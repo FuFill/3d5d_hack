@@ -1,0 +1,66 @@
+{
+  "data_source": "SYNTHETIC_SIMULATION_ONLY",
+  "real_printing_outcomes_used": 0,
+  "physical_units": "none; all variables are dimensionless",
+  "seed": 20261023,
+  "n_observations": 5000,
+  "n_covariates": 5,
+  "true_effect_assigned_by_generator": 2.0,
+  "unadjusted_ols_effect": 5.430486482365232,
+  "double_ml_comparison": {
+    "polynomial_ridge": {
+      "effect": 2.0091801121652217,
+      "standard_error": 0.014311984150656846,
+      "95_percent_interval": [
+        1.9811291386826262,
+        2.0372310856478175
+      ],
+      "true_effect_inside_95_percent_interval": true,
+      "recovers_known_effect_within_4_standard_errors": true,
+      "cross_fitting_has_no_train_test_overlap": true,
+      "nuisance_rmse": {
+        "ml_l": 2.4223004189012647,
+        "ml_m": 1.0885661788624479
+      },
+      "learner_specification": "Pipeline(steps=[('polynomialfeatures',\n                 PolynomialFeatures(degree=5, include_bias=False)),\n                ('standardscaler', StandardScaler()), ('ridge', Ridge())])"
+    },
+    "hist_gradient_boosting": {
+      "effect": 2.2263778432766927,
+      "standard_error": 0.047798536233315606,
+      "95_percent_interval": [
+        2.1326944337456615,
+        2.320061252807724
+      ],
+      "true_effect_inside_95_percent_interval": false,
+      "recovers_known_effect_within_4_standard_errors": false,
+      "cross_fitting_has_no_train_test_overlap": true,
+      "nuisance_rmse": {
+        "ml_l": 2.9574020383871975,
+        "ml_m": 1.0661245246299433
+      },
+      "learner_specification": "HistGradientBoostingRegressor(l2_regularization=1.0, learning_rate=0.05,\n                              max_iter=200, max_leaf_nodes=15,\n                              min_samples_leaf=30, random_state=20261023)"
+    }
+  },
+  "n_folds": 5,
+  "n_rep": 3,
+  "checks": {
+    "cross_fitting_has_no_train_test_overlap": true,
+    "primary_series_model_recovers_known_effect": true,
+    "less_absolute_error_than_unadjusted_baseline": true
+  },
+  "versions": {
+    "python": "3.12.14",
+    "doubleml": "0.11.4",
+    "scikit-learn": "1.9.1",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "pandas": "3.1.0"
+  },
+  "limits": [
+    "One simulation is a procedural check, not an empirical coverage study.",
+    "This does not estimate physical effects, recommend settings, or compare 3D and 5D.",
+    "Observations are iid in this simulation; real print jobs need a cluster-aware design.",
+    "Causal identification requires a justified design; cross-fitting cannot provide it.",
+    "Learner comparison is exploratory and is not independent validation of model selection."
+  ]
+}

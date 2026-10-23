@@ -1,0 +1,28 @@
+{
+  "data_source": "SYNTHETIC_ORACLE_CHECK_ONLY",
+  "iid": {
+    "groups": 600,
+    "observations": 600,
+    "native_coefficient": 2.0479442514846578,
+    "doubleml_coefficient": 2.047944251484658,
+    "absolute_coefficient_difference": 4.440892098500626e-16,
+    "native_standard_error": 0.038788091713695676,
+    "doubleml_standard_error_with_finite_group_correction": 0.038788091713695655,
+    "passed": true
+  },
+  "clustered": {
+    "groups": 200,
+    "observations": 600,
+    "native_coefficient": 1.9506165355736884,
+    "doubleml_coefficient": 1.9506165355736906,
+    "absolute_coefficient_difference": 2.220446049250313e-15,
+    "native_standard_error": 0.08007423840960548,
+    "doubleml_standard_error_with_finite_group_correction": 0.08007423840960554,
+    "passed": true
+  },
+  "versions": {
+    "numpy": "2.5.4",
+    "scikit-learn": "1.9.1",
+    "doubleml": "0.11.4"
+  }
+}

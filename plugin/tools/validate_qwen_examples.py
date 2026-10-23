@@ -34,12 +34,18 @@ def main():
         result = PlanningAssistant(client).run(read_docx_text(tzs[0]), meshes[0],
                                                 {"source": os.path.basename(tzs[0])})
         decision = result["decision"]
-        expected_flow = "propose_requirements" in result["tools_used"] and "plan_print" in result["tools_used"]
+        expected_flow = any(e["tool"] == "propose_requirements" and "requirements" in e["result"]
+                            for e in result["events"]) and any(
+                            e["tool"] == "plan_print" and e["result"].get("status") == decision["status"]
+                            for e in result["events"])
+        causal_status = decision["causal_analysis"]["status"]
         row = {"case": os.path.basename(directory), "decision_status": decision["status"],
                "route": decision["route"]["mode"], "material": (decision.get("chosen_material") or {}).get("id"),
                "tools_used": result["tools_used"], "llm_error": result["llm_error"],
                "patch_errors": decision["setting_patch"]["errors"],
-               "verified": expected_flow and not result["llm_error"] and not decision["setting_patch"]["errors"],
+               "causal_status": causal_status,
+               "verified": expected_flow and not result["llm_error"] and not decision["setting_patch"]["errors"]
+                           and causal_status == "needs_calibration",
                "llm_merge": next((t for t in decision["trace"] if t["step"] == "merge_llm_requirements"), None),
                "seconds": round(time.time() - started, 2)}
         report["cases"].append(row)

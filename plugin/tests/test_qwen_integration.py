@@ -1,6 +1,9 @@
 # Copyright (c) 2026. Released under the terms of the LGPLv3 or higher.
 import io
 import json
+import os
+import tempfile
+from contextlib import contextmanager
 from urllib.error import HTTPError
 from testutil import assert_close, raises, make_box, resources_dir
 from ste_planner.qwen_client import QwenClient, QwenError, load_env_file, tls_context
@@ -11,6 +14,22 @@ from ste_planner.causal_bridge import PLREffect, CausalRegistry
 
 def call(name, args, ident="call1"):
     return {"id": ident, "type": "function", "function": {"name": name, "arguments": json.dumps(args)}}
+
+
+@contextmanager
+def box_model():
+    """Real temporary STL, including bytes for the core's geometry hash."""
+    with tempfile.TemporaryDirectory() as directory:
+        path = os.path.join(directory, "box.stl")
+        with open(path, "w", encoding="ascii") as handle:
+            handle.write("solid fixture\n")
+            for triangle in make_box(10, 10, 10).triangles:
+                handle.write("facet normal 0 0 0\nouter loop\n")
+                for vertex in triangle:
+                    handle.write("vertex %g %g %g\n" % tuple(vertex))
+                handle.write("endloop\nendfacet\n")
+            handle.write("endsolid fixture\n")
+        yield path
 
 
 class FakeClient(object):
@@ -204,16 +223,11 @@ def test_agent_fallback_on_api_error_or_budget():
 
 def test_planner_accepts_grounded_llm_input_before_validation():
     from ste_planner import planner
-    from ste_planner import geometry
-    original = geometry.load_stl
-    geometry.load_stl = lambda path: make_box(10, 10, 10)
-    try:
-        decision = planner.plan_case("Наименование детали: X\nМасса не более 50 г.", "synthetic.stl",
+    with box_model() as path:
+        decision = planner.plan_case("Наименование детали: X\nМасса не более 50 г.", path,
                                      resources_dir=resources_dir(), llm_items=[
                                          {"property": "part_mass", "fragment": "Масса не более 50 г.",
                                           "value": 50, "unit": "g", "comparator": "<="}])
-    finally:
-        geometry.load_stl = original
     added = [r for r in decision["requirements"] if r["property"] == "part_mass"]
     assert len(added) == 1 and added[0]["value"] == 50
     assert any(t["step"] == "merge_llm_requirements" for t in decision["trace"])

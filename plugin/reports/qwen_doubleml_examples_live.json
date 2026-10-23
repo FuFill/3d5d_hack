@@ -1,0 +1,412 @@
+{
+  "model": "dashscope/qwen3.8-flash",
+  "validation_type": "live_timeweb_tools_offline_core",
+  "physical_print_tests": false,
+  "fitted_causal_models_registered": 0,
+  "cases": [
+    {
+      "case": "1. Шестерня - 3D",
+      "decision_status": "infeasible",
+      "route": "classic",
+      "material": "fiberpart_tpu_c5",
+      "tools_used": [
+        "propose_requirements",
+        "plan_print"
+      ],
+      "llm_error": null,
+      "patch_errors": [],
+      "causal_status": "needs_calibration",
+      "verified": true,
+      "llm_merge": {
+        "step": "merge_llm_requirements",
+        "accepted_indices": [
+          6
+        ],
+        "rejected": [
+          {
+            "index": 0,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 1,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 2,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 3,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 4,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 5,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 7,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          }
+        ]
+      },
+      "seconds": 26.41
+    },
+    {
+      "case": "2. Колесо конвейерной линии - 5D",
+      "decision_status": "needs_input",
+      "route": "cylindrical",
+      "material": "sealant_tpu_A95",
+      "tools_used": [
+        "propose_requirements",
+        "plan_print",
+        "list_causal_models"
+      ],
+      "llm_error": null,
+      "patch_errors": [],
+      "causal_status": "needs_calibration",
+      "verified": true,
+      "llm_merge": {
+        "step": "merge_llm_requirements",
+        "accepted_indices": [
+          5,
+          8,
+          9,
+          10,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ],
+        "rejected": [
+          {
+            "index": 0,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 1,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 2,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 3,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 4,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 6,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 7,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 11,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          }
+        ]
+      },
+      "seconds": 27.91
+    },
+    {
+      "case": "3. Пыльник Шруса - 3D",
+      "decision_status": "needs_input",
+      "route": "classic",
+      "material": "sealant_tpu_A95",
+      "tools_used": [
+        "propose_requirements",
+        "plan_print",
+        "list_causal_models"
+      ],
+      "llm_error": null,
+      "patch_errors": [],
+      "causal_status": "needs_calibration",
+      "verified": true,
+      "llm_merge": {
+        "step": "merge_llm_requirements",
+        "accepted_indices": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "rejected": [
+          {
+            "index": 0,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 1,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 2,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 3,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          }
+        ]
+      },
+      "seconds": 30.72
+    },
+    {
+      "case": "4. Фигурка",
+      "decision_status": "candidate",
+      "route": "classic",
+      "material": "fiberpart_tpu_c5",
+      "tools_used": [
+        "propose_requirements",
+        "plan_print"
+      ],
+      "llm_error": null,
+      "patch_errors": [],
+      "causal_status": "needs_calibration",
+      "verified": true,
+      "llm_merge": {
+        "step": "merge_llm_requirements",
+        "accepted_indices": [
+          1,
+          2,
+          4,
+          5,
+          6,
+          7
+        ],
+        "rejected": [
+          {
+            "index": 0,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 3,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          }
+        ]
+      },
+      "seconds": 44.32
+    },
+    {
+      "case": "5. Рабочее колесо насоса Wilo - 5D",
+      "decision_status": "needs_input",
+      "route": "cylindrical",
+      "material": "fiberpart_pp_g30",
+      "tools_used": [
+        "propose_requirements",
+        "plan_print",
+        "list_causal_models"
+      ],
+      "llm_error": null,
+      "patch_errors": [],
+      "causal_status": "needs_calibration",
+      "verified": true,
+      "llm_merge": {
+        "step": "merge_llm_requirements",
+        "accepted_indices": [
+          7,
+          11,
+          20,
+          21
+        ],
+        "rejected": [
+          {
+            "index": 0,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 1,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 2,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 3,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 4,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 5,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 6,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 8,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 9,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 10,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 12,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 13,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 14,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 15,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 16,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 17,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 18,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 19,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          }
+        ]
+      },
+      "seconds": 38.09
+    },
+    {
+      "case": "6. Крыльчатка охлаждения электродвигателя - 3D",
+      "decision_status": "needs_input",
+      "route": "classic",
+      "material": "enduse_pp",
+      "tools_used": [
+        "propose_requirements",
+        "plan_print",
+        "list_causal_models"
+      ],
+      "llm_error": null,
+      "patch_errors": [],
+      "causal_status": "needs_calibration",
+      "verified": true,
+      "llm_merge": {
+        "step": "merge_llm_requirements",
+        "accepted_indices": [
+          2,
+          5,
+          6,
+          7,
+          9,
+          10
+        ],
+        "rejected": [
+          {
+            "index": 0,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 1,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 3,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 4,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 8,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          }
+        ]
+      },
+      "seconds": 32.22
+    },
+    {
+      "case": "7. Ось вращения передающих звёзд формовщика коробов Krones - 5D",
+      "decision_status": "needs_calibration",
+      "route": "cylindrical_full",
+      "material": "enduse_pa6",
+      "tools_used": [
+        "propose_requirements",
+        "plan_print",
+        "list_causal_models"
+      ],
+      "llm_error": null,
+      "patch_errors": [],
+      "causal_status": "needs_calibration",
+      "verified": true,
+      "llm_merge": {
+        "step": "merge_llm_requirements",
+        "accepted_indices": [
+          2,
+          5,
+          6,
+          7,
+          8,
+          9,
+          11,
+          13
+        ],
+        "rejected": [
+          {
+            "index": 0,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 1,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 3,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 4,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 10,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 12,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          },
+          {
+            "index": 14,
+            "reason": "invalid, unsupported or duplicate grounded requirement"
+          }
+        ]
+      },
+      "seconds": 35.74
+    }
+  ]
+}

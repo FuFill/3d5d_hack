@@ -2,7 +2,8 @@
 """Qwen tool loop bound to a caller-selected TZ and local model; no Qt writes."""
 import json
 import math
-from .causal_bridge import CausalRegistry
+import copy
+from .causal_bridge import CausalRegistry, NATIVE_PREFIX, describe_core_models, core_effect_result
 from .llm_requirements import prepare_requirements, PROPERTIES
 from .qwen_client import QwenError
 from .compiler import QUANTITIES
@@ -20,6 +21,9 @@ region/load_case при необходимости. Числа и единицы
 ожидаемых откликов в проверенной области при предпосылках модели, не абсолютная прочность детали,
 не доказательство безопасности и не разрешение применить настройки. Нет модели — сообщи об этом.
 Не обучай модель на выдуманных данных. Не обещай слайсинг, применение или экспорт: их здесь нет.
+Модели calibration:<dataset_id> — калибровка ядра на переданных приложением измерениях.
+Запрашивай эффект только у подходящей модели из list_causal_models. Каждый эффект относится
+к одному изменению относительно плана; несколько эффектов нельзя складывать.
 Отвечай по-русски, кратко объясняя ограничения. Не выводи секреты или содержимое окружения."""
 
 
@@ -53,13 +57,16 @@ def _reject_constant(value):
 
 
 class PlanningAssistant(object):
-    def __init__(self, client, causal_models=None, plan_fn=None, max_rounds=6, max_calls=12):
+    def __init__(self, client, causal_models=None, plan_fn=None, max_rounds=6, max_calls=12,
+                 calibration_data=None):
         if not 1 <= max_rounds <= 12 or not 1 <= max_calls <= 32:
             raise ValueError("Invalid loop limits")
         self.client = client
         self.causal = causal_models if causal_models is not None else CausalRegistry()
         self.plan_fn = plan_fn
         self.max_rounds, self.max_calls = max_rounds, max_calls
+        # Trusted application input only; no tool can supply or edit observations.
+        self.calibration_data = copy.deepcopy(calibration_data)
 
     def run(self, tz_text, mesh_path, planner_options=None, history=None):
         if not isinstance(tz_text, str) or not tz_text.strip() or len(tz_text) > 120000:
@@ -81,13 +88,21 @@ class PlanningAssistant(object):
             messages.append({"role": "user", "content": "Предыдущая реплика (%s): %s" % (item["role"], item["content"])})
         messages.append({"role": "user", "content": "ТЗ для текущей модели:\n" + tz_text})
 
-        def plan():
+        def calculate(changes=None):
             if self.plan_fn is None:
                 from .planner import plan_case
                 fn = plan_case
             else:
                 fn = self.plan_fn
-            state["decision"] = fn(tz_text, mesh_path, llm_items=state["items"], **options)
+            inputs = dict(options)
+            if self.calibration_data is not None:
+                inputs["calibration_data"] = self.calibration_data
+            if changes is not None:
+                inputs["setting_changes"] = changes
+            return fn(tz_text, mesh_path, llm_items=state["items"], **inputs)
+
+        def plan():
+            state["decision"] = calculate()
             return state["decision"]
 
         def execute(name, args):
@@ -110,27 +125,46 @@ class PlanningAssistant(object):
                     plan()
                 d = state["decision"]
                 return dict((key, d.get(key)) for key in ("status", "prototype_only", "chosen_material", "route",
-                             "effective_settings", "verification", "missing_inputs", "assumptions", "qualification_plan", "explanation"))
+                             "effective_settings", "verification", "missing_inputs", "assumptions", "qualification_plan",
+                             "causal_analysis", "explanation"))
             if name == "list_causal_models":
                 if args:
                     raise ValueError("list_causal_models accepts no arguments")
-                return {"models": self.causal.describe()}
+                if state["decision"] is None:
+                    return {"status": "needs_input", "reason": "call_plan_print_first"}
+                return {"models": describe_core_models(state["decision"]) + self.causal.describe(),
+                        "core_status": (state["decision"].get("causal_analysis") or {}).get("status", "needs_calibration")}
             if name == "estimate_setting_effect":
                 if set(args) != {"model_id", "treatment", "outcome", "to_value"}:
                     raise ValueError("invalid effect arguments")
                 if state["decision"] is None:
                     return {"status": "needs_input", "reason": "call_plan_print_first"}
                 d = state["decision"]
-                effective = d.get("effective_settings", {})
                 treatment = args["treatment"]
-                if not isinstance(treatment, str) or treatment not in effective:
-                    raise ValueError("unknown effective treatment")
-                if not SETTING_UNITS.get(treatment):
-                    raise ValueError("unsupported numeric treatment unit")
-                if not all(isinstance(args[k], str) for k in ("model_id", "outcome")):
+                if not all(isinstance(args[k], str) for k in ("model_id", "treatment", "outcome")):
                     raise ValueError("invalid model/outcome")
                 if isinstance(args["to_value"], bool) or not isinstance(args["to_value"], (float, int)) or not math.isfinite(args["to_value"]):
                     raise ValueError("finite treatment required")
+                if args["model_id"].startswith(NATIVE_PREFIX):
+                    models = [m for m in describe_core_models(d) if m["model_id"] == args["model_id"]]
+                    if len(models) != 1 or models[0]["status"] != "computed":
+                        result = core_effect_result(d, args["model_id"][len(NATIVE_PREFIX):])
+                    elif models[0]["treatment"] != treatment or models[0]["outcome"] != args["outcome"]:
+                        raise ValueError("model treatment/outcome mismatch")
+                    else:
+                        candidate = calculate({treatment: args["to_value"]})
+                        # Re-evaluation must retain the original plan, including geometry.
+                        stable = ("status", "setting_patch", "effective_settings", "verification", "qualification_plan",
+                                  "calibration_context", "chosen_material", "route", "scene_operations")
+                        if any(candidate.get(k) != d.get(k) for k in stable):
+                            result = {"status": "out_of_domain", "reason": "planned_context_changed"}
+                        else:
+                            result = core_effect_result(candidate, models[0]["dataset_id"])
+                    state["causal_estimates"].append(result)
+                    return result
+                effective = d.get("effective_settings", {})
+                if treatment not in effective or not SETTING_UNITS.get(treatment):
+                    raise ValueError("unsupported effective treatment or unit")
                 machine = next((e.get("machine") for e in d.get("trace", []) if e.get("step") == "inspect_machine"), None)
                 context = {"machine_id": machine, "material_id": (d.get("chosen_material") or {}).get("id"),
                            "mode": (d.get("route") or {}).get("mode"), "nozzle_mm": effective.get("machine_nozzle_size")}

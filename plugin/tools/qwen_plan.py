@@ -39,6 +39,7 @@ def main():
     parser.add_argument("--resources")
     parser.add_argument("--out", help="JSON result; omitted means stdout")
     parser.add_argument("--causal-models", help="Reviewed scalar PLR exports: JSON list of PLREffect constructor records")
+    parser.add_argument("--calibration", help="JSON list of measured experiments for the core Double ML calibration")
     args = parser.parse_args()
     try:
         client = QwenClient.from_env(args.env_file if os.path.isfile(args.env_file) else None)
@@ -57,10 +58,15 @@ def main():
                 with open(args.causal_models, encoding="utf-8-sig") as handle:
                     records = json.load(handle)
                 registry = CausalRegistry([PLREffect(**record) for record in records])
+            calibration_data = None
+            if args.calibration:
+                with open(args.calibration, encoding="utf-8-sig") as handle:
+                    calibration_data = json.load(handle)
             options = {"source": os.path.basename(args.tz)}
             if args.resources:
                 options["resources_dir"] = args.resources
-            result = PlanningAssistant(client, registry).run(text, os.path.abspath(args.stl), options)
+            result = PlanningAssistant(client, registry, calibration_data=calibration_data).run(
+                text, os.path.abspath(args.stl), options)
         output = to_json(result, indent=2)
         if args.out:
             with open(args.out, "w", encoding="utf-8") as handle:

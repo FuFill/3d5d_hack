@@ -1,11 +1,59 @@
 # Copyright (c) 2026. Released under the terms of the LGPLv3 or higher.
-"""Read-only bridge to fitted single-treatment DoubleMLPLR models.
+"""Read-only bridges to the core DML calibration and exported DoubleMLPLR.
 
-No DoubleML dependency in the Python 3.5 slicer runtime. Training/export lives
-outside it; reviewed scalar PLR effects can be registered here. An effect is
-neither an absolute outcome prediction nor approval to apply a setting.
+No DoubleML package dependency in the Python 3.5 slicer runtime: native fits
+use the core's NumPy implementation; external PLR exports are optional. An
+effect is neither an absolute outcome prediction nor approval to apply a setting.
 """
 import math
+
+NATIVE_PREFIX = "calibration:"
+
+
+def describe_core_models(decision):
+    """Expose fit summaries and failures, never raw experimental observations."""
+    models = []
+    for entry in (decision.get("causal_analysis") or {}).get("value") or []:
+        dataset = entry.get("dataset_id")
+        if not dataset:
+            continue
+        value = entry.get("value") or {}
+        fit = value.get("fit") or {}
+        summary = fit.get("value") or {}
+        models.append({"model_id": NATIVE_PREFIX + dataset, "backend": "core_double_ml",
+                       "status": entry["status"], "dataset_id": dataset,
+                       "treatment": value.get("treatment"), "treatment_unit": value.get("treatment_unit"),
+                       "outcome": (value.get("outcome") or {}).get("name"),
+                       "outcome_unit": (value.get("outcome") or {}).get("unit"),
+                       "treatment_bounds": (fit.get("domain") or {}).get("treatment"),
+                       "observations": summary.get("observations"),
+                       "independent_groups": summary.get("independent_groups"),
+                       "trace": entry.get("trace", [])})
+    return models
+
+
+def core_effect_result(decision, dataset_id):
+    """Convert the authoritative core contrast to the common tool response."""
+    entries = [e for e in (decision.get("causal_analysis") or {}).get("value") or []
+               if e.get("dataset_id") == dataset_id]
+    if len(entries) != 1:
+        return {"status": "needs_calibration", "reason": "no_unique_calibration_dataset"}
+    entry = entries[0]
+    if entry["status"] != "computed":
+        return {"status": entry["status"], "dataset_id": dataset_id, "trace": entry.get("trace", [])}
+    value = entry["value"]
+    change = (value.get("change") or {}).get("value")
+    if change is None:
+        return {"status": "needs_input", "reason": "core_contrast_not_requested"}
+    return {"status": "computed", "model_id": NATIVE_PREFIX + dataset_id, "backend": "core_double_ml",
+            "dataset_id": dataset_id, "dataset_sha256": value["dataset_sha256"],
+            "treatment": value["treatment"], "treatment_unit": value["treatment_unit"],
+            "outcome": value["outcome"]["name"], "unit": value["outcome"]["unit"],
+            "from": change["baseline"], "to": change["target"], "effect": change["expected_change"],
+            "confidence_interval": change["confidence_interval_95"], "confidence_level": 0.95,
+            "proposed_patch": value["proposed_patch"], "fit": value["fit"],
+            "absolute_prediction": False, "setting_approval": False,
+            "note": "Independent single-setting contrast; causal assumptions require justification; patch not applied"}
 
 
 def _finite(value):
@@ -87,6 +135,8 @@ class CausalRegistry(object):
     def __init__(self, models=None):
         self.models = {}
         for model in models or []:
+            if not isinstance(model.model_id, str) or model.model_id.startswith(NATIVE_PREFIX):
+                raise ValueError("Model id must be a string outside the reserved calibration: namespace")
             if model.model_id in self.models:
                 raise ValueError("Duplicate causal model id")
             self.models[model.model_id] = model

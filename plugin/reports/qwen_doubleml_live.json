@@ -1,0 +1,107 @@
+{
+  "data_source": "SYNTHETIC_SOFTWARE_FIXTURE_ONLY",
+  "physical_print_tests": false,
+  "model": "dashscope/qwen3.8-flash",
+  "validation_type": "live_forced_tool_sequence_native_double_ml",
+  "tools_used": [
+    "propose_requirements",
+    "plan_print",
+    "list_causal_models",
+    "estimate_setting_effect"
+  ],
+  "llm_error": null,
+  "core_status": "computed",
+  "baseline_unchanged": true,
+  "fixture_process_unchanged": true,
+  "native_percent_patch_correct": true,
+  "expected_fixture_effect": -40.0,
+  "observed_effect": -40.00620080459346,
+  "contrast": {
+    "status": "computed",
+    "model_id": "calibration:software_fixture_only",
+    "backend": "core_double_ml",
+    "dataset_id": "software_fixture_only",
+    "dataset_sha256": "26dc3f94def4a940b0df17cb37bda3292ce676339978a8f6069ce3586101d798",
+    "treatment": "infill_sparse_density",
+    "treatment_unit": "%",
+    "outcome": "breaking_load",
+    "unit": "N",
+    "from": 30.0,
+    "to": 10.0,
+    "effect": -40.00620080459346,
+    "confidence_interval": [
+      -40.03054313780149,
+      -39.98185847138543
+    ],
+    "confidence_level": 0.95,
+    "proposed_patch": {
+      "payload": {
+        "global": {},
+        "extruders": {
+          "0": {
+            "infill_sparse_density": 10.0
+          }
+        }
+      },
+      "warnings": []
+    },
+    "fit": {
+      "value": {
+        "coefficient": 2.000310040229673,
+        "standard_error": 0.0006209892987840425,
+        "confidence_interval_95": [
+          1.9990929235692716,
+          2.0015271568900745
+        ],
+        "outcome_unit": "N",
+        "observations": 180,
+        "independent_groups": 90,
+        "n_folds": 5,
+        "seed": 0,
+        "covariate_count": 1,
+        "nuisance_model": "quadratic_series",
+        "algorithm_version": 1,
+        "numpy_version": "2.3.5",
+        "diagnostics": {
+          "out_of_fold_rmse_y": 33.58557192203296,
+          "out_of_fold_rmse_d": 16.790114196459175,
+          "residual_treatment_variance": 281.90793473013997
+        },
+        "inference": "cluster-robust asymptotic normal; not a prediction interval"
+      },
+      "unit": "N/%",
+      "status": "computed",
+      "evidence": null,
+      "uncertainty": {
+        "standard_error": 0.0006209892987840425,
+        "confidence_interval_95": [
+          1.9990929235692716,
+          2.0015271568900745
+        ]
+      },
+      "domain": {
+        "treatment": [
+          10.0,
+          50.0
+        ],
+        "x0": [
+          3.0,
+          6.0
+        ]
+      },
+      "trace": [
+        {
+          "model_id": "fit_double_ml",
+          "inputs": {},
+          "note": "requires adequate nuisance fits, conditional treatment variation and a justified causal design; does not prove absolute strength or qualification"
+        }
+      ],
+      "model_id": "fit_double_ml",
+      "model_class": "E"
+    },
+    "absolute_prediction": false,
+    "setting_approval": false,
+    "note": "Independent single-setting contrast; causal assumptions require justification; patch not applied"
+  },
+  "verified": true
+}
