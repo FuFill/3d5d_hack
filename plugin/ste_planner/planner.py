@@ -38,17 +38,21 @@ def default_resources_dir():
 
 
 def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE, catalog=None,
-              preferred_materials=None, forced_mode=None, source=None):
+              preferred_materials=None, forced_mode=None, source=None, llm_items=None):
     trace = []
     resources_dir = resources_dir or default_resources_dir()
     catalog = catalog or materials.load_catalog()
 
     # requirements
-    reqset = reqmod.normalize_requirements(reqmod.parse_requirements(tz_text, source=source))
+    from .llm_requirements import prepare_requirements
+    reqset, llm_accepted, llm_rejected = prepare_requirements(tz_text, llm_items, source)
     issues = reqmod.validate_requirements(reqset)
     ptype = materials.part_type(reqset)
     trace.append({"step": "parse_requirements", "count": len(reqset.requirements), "issues": issues,
                   "part_type": ptype})
+    if llm_items is not None:
+        trace.append({"step": "merge_llm_requirements", "accepted_indices": llm_accepted,
+                      "rejected": llm_rejected})
 
     # geometry
     mesh = geometry.load_stl(mesh_path)

@@ -6,6 +6,31 @@
 
 Слой плагина (MCP-сервер, чат, применение patch в Qt-потоке, нарезка, экспорт 3MF/G-code) — следующий этап.
 
+Сетевой адаптер Qwen/Timeweb и цикл вызовов инструментов реализованы отдельно от UI. Они вызывают расчётное ядро и не применяют настройки в слайсере. Контракт подключения причинного DoubleML: [QWEN_INTEGRATION.md](QWEN_INTEGRATION.md).
+
+## Qwen через Timeweb
+
+В корневом `.env` задайте `TIMEWEB_API_KEY` либо используйте существующий `LLM_API_KEY`. Поддерживаются `QWEN_BASE_URL`/`LLM_BASE_URL` и `QWEN_MODEL`/`LLM_MODEL`; по умолчанию — `https://api.timeweb.ai/v1`, `dashscope/qwen3.8-flash`. Ключ не передаётся в аргументах командной строки. `.env` и его локальные варианты исключены из Git; шаблон — [../.env.example](../.env.example).
+
+Из корня репозитория:
+
+```bash
+python plugin/tools/qwen_plan.py --check-api
+python plugin/tools/qwen_plan.py --tz "path/to/task.docx" --stl "path/to/model.stl" --out "decision.json"
+```
+
+Первый вызов проверяет реальное соединение и обмен результатом инструмента. Второй передаёт текст выбранного ТЗ в Timeweb и анализирует STL локально; бинарная модель не включается в запрос. Инструменты получают структурированные результаты ядра. Для проверки всех семи ТЗ с передачей их текста провайдеру:
+
+```bash
+python plugin/tools/validate_qwen_examples.py
+```
+
+Результаты пишутся в `plugin/reports/qwen_validation.json`. Запуск требует доступа к API и расходует его квоту. Проверка не запускает печать. Сетевой адаптер проверяет сертификаты и имя сервера, на Windows использует доверенные ROOT-сертификаты ОС. Для собственного доверенного CA можно задать `QWEN_CA_FILE`; TLS verification не отключается.
+
+Без зарегистрированной обученной причинной модели `estimate_setting_effect` возвращает `needs_calibration`. Поле `decision` и его `explanation` авторитетны; `assistant_text` — отдельный текст Qwen с `assistant_text_verified=false`. Ответ Qwen не повышает статус квалификации и не заменяет patch ядра.
+
+Проверено на семи ТЗ организаторов через реальный Timeweb/Qwen: вызовы инструментов и расчёт ядра завершились без ошибок API и компиляции patch ([отчёт](reports/qwen_validation.json)). В Python 3.5.7 / numpy 1.15.4 полный набор: 96 тестов прошли, одна необязательная проверка Uranium пропущена ([отчёт](reports/qwen_py35_tests.json)); 15 тестов адаптера также прошли после финальной сверки контракта DoubleML ([отчёт](reports/qwen_adapter_tests.json)). Это проверка интеграции; обученных причинных моделей в этом прогоне нет.
+
 ## Быстрый старт
 
 ```bash
@@ -42,6 +67,9 @@ decision["status"], decision["setting_patch"]["payload"], decision["scene_operat
 | `optimize`, `surrogate` | optimize_candidates, domain_check, fit_response_model | Парето после отбора допустимых; RSM и GP, ограничение μ+κσ≤0, constrained EI |
 | `verification` | verify_requirements, build_qualification_plan, explain_decision | статусы infeasible > needs_input > needs_calibration > candidate |
 | `planner` | основной алгоритм §13 | сборка `Decision` |
+| `llm_requirements` | входной контракт Qwen | проверка цитаты, чисел/единиц, направления ограничения; отсутствие семантического подтверждения → assumed |
+| `qwen_client`, `qwen_assistant` | сетевой адаптер и цикл инструментов | Timeweb Chat Completions, ограничение числа вызовов, ошибки API, детерминированный fallback |
+| `causal_bridge` | адаптер причинного DoubleML | контраст одиночной PLR-модели, доверительный интервал, контекст и support; не абсолютный прогноз |
 
 Не реализованы в ядре (требуют рантайма слайсера или внешних данных): apply_patch_transaction, dry_slice, export_project (следующий этап, плагин), check_kinematics и check_collisions (нет модели головки и оснастки — статус unknown), FEA, seam_plan, адаптивный слой.
 
@@ -91,3 +119,4 @@ python tools/build_material_catalog.py <cache_dir>/wiki_pages.json ../STE-Slicer
 - Объёмная подача Q не откалибрована: скорости берутся из профиля и паспорта и помечены needs_calibration.
 - Выбор режима 5D — явная политика (документированные преимущества ≥ 2), её можно переопределить параметром `forced_mode`.
 - Модель 564 тыс. граней (фигурка) обрабатывается около 30 с; в плагине нужна децимация для ориентации.
+- Тренировка и набор экспериментальных данных DoubleML не входят в сетевой адаптер. Регистрация обученной модели выполняется доверенным кодом приложения, не вызовом Qwen.

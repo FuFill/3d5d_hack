@@ -1,0 +1,84 @@
+{
+ "counts": {
+  "pass": 15
+ },
+ "numpy": "1.15.4",
+ "python": "3.5.7 (default, Oct 23 2020, 08:07:59) [MSC v.1900 64 bit (AMD64)]",
+ "results": {
+  "test_qwen_integration::test_agent_fallback_on_api_error_or_budget": {
+   "detail": "",
+   "seconds": 0.001,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_agent_rejects_injected_paths_and_context": {
+   "detail": "",
+   "seconds": 0.0,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_agent_tool_roundtrip_and_authoritative_core_status": {
+   "detail": "",
+   "seconds": 0.001,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_api_failure_does_not_echo_provider_error_or_key": {
+   "detail": "",
+   "seconds": 0.046,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_causal_contrast_and_reversed_interval": {
+   "detail": "",
+   "seconds": 0.0,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_doubleml_adapter_rejects_other_estimands": {
+   "detail": "",
+   "seconds": 0.0,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_doubleml_plr_export_contract": {
+   "detail": "",
+   "seconds": 0.001,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_existing_env_alias_and_tls_verification": {
+   "detail": "",
+   "seconds": 0.036,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_llm_cannot_invert_bound_or_relabel_quantity_as_proven": {
+   "detail": "",
+   "seconds": 0.002,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_llm_cannot_use_raw_value_bypass_or_wrong_units": {
+   "detail": "",
+   "seconds": 0.013,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_malformed_tool_envelope_has_deterministic_fallback": {
+   "detail": "",
+   "seconds": 0.0,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_planner_accepts_grounded_llm_input_before_validation": {
+   "detail": "",
+   "seconds": 0.085,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_timeweb_transport_and_secret_redaction": {
+   "detail": "",
+   "seconds": 0.247,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_truncated_or_malformed_response_rejected": {
+   "detail": "",
+   "seconds": 0.027,
+   "status": "pass"
+  },
+  "test_qwen_integration::test_unknown_properties_nonfinite_and_optional_requirements": {
+   "detail": "",
+   "seconds": 0.001,
+   "status": "pass"
+  }
+ }
+}
