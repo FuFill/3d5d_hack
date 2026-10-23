@@ -262,7 +262,7 @@
         "visible_staircase_before_mm": 0.0,
         "visible_staircase_after_mm": 0.0
       },
-      "seconds_including_meshing": 2.061
+      "seconds_including_meshing": 2.926
     },
     "wedge": {
       "status": "needs_calibration",
@@ -525,7 +525,7 @@
         "visible_staircase_before_mm": 0.01924449499013355,
         "visible_staircase_after_mm": 0.009622247495066774
       },
-      "seconds_including_meshing": 2.796
+      "seconds_including_meshing": 4.266
     }
   },
   "cantilever_reference": {
@@ -541,7 +541,7 @@
     "plugin/ste_planner/compiler.py": "fe78d3901165ea3cc5eff68617af09ed751108a03220a7467dcaad6eb553f783",
     "plugin/ste_planner/elasticity.py": "7a64e2f19fe163b51243b83e7427fb4a060170ee702bbfb995d4071640bba34c",
     "plugin/ste_planner/functional.py": "50ec7c208fd3fed84e0c4daff2dce7fa63d2b0d3748d391c6248cfadf4e583c7",
-    "plugin/ste_planner/gcode.py": "f67ea67293470dffbea37d70b3be88a0321d48c537160f5d71e2d0add64fb573",
+    "plugin/ste_planner/gcode.py": "ce9af408988ea6712027365db3f9990ea4c99da504f901b09b285de9affeaa07",
     "plugin/ste_planner/geometry.py": "1ea6f74abea528bd1a6a120deedc8524fa9efc6221dc9c6d4a90d2b3ac0ead7c",
     "plugin/ste_planner/materials.py": "2ae833095811135b5731b9b512234759e17329f40b9c270e310db861cd06fc42",
     "plugin/ste_planner/mechanics.py": "7720f611db3fb5ebf10736da5eaa58c0dbbf7fe3ce8f807d9bb2bfc4426ffd0f",

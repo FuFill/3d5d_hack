@@ -145,6 +145,9 @@ export STE_RESOURCES_DIR=/path/to/STE-Slicer/resources
 
 ## Доказательства и незакрытые проверки
 
+Задание для проверки в установленном STE Slicer:
+[ste_runtime_handoff.md](../experiments/ste_runtime_handoff.md).
+
 T4/T10 на точном осевом стержне, квадратичный patch test, энергия/равновесие,
 масштабирование нагрузок, направления материала; две модели с уточнением сетки;
 семь примеров организаторов, компилятор, Double ML и живая LLM.
