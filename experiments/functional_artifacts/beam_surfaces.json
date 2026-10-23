@@ -1,0 +1,38 @@
+[
+ {
+  "description": "левый торец X=0",
+  "face_ids": [
+   10,
+   11
+  ],
+  "id": "root",
+  "selector": {
+   "axis": 0,
+   "value_mm": 0
+  }
+ },
+ {
+  "description": "правый торец X=60",
+  "face_ids": [
+   6,
+   7
+  ],
+  "id": "tip",
+  "selector": {
+   "axis": 0,
+   "value_mm": 60
+  }
+ },
+ {
+  "description": "передняя сторона Y=0",
+  "face_ids": [
+   4,
+   5
+  ],
+  "id": "front",
+  "selector": {
+   "axis": 1,
+   "value_mm": 0
+  }
+ }
+]

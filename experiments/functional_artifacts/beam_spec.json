@@ -1,0 +1,194 @@
+{
+ "baseline_profile_id": "baseline",
+ "blocks": [
+  {
+   "bounds_mm": [
+    [
+     -0.1,
+     -1,
+     -1
+    ],
+    [
+     15,
+     20,
+     20
+    ]
+   ],
+   "id": "root_block"
+  },
+  {
+   "bounds_mm": [
+    [
+     15,
+     -1,
+     -1
+    ],
+    [
+     45,
+     20,
+     20
+    ]
+   ],
+   "id": "middle_block"
+  },
+  {
+   "bounds_mm": [
+    [
+     45,
+     -1,
+     -1
+    ],
+    [
+     60.1,
+     20,
+     20
+    ]
+   ],
+   "id": "tip_block"
+  }
+ ],
+ "fixed": [
+  {
+   "on": {
+    "axis": 0,
+    "value_mm": 0
+   }
+  }
+ ],
+ "geometry_sha256": "8f29950ff77a4dd25440717f9ec3d4a030a2f909fa4402e92e5d763e89ebd668",
+ "limits": {
+  "max_displacement_mm": 10,
+  "safety_factor": 1.5
+ },
+ "load_cases": [
+  {
+   "force_N": [
+    0,
+    0,
+    -10
+   ],
+   "id": "bending",
+   "on": {
+    "axis": 0,
+    "value_mm": 60
+   }
+  }
+ ],
+ "profiles": [
+  {
+   "context": {
+    "machine_id": "hte530v5.2.4",
+    "material_id": "enduse_petg",
+    "printing_mode": "classic"
+   },
+   "elastic": {
+    "E_xy_MPa": 1000.0,
+    "E_z_MPa": 400.0,
+    "G_xz_MPa": 200.0,
+    "nu_xy": 0.25,
+    "nu_xz": 0.1
+   },
+   "id": "baseline",
+   "protocol": "SOFTWARE fixture of a scoped coupon record; not a physical measurement",
+   "service_conditions": {
+    "environment": "dry_air",
+    "load_regime": "static",
+    "temperature_C": 23.0
+   },
+   "settings": {
+    "bottom_layers": 5,
+    "cool_fan_speed": 20.0,
+    "infill_pattern": "lines",
+    "infill_sparse_density": 30.0,
+    "layer_height": 0.2,
+    "line_width": 0.4,
+    "machine_nozzle_size": 0.4,
+    "material_bed_temperature": 60.0,
+    "material_print_temperature": 235.0,
+    "speed_print": 45.0,
+    "top_layers": 5,
+    "wall_line_count": 3
+   },
+   "source": "software_fixture",
+   "strength": {
+    "compressive_xy_MPa": 20.0,
+    "compressive_z_MPa": 6.0,
+    "shear_xy_MPa": 10.0,
+    "shear_xz_MPa": 4.0,
+    "tensile_xy_MPa": 20.0,
+    "tensile_z_MPa": 6.0
+   }
+  },
+  {
+   "context": {
+    "machine_id": "hte530v5.2.4",
+    "material_id": "enduse_petg",
+    "printing_mode": "classic"
+   },
+   "elastic": {
+    "E_xy_MPa": 2000.0,
+    "E_z_MPa": 800.0,
+    "G_xz_MPa": 400.0,
+    "nu_xy": 0.25,
+    "nu_xz": 0.1
+   },
+   "id": "fine_strong",
+   "protocol": "SOFTWARE fixture of a scoped coupon record; not a physical measurement",
+   "service_conditions": {
+    "environment": "dry_air",
+    "load_regime": "static",
+    "temperature_C": 23.0
+   },
+   "settings": {
+    "bottom_layers": 5,
+    "cool_fan_speed": 20.0,
+    "infill_pattern": "lines",
+    "infill_sparse_density": 60.0,
+    "layer_height": 0.1,
+    "line_width": 0.4,
+    "machine_nozzle_size": 0.4,
+    "material_bed_temperature": 60.0,
+    "material_print_temperature": 235.0,
+    "speed_print": 45.0,
+    "top_layers": 5,
+    "wall_line_count": 6
+   },
+   "source": "software_fixture",
+   "strength": {
+    "compressive_xy_MPa": 40.0,
+    "compressive_z_MPa": 12.0,
+    "shear_xy_MPa": 20.0,
+    "shear_xz_MPa": 8.0,
+    "tensile_xy_MPa": 40.0,
+    "tensile_z_MPa": 12.0
+   }
+  }
+ ],
+ "purpose": "Рабочая консоль",
+ "refine": false,
+ "service_conditions": {
+  "environment": "dry_air",
+  "load_regime": "static",
+  "temperature_C": 23.0
+ },
+ "surface_regions": [
+  {
+   "face_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+   ],
+   "id": "visible",
+   "importance": 1
+  }
+ ]
+}

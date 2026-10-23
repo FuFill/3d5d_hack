@@ -16,17 +16,23 @@ KNOWN_M = {"82", "83", "84", "104", "105", "106", "107", "109", "110", "117", "1
 KNOWN_WORDS = {"START", "END"}
 
 _WORD = re.compile(r"([A-Z])\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)")
+_NONFINITE = re.compile(r"[XYZACEFS]\s*[-+]?(?:NAN|INF(?:INITY)?)(?=$|\s)")
 
 
 def parse_gcode(text, filament_diameter=1.75):
+    if (isinstance(filament_diameter, bool) or not isinstance(filament_diameter, (int, float))
+            or not math.isfinite(filament_diameter) or filament_diameter <= 0):
+        raise ValueError("finite positive filament diameter required")
     state = {"abs_xyz": True, "abs_e": True, "pos": {"X": 0.0, "Y": 0.0, "Z": 0.0, "A": 0.0, "C": 0.0},
              "e": 0.0, "f": 0.0, "tool": 0, "cs": "G54"}
     a_fil = math.pi * filament_diameter ** 2 / 4.0
     info = {"header": {}, "layers": [], "temps_nozzle": [], "temps_bed": [], "fans": [], "unsupported": {},
             "extruded_mm": {}, "coordinate_systems": set(), "extrusion_modes": set(), "tools": set(),
             "bbox": {}, "rotary": {"A": [None, None], "C": [None, None]}, "max_linear_flow_mm3_s": 0.0,
-            "rotary_extrusion_moves": 0, "moves": 0, "retractions": 0, "lines": 0}
+            "rotary_extrusion_moves": 0, "moves": 0, "retractions": 0, "lines": 0,
+            "feature_extruded_mm": {}, "parse_errors": [], "spatial_resets": 0}
     layer = None
+    feature = "UNKNOWN"
     for raw in text.splitlines():
         info["lines"] += 1
         line = raw.strip()
@@ -38,10 +44,14 @@ def parse_gcode(text, filament_diameter=1.75):
                 key, val = m.group(1).strip().upper(), m.group(2).strip()
                 if key == "LAYER":
                     try:
-                        layer = {"index": int(val), "extruded_mm": 0.0, "moves": 0, "z": []}
+                        layer = {"index": int(val), "extruded_mm": 0.0, "moves": 0, "z": [],
+                                 "extrusion_z": []}
                         info["layers"].append(layer)
+                        feature = "UNKNOWN"
                     except ValueError:
                         pass
+                elif key == "TYPE":
+                    feature = val.upper()
                 elif key in ("TIME", "FILAMENT USED", "FLAVOR", "LAYER_COUNT", "PRINT.TIME", "MINX", "MAXX",
                              "MINY", "MAXY", "MINZ", "MAXZ", "GENERATED WITH", "TIME_ELAPSED"):
                     info["header"].setdefault(key, val)
@@ -57,6 +67,9 @@ def parse_gcode(text, filament_diameter=1.75):
             continue
         letter, num = m.group(1), m.group(2)
         words = dict((k, float(v)) for k, v in _WORD.findall(code[m.end():]))
+        if _NONFINITE.search(code) or any(not math.isfinite(v) for v in words.values()):
+            info["parse_errors"].append(info["lines"])
+            continue
         if letter == "T":
             state["tool"] = int(num)
             info["tools"].add(int(num))
@@ -98,6 +111,7 @@ def parse_gcode(text, filament_diameter=1.75):
             for ax in ("X", "Y", "Z", "A", "C"):
                 if ax in words:
                     state["pos"][ax] = words[ax]
+                    info["spatial_resets"] += 1
             continue
         if num in ("0", "1"):
             info["moves"] += 1
@@ -114,6 +128,11 @@ def parse_gcode(text, filament_diameter=1.75):
             if de < 0:
                 info["retractions"] += 1
             if de > 0:
+                dist = math.sqrt(sum((state["pos"][ax] - old[ax]) ** 2 for ax in ("X", "Y", "Z")))
+                if dist > 1e-6:
+                    info["feature_extruded_mm"][feature] = info["feature_extruded_mm"].get(feature, 0.0) + de
+                    if layer is not None:
+                        layer["extrusion_z"].append(state["pos"]["Z"])
                 info["extruded_mm"][state["tool"]] = info["extruded_mm"].get(state["tool"], 0.0) + de
                 if layer is not None:
                     layer["extruded_mm"] += de
@@ -148,7 +167,11 @@ def inspect_toolpath(text, expected=None, filament_diameter=1.75):
     """Checks of the sliced program against expected effective settings.
 
     expected: {"printing_mode", "nozzle_temperature", "bed_temperature", "build_volume": [x, y, z],
-               "q_limit": mm3/s or None, "layer_height"}
+               "q_limit": mm3/s or None, "layer_height", "xy_centered": bool}
+
+    Temperatures are commanded setpoints, not sensor measurements. Feature
+    extrusion comes from TYPE comments; its amount does not prove support
+    contact clearance. Spatial G92 leaves coordinate-dependent checks unknown.
     """
     expected = expected or {}
     info = parse_gcode(text, filament_diameter)
@@ -163,6 +186,8 @@ def inspect_toolpath(text, expected=None, filament_diameter=1.75):
         "empty layers: %s" % (empty[:10] if empty else "none"))
     add("extrusion_present", "pass" if info["extruded_mm"] else "fail", "filament mm per tool: %s" %
         dict((k, round(v, 1)) for k, v in info["extruded_mm"].items()))
+    add("finite_coordinates", "fail" if info["parse_errors"] else "pass",
+        "nonfinite numbers on lines: %s" % info["parse_errors"][:10])
     add("supported_commands", "pass" if not info["unsupported"] else "unknown",
         "unrecognised: %s" % (sorted(info["unsupported"].items())[:10] or "none"))
     add("single_extrusion_mode", "pass" if len(info["extrusion_modes"]) <= 1 else "fail",
@@ -172,20 +197,25 @@ def inspect_toolpath(text, expected=None, filament_diameter=1.75):
         temps = [s for _, s in info["temps_nozzle"] if s > 0]
         ok = any(abs(s - t) < 0.51 for s in temps)
         add("nozzle_temperature", "pass" if ok else "fail", "expected %g, found %s" % (t, sorted(set(temps))[:6]))
+    bed = expected.get("bed_temperature")
+    if bed is not None:
+        ok = any(abs(s - bed) < 0.51 for s in info["temps_bed"])
+        add("bed_temperature", "pass" if ok else "fail", "expected %g, found %s" % (bed, sorted(set(info["temps_bed"]))[:6]))
     mode = expected.get("printing_mode")
     if mode:
         five = bool(info["rotary_extrusion_moves"]) or "G56" in info["coordinate_systems"] or \
             "G55" in info["coordinate_systems"]
         if mode == "classic":
-            add("mode_consistency", "pass" if not info["rotary_extrusion_moves"] else "fail",
-                "rotary extrusion moves: %d" % info["rotary_extrusion_moves"])
+            add("mode_consistency", "pass" if not five else "fail",
+                "rotary extrusion moves: %d; systems: %s" % (info["rotary_extrusion_moves"], info["coordinate_systems"]))
         else:
             add("mode_consistency", "pass" if five else "fail",
                 "5D markers: coordinate systems %s, rotary extrusion moves %d" %
                 (info["coordinate_systems"], info["rotary_extrusion_moves"]))
     q = expected.get("q_limit")
     if q:
-        add("volumetric_flow", "pass" if info["max_linear_flow_mm3_s"] <= q else "fail",
+        status = "fail" if info["max_linear_flow_mm3_s"] > q else ("unknown" if info["rotary_extrusion_moves"] else "pass")
+        add("volumetric_flow", status,
             "max linear %.2f mm3/s vs limit %.2f (rotary moves not converted)" % (info["max_linear_flow_mm3_s"], q))
     else:
         add("volumetric_flow", "unknown", "max linear %.2f mm3/s; no calibrated Q_limit" %
@@ -194,10 +224,28 @@ def inspect_toolpath(text, expected=None, filament_diameter=1.75):
         bb = info["bbox"]["G54"]
         bv = expected["build_volume"]
         z_ok = bb[1][2] <= bv[2] + 1e-6
-        add("z_within_build_volume", "pass" if z_ok else "fail", "max Z %.2f vs %.1f" % (bb[1][2], bv[2]))
+        add("z_within_build_volume", "unknown" if info["spatial_resets"] else ("pass" if z_ok else "fail"),
+            "max Z %.2f vs %.1f" % (bb[1][2], bv[2]))
+        if "xy_centered" in expected:
+            lower = [-bv[0] / 2, -bv[1] / 2, 0] if expected["xy_centered"] else [0, 0, 0]
+            upper = [lower[i] + bv[i] for i in range(3)]
+            fits = all(bb[0][i] >= lower[i] - 0.01 and bb[1][i] <= upper[i] + 0.01 for i in range(3))
+            add("extrusion_within_build_volume", "unknown" if info["spatial_resets"] else ("pass" if fits else "fail"),
+                "extrusion bounds %s; spatial G92 needs a coordinate transform" % bb)
+    if mode == "classic" and expected.get("layer_height") is not None:
+        layers = [l for l in info["layers"] if l["index"] >= 0 and l["extrusion_z"]]
+        planar = all(max(l["extrusion_z"]) - min(l["extrusion_z"]) <= 0.011 for l in layers)
+        heights = [max(l["extrusion_z"]) for l in layers]
+        deltas = [b - a for a, b in zip(heights, heights[1:])]
+        ok = planar and bool(deltas) and all(abs(h - expected["layer_height"]) <= 0.011 for h in deltas)
+        status = "unknown" if info["spatial_resets"] or (planar and not deltas) else ("pass" if ok else "fail")
+        add("layer_schedule", status,
+            "planar=%s; observed increments=%s mm" % (planar, sorted(set(round(h, 4) for h in deltas))[:10]))
     return {"checks": checks, "summary": {
         "layers": len(info["layers"]), "time_header": info["header"].get("TIME"),
         "filament_used_header": info["header"].get("FILAMENT USED"), "filament_volume_mm3": info["filament_volume_mm3"],
         "coordinate_systems": info["coordinate_systems"], "rotary_ranges": info["rotary"],
         "max_linear_flow_mm3_s": info["max_linear_flow_mm3_s"], "retractions": info["retractions"],
-        "bbox": info["bbox"], "label": "slicer estimate"}}
+        "bbox": info["bbox"], "feature_extruded_mm": info["feature_extruded_mm"],
+        "support_extruded_mm": sum(v for k, v in info["feature_extruded_mm"].items() if k.startswith("SUPPORT")),
+        "label": "slicer estimate"}}

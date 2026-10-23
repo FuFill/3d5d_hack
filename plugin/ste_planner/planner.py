@@ -13,7 +13,7 @@ import hashlib
 import os
 
 from . import requirements as reqmod
-from . import geometry, materials, routes, process_plan, structure, compiler, verification, calibration
+from . import geometry, materials, routes, process_plan, structure, compiler, verification, calibration, functional
 from .settings_schema import load_machine_schema, SettingResolver, material_settings_from_file
 from .result import (PASS, FAIL, UNKNOWN, EVIDENCE_DOCUMENT, EVIDENCE_ANALYTICAL, DECISION_INFEASIBLE, to_json)
 
@@ -40,7 +40,7 @@ def default_resources_dir():
 
 def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE, catalog=None,
               preferred_materials=None, forced_mode=None, source=None, calibration_data=None, setting_changes=None,
-              llm_items=None):
+              functional_spec=None, llm_items=None):
     trace = []
     resources_dir = resources_dir or default_resources_dir()
     catalog = catalog or materials.load_catalog()
@@ -174,6 +174,30 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     with open(mesh_path, "rb") as mesh_file:
         for block in iter(lambda: mesh_file.read(1024 * 1024), b""):
             digest.update(block)
+    functional_context = {"machine_id": machine_id, "material_id": material.id if material else None,
+                          "printing_mode": mode, "geometry_sha256": digest.hexdigest()}
+    service_temperatures = [value for r in reqset.requirements if r.property == "service_temperature"
+                            for value in (r.lower, r.upper) if value is not None]
+    if service_temperatures:
+        functional_context["required_temperature_range_C"] = [min(service_temperatures), max(service_temperatures)]
+    functional_result, functional_patch = functional.optimize(
+        mesh, functional_spec, functional_context, scene_ops[1]["rotation"], mode, chosen_route,
+        caps, patch, resolver)
+    if functional_patch is not None:
+        selected = functional_result.value["selected"]
+        patch = functional_patch
+        effective = compiler.effective_settings(patch["resolver"], READBACK_KEYS)
+        scene_ops[1].update({"rotation": selected["rotation"], "translation": selected["translation"],
+                             "note": "functional orientation under explicit mechanical/surface constraints"})
+        # Batch placement follows the final orientation, not the preliminary one.
+        if batch and mode == "classic":
+            placed = mesh.transformed(selected["rotation"])
+            footprint = (placed.vertices.max(axis=0) - placed.vertices.min(axis=0))[:2]
+            pack = process_plan.pack_batch(footprint, int(batch.value), caps["build_volume"]["classic"][:2])
+            scene_ops[2].update({"count": pack["per_plate"], "plates": pack["plates"]})
+        scene_ops.extend(functional_result.value["support_modifier_operations"])
+    trace.append({"step": "functional_orientation", "status": functional_result.status,
+                  "applied": bool(functional_patch), "note": "simulation estimates; no qualification promotion"})
     calibration_context = {"machine_id": machine_id, "material_id": material.id if material else None,
                            "printing_mode": mode, "geometry_sha256": digest.hexdigest(),
                            "rotation": scene_ops[1]["rotation"], "settings": dict(effective)}
@@ -207,6 +231,13 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     status = verification.decision_status(ver, missing, calibration_needed)
     if prototype_only:
         status = DECISION_INFEASIBLE
+    if functional_spec is not None and status != DECISION_INFEASIBLE:
+        if functional_result.status in ("invalid_input", "out_of_domain", "needs_input"):
+            status = "needs_input"
+        elif functional_result.status == "needs_calibration":
+            status = "needs_calibration"
+        elif functional_result.status == "infeasible":
+            status = "search_incomplete"  # no feasible sampled candidate is not a proof of global infeasibility
     levels = [v["evidence_level"] for v in ver if v["evidence_level"]]
     evidence_level = EVIDENCE_ANALYTICAL if EVIDENCE_ANALYTICAL in levels else (EVIDENCE_DOCUMENT if levels else None)
     assumptions = []
@@ -239,12 +270,18 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
         "effective_settings": effective,
         "calibration_context": calibration_context,
         "causal_analysis": causal.to_dict(),
+        "functional_analysis": functional_result.to_dict(),
         "scene_operations": scene_ops,
         "structural_checks": struct,
         "verification": ver,
         "trace": trace,
     }
     decision["qualification_plan"] = verification.build_qualification_plan(ver)
+    if functional_spec is not None:
+        decision["qualification_plan"].append({"property": "functional_strength_stiffness",
+                                              "reason": "simulation_requires_validation", "mandatory": True,
+                                              "test": "Статическое нагружение напечатанной детали и контроль прогиба/поверхностей",
+                                              "conditions": "те же закрепления, нагрузки, ориентация и профиль; Ra и плоскостность измерить"})
     decision["explanation"] = verification.explain_decision(decision)
     return decision
 
