@@ -1,0 +1,1427 @@
+{
+ "assumptions": [
+  "blades and hub not covered",
+  "material properties are manufacturer typical values (Stereotech wiki), not batch data",
+  "process settings start from the Stereotech material profile; volumetric flow limit uncalibrated",
+  "thin ring rho*v^2 bounds disc hoop stress"
+ ],
+ "candidates": {
+  "materials": [
+   {
+    "id": "sealant_tpu_A95",
+    "summary": {
+     "hinted_unknown": [
+      "R09",
+      "R14"
+     ],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R06",
+      "R07",
+      "R10"
+     ],
+     "mandatory_unknown": [
+      "R09",
+      "R11",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 5.0
+   },
+   {
+    "id": "sealant_tpu",
+    "summary": {
+     "hinted_unknown": [
+      "R09",
+      "R14"
+     ],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R06",
+      "R07",
+      "R10"
+     ],
+     "mandatory_unknown": [
+      "R09",
+      "R11",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 5.0
+   },
+   {
+    "id": "enduse_pp",
+    "summary": {
+     "hinted_unknown": [],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R06",
+      "R07",
+      "R09",
+      "R10"
+     ],
+     "mandatory_unknown": [
+      "R11",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 4.0
+   },
+   {
+    "id": "enduse_pa6",
+    "summary": {
+     "hinted_unknown": [],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R06",
+      "R07",
+      "R09",
+      "R10"
+     ],
+     "mandatory_unknown": [
+      "R11",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 4.0
+   },
+   {
+    "id": "enduse_tpu_d70",
+    "summary": {
+     "hinted_unknown": [
+      "R09"
+     ],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R06",
+      "R07"
+     ],
+     "mandatory_unknown": [
+      "R09",
+      "R10",
+      "R11",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 3.5
+   },
+   {
+    "id": "fiberpart_tpu_c5",
+    "summary": {
+     "hinted_unknown": [
+      "R09"
+     ],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R06",
+      "R07"
+     ],
+     "mandatory_unknown": [
+      "R09",
+      "R10",
+      "R11",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 3.5
+   }
+  ],
+  "routes": [
+   {
+    "feasible": true,
+    "mode": "classic",
+    "score": 0.0
+   },
+   {
+    "feasible": true,
+    "mode": "cylindrical",
+    "score": 3.5
+   },
+   {
+    "feasible": false,
+    "mode": "cylindrical_full",
+    "score": 3.0
+   }
+  ]
+ },
+ "chosen_material": {
+  "base_polymer": "TPU",
+  "excluded": null,
+  "filler": null,
+  "id": "sealant_tpu_A95",
+  "label": "Sealant TPU A95",
+  "selectable": true,
+  "series": "Sealant",
+  "slicer_file": "sealant_tpu_A95.xml.fdm_material",
+  "wiki_url": "https://wiki.stereotech.org/ru/fdm-materials/sealant/tpu"
+ },
+ "effective_settings": {
+  "adhesion_type": "brim",
+  "bottom_layers": 6,
+  "cool_fan_enabled": true,
+  "cool_fan_speed": 20.0,
+  "cylindrical_mode_base_diameter": 15.99,
+  "cylindrical_mode_overlap": 0.0,
+  "infill_pattern": "lines",
+  "infill_sparse_density": 100.0,
+  "layer_height": 0.2,
+  "layer_height_0": 0.3,
+  "line_width": 0.4,
+  "machine_heated_bed": false,
+  "machine_height": 231.1,
+  "machine_nozzle_size": 0.4,
+  "material_bed_temperature": 60.0,
+  "material_flow": 100.0,
+  "material_print_temperature": 215.0,
+  "non_printing_base_diameter": 15.99,
+  "printing_mode": "cylindrical",
+  "retraction_amount": 5.7,
+  "retraction_enable": true,
+  "retraction_speed": 37.0,
+  "speed_print": 30.0,
+  "support_angle": 50.0,
+  "support_enable": false,
+  "top_layers": 6,
+  "wall_line_count": 4,
+  "wall_thickness": 0.8
+ },
+ "evidence_level": "analytical_screen",
+ "explanation": [
+  "Статус: needs_input; уровень доказательности: analytical_screen.",
+  "Материал: Sealant TPU A95 — выбран из 16 допустимых; отклонено 4 (обязательное требование не выполнено).",
+  "Режим: cylindrical. axis: rotational symmetry (inertia + sector radii); cylindrical working surface (tread/journal): cylindrical layers follow it; TZ reports delamination; cylindrical layers remove radial layer interfaces; through bore 15.99 mm: mandrel defines the bore, base cylinder removes no material",
+  "  printing_mode = cylindrical (было cylindrical): route selected by documented policy",
+  "  bottom_layers = 6 (было 8): skin_layers, policy:skin",
+  "  infill_sparse_density = 100.0 (было 20.0): no calibrated relation load -> infill exists; policy by load class structural",
+  "  layer_height = 0.2 (было 0.1): choose_layer_height, policy:layer",
+  "  top_layers = 6 (было 8): skin_layers, policy:skin",
+  "  wall_line_count = 4 (было 2): shell 1.60 mm -> 4 walls (1.60 mm)",
+  "  speed_print = 30.0 (было 60.0): material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+  "  support_enable = False (было False): 5D route prints the part without supports",
+  "  cylindrical_mode_base_diameter = 15.99 (было 6.0): Spiral: equals the bore; Full: core inside the smallest section",
+  "  non_printing_base_diameter = 15.99 (было 6.0): tooling diameter (printed mandrel of the bore diameter (manual 3.4.14))",
+  "Не подтверждено расчётом/данными (нужны испытания): operating_hours, ipa_resistance, low_voc, dimensional_tolerance, no_play, high_friction_vs_paper, no_marking, fatigue_resistance, ductile_failure"
+ ],
+ "materials_considered": 16,
+ "materials_rejected": 4,
+ "missing_inputs": [
+  {
+   "field": "nominal_diameter",
+   "requirement_type": "hole_accuracy"
+  },
+  {
+   "field": "fit_length",
+   "requirement_type": "hole_accuracy"
+  },
+  {
+   "field": "mating_part",
+   "requirement_type": "hole_accuracy"
+  },
+  {
+   "field": "measurement_method",
+   "requirement_type": "hole_accuracy"
+  },
+  {
+   "field": "load_history",
+   "requirement_type": "lifetime"
+  },
+  {
+   "field": "environment",
+   "requirement_type": "lifetime"
+  },
+  {
+   "field": "allowed_failure_probability",
+   "requirement_type": "lifetime"
+  },
+  {
+   "field": "balancing",
+   "requirement_type": "safe_rotation"
+  },
+  {
+   "field": "max_acceleration",
+   "requirement_type": "safe_rotation"
+  }
+ ],
+ "part_name": "Ведущее колесо конвейерной линии (ролик привода)",
+ "part_type": "wheel_roller",
+ "prototype_only": false,
+ "qualification_plan": [
+  {
+   "conditions": "внешний вид, масса, прочность",
+   "mandatory": true,
+   "property": "ipa_resistance",
+   "reason": "unverified",
+   "requirement_id": "R09",
+   "test": "Циклы протирки 70% IPA"
+  },
+  {
+   "conditions": "по требованиям заказчика",
+   "mandatory": true,
+   "property": "low_voc",
+   "reason": "unverified",
+   "requirement_id": "R11",
+   "test": "Эмиссия VOC (камера)"
+  },
+  {
+   "conditions": "bias и интервал по ориентации",
+   "mandatory": true,
+   "property": "dimensional_tolerance",
+   "reason": "unverified",
+   "requirement_id": "R12",
+   "test": "Калибровка размеров: контрольные контуры и отверстия"
+  },
+  {
+   "conditions": "люфт/натяг",
+   "mandatory": true,
+   "property": "no_play",
+   "reason": "unverified",
+   "requirement_id": "R13",
+   "test": "Контроль посадки на вал"
+  },
+  {
+   "conditions": "μ при 45% RH",
+   "mandatory": true,
+   "property": "high_friction_vs_paper",
+   "reason": "unverified",
+   "requirement_id": "R14",
+   "test": "Трибометр: пара с бумагой/крафтом"
+  },
+  {
+   "conditions": "визуально, после истирания",
+   "mandatory": true,
+   "property": "no_marking",
+   "reason": "unverified",
+   "requirement_id": "R15",
+   "test": "Тест переноса материала на белую бумагу"
+  },
+  {
+   "conditions": "та же ориентация слоёв и режим печати",
+   "mandatory": true,
+   "property": "fatigue_resistance",
+   "reason": "unverified",
+   "requirement_id": "R16",
+   "test": "S–N испытания образцов/деталей"
+  },
+  {
+   "conditions": "характер разрушения: изгиб/отрыв лопасти",
+   "mandatory": true,
+   "property": "ductile_failure",
+   "reason": "unverified",
+   "requirement_id": "R17",
+   "test": "Ударное нагружение детали/кожуха"
+  },
+  {
+   "conditions": "диапазон 1e6–1e9 Ohm",
+   "mandatory": false,
+   "property": "esd",
+   "reason": "unverified",
+   "requirement_id": "R18",
+   "test": "Поверхностное сопротивление (IEC 61340)"
+  }
+ ],
+ "requirement_issues": [],
+ "requirements": [
+  {
+   "comparator": "in",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R01",
+   "interpretation_status": "explicit",
+   "kind": "condition",
+   "load_case": null,
+   "mandatory": true,
+   "note": null,
+   "property": "transported_mass",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Объект транспортировки: Пачки офисной и мелованной бумаги в полиэтиленовой и крафт-обертке (масса одной пачки от 2 до 5 кг)."
+   },
+   "region": null,
+   "unit": "g",
+   "value": [
+    2000.0,
+    5000.0
+   ]
+  },
+  {
+   "comparator": "==",
+   "conditions": {},
+   "cycles": null,
+   "duration": 28800000.0,
+   "environment": null,
+   "id": "R02",
+   "interpretation_status": "explicit",
+   "kind": "condition",
+   "load_case": null,
+   "mandatory": true,
+   "note": null,
+   "property": "operating_hours",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Режим работы: Непрерывный, 24/7 (около 8000 моточасов до планового ТО)."
+   },
+   "region": null,
+   "unit": "s",
+   "value": 28800000.0
+  },
+  {
+   "comparator": "==",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R03",
+   "interpretation_status": "explicit",
+   "kind": "condition",
+   "load_case": null,
+   "mandatory": true,
+   "note": null,
+   "property": "rotation_speed",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Скорость линии: 2.2 м/с (примерно 450 об/мин)."
+   },
+   "region": null,
+   "unit": "rad/s",
+   "value": 47.12388980384689
+  },
+  {
+   "comparator": "==",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R04",
+   "interpretation_status": "explicit",
+   "kind": "condition",
+   "load_case": null,
+   "mandatory": true,
+   "note": null,
+   "property": "peripheral_speed",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Скорость линии: 2.2 м/с (примерно 450 об/мин)."
+   },
+   "region": null,
+   "unit": "mm/s",
+   "value": 2200.0
+  },
+  {
+   "comparator": "<=",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R05",
+   "interpretation_status": "derived",
+   "kind": "condition",
+   "load_case": "peak",
+   "mandatory": true,
+   "note": "Нагрузка задана массой 18000.0 g; принято F = m·g",
+   "property": "radial_load",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Радиальная нагрузка на одно колесо: до 18 кг (возможны микроудары при схождении пачек с соседних линий)."
+   },
+   "region": null,
+   "unit": "N",
+   "value": 176.5197
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R06",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужна ударная вязкость в рабочих условиях",
+   "property": "impact_resistance",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Радиальная нагрузка на одно колесо: до 18 кг (возможны микроудары при схождении пачек с соседних линий)."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "in",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R07",
+   "interpretation_status": "explicit",
+   "kind": "condition",
+   "load_case": null,
+   "mandatory": true,
+   "note": null,
+   "property": "service_temperature",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Температурный режим: Строго +20°C ± 2°C."
+   },
+   "region": null,
+   "unit": "degC",
+   "value": [
+    18.0,
+    22.0
+   ]
+  },
+  {
+   "comparator": "in",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R08",
+   "interpretation_status": "explicit",
+   "kind": "condition",
+   "load_case": null,
+   "mandatory": true,
+   "note": null,
+   "property": "service_humidity",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Влажность: 45% ± 5% (критично для бумаги)."
+   },
+   "region": null,
+   "unit": "fraction",
+   "value": [
+    0.4,
+    0.5
+   ]
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R09",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужна стойкость к 70% IPA при режиме протирки",
+   "property": "ipa_resistance",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Химическое воздействие: Еженедельная санитарная обработка ветошью, смоченной в 70% изопропиловом спирте (IPA) или перекиси водорода."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R10",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужен тест износа в среде",
+   "property": "abrasion_resistance",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Требования к чистоте: Деталь не должна выделять микропыль (абразивный износ пластика недопустим) и не должна выделять летучие органические соединения (VOC), которые могут осесть на бумаге и повлиять на её дальнейшую печать в офисах клиентов."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R11",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужны данные эмиссии VOC",
+   "property": "low_voc",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Требования к чистоте: Деталь не должна выделять микропыль (абразивный износ пластика недопустим) и не должна выделять летучие органические соединения (VOC), которые могут осесть на бумаге и повлиять на её дальнейшую печать в офисах клиентов."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "abs_dev_le",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R12",
+   "interpretation_status": "explicit",
+   "kind": "constraint",
+   "load_case": null,
+   "mandatory": true,
+   "note": null,
+   "property": "dimensional_tolerance",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Требуется обеспечить точность отверстия (допуск ±0.1 мм) с учетом усадки FDM-пластиков."
+   },
+   "region": "bore",
+   "unit": "mm",
+   "value": 0.1
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R13",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужна посадка и ответная деталь",
+   "property": "no_play",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Люфт недопустим (возникнет биение), натяг без нагрева приведет к разрыву детали."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R14",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "μ по бумаге/крафту требует испытания пары",
+   "property": "high_friction_vs_paper",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Материал должен обладать высоким коэффициентом трения по скольжению к бумаге и крафт-картону (во избежание проскальзывания ролика)."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R15",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужно испытание на перенос материала",
+   "property": "no_marking",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Материал не должен оставлять черных или цветных следов (следов пластификаторов) на белой бумаге при трении."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R16",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужна S–N зависимость материала/процесса",
+   "property": "fatigue_resistance",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Стойкость к циклическим нагрузкам на сжатие (пятно контакта при нагрузке 18 кг)."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R17",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужны ударная вязкость/характер разрушения по испытанию",
+   "property": "ductile_failure",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Отсутствие хрупкого разрушения при случайных ударах."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R18",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": false,
+   "note": "Нужен диапазон поверхностного сопротивления",
+   "property": "esd",
+   "provenance": {
+    "file": "Техническое задание для колеса конвейерной линии.docx",
+    "fragment": "Желательно, чтобы материал обладал антистатическими (ESD) свойствами, чтобы не притягивать бумажную пыль к оси и не накапливать статику."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  }
+ ],
+ "route": {
+  "mode": "cylindrical",
+  "note": "axis: rotational symmetry (inertia + sector radii); cylindrical working surface (tread/journal): cylindrical layers follow it; TZ reports delamination; cylindrical layers remove radial layer interfaces; through bore 15.99 mm: mandrel defines the bore, base cylinder removes no material",
+  "parameters": {
+   "base_diameter": 15.99,
+   "mandrel": "printed mandrel of the bore diameter (manual 3.4.14)",
+   "non_printing_base_diameter": 15.99
+  }
+ },
+ "scene_operations": [
+  {
+   "coordinates": "printer (Z up); the adapter converts to the Uranium scene (Y up)",
+   "op": "load_mesh",
+   "path": "C:\\Users\\Matvey\\3d5d_hack\\data\\examples\\2. Колесо конвейерной линии - 5D\\Колесо.STL",
+   "units": "mm"
+  },
+  {
+   "note": "part axis on the tooling axis (scene Z), starts at the tooling end face",
+   "op": "set_transform",
+   "rotation": [
+    [
+     1.0,
+     -6.920556035090797e-10,
+     -6.920556060534694e-10
+    ],
+    [
+     -6.920556035090797e-10,
+     3.6765682720485415e-09,
+     -1.0
+    ],
+    [
+     6.920556060534694e-10,
+     1.0,
+     3.6765682720485415e-09
+    ]
+   ],
+   "translation": [
+    -29.499999965899523,
+    29.50254794853281,
+    -3.441573614732681e-08
+   ]
+  },
+  {
+   "op": "center_on_axis"
+  }
+ ],
+ "setting_patch": {
+  "errors": [],
+  "items": [
+   {
+    "decision_unit": null,
+    "enabled_after_patch": true,
+    "key": "printing_mode",
+    "model_ids": [
+     "choose_route"
+    ],
+    "note": "route selected by documented policy",
+    "old_effective_value": "cylindrical",
+    "reason_requirement_ids": [],
+    "scope": "global",
+    "stage": "configuration",
+    "target": "global",
+    "unit": null,
+    "validation": "valid",
+    "value": "cylindrical"
+   },
+   {
+    "decision_unit": "count",
+    "enabled_after_patch": true,
+    "key": "bottom_layers",
+    "model_ids": [
+     "skin_layers",
+     "policy:skin"
+    ],
+    "note": null,
+    "old_effective_value": 8,
+    "reason_requirement_ids": [],
+    "scope": "extruder",
+    "stage": "geometry",
+    "target": "extruder_0",
+    "unit": "count",
+    "validation": "valid",
+    "value": 6
+   },
+   {
+    "decision_unit": "fraction",
+    "enabled_after_patch": true,
+    "key": "infill_sparse_density",
+    "model_ids": [
+     "policy:infill"
+    ],
+    "note": "no calibrated relation load -> infill exists; policy by load class structural",
+    "old_effective_value": 20.0,
+    "reason_requirement_ids": [
+     "R05"
+    ],
+    "scope": "extruder",
+    "stage": "geometry",
+    "target": "extruder_0",
+    "unit": "%",
+    "validation": "valid",
+    "value": 100.0
+   },
+   {
+    "decision_unit": "mm",
+    "enabled_after_patch": true,
+    "key": "layer_height",
+    "model_ids": [
+     "choose_layer_height",
+     "policy:layer"
+    ],
+    "note": null,
+    "old_effective_value": 0.1,
+    "reason_requirement_ids": [],
+    "scope": "global",
+    "stage": "geometry",
+    "target": "global",
+    "unit": "mm",
+    "validation": "valid",
+    "value": 0.2
+   },
+   {
+    "decision_unit": "count",
+    "enabled_after_patch": true,
+    "key": "top_layers",
+    "model_ids": [
+     "skin_layers",
+     "policy:skin"
+    ],
+    "note": null,
+    "old_effective_value": 8,
+    "reason_requirement_ids": [],
+    "scope": "extruder",
+    "stage": "geometry",
+    "target": "extruder_0",
+    "unit": "count",
+    "validation": "valid",
+    "value": 6
+   },
+   {
+    "decision_unit": "count",
+    "enabled_after_patch": true,
+    "key": "wall_line_count",
+    "model_ids": [
+     "wall_count",
+     "policy:shell"
+    ],
+    "note": "shell 1.60 mm -> 4 walls (1.60 mm)",
+    "old_effective_value": 2,
+    "reason_requirement_ids": [],
+    "scope": "extruder",
+    "stage": "geometry",
+    "target": "extruder_0",
+    "unit": "count",
+    "validation": "valid",
+    "value": 4
+   },
+   {
+    "decision_unit": "mm/s",
+    "enabled_after_patch": true,
+    "key": "speed_print",
+    "model_ids": [
+     "role_speed",
+     "material_datasheet"
+    ],
+    "note": "material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+    "old_effective_value": 60.0,
+    "reason_requirement_ids": [],
+    "scope": "extruder",
+    "stage": "motion",
+    "target": "extruder_0",
+    "unit": "mm/s",
+    "validation": "valid",
+    "value": 30.0
+   },
+   {
+    "decision_unit": null,
+    "enabled_after_patch": true,
+    "key": "support_enable",
+    "model_ids": [
+     "plan_5d"
+    ],
+    "note": "5D route prints the part without supports",
+    "old_effective_value": false,
+    "reason_requirement_ids": [],
+    "scope": "global",
+    "stage": "support_adhesion",
+    "target": "global",
+    "unit": null,
+    "validation": "valid",
+    "value": false
+   },
+   {
+    "decision_unit": "mm",
+    "enabled_after_patch": true,
+    "key": "cylindrical_mode_base_diameter",
+    "model_ids": [
+     "plan_5d"
+    ],
+    "note": "Spiral: equals the bore; Full: core inside the smallest section",
+    "old_effective_value": 6.0,
+    "reason_requirement_ids": [],
+    "scope": "global",
+    "stage": "five_axis",
+    "target": "global",
+    "unit": "mm",
+    "validation": "valid",
+    "value": 15.99
+   },
+   {
+    "decision_unit": "mm",
+    "enabled_after_patch": true,
+    "key": "non_printing_base_diameter",
+    "model_ids": [
+     "plan_5d"
+    ],
+    "note": "tooling diameter (printed mandrel of the bore diameter (manual 3.4.14))",
+    "old_effective_value": 6.0,
+    "reason_requirement_ids": [],
+    "scope": "global",
+    "stage": "five_axis",
+    "target": "global",
+    "unit": "mm",
+    "validation": "valid",
+    "value": 15.99
+   }
+  ],
+  "payload": {
+   "extruders": {
+    "0": {
+     "bottom_layers": 6,
+     "infill_sparse_density": 100.0,
+     "speed_print": 30.0,
+     "top_layers": 6,
+     "wall_line_count": 4
+    }
+   },
+   "global": {
+    "cylindrical_mode_base_diameter": 15.99,
+    "layer_height": 0.2,
+    "non_printing_base_diameter": 15.99,
+    "printing_mode": "cylindrical",
+    "support_enable": false
+   }
+  },
+  "warnings": []
+ },
+ "status": "needs_input",
+ "structural_checks": [
+  {
+   "assumptions": [
+    "thin ring rho*v^2 bounds disc hoop stress",
+    "blades and hub not covered"
+   ],
+   "check": "rotating_rim",
+   "evidence": "analytical_screen",
+   "note": "rim stress 0.01 MPa, SF 4 against 28.0 MPa",
+   "peripheral_speed_mm_s": 2200.0,
+   "policy_safety_factor": 4.0,
+   "sigma_MPa": 0.005566000000000001,
+   "status": "pass"
+  },
+  {
+   "check": "fatigue_cycles",
+   "cycles": 216000000.0,
+   "evidence": "analytical_screen",
+   "note": "2.16e+08 revolutions; S-N data of the printed material required",
+   "requirement_id": "R02",
+   "status": "unknown"
+  }
+ ],
+ "trace": [
+  {
+   "count": 18,
+   "issues": [],
+   "part_type": "wheel_roller",
+   "step": "parse_requirements"
+  },
+  {
+   "errors": [],
+   "rotational": {
+    "axial_length": 25.000000141217804,
+    "axis": [
+     6.920556060534694e-10,
+     1.0,
+     3.6765682720485407e-09
+    ],
+    "bore_radius": 7.995469275446166,
+    "is_rotational_candidate": true,
+    "moment_mismatch": 2.118534186826519e-09,
+    "r_max": 29.50000239613127,
+    "sector_cv": 2.0931990442194098e-08
+   },
+   "size": [
+    58.997451999999996,
+    25.0,
+    58.994904
+   ],
+   "status": "ok",
+   "step": "analyze_mesh",
+   "volume_mm3": 46704.105962256515,
+   "warnings": []
+  },
+  {
+   "build_volume": {
+    "classic": [
+     351.0,
+     300.3,
+     300.0
+    ],
+    "cylindrical": [
+     351.0,
+     300.3,
+     231.1
+    ],
+    "cylindrical_full": [
+     351.0,
+     300.3,
+     231.1
+    ]
+   },
+   "chain": [
+    "fdmprinter",
+    "steprinter_v5",
+    "steprinter530_v5.2.4",
+    "hte530v5.2.4"
+   ],
+   "machine": "hte530v5.2.4",
+   "note": "offline schema from the slicer resources; installed runtime confirmed by read-back",
+   "nozzles": [
+    0.4
+   ],
+   "step": "inspect_machine"
+  },
+  {
+   "chosen": "sealant_tpu_A95",
+   "policy": "hard constraints first (any mandatory fail rejects); ranking by support = passes + 0.5*hinted unknowns + 1*manufacturer application match + 0.25*optional passes, then fewer unknowns, printability, print difficulty (Stereotech memo)",
+   "prototype_only": false,
+   "ranked": [
+    "sealant_tpu_A95",
+    "sealant_tpu",
+    "enduse_pp",
+    "enduse_pa6",
+    "enduse_tpu_d70",
+    "fiberpart_tpu_c5",
+    "sealant_tpu93",
+    "enduse_sbs"
+   ],
+   "rejected": 36,
+   "step": "screen_materials"
+  },
+  {
+   "chosen": "cylindrical",
+   "routes": [
+    {
+     "feasible": true,
+     "mode": "classic",
+     "reasons": [
+      "flat layers, heated platform"
+     ],
+     "score": 0.0
+    },
+    {
+     "feasible": true,
+     "mode": "cylindrical",
+     "reasons": [
+      "axis: rotational symmetry (inertia + sector radii)",
+      "cylindrical working surface (tread/journal): cylindrical layers follow it",
+      "TZ reports delamination; cylindrical layers remove radial layer interfaces",
+      "through bore 15.99 mm: mandrel defines the bore, base cylinder removes no material"
+     ],
+     "score": 3.5
+    },
+    {
+     "feasible": false,
+     "mode": "cylindrical_full",
+     "reasons": [
+      "axis: rotational symmetry (inertia + sector radii)",
+      "cylindrical working surface (tread/journal): cylindrical layers follow it",
+      "TZ reports delamination; cylindrical layers remove radial layer interfaces",
+      "part has a bore: Spiral is the matching 5D route"
+     ],
+     "score": 3.0
+    }
+   ],
+   "step": "enumerate_routes"
+  },
+  {
+   "axial_length": 25.000000141217804,
+   "checks": [
+    {
+     "check": "round_segments_for_chord_error",
+     "eps_path_mm": 0.05,
+     "note": "only if cylindrical_round_segments means chord count; verify in the engine",
+     "required_N": 54,
+     "schema_max": 256,
+     "status": "pass"
+    },
+    {
+     "check": "collisions",
+     "note": "head/tooling collision model not available offline (section 8)",
+     "status": "unknown"
+    },
+    {
+     "check": "kinematics",
+     "note": "A/C axis limits verified only from the engine toolpath",
+     "status": "unknown"
+    }
+   ],
+   "r_max": 29.502548466830063,
+   "step": "plan_5d"
+  },
+  {
+   "chosen": "sealant_tpu_A95",
+   "rejected_by_structure": [],
+   "step": "solve_structure"
+  },
+  {
+   "errors": [],
+   "items": 10,
+   "process_notes": [
+    {
+     "item": "load_class",
+     "model": "P",
+     "value": "structural"
+    },
+    {
+     "item": "layer_height",
+     "model": "P",
+     "note": "h/d = 0.50 functional seed",
+     "value": 0.2
+    },
+    {
+     "item": "tolerance_layer_budget",
+     "model": "A",
+     "note": "bore surface coincides with a layer/build direction: no staircase term",
+     "requirement_id": "R12"
+    },
+    {
+     "item": "nozzle_temperature",
+     "model": "S",
+     "note": "material profile value inside data-sheet window 190..235 C",
+     "value": 215.0
+    }
+   ],
+   "step": "compile_patch",
+   "warnings": []
+  }
+ ],
+ "verification": [
+  {
+   "evidence_level": null,
+   "fragment": "Объект транспортировки: Пачки офисной и мелованной бумаги в полиэтиленовой и крафт-обертке (масса одной пачки от 2 до 5 кг).",
+   "mandatory": true,
+   "notes": [],
+   "property": "transported_mass",
+   "requirement_id": "R01",
+   "sources": [],
+   "status": "input"
+  },
+  {
+   "evidence_level": "analytical_screen",
+   "fragment": "Режим работы: Непрерывный, 24/7 (около 8000 моточасов до планового ТО).",
+   "mandatory": true,
+   "notes": [
+    "2.16e+08 revolutions; S-N data of the printed material required"
+   ],
+   "property": "operating_hours",
+   "requirement_id": "R02",
+   "sources": [
+    "fatigue_cycles"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Скорость линии: 2.2 м/с (примерно 450 об/мин).",
+   "mandatory": true,
+   "notes": [],
+   "property": "rotation_speed",
+   "requirement_id": "R03",
+   "sources": [],
+   "status": "input"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Скорость линии: 2.2 м/с (примерно 450 об/мин).",
+   "mandatory": true,
+   "notes": [],
+   "property": "peripheral_speed",
+   "requirement_id": "R04",
+   "sources": [],
+   "status": "input"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Радиальная нагрузка на одно колесо: до 18 кг (возможны микроудары при схождении пачек с соседних линий).",
+   "mandatory": true,
+   "notes": [],
+   "property": "radial_load",
+   "requirement_id": "R05",
+   "sources": [],
+   "status": "input"
+  },
+  {
+   "evidence_level": "document",
+   "fragment": "Радиальная нагрузка на одно колесо: до 18 кг (возможны микроудары при схождении пачек с соседних линий).",
+   "mandatory": true,
+   "notes": [
+    "elongation 3.43 vs policy 0.05"
+   ],
+   "property": "impact_resistance",
+   "requirement_id": "R06",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "pass"
+  },
+  {
+   "evidence_level": "document",
+   "fragment": "Температурный режим: Строго +20°C ± 2°C.",
+   "mandatory": true,
+   "notes": [
+    "manufacturer operating range -35..100 C"
+   ],
+   "property": "service_temperature",
+   "requirement_id": "R07",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "pass"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Влажность: 45% ± 5% (критично для бумаги).",
+   "mandatory": true,
+   "notes": [],
+   "property": "service_humidity",
+   "requirement_id": "R08",
+   "sources": [],
+   "status": "input"
+  },
+  {
+   "evidence_level": "document",
+   "fragment": "Химическое воздействие: Еженедельная санитарная обработка ветошью, смоченной в 70% изопропиловом спирте (IPA) или перекиси водорода.",
+   "mandatory": true,
+   "notes": [
+    "indicated resistant (theoretical/base polymer/memo)"
+   ],
+   "property": "ipa_resistance",
+   "requirement_id": "R09",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": "document",
+   "fragment": "Требования к чистоте: Деталь не должна выделять микропыль (абразивный износ пластика недопустим) и не должна выделять летучие органические соединения (VOC), которые могут осесть на бумаге и повлиять на её дальнейшую печать в офисах клиентов.",
+   "mandatory": true,
+   "notes": [
+    "abrasion class: high (memo); wear in the real pair needs a test"
+   ],
+   "property": "abrasion_resistance",
+   "requirement_id": "R10",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "pass"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Требования к чистоте: Деталь не должна выделять микропыль (абразивный износ пластика недопустим) и не должна выделять летучие органические соединения (VOC), которые могут осесть на бумаге и повлиять на её дальнейшую печать в офисах клиентов.",
+   "mandatory": true,
+   "notes": [
+    "Нужны данные эмиссии VOC"
+   ],
+   "property": "low_voc",
+   "requirement_id": "R11",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Требуется обеспечить точность отверстия (допуск ±0.1 мм) с учетом усадки FDM-пластиков.",
+   "mandatory": true,
+   "notes": [],
+   "property": "dimensional_tolerance",
+   "requirement_id": "R12",
+   "sources": [],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Люфт недопустим (возникнет биение), натяг без нагрева приведет к разрыву детали.",
+   "mandatory": true,
+   "notes": [
+    "Нужна посадка и ответная деталь"
+   ],
+   "property": "no_play",
+   "requirement_id": "R13",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Материал должен обладать высоким коэффициентом трения по скольжению к бумаге и крафт-картону (во избежание проскальзывания ролика).",
+   "mandatory": true,
+   "notes": [
+    "friction of the pair needs a test; elastomer class used only as a hint"
+   ],
+   "property": "high_friction_vs_paper",
+   "requirement_id": "R14",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Материал не должен оставлять черных или цветных следов (следов пластификаторов) на белой бумаге при трении.",
+   "mandatory": true,
+   "notes": [
+    "Нужно испытание на перенос материала"
+   ],
+   "property": "no_marking",
+   "requirement_id": "R15",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Стойкость к циклическим нагрузкам на сжатие (пятно контакта при нагрузке 18 кг).",
+   "mandatory": true,
+   "notes": [
+    "Нужна S–N зависимость материала/процесса"
+   ],
+   "property": "fatigue_resistance",
+   "requirement_id": "R16",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": "document",
+   "fragment": "Отсутствие хрупкого разрушения при случайных ударах.",
+   "mandatory": true,
+   "notes": [
+    "elongation 3.43 vs policy 0.05; fracture mode needs a test"
+   ],
+   "property": "ductile_failure",
+   "requirement_id": "R17",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Желательно, чтобы материал обладал антистатическими (ESD) свойствами, чтобы не притягивать бумажную пыль к оси и не накапливать статику.",
+   "mandatory": false,
+   "notes": [
+    "no electrical data"
+   ],
+   "property": "esd",
+   "requirement_id": "R18",
+   "sources": [
+    "material:sealant_tpu_A95"
+   ],
+   "status": "unknown"
+  }
+ ]
+}
