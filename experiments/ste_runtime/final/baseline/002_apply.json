@@ -1,0 +1,104 @@
+{
+  "readback": {
+    "actual": {
+      "support_bottom_enable": false,
+      "support_interface_enable": false,
+      "cylindrical_mode_overlap": 0,
+      "infill_sparse_density": 30.0,
+      "line_width": 0.4,
+      "support_roof_enable": false,
+      "support_line_width": 0.4,
+      "support_angle": 50,
+      "top_layers": 5,
+      "non_printing_base_diameter": 6,
+      "machine_height": 300,
+      "material_flow": 100,
+      "machine_heated_bed": true,
+      "machine_depth": 300.3,
+      "layer_height_0": 0.3,
+      "support_bottom_distance": 0.1,
+      "adhesion_type": "brim",
+      "support_xy_distance": 0.7,
+      "layer_height": 0.2,
+      "support_top_distance": 0.1,
+      "retraction_amount": 1.5,
+      "support_enable": false,
+      "machine_width": 351,
+      "cool_fan_enabled": true,
+      "cylindrical_mode_base_diameter": 6,
+      "bottom_layers": 5,
+      "retraction_speed": 11.5,
+      "material_bed_temperature": 60.0,
+      "wall_thickness": 0.8,
+      "infill_pattern": "lines",
+      "support_type": "everywhere",
+      "retraction_enable": true,
+      "wall_line_count": 3,
+      "machine_center_is_zero": false,
+      "machine_nozzle_size": 0.4,
+      "cool_fan_speed": 20.0,
+      "printing_mode": "classic",
+      "speed_print": 45.0,
+      "material_print_temperature": 235.0
+    },
+    "machine_definition": "hte530v5.2.4",
+    "differences": [],
+    "quality_id": "ste_planner_quality_39c936ca8e9d4a469a20a1a5f09f8dae",
+    "material_id": "enduse_petg",
+    "status": "pass"
+  },
+  "qt_thread": true,
+  "status": "applied",
+  "nodes": [
+    {
+      "mesh_sha256": "4389f884e4b5f92cb9a5e36a714270ad7b287240bd4c329ca6bbfcbc4ec4d451",
+      "vertices": 8,
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -30.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          6.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "name": "beam.stl",
+      "world_bounds": [
+        [
+          -30.0,
+          0.0,
+          -6.0
+        ],
+        [
+          30.0,
+          8.0,
+          6.0
+        ]
+      ],
+      "modifier": {
+        "support_mesh": false,
+        "anti_overhang_mesh": false,
+        "support_mesh_drop_down": true
+      },
+      "parent": "Root"
+    }
+  ],
+  "decision_sha256": "bdc8f097b4cdb28e4607ad8d631a7c1e6f5465d46a85cfae158f40c7c5065062"
+}

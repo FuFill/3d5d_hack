@@ -13,7 +13,7 @@ import hashlib
 import os
 
 from . import requirements as reqmod
-from . import geometry, materials, routes, process_plan, structure, compiler, verification, calibration, functional
+from . import geometry, materials, routes, process_plan, structure, compiler, verification, calibration, functional, robustness
 from .settings_schema import load_machine_schema, SettingResolver, material_settings_from_file
 from .result import (PASS, FAIL, UNKNOWN, EVIDENCE_DOCUMENT, EVIDENCE_ANALYTICAL, DECISION_INFEASIBLE, to_json)
 
@@ -25,7 +25,9 @@ READBACK_KEYS = ["printing_mode", "machine_nozzle_size", "layer_height", "layer_
                  "speed_print", "cool_fan_enabled", "cool_fan_speed", "retraction_enable", "retraction_amount",
                  "retraction_speed", "support_enable", "support_angle", "adhesion_type",
                  "cylindrical_mode_base_diameter", "non_printing_base_diameter", "cylindrical_mode_overlap",
-                 "machine_height", "machine_heated_bed"]
+                 "machine_height", "machine_heated_bed", "machine_width", "machine_depth", "machine_center_is_zero",
+                 "support_type", "support_line_width", "support_top_distance", "support_bottom_distance",
+                 "support_xy_distance", "support_interface_enable", "support_roof_enable", "support_bottom_enable"]
 
 
 def default_resources_dir():
@@ -40,7 +42,7 @@ def default_resources_dir():
 
 def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE, catalog=None,
               preferred_materials=None, forced_mode=None, source=None, calibration_data=None, setting_changes=None,
-              functional_spec=None, llm_items=None):
+              functional_spec=None, llm_items=None, noise_spec=None, robustness_limits=None):
     trace = []
     resources_dir = resources_dir or default_resources_dir()
     catalog = catalog or materials.load_catalog()
@@ -283,6 +285,39 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
                                               "test": "Статическое нагружение напечатанной детали и контроль прогиба/поверхностей",
                                               "conditions": "те же закрепления, нагрузки, ориентация и профиль; Ra и плоскостность измерить"})
     decision["explanation"] = verification.explain_decision(decision)
+    # A separate final assessment: uncertain manufacturing inputs never become
+    # invented material properties or silently replace the accepted process.
+    functional_value = (functional_result.value or {})
+    chosen = functional_value.get("selected")
+    if chosen:
+        nominal = dict(effective)
+        proposed = (functional_value.get("proposed_patch") or {}).get("payload")
+        if proposed:
+            preview = resolver.copy_with(proposed["global"], proposed["extruders"])
+            nominal = compiler.effective_settings(preview, READBACK_KEYS)
+        mechanical_cases = chosen["mechanics"]["cases"]
+        assessments = [robustness.assess_process_stability(nominal, c, noise_spec, robustness_limits).to_dict()
+                       for c in mechanical_cases]
+        decision["robustness_analysis"] = {"status": "needs_calibration", "profile_id": chosen["profile_id"],
+            "cases": assessments, "setting_approval": False, "physical_stability_verified": False}
+        if noise_spec is not None:
+            profiles = dict((p["id"], p["settings"]) for p in (functional_spec or {}).get("profiles", []))
+            candidates = []
+            for candidate in functional_value.get("candidates", []):
+                if candidate.get("rejected_reasons") or not candidate.get("mechanics"):
+                    continue
+                settings = dict(effective)
+                settings.update(profiles.get(candidate["profile_id"], {}))
+                cases = candidate["mechanics"]["cases"]
+                worst = {"compliance_Nmm": sum(c["compliance_Nmm"] for c in cases),
+                    "effective_stiffness_N_per_mm": min(c["effective_stiffness_N_per_mm"] for c in cases),
+                    "max_displacement_mm": max(c["max_displacement_mm"] for c in cases),
+                    "safety_factor_min": min(c["safety_factor_min"] for c in cases)}
+                candidates.append({"id": candidate["id"], "settings": settings, "mechanics": worst})
+            decision["robustness_analysis"]["conditional_candidate_selection"] = robustness.choose_stable_candidate(
+                candidates, noise_spec, robustness_limits)
+    else:
+        decision["robustness_analysis"] = robustness.assess_process_stability(effective, {}, noise_spec, robustness_limits).to_dict()
     return decision
 
 

@@ -165,6 +165,21 @@ def test_support_modifier_prisms_are_closed_and_carry_real_STE_keys():
     assert operations[1]["settings"]["anti_overhang_mesh"] is True
 
 
+def test_protected_masks_include_clearance_and_skip_redundant_bed_faces():
+    mesh = make_box(20, 10, 5)
+    selected = {"mode": "classic", "rotation": np.eye(3), "support_clearance_mm": .91,
+                "support_depth_mm": .5,
+                "surface": {"support_plan": {"required_face_ids": [], "blocked_face_ids": list(range(12))}}}
+    operations = functional.support_modifiers(mesh, selected)
+    assert len(operations) == 1
+    vertices = np.asarray(operations[0]["vertices_mm"])
+    assert vertices[:, 0].min() < -10.9 and vertices[:, 0].max() > 10.9
+    # Horizontal bed triangles do not produce separate below-bed prisms.
+    assert len(vertices) == 10 * 6
+    modifier = geometry.Mesh(vertices, operations[0]["faces"])
+    assert geometry.edge_topology(modifier)["boundary_edges"] == 0
+
+
 def test_5D_volume_route_uses_radial_physics_and_never_assumes_collision_clearance():
     import os
     import tempfile

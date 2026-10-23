@@ -34,6 +34,8 @@ def main():
     parser.add_argument("--resources", help="STE resources directory")
     parser.add_argument("--mode", choices=("classic", "cylindrical", "cylindrical_full"))
     parser.add_argument("--output", required=True)
+    parser.add_argument("--noise", help="JSON with explicit source and interval bounds; never inferred by LLM")
+    parser.add_argument("--robustness-limits", help="JSON of measured/design tolerance intervals")
     args = parser.parse_args()
     spec = read_json(args.spec)
     with io.open(args.task, encoding="utf-8") as f:
@@ -46,6 +48,10 @@ def main():
             spec[key] = result.value
         spec["geometry_sha256"] = spec["volume_mesh"]["geometry_sha256"]
     options = {"resources_dir": args.resources, "forced_mode": args.mode}
+    if args.noise:
+        options["noise_spec"] = read_json(args.noise)
+    if args.robustness_limits:
+        options["robustness_limits"] = read_json(args.robustness_limits)
     if args.llm:
         if not args.surfaces:
             parser.error("--llm requires application-owned --surfaces")

@@ -1,0 +1,244 @@
+{
+  "evaluation_split": "additional frozen synthetic holdout; no tuning on this result",
+  "case_sha256": "9dd16277fc85699b5f27b7b9b67ae5be9b7c4cb9e3000fdb80f09e78b978d87b",
+  "physical_generalization_accuracy": null,
+  "cases": [
+    {
+      "id": "holdout_positive_y",
+      "status": "computed",
+      "seconds": 2.633,
+      "response": {
+        "value": {
+          "purpose": "Консольная балка: левый торец закреплён, на правый торец приложена нагрузка 7 Н по +Y.",
+          "regions": [
+            {
+              "surface_id": "root",
+              "role": "fixture",
+              "quote": "Левый торец зафиксировать."
+            }
+          ],
+          "loads": [
+            {
+              "surface_id": "tip",
+              "force_N": [
+                0,
+                7,
+                0
+              ],
+              "quote": "На правый торец действует 7 Н по +Y."
+            }
+          ],
+          "missing_inputs": []
+        },
+        "unit": null,
+        "status": "computed",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 2.633,
+            "attempts": [
+              {
+                "status": "computed"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "force_exact_match": true,
+      "region_roles_exact_match": true,
+      "correct": true
+    },
+    {
+      "id": "holdout_negative_x",
+      "status": "computed",
+      "seconds": 3.929,
+      "response": {
+        "value": {
+          "purpose": "Прочностная проверка рабочей консоли: левый торец закреплён, на правый торец действует сила 12 Н вдоль -X.",
+          "regions": [
+            {
+              "surface_id": "root",
+              "role": "fixture",
+              "quote": "левый торец зажат"
+            },
+            {
+              "surface_id": "front",
+              "role": "flat",
+              "quote": "Передняя сторона плоская"
+            },
+            {
+              "surface_id": "front",
+              "role": "no_support",
+              "quote": "контакт поддержек запрещён"
+            }
+          ],
+          "loads": [
+            {
+              "surface_id": "tip",
+              "force_N": [
+                -12,
+                0,
+                0
+              ],
+              "quote": "К правому торцу приложить силу 12 Н по -X"
+            }
+          ],
+          "missing_inputs": []
+        },
+        "unit": null,
+        "status": "computed",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 3.929,
+            "attempts": [
+              {
+                "status": "computed"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "force_exact_match": true,
+      "region_roles_exact_match": true,
+      "correct": true
+    },
+    {
+      "id": "holdout_fraction",
+      "status": "computed",
+      "seconds": 6.616,
+      "response": {
+        "value": {
+          "loads": [
+            {
+              "force_N": [
+                0,
+                0,
+                -0.75
+              ],
+              "quote": "сила 0,75 N по -Z",
+              "surface_id": "tip"
+            }
+          ],
+          "missing_inputs": [],
+          "purpose": "Консольная балка: заделка левого торца, нагрузка на правом торце, видимая передняя сторона.",
+          "regions": [
+            {
+              "role": "fixture",
+              "quote": "Закреплён левый торец",
+              "surface_id": "root"
+            },
+            {
+              "role": "visible",
+              "quote": "Передняя сторона видимая",
+              "surface_id": "front"
+            }
+          ]
+        },
+        "unit": null,
+        "status": "computed",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 6.615,
+            "attempts": [
+              {
+                "status": "invalid_input"
+              },
+              {
+                "status": "computed"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "force_exact_match": true,
+      "region_roles_exact_match": true,
+      "correct": true
+    },
+    {
+      "id": "holdout_unknown_direction",
+      "status": "needs_input",
+      "seconds": 2.89,
+      "response": {
+        "value": {
+          "missing_inputs": [
+            "load_direction_axis",
+            "load_magnitude_N"
+          ],
+          "regions": [
+            {
+              "surface_id": "root",
+              "role": "fixture",
+              "quote": "Левый торец закрепить"
+            }
+          ],
+          "loads": [],
+          "purpose": "Консоль, проверка от силы на правом торце."
+        },
+        "unit": null,
+        "status": "needs_input",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 2.89,
+            "attempts": [
+              {
+                "status": "needs_input"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "correct": true
+    }
+  ],
+  "correct": 4,
+  "count": 4,
+  "accepted_incorrect_cases": [],
+  "note": "Four synthetic texts cannot establish physical or broad linguistic generalization"
+}

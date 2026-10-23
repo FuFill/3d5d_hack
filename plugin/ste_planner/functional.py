@@ -18,6 +18,10 @@ PROCESS_KEYS = ("machine_nozzle_size", "line_width", "layer_height", "wall_line_
                 "bottom_layers", "infill_sparse_density", "infill_pattern", "material_print_temperature",
                 "material_bed_temperature", "speed_print", "cool_fan_speed")
 
+# Reserved geometric separation, ten times native G-code's 0.001 mm rounding.
+# This is an algorithmic margin, not a claim about printer positioning accuracy.
+SUPPORT_NUMERICAL_CLEARANCE_MM = 0.01
+
 
 def _native_decision(key, value, original=None):
     converted = value
@@ -188,13 +192,46 @@ def support_modifiers(mesh, selected, thickness_mm=0.4):
         vertices, faces = [], []
         for face_id in ids:
             triangle = placed.triangles[face_id]
+            # A protected face lying on the build plate cannot receive support
+            # from below. A prism straddling Z=0 unnecessarily extends the group
+            # bounding box and can add a phantom layer in the native engine.
+            if role == "support_blocker" and float(np.max(triangle[:, 2])) <= 1e-8:
+                continue
             if role == "support_enforcer":
+                margin = float(selected.get("support_clearance_mm", 0.0))
+                if margin > 0:
+                    edges = [triangle[(i + 1) % 3] - triangle[i] for i in range(3)]
+                    lengths = [np.linalg.norm(e) for e in edges]
+                    inradius = np.linalg.norm(np.cross(edges[0], edges[1])) / sum(lengths)
+                    if inradius <= margin:
+                        selected.setdefault("support_modifier_warnings", []).append(
+                            {"face_id": face_id, "reason": "required patch too narrow for reserved boundary clearance"})
+                        continue
+                    inset = triangle.copy()
+                    for i in range(3):
+                        a = np.cross(edges[(i - 1) % 3] / lengths[(i - 1) % 3], normals[face_id])
+                        b = np.cross(edges[i] / lengths[i], normals[face_id])
+                        inset[i] += np.linalg.solve(np.vstack([a, b, normals[face_id]]), [-margin, -margin, 0.])
+                    triangle = inset
                 lower, upper = triangle.copy(), triangle.copy()
                 lower[:, 2] = 0.0
                 upper[:, 2] += thickness_mm
             else:
-                lower = triangle - thickness_mm * normals[face_id] / 2
-                upper = triangle + thickness_mm * normals[face_id] / 2
+                # Native support polygons can grow around an overhang boundary.
+                # Expand protected masks by the resolved XY clearance + line
+                # radius, and include the rounded top gap in their depth.
+                margin = float(selected.get("support_clearance_mm", 0.0))
+                depth = max(thickness_mm / 2, float(selected.get("support_depth_mm", 0.0)))
+                normal = normals[face_id]
+                expanded = triangle.copy()
+                if margin > 0:
+                    for i in range(3):
+                        prev = triangle[i] - triangle[(i - 1) % 3]
+                        following = triangle[(i + 1) % 3] - triangle[i]
+                        a, b = np.cross(prev / np.linalg.norm(prev), normal), np.cross(following / np.linalg.norm(following), normal)
+                        expanded[i] += np.linalg.solve(np.vstack([a, b, normal]), [margin, margin, 0.])
+                lower = expanded - depth * normal
+                upper = expanded + depth * normal
             offset = len(vertices)
             prism = np.vstack([lower, upper])
             oriented = topology
@@ -461,6 +498,13 @@ def optimize(mesh, spec, context, initial_rotation, mode, route, caps, base_patc
                  "limitations": ["finite candidate search; geometric smoothness proxy, not measured Ra",
                                  "linear static printed-property model; no fatigue or thermal warping",
                                  "5D kinematics and support geometry need authoritative slicer verification"]}
+        if selected:
+            resolved = patch["resolver"]
+            selected["support_clearance_mm"] = (resolved.value("support_xy_distance", extruder="0") +
+                                                 resolved.value("support_line_width", extruder="0") / 2. + SUPPORT_NUMERICAL_CLEARANCE_MM)
+            selected["support_depth_mm"] = (resolved.value("support_top_distance", extruder="0") +
+                                             resolved.value("layer_height", extruder="0") +
+                                             resolved.value("support_line_width", extruder="0") / 2.)
         value["support_modifier_operations"] = support_modifiers(mesh, selected) if selected else []
         result = computed(value, None, "functional_orientation", MODEL_ANALYTIC, evidence=EVIDENCE_SIMULATION)
         if not selected:

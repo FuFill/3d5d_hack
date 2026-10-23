@@ -36,7 +36,8 @@ def test_support_statistics_exclude_stationary_unretraction():
     result = gcode.inspect_toolpath(PROGRAM, EXPECTED)
     assert result["summary"]["support_extruded_mm"] == 2.0
     assert result["summary"]["feature_extruded_mm"]["WALL-OUTER"] == 1.0
-    assert all(value == "pass" for key, value in statuses().items() if key != "volumetric_flow")
+    assert all(value == "pass" for key, value in statuses().items() if key not in ("volumetric_flow", "program_termination"))
+    assert statuses()["program_termination"] == "unknown"  # The fixture is a fragment, not a full native program.
     assert statuses()["volumetric_flow"] == "unknown"
 
 

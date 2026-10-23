@@ -1,0 +1,104 @@
+{
+  "readback": {
+    "status": "pass",
+    "machine_definition": "hte530v5.2.4",
+    "differences": [],
+    "material_id": "enduse_petg",
+    "actual": {
+      "retraction_enable": true,
+      "machine_depth": 300.3,
+      "machine_heated_bed": true,
+      "wall_thickness": 0.8,
+      "support_type": "everywhere",
+      "non_printing_base_diameter": 6,
+      "machine_height": 300,
+      "wall_line_count": 6,
+      "support_line_width": 0.4,
+      "material_flow": 100,
+      "machine_nozzle_size": 0.4,
+      "layer_height": 0.1,
+      "support_angle": 50,
+      "layer_height_0": 0.3,
+      "infill_pattern": "lines",
+      "cool_fan_speed": 20.0,
+      "bottom_layers": 5,
+      "adhesion_type": "brim",
+      "material_print_temperature": 235.0,
+      "support_interface_enable": false,
+      "machine_center_is_zero": false,
+      "retraction_amount": 1.5,
+      "cylindrical_mode_base_diameter": 6,
+      "support_bottom_enable": false,
+      "support_top_distance": 0.1,
+      "retraction_speed": 11.5,
+      "speed_print": 45.0,
+      "support_bottom_distance": 0.1,
+      "material_bed_temperature": 60.0,
+      "support_enable": false,
+      "top_layers": 5,
+      "cool_fan_enabled": true,
+      "machine_width": 351,
+      "support_roof_enable": false,
+      "cylindrical_mode_overlap": 0,
+      "support_xy_distance": 0.7,
+      "infill_sparse_density": 60.0,
+      "line_width": 0.4,
+      "printing_mode": "classic"
+    },
+    "quality_id": "ste_planner_quality_cc41c611bfa34a7b9319e91543df48df"
+  },
+  "decision_sha256": "7c20293b4b715737f46939349acbd18ceba983addf6ce359e9c69b981f2e2a58",
+  "status": "applied_demo",
+  "nodes": [
+    {
+      "vertices": 8,
+      "mesh_sha256": "4389f884e4b5f92cb9a5e36a714270ad7b287240bd4c329ca6bbfcbc4ec4d451",
+      "name": "beam.stl",
+      "modifier": {
+        "support_mesh": false,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false
+      },
+      "world_bounds": [
+        [
+          -30.0,
+          0.0,
+          -4.0
+        ],
+        [
+          30.0,
+          12.0,
+          4.0
+        ]
+      ],
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -30.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -4.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "Root"
+    }
+  ],
+  "qt_thread": true
+}

@@ -1,0 +1,749 @@
+{
+  "assumptions": [
+    "material properties are manufacturer typical values (Stereotech wiki), not batch data",
+    "process settings start from the Stereotech material profile; volumetric flow limit uncalibrated"
+  ],
+  "calibration_context": {
+    "geometry_sha256": "8f29950ff77a4dd25440717f9ec3d4a030a2f909fa4402e92e5d763e89ebd668",
+    "machine_id": "hte530v5.2.4",
+    "material_id": "enduse_petg",
+    "printing_mode": "classic",
+    "rotation": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "settings": {
+      "adhesion_type": "brim",
+      "bottom_layers": 5,
+      "cool_fan_enabled": true,
+      "cool_fan_speed": 20.0,
+      "cylindrical_mode_base_diameter": 6.0,
+      "cylindrical_mode_overlap": 0.0,
+      "infill_pattern": "lines",
+      "infill_sparse_density": 30.0,
+      "layer_height": 0.2,
+      "layer_height_0": 0.3,
+      "line_width": 0.4,
+      "machine_center_is_zero": false,
+      "machine_depth": 300.3,
+      "machine_heated_bed": true,
+      "machine_height": 300.0,
+      "machine_nozzle_size": 0.4,
+      "machine_width": 351.0,
+      "material_bed_temperature": 60.0,
+      "material_flow": 100.0,
+      "material_print_temperature": 235.0,
+      "non_printing_base_diameter": 6.0,
+      "printing_mode": "classic",
+      "retraction_amount": 1.5,
+      "retraction_enable": true,
+      "retraction_speed": 11.5,
+      "speed_print": 45.0,
+      "support_angle": 50.0,
+      "support_bottom_distance": 0.1,
+      "support_bottom_enable": false,
+      "support_enable": false,
+      "support_interface_enable": false,
+      "support_line_width": 0.4,
+      "support_roof_enable": false,
+      "support_top_distance": 0.1,
+      "support_type": "everywhere",
+      "support_xy_distance": 0.7,
+      "top_layers": 5,
+      "wall_line_count": 3,
+      "wall_thickness": 0.8
+    }
+  },
+  "candidates": {
+    "materials": [
+      {
+        "id": "enduse_petg",
+        "summary": {
+          "hinted_unknown": [],
+          "mandatory_fail": [],
+          "mandatory_pass": [],
+          "mandatory_unknown": [],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 0.0
+      },
+      {
+        "id": "proto_pla",
+        "summary": {
+          "hinted_unknown": [],
+          "mandatory_fail": [],
+          "mandatory_pass": [],
+          "mandatory_unknown": [],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 0.0
+      },
+      {
+        "id": "enduse_abs",
+        "summary": {
+          "hinted_unknown": [],
+          "mandatory_fail": [],
+          "mandatory_pass": [],
+          "mandatory_unknown": [],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 0.0
+      },
+      {
+        "id": "enduse_sbs",
+        "summary": {
+          "hinted_unknown": [],
+          "mandatory_fail": [],
+          "mandatory_pass": [],
+          "mandatory_unknown": [],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 0.0
+      },
+      {
+        "id": "sealant_tpu_A95",
+        "summary": {
+          "hinted_unknown": [],
+          "mandatory_fail": [],
+          "mandatory_pass": [],
+          "mandatory_unknown": [],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 0.0
+      },
+      {
+        "id": "enduse_pp",
+        "summary": {
+          "hinted_unknown": [],
+          "mandatory_fail": [],
+          "mandatory_pass": [],
+          "mandatory_unknown": [],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 0.0
+      }
+    ],
+    "routes": [
+      {
+        "feasible": true,
+        "mode": "classic",
+        "score": 0.0
+      },
+      {
+        "feasible": false,
+        "mode": "cylindrical",
+        "score": 0.0
+      },
+      {
+        "feasible": true,
+        "mode": "cylindrical_full",
+        "score": 0.0
+      }
+    ]
+  },
+  "causal_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "assess_double_ml",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "calibration_data"
+        ],
+        "model_id": "assess_double_ml",
+        "reason": "no measured print experiments supplied"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "chosen_material": {
+    "base_polymer": "PETG",
+    "excluded": null,
+    "filler": null,
+    "id": "enduse_petg",
+    "label": "Enduse PETG",
+    "selectable": true,
+    "series": "Enduse",
+    "slicer_file": "enduse_petg.xml.fdm_material",
+    "wiki_url": "https://wiki.stereotech.org/ru/fdm-materials/enduse/petg"
+  },
+  "effective_settings": {
+    "adhesion_type": "brim",
+    "bottom_layers": 5,
+    "cool_fan_enabled": true,
+    "cool_fan_speed": 20.0,
+    "cylindrical_mode_base_diameter": 6.0,
+    "cylindrical_mode_overlap": 0.0,
+    "infill_pattern": "lines",
+    "infill_sparse_density": 30.0,
+    "layer_height": 0.2,
+    "layer_height_0": 0.3,
+    "line_width": 0.4,
+    "machine_center_is_zero": false,
+    "machine_depth": 300.3,
+    "machine_heated_bed": true,
+    "machine_height": 300.0,
+    "machine_nozzle_size": 0.4,
+    "machine_width": 351.0,
+    "material_bed_temperature": 60.0,
+    "material_flow": 100.0,
+    "material_print_temperature": 235.0,
+    "non_printing_base_diameter": 6.0,
+    "printing_mode": "classic",
+    "retraction_amount": 1.5,
+    "retraction_enable": true,
+    "retraction_speed": 11.5,
+    "speed_print": 45.0,
+    "support_angle": 50.0,
+    "support_bottom_distance": 0.1,
+    "support_bottom_enable": false,
+    "support_enable": false,
+    "support_interface_enable": false,
+    "support_line_width": 0.4,
+    "support_roof_enable": false,
+    "support_top_distance": 0.1,
+    "support_type": "everywhere",
+    "support_xy_distance": 0.7,
+    "top_layers": 5,
+    "wall_line_count": 3,
+    "wall_thickness": 0.8
+  },
+  "evidence_level": null,
+  "explanation": [
+    "Статус: candidate; уровень доказательности: None.",
+    "Материал: Enduse PETG — выбран из 20 допустимых; отклонено 0 (обязательное требование не выполнено).",
+    "Режим: classic. mode requested by the user",
+    "  printing_mode = classic (было classic): route selected by documented policy",
+    "  bottom_layers = 5 (было 8): skin_layers, policy:skin",
+    "  infill_sparse_density = 30.0 (было 20.0): no calibrated relation load -> infill exists; policy by load class general",
+    "  layer_height = 0.2 (было 0.1): choose_layer_height, policy:layer",
+    "  top_layers = 5 (было 8): skin_layers, policy:skin",
+    "  wall_line_count = 3 (было 2): shell 1.20 mm -> 3 walls (1.20 mm)",
+    "  material_bed_temperature = 60.0 (было 60.0): material profile value; explicit because STE takes max() over extruders",
+    "  speed_print = 45.0 (было 60.0): material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+    "  support_enable = False (было False): overhang 0 mm2, support volume bound 0 mm3 (thresholds 25 mm2, 200 mm3)",
+    "Double ML: оценка отсутствует или часть изменений не подтверждена; нужны измеренные испытания в тех же условиях."
+  ],
+  "functional_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "functional_orientation",
+    "status": "needs_input",
+    "trace": [
+      {
+        "missing": [
+          "functional_spec"
+        ],
+        "model_id": "functional_orientation",
+        "reason": "purpose, service loads and scoped printed properties required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "materials_considered": 20,
+  "materials_rejected": 0,
+  "missing_inputs": [],
+  "part_name": null,
+  "part_type": null,
+  "prototype_only": false,
+  "qualification_plan": [],
+  "requirement_issues": [],
+  "requirements": [],
+  "robustness_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "process_stability",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "noise_bounds",
+          "first_layer_gap_limits",
+          "process_response_calibration"
+        ],
+        "model_id": "process_stability",
+        "reason": "measured noise bounds and quality tolerances required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "route": {
+    "mode": "classic",
+    "note": "mode requested by the user",
+    "parameters": {}
+  },
+  "scene_operations": [
+    {
+      "coordinates": "printer (Z up); the adapter converts to the Uranium scene (Y up)",
+      "op": "load_mesh",
+      "path": "C:\\Users\\Ilya\\Working projects\\3d5d_hack\\experiments\\functional_artifacts\\beam.stl",
+      "units": "mm"
+    },
+    {
+      "note": "original orientation kept (within 5% of best J_R)",
+      "op": "set_transform",
+      "rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "translation": [
+        -30.0,
+        -6.0,
+        -0.0
+      ]
+    },
+    {
+      "op": "arrange"
+    }
+  ],
+  "setting_patch": {
+    "errors": [],
+    "items": [
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "printing_mode",
+        "model_ids": [
+          "choose_route"
+        ],
+        "note": "route selected by documented policy",
+        "old_effective_value": "classic",
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "configuration",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": "classic"
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "bottom_layers",
+        "model_ids": [
+          "skin_layers",
+          "policy:skin"
+        ],
+        "note": null,
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 5
+      },
+      {
+        "decision_unit": "fraction",
+        "enabled_after_patch": true,
+        "key": "infill_sparse_density",
+        "model_ids": [
+          "policy:infill"
+        ],
+        "note": "no calibrated relation load -> infill exists; policy by load class general",
+        "old_effective_value": 20.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "%",
+        "validation": "valid",
+        "value": 30.0
+      },
+      {
+        "decision_unit": "mm",
+        "enabled_after_patch": true,
+        "key": "layer_height",
+        "model_ids": [
+          "choose_layer_height",
+          "policy:layer"
+        ],
+        "note": null,
+        "old_effective_value": 0.1,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "geometry",
+        "target": "global",
+        "unit": "mm",
+        "validation": "valid",
+        "value": 0.2
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "top_layers",
+        "model_ids": [
+          "skin_layers",
+          "policy:skin"
+        ],
+        "note": null,
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 5
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "wall_line_count",
+        "model_ids": [
+          "wall_count",
+          "policy:shell"
+        ],
+        "note": "shell 1.20 mm -> 3 walls (1.20 mm)",
+        "old_effective_value": 2,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 3
+      },
+      {
+        "decision_unit": "degC",
+        "enabled_after_patch": true,
+        "key": "material_bed_temperature",
+        "model_ids": [
+          "thermal_window"
+        ],
+        "note": "material profile value; explicit because STE takes max() over extruders",
+        "old_effective_value": 60.0,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "thermal_flow",
+        "target": "global",
+        "unit": "°C",
+        "validation": "valid",
+        "value": 60.0
+      },
+      {
+        "decision_unit": "mm/s",
+        "enabled_after_patch": true,
+        "key": "speed_print",
+        "model_ids": [
+          "role_speed",
+          "material_datasheet"
+        ],
+        "note": "material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+        "old_effective_value": 60.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "motion",
+        "target": "extruder_0",
+        "unit": "mm/s",
+        "validation": "valid",
+        "value": 45.0
+      },
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "support_enable",
+        "model_ids": [
+          "support_plan"
+        ],
+        "note": "overhang 0 mm2, support volume bound 0 mm3 (thresholds 25 mm2, 200 mm3)",
+        "old_effective_value": false,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "support_adhesion",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": false
+      }
+    ],
+    "payload": {
+      "extruders": {
+        "0": {
+          "bottom_layers": 5,
+          "infill_sparse_density": 30.0,
+          "speed_print": 45.0,
+          "top_layers": 5,
+          "wall_line_count": 3
+        }
+      },
+      "global": {
+        "layer_height": 0.2,
+        "material_bed_temperature": 60.0,
+        "printing_mode": "classic",
+        "support_enable": false
+      }
+    },
+    "warnings": []
+  },
+  "status": "candidate",
+  "structural_checks": [],
+  "trace": [
+    {
+      "count": 0,
+      "issues": [],
+      "part_type": null,
+      "step": "parse_requirements"
+    },
+    {
+      "errors": [],
+      "rotational": {
+        "axial_length": 60.0,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "bore_radius": null,
+        "is_rotational_candidate": true,
+        "moment_mismatch": 0.021367521367521368,
+        "r_max": 7.211102550927978,
+        "sector_cv": null
+      },
+      "size": [
+        60.0,
+        12.0,
+        8.0
+      ],
+      "status": "ok",
+      "step": "analyze_mesh",
+      "volume_mm3": 5760.0,
+      "warnings": []
+    },
+    {
+      "build_volume": {
+        "classic": [
+          351.0,
+          300.3,
+          300.0
+        ],
+        "cylindrical": [
+          351.0,
+          300.3,
+          231.1
+        ],
+        "cylindrical_full": [
+          351.0,
+          300.3,
+          231.1
+        ]
+      },
+      "chain": [
+        "fdmprinter",
+        "steprinter_v5",
+        "steprinter530_v5.2.4",
+        "hte530v5.2.4"
+      ],
+      "machine": "hte530v5.2.4",
+      "note": "offline schema from the slicer resources; installed runtime confirmed by read-back",
+      "nozzles": [
+        0.4
+      ],
+      "step": "inspect_machine"
+    },
+    {
+      "chosen": "enduse_petg",
+      "policy": "hard constraints first (any mandatory fail rejects); ranking by support = passes + 0.5*hinted unknowns + 1*manufacturer application match + 0.25*optional passes, then fewer unknowns, printability, print difficulty (Stereotech memo)",
+      "prototype_only": false,
+      "ranked": [
+        "enduse_petg",
+        "proto_pla",
+        "enduse_abs",
+        "enduse_sbs",
+        "sealant_tpu_A95",
+        "enduse_pp",
+        "sealant_sebs",
+        "enduse_pa6"
+      ],
+      "rejected": 32,
+      "step": "screen_materials"
+    },
+    {
+      "chosen": "classic",
+      "routes": [
+        {
+          "feasible": true,
+          "mode": "classic",
+          "reasons": [
+            "flat layers, heated platform"
+          ],
+          "score": 0.0
+        },
+        {
+          "feasible": false,
+          "mode": "cylindrical",
+          "reasons": [
+            "axis: rotational symmetry (inertia + sector radii)",
+            "no axial bore for a mandrel: 5D Spiral would cut the part"
+          ],
+          "score": 0.0
+        },
+        {
+          "feasible": true,
+          "mode": "cylindrical_full",
+          "reasons": [
+            "axis: rotational symmetry (inertia + sector radii)",
+            "core 6.0 mm inside min section radius 4.00 mm (80% / 1 mm margin policy)"
+          ],
+          "score": 0.0
+        }
+      ],
+      "step": "enumerate_routes"
+    },
+    {
+      "candidates": [
+        {
+          "height": 8.0,
+          "score": 0.04,
+          "support_volume": 0.0,
+          "up": [
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "height": 8.0,
+          "score": 0.04,
+          "support_volume": 0.0,
+          "up": [
+            -0.0,
+            -0.0,
+            -1.0
+          ]
+        },
+        {
+          "height": 12.0,
+          "score": 0.05999999999999999,
+          "support_volume": 0.0,
+          "up": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        {
+          "height": 12.0,
+          "score": 0.05999999999999999,
+          "support_volume": 0.0,
+          "up": [
+            -0.0,
+            -1.0,
+            -0.0
+          ]
+        },
+        {
+          "height": 60.0,
+          "score": 0.3,
+          "support_volume": 0.0,
+          "up": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "height": 60.0,
+          "score": 0.3,
+          "support_volume": 0.0,
+          "up": [
+            -1.0,
+            -0.0,
+            -0.0
+          ]
+        }
+      ],
+      "chosen_up": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "step": "orientation"
+    },
+    {
+      "chosen": "enduse_petg",
+      "rejected_by_structure": [],
+      "step": "solve_structure"
+    },
+    {
+      "errors": [],
+      "items": 9,
+      "process_notes": [
+        {
+          "item": "load_class",
+          "model": "P",
+          "value": "general"
+        },
+        {
+          "item": "layer_height",
+          "model": "P",
+          "note": "h/d = 0.50 functional seed",
+          "value": 0.2
+        },
+        {
+          "item": "nozzle_temperature",
+          "model": "S",
+          "note": "material profile value inside data-sheet window 220..245 C",
+          "value": 235.0
+        }
+      ],
+      "step": "compile_patch",
+      "warnings": []
+    },
+    {
+      "applied": false,
+      "note": "simulation estimates; no qualification promotion",
+      "status": "needs_input",
+      "step": "functional_orientation"
+    },
+    {
+      "note": "independent single-setting comparisons; deterministic patch and qualification unchanged",
+      "status": "needs_calibration",
+      "step": "assess_double_ml"
+    }
+  ],
+  "verification": []
+}

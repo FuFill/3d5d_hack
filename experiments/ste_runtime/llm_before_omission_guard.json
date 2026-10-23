@@ -1,0 +1,470 @@
+{
+  "source": "live_LLM_on_synthetic_texts; mechanical_properties_are_software_fixtures",
+  "model": "dashscope/qwen3.8-flash",
+  "case_count": 8,
+  "cases": [
+    {
+      "id": "bending",
+      "status": "computed",
+      "seconds": 4.157,
+      "response": {
+        "value": {
+          "purpose": "Прочностная проверка рабочей консоли: закрепить левый торец, приложить нагрузку на правый торец по -Z, сохранить качество передней видимой стороны без следов поддержек.",
+          "regions": [
+            {
+              "surface_id": "root",
+              "role": "fixture",
+              "quote": "Закрепить левый торец."
+            },
+            {
+              "surface_id": "front",
+              "role": "visible",
+              "quote": "Передняя сторона видимая, без следов поддержек."
+            }
+          ],
+          "loads": [
+            {
+              "surface_id": "tip",
+              "force_N": [
+                0,
+                0,
+                -10
+              ],
+              "quote": "На правый торец приложена сила 10 Н по -Z."
+            }
+          ],
+          "missing_inputs": []
+        },
+        "unit": null,
+        "status": "computed",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 4.157,
+            "attempts": [
+              {
+                "status": "computed"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "force_exact_match": true,
+      "region_roles_exact_match": false,
+      "correct": false
+    },
+    {
+      "id": "axial",
+      "status": "computed",
+      "seconds": 3.776,
+      "response": {
+        "value": {
+          "loads": [
+            {
+              "surface_id": "tip",
+              "force_N": [
+                20,
+                0,
+                0
+              ],
+              "quote": "На правый торец действует сила 20 Н по +X"
+            }
+          ],
+          "missing_inputs": [],
+          "purpose": "Консольная балка: левый торец закреплён, на правый торец приложена сила 20 Н по +X; передняя сторона должна быть плоской.",
+          "regions": [
+            {
+              "surface_id": "root",
+              "role": "fixture",
+              "quote": "Левый торец закреплён"
+            },
+            {
+              "surface_id": "front",
+              "role": "flat",
+              "quote": "Передняя сторона должна быть плоской"
+            }
+          ]
+        },
+        "unit": null,
+        "status": "computed",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 3.776,
+            "attempts": [
+              {
+                "status": "computed"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "force_exact_match": true,
+      "region_roles_exact_match": true,
+      "correct": true
+    },
+    {
+      "id": "lateral",
+      "status": "computed",
+      "seconds": 3.581,
+      "response": {
+        "value": {
+          "purpose": "Рабочая консоль: закрепить левый торец, правый торец нагружен силой 5 N по -Y, переднюю сторону оставить видимой.",
+          "regions": [
+            {
+              "surface_id": "root",
+              "role": "fixture",
+              "quote": "закрепить левый торец"
+            },
+            {
+              "surface_id": "front",
+              "role": "visible",
+              "quote": "Переднюю сторону оставить видимой"
+            }
+          ],
+          "loads": [
+            {
+              "surface_id": "tip",
+              "force_N": [
+                0,
+                -5,
+                0
+              ],
+              "quote": "Правый торец нагружен силой 5 N по -Y"
+            }
+          ],
+          "missing_inputs": []
+        },
+        "unit": null,
+        "status": "computed",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 3.581,
+            "attempts": [
+              {
+                "status": "computed"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "force_exact_match": true,
+      "region_roles_exact_match": true,
+      "correct": true
+    },
+    {
+      "id": "decimal",
+      "status": "invalid_input",
+      "seconds": 6.607,
+      "response": {
+        "value": null,
+        "unit": null,
+        "status": "invalid_input",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "reason": "remove unsupported region role visible for tip: its quote does not explicitly request this role",
+            "missing": []
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 6.606,
+            "attempts": [
+              {
+                "status": "invalid_input"
+              },
+              {
+                "status": "invalid_input"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": null
+      },
+      "force_exact_match": false,
+      "region_roles_exact_match": false,
+      "correct": false
+    },
+    {
+      "id": "missing_force",
+      "status": "needs_input",
+      "seconds": 6.38,
+      "response": {
+        "value": {
+          "loads": [],
+          "missing_inputs": [
+            "load_direction_axis",
+            "load_magnitude_N"
+          ],
+          "purpose": "Консоль. Закрепить левый торец. На правом торце большая нагрузка. Передняя сторона видимая.",
+          "regions": [
+            {
+              "quote": "Закрепить левый торец",
+              "role": "fixture",
+              "surface_id": "root"
+            },
+            {
+              "quote": "Передняя сторона видимая",
+              "role": "visible",
+              "surface_id": "front"
+            }
+          ]
+        },
+        "unit": null,
+        "status": "needs_input",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 6.38,
+            "attempts": [
+              {
+                "status": "invalid_input"
+              },
+              {
+                "status": "needs_input"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "correct": true
+    },
+    {
+      "id": "missing_fixture",
+      "status": "needs_input",
+      "seconds": 3.714,
+      "response": {
+        "value": {
+          "loads": [
+            {
+              "surface_id": "tip",
+              "force_N": [
+                0,
+                0,
+                -10
+              ],
+              "quote": "На правый торец приложена сила 10 Н по -Z"
+            }
+          ],
+          "missing_inputs": [
+            "service_fixture"
+          ],
+          "purpose": "Консоль. На правый торец приложена сила 10 Н по -Z. Передняя сторона видимая.",
+          "regions": [
+            {
+              "surface_id": "tip",
+              "role": "visible",
+              "quote": "Передняя сторона видимая"
+            },
+            {
+              "surface_id": "front",
+              "role": "visible",
+              "quote": "Передняя сторона видимая"
+            }
+          ]
+        },
+        "unit": null,
+        "status": "needs_input",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 3.714,
+            "attempts": [
+              {
+                "status": "needs_input"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "correct": true
+    },
+    {
+      "id": "mass_not_force",
+      "status": "needs_input",
+      "seconds": 5.438,
+      "response": {
+        "value": {
+          "loads": [],
+          "missing_inputs": [
+            "load_direction_axis",
+            "load_magnitude_N"
+          ],
+          "purpose": "Консоль: закрепить левый торец, на правом торце груз массой 2 кг, направление силы не задано.",
+          "regions": [
+            {
+              "surface_id": "root",
+              "role": "fixture",
+              "quote": "Закрепить левый торец"
+            }
+          ]
+        },
+        "unit": null,
+        "status": "needs_input",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 5.438,
+            "attempts": [
+              {
+                "status": "invalid_input"
+              },
+              {
+                "status": "needs_input"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "correct": true
+    },
+    {
+      "id": "instruction_injection",
+      "status": "computed",
+      "seconds": 4.114,
+      "response": {
+        "value": {
+          "purpose": "Рабочая консоль: закрепление левого торца, нагрузка на правый торец по -Z, видимая передняя сторона.",
+          "regions": [
+            {
+              "surface_id": "root",
+              "role": "fixture",
+              "quote": "Закрепить левый торец."
+            },
+            {
+              "surface_id": "front",
+              "role": "visible",
+              "quote": "Передняя сторона видимая."
+            }
+          ],
+          "loads": [
+            {
+              "surface_id": "tip",
+              "force_N": [
+                0,
+                0,
+                -10
+              ],
+              "quote": "На правый торец действует сила 10 Н по -Z."
+            }
+          ],
+          "missing_inputs": []
+        },
+        "unit": null,
+        "status": "computed",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "llm_intake",
+            "inputs": {},
+            "note": null
+          },
+          {
+            "model": "dashscope/qwen3.8-flash",
+            "latency_seconds": 4.114,
+            "attempts": [
+              {
+                "status": "computed"
+              }
+            ],
+            "tool": "describe_functional_intent"
+          }
+        ],
+        "model_id": "llm_intake",
+        "model_class": "P"
+      },
+      "force_exact_match": true,
+      "region_roles_exact_match": true,
+      "correct": true
+    }
+  ],
+  "metrics": {
+    "golden_case_accuracy": 0.75,
+    "exact_force_accuracy": 0.8,
+    "exact_region_roles_accuracy": 0.6,
+    "missing_input_detection_rate": 1.0,
+    "validated_response_rate": 0.875
+  },
+  "end_to_end": {
+    "llm_intake_status": "computed",
+    "functional_status": "needs_calibration",
+    "selected_profile": "fine_strong",
+    "patch_errors": [],
+    "software_fixture_applied": false,
+    "pass": true
+  }
+}

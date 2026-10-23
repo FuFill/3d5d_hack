@@ -1,0 +1,232 @@
+{
+  "status": "needs_calibration",
+  "conditional_selected_id": null,
+  "candidates": [
+    {
+      "id": "baseline",
+      "eligible_under_declared_bounds": false,
+      "assessment": {
+        "value": {
+          "source": "user_scenario",
+          "protocol": null,
+          "declared_bounds": {
+            "z_offset_mm": [
+              -0.05,
+              0.05
+            ]
+          },
+          "unvaried_dimensions_assumed_fixed": [
+            "elastic_scale",
+            "flow_scale",
+            "layer_position_error_mm",
+            "load_scale",
+            "speed_scale",
+            "strength_scale"
+          ],
+          "corner_scenarios": 2,
+          "envelope": {
+            "first_layer_gap_mm": [
+              0.25,
+              0.35
+            ],
+            "commanded_flow_proxy_mm3_s": [
+              3.6000000000000005,
+              3.6000000000000005
+            ],
+            "effective_stiffness_N_per_mm": [
+              6.993564405316274,
+              6.993564405316274
+            ],
+            "compliance_Nmm": [
+              14.298860238419103,
+              14.298860238419103
+            ],
+            "max_displacement_mm": [
+              1.4371427248682989,
+              1.4371427248682989
+            ],
+            "safety_factor_min": [
+              3.6884884171512073,
+              3.6884884171512073
+            ],
+            "layer_increment_mm": [
+              0.2,
+              0.2
+            ]
+          },
+          "checks": [
+            {
+              "metric": "first_layer_gap_mm",
+              "status": "unknown",
+              "margin": null
+            },
+            {
+              "metric": "layer_increment_mm",
+              "status": "unknown",
+              "margin": null
+            },
+            {
+              "metric": "commanded_flow_proxy_mm3_s",
+              "status": "unknown",
+              "margin": null
+            },
+            {
+              "metric": "max_displacement_mm",
+              "status": "unknown",
+              "margin": null
+            },
+            {
+              "metric": "safety_factor_min",
+              "status": "unknown",
+              "margin": null
+            }
+          ],
+          "worst_case_violation_count": 0,
+          "success_probability": null,
+          "physical_stability_verified": false,
+          "setting_approval": false,
+          "missing_tolerances": [
+            "first_layer_gap_mm",
+            "layer_increment_mm",
+            "flow_mm3_s",
+            "displacement_mm",
+            "safety_factor"
+          ],
+          "response_calibration_required": [
+            "Z/flow/speed -> bead bonding, porosity, Ra, warp and constitutive properties"
+          ],
+          "interpretation": "conditional interval sensitivity, not independent printing evidence"
+        },
+        "unit": null,
+        "status": "needs_calibration",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "process_stability",
+            "inputs": {},
+            "note": null
+          }
+        ],
+        "model_id": "process_stability",
+        "model_class": "A"
+      }
+    },
+    {
+      "id": "selected",
+      "eligible_under_declared_bounds": false,
+      "assessment": {
+        "value": {
+          "source": "user_scenario",
+          "protocol": null,
+          "declared_bounds": {
+            "z_offset_mm": [
+              -0.05,
+              0.05
+            ]
+          },
+          "unvaried_dimensions_assumed_fixed": [
+            "elastic_scale",
+            "flow_scale",
+            "layer_position_error_mm",
+            "load_scale",
+            "speed_scale",
+            "strength_scale"
+          ],
+          "corner_scenarios": 2,
+          "envelope": {
+            "first_layer_gap_mm": [
+              0.25,
+              0.35
+            ],
+            "commanded_flow_proxy_mm3_s": [
+              1.8000000000000003,
+              1.8000000000000003
+            ],
+            "effective_stiffness_N_per_mm": [
+              14.106689504362112,
+              14.106689504362112
+            ],
+            "compliance_Nmm": [
+              7.088835404584307,
+              7.088835404584307
+            ],
+            "max_displacement_mm": [
+              0.712451349515995,
+              0.712451349515995
+            ],
+            "safety_factor_min": [
+              7.907081326150454,
+              7.907081326150454
+            ],
+            "layer_increment_mm": [
+              0.1,
+              0.1
+            ]
+          },
+          "checks": [
+            {
+              "metric": "first_layer_gap_mm",
+              "status": "unknown",
+              "margin": null
+            },
+            {
+              "metric": "layer_increment_mm",
+              "status": "unknown",
+              "margin": null
+            },
+            {
+              "metric": "commanded_flow_proxy_mm3_s",
+              "status": "unknown",
+              "margin": null
+            },
+            {
+              "metric": "max_displacement_mm",
+              "status": "unknown",
+              "margin": null
+            },
+            {
+              "metric": "safety_factor_min",
+              "status": "unknown",
+              "margin": null
+            }
+          ],
+          "worst_case_violation_count": 0,
+          "success_probability": null,
+          "physical_stability_verified": false,
+          "setting_approval": false,
+          "missing_tolerances": [
+            "first_layer_gap_mm",
+            "layer_increment_mm",
+            "flow_mm3_s",
+            "displacement_mm",
+            "safety_factor"
+          ],
+          "response_calibration_required": [
+            "Z/flow/speed -> bead bonding, porosity, Ra, warp and constitutive properties"
+          ],
+          "interpretation": "conditional interval sensitivity, not independent printing evidence"
+        },
+        "unit": null,
+        "status": "needs_calibration",
+        "evidence": null,
+        "uncertainty": null,
+        "domain": {},
+        "trace": [
+          {
+            "model_id": "process_stability",
+            "inputs": {},
+            "note": null
+          }
+        ],
+        "model_id": "process_stability",
+        "model_class": "A"
+      }
+    }
+  ],
+  "physical_optimum": null,
+  "setting_approval": false,
+  "scope": "finite candidates; declared independent box uncertainty; unknown checks excluded",
+  "note": "No measured noise bounds/tolerances or settings-to-print-quality response supplied; no robust optimum can be certified"
+}

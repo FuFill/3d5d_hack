@@ -35,6 +35,7 @@ def fixture_data(baseline):
     return {"dataset_id": DATASET, "source": "physical_test",
             "design": "SYNTHETIC SOFTWARE FIXTURE ONLY, not measured print evidence",
             "context": context, "treatment": KEY, "covariates": ["wall_line_count"],
+            "covariate_timing": {"wall_line_count": "assigned_control"},
             "units": {KEY: "%", "wall_line_count": "count"},
             "outcome": {"name": OUTCOME, "unit": "N"}, "observations": rows}
 

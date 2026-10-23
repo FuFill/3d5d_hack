@@ -1,0 +1,180 @@
+{
+  "backend_state": 3,
+  "nodes": [
+    {
+      "parent": "Root",
+      "vertices": 36,
+      "name": "beam.stl",
+      "modifier": {
+        "anti_overhang_mesh": false,
+        "support_mesh": false,
+        "support_mesh_drop_down": true
+      },
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          4.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ],
+  "project": {
+    "sha256": "07a2546ec860067dc155e2226270836ee3523cd121b9bfdc67a96049adaf98c3",
+    "path": "stock.3mf"
+  },
+  "readback": null,
+  "expected": {
+    "layer_height": 0.1,
+    "nozzle_temperature": 200,
+    "printing_mode": "classic",
+    "build_volume": [
+      351,
+      300.3,
+      300
+    ],
+    "bed_temperature": 60,
+    "xy_centered": false
+  },
+  "gcode": {
+    "sha256": "511d3871ece066a7867918278dd3fc0d43e082fda50d069f03eb1a6a6a414a27",
+    "path": "stock.gcode",
+    "bytes": 317137
+  },
+  "backend": "CuraEngineBackend",
+  "status": "slice_completed",
+  "inspection": {
+    "checks": [
+      {
+        "check": "has_layers",
+        "note": "78 layers",
+        "status": "pass"
+      },
+      {
+        "check": "no_empty_layers",
+        "note": "empty layers: none",
+        "status": "pass"
+      },
+      {
+        "check": "extrusion_present",
+        "note": "filament mm per tool: {0: 1332.0}",
+        "status": "pass"
+      },
+      {
+        "check": "finite_coordinates",
+        "note": "nonfinite numbers on lines: []",
+        "status": "pass"
+      },
+      {
+        "check": "supported_commands",
+        "note": "unrecognised: none",
+        "status": "pass"
+      },
+      {
+        "check": "single_extrusion_mode",
+        "note": "modes: ['absolute']",
+        "status": "pass"
+      },
+      {
+        "check": "nozzle_temperature",
+        "note": "expected 200, found [200.0]",
+        "status": "pass"
+      },
+      {
+        "check": "bed_temperature",
+        "note": "expected 60, found [0.0, 60.0]",
+        "status": "pass"
+      },
+      {
+        "check": "mode_consistency",
+        "note": "rotary extrusion moves: 0; systems: ['G54']",
+        "status": "pass"
+      },
+      {
+        "check": "volumetric_flow",
+        "note": "max linear 3.60 mm3/s; no calibrated Q_limit",
+        "status": "unknown"
+      },
+      {
+        "check": "z_within_build_volume",
+        "note": "max Z 8.00 vs 300.0",
+        "status": "pass"
+      },
+      {
+        "check": "extrusion_within_build_volume",
+        "note": "extrusion bounds [[0.0, 0.0, 0.0], [213.3, 163.95, 8.0]]; spatial G92 needs a coordinate transform",
+        "status": "pass"
+      },
+      {
+        "check": "layer_schedule",
+        "note": "planar=True; observed increments=[0.1] mm",
+        "status": "pass"
+      }
+    ],
+    "summary": {
+      "layers": 78,
+      "time_header": "2321",
+      "coordinate_systems": [
+        "G54"
+      ],
+      "filament_volume_mm3": {
+        "0": 3203.813690238068
+      },
+      "feature_extruded_mm": {
+        "WALL-OUTER": 189.44973000000002,
+        "FILL": 314.3294000000001,
+        "WALL-INNER": 185.1924400000001,
+        "SKIN": 457.55454999999995,
+        "SKIRT": 168.46483
+      },
+      "filament_used_header": "1.31499m, 0m",
+      "bbox": {
+        "G54": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            213.3,
+            163.95,
+            8.0
+          ]
+        ]
+      },
+      "rotary_ranges": {
+        "C": [
+          0.0,
+          0.0
+        ],
+        "A": [
+          0.0,
+          0.0
+        ]
+      },
+      "retractions": 4,
+      "max_linear_flow_mm3_s": 3.6028128495313894,
+      "support_extruded_mm": 0,
+      "label": "slicer estimate"
+    }
+  }
+}

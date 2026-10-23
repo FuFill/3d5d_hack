@@ -1,0 +1,103 @@
+{
+  "nodes": [
+    {
+      "modifier": {
+        "anti_overhang_mesh": false,
+        "support_mesh": false,
+        "support_mesh_drop_down": true
+      },
+      "mesh_sha256": "f43c7a6e07da3c4239cb3f267f94967f32e4fc9c1757187825ea6ab665ce592c",
+      "parent": "Root",
+      "name": "shelf.stl",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_bounds": [
+        [
+          -15.0,
+          0.0,
+          -5.0
+        ],
+        [
+          15.0,
+          24.0,
+          5.0
+        ]
+      ],
+      "vertices": 14
+    },
+    {
+      "modifier": {
+        "anti_overhang_mesh": false,
+        "support_mesh": true,
+        "support_mesh_drop_down": true
+      },
+      "mesh_sha256": "d3578a3cbe2253bdbfba21e25a0f551d13201c57c536723308a18ebd690f80fe",
+      "parent": "shelf.stl",
+      "name": "support_enforcer",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_bounds": [
+        [
+          -10.09000015258789,
+          0.0,
+          -4.090000152587891
+        ],
+        [
+          14.09000015258789,
+          20.399999618530273,
+          4.090000152587891
+        ]
+      ],
+      "vertices": 24
+    }
+  ],
+  "status": "computed"
+}

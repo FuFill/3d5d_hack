@@ -39,6 +39,27 @@ def test_dml_groups_never_cross_training_and_validation():
     assert numpy.all(tested == 1)
 
 
+def test_dml_preprocessing_and_nuisance_fit_ignore_held_out_targets():
+    x, d, y = _sample()
+    groups = numpy.repeat(numpy.arange(len(d) // 4), 4)
+    train, test = next(SG._dml_splits(groups, 5, 31))
+    targets = numpy.column_stack((y, d))
+    first = SG._dml_predict(x[train], targets[train], x[test])
+    targets[test] += 1e9  # A held-out label cannot affect its nuisance prediction.
+    second = SG._dml_predict(x[train], targets[train], x[test])
+    assert numpy.array_equal(first, second)
+    # Training-only min/max and column selection agree with an independent basis.
+    lo, hi = x[train].min(axis=0), x[train].max(axis=0)
+    a = SG._quad_design(2 * (x[train] - lo) / (hi - lo) - 1)
+    b = SG._quad_design(2 * (x[test] - lo) / (hi - lo) - 1)
+    independent = b.dot(numpy.linalg.lstsq(a, targets[train], rcond=None)[0])
+    assert numpy.allclose(second, independent)
+    fit = SG.fit_double_ml(x, d, y, groups)
+    audit = fit.value["diagnostics"]["cross_fitting"]
+    assert audit["test_coverage_exactly_once"]
+    assert all(f["group_overlap"] == 0 for f in audit["folds"])
+
+
 def test_dml_cluster_uncertainty_does_not_count_coupons_as_print_jobs():
     rng = numpy.random.RandomState(123)
     count, repeats = 120, 8

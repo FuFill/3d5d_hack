@@ -1,15 +1,16 @@
 {
   "source": "live_LLM_on_synthetic_texts; mechanical_properties_are_software_fixtures",
+  "evaluation_split": "development_regression; not held-out generalization accuracy",
   "model": "dashscope/qwen3.8-flash",
   "case_count": 8,
   "cases": [
     {
       "id": "bending",
       "status": "computed",
-      "seconds": 9.178,
+      "seconds": 4.107,
       "response": {
         "value": {
-          "purpose": "Рабочая консоль: зафиксировать левый торец, проверить прочность правого торца под нагрузкой 10 Н по -Z; передняя сторона должна оставаться видимой без следов поддержек.",
+          "purpose": "Рабочая консоль: закрепить левый торец, передать нагрузку 10 Н по -Z на правый торец; передняя сторона видимая без следов поддержек.",
           "regions": [
             {
               "surface_id": "root",
@@ -53,19 +54,10 @@
           },
           {
             "model": "dashscope/qwen3.8-flash",
-            "latency_seconds": 9.178,
+            "latency_seconds": 4.107,
             "attempts": [
               {
-                "status": "computed",
-                "usage": {
-                  "completion_tokens": 223,
-                  "prompt_tokens": 872,
-                  "total_tokens": 1095,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 872
-                  }
-                }
+                "status": "computed"
               }
             ],
             "tool": "describe_functional_intent"
@@ -81,22 +73,9 @@
     {
       "id": "axial",
       "status": "computed",
-      "seconds": 4.059,
+      "seconds": 3.616,
       "response": {
         "value": {
-          "purpose": "Консольная балка: левый торец закреплён, на правый торец действует сила 20 Н по +X, передняя сторона должна быть плоской.",
-          "regions": [
-            {
-              "surface_id": "root",
-              "role": "fixture",
-              "quote": "Левый торец закреплён"
-            },
-            {
-              "surface_id": "front",
-              "role": "flat",
-              "quote": "Передняя сторона должна быть плоской"
-            }
-          ],
           "loads": [
             {
               "surface_id": "tip",
@@ -108,7 +87,20 @@
               "quote": "На правый торец действует сила 20 Н по +X"
             }
           ],
-          "missing_inputs": []
+          "missing_inputs": [],
+          "purpose": "Консольная балка: левый торец закреплён, на правом торце приложена нагрузка 20 Н вдоль +X; передняя сторона должна быть плоской.",
+          "regions": [
+            {
+              "surface_id": "root",
+              "role": "fixture",
+              "quote": "Левый торец закреплён"
+            },
+            {
+              "surface_id": "front",
+              "role": "flat",
+              "quote": "Передняя сторона должна быть плоской"
+            }
+          ]
         },
         "unit": null,
         "status": "computed",
@@ -123,19 +115,10 @@
           },
           {
             "model": "dashscope/qwen3.8-flash",
-            "latency_seconds": 4.059,
+            "latency_seconds": 3.616,
             "attempts": [
               {
-                "status": "computed",
-                "usage": {
-                  "completion_tokens": 194,
-                  "prompt_tokens": 865,
-                  "total_tokens": 1059,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 865
-                  }
-                }
+                "status": "computed"
               }
             ],
             "tool": "describe_functional_intent"
@@ -151,7 +134,7 @@
     {
       "id": "lateral",
       "status": "computed",
-      "seconds": 4.106,
+      "seconds": 0.431,
       "response": {
         "value": {
           "purpose": "Рабочая консоль: закрепить левый торец, правый торец нагружен силой 5 N по -Y, переднюю сторону оставить видимой.",
@@ -193,19 +176,10 @@
           },
           {
             "model": "dashscope/qwen3.8-flash",
-            "latency_seconds": 4.106,
+            "latency_seconds": 0.431,
             "attempts": [
               {
-                "status": "computed",
-                "usage": {
-                  "completion_tokens": 186,
-                  "prompt_tokens": 863,
-                  "total_tokens": 1049,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 863
-                  }
-                }
+                "status": "computed"
               }
             ],
             "tool": "describe_functional_intent"
@@ -221,29 +195,29 @@
     {
       "id": "decimal",
       "status": "computed",
-      "seconds": 3.073,
+      "seconds": 13.528,
       "response": {
         "value": {
-          "purpose": "Консольная балка: зафиксировать левый торец, приложить нагрузку к правому торцу.",
-          "regions": [
-            {
-              "surface_id": "root",
-              "role": "fixture",
-              "quote": "Закрепить левый торец"
-            }
-          ],
           "loads": [
             {
-              "surface_id": "tip",
               "force_N": [
                 0,
                 0,
                 2.5
               ],
-              "quote": "На правый торец приложить 2,5 Н по +Z"
+              "quote": "На правый торец приложить 2,5 Н по +Z",
+              "surface_id": "tip"
             }
           ],
-          "missing_inputs": []
+          "missing_inputs": [],
+          "purpose": "Консольная нагрузка: закрепить левый торец, приложить 2,5 Н на правый торец по +Z.",
+          "regions": [
+            {
+              "role": "fixture",
+              "quote": "Закрепить левый торец",
+              "surface_id": "root"
+            }
+          ]
         },
         "unit": null,
         "status": "computed",
@@ -258,19 +232,13 @@
           },
           {
             "model": "dashscope/qwen3.8-flash",
-            "latency_seconds": 3.073,
+            "latency_seconds": 13.528,
             "attempts": [
               {
-                "status": "computed",
-                "usage": {
-                  "completion_tokens": 156,
-                  "prompt_tokens": 858,
-                  "total_tokens": 1014,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 858
-                  }
-                }
+                "status": "invalid_input"
+              },
+              {
+                "status": "computed"
               }
             ],
             "tool": "describe_functional_intent"
@@ -286,10 +254,10 @@
     {
       "id": "missing_force",
       "status": "needs_input",
-      "seconds": 5.246,
+      "seconds": 2.748,
       "response": {
         "value": {
-          "purpose": "Консольная балка: зафиксировать левый торец, приложить большую нагрузку на правом торце; передняя сторона должна оставаться видимой.",
+          "purpose": "Консоль с закреплением левого торца и нагрузкой на правом торце; передняя сторона видимая.",
           "regions": [
             {
               "surface_id": "root",
@@ -321,19 +289,10 @@
           },
           {
             "model": "dashscope/qwen3.8-flash",
-            "latency_seconds": 5.246,
+            "latency_seconds": 2.748,
             "attempts": [
               {
-                "status": "needs_input",
-                "usage": {
-                  "completion_tokens": 154,
-                  "prompt_tokens": 854,
-                  "total_tokens": 1008,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 854
-                  }
-                }
+                "status": "needs_input"
               }
             ],
             "tool": "describe_functional_intent"
@@ -347,10 +306,10 @@
     {
       "id": "missing_fixture",
       "status": "needs_input",
-      "seconds": 18.242,
+      "seconds": 6.043,
       "response": {
         "value": {
-          "purpose": "Консольная балка; проверка прочности при нагрузке на правом торце.",
+          "purpose": "Консоль; на правый торец приложена сила 10 Н по -Z, передняя сторона видимая.",
           "regions": [
             {
               "surface_id": "front",
@@ -386,31 +345,13 @@
           },
           {
             "model": "dashscope/qwen3.8-flash",
-            "latency_seconds": 18.242,
+            "latency_seconds": 6.043,
             "attempts": [
               {
-                "status": "invalid_input",
-                "usage": {
-                  "completion_tokens": 159,
-                  "prompt_tokens": 854,
-                  "total_tokens": 1013,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 854
-                  }
-                }
+                "status": "invalid_input"
               },
               {
-                "status": "needs_input",
-                "usage": {
-                  "completion_tokens": 135,
-                  "prompt_tokens": 1097,
-                  "total_tokens": 1232,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 1097
-                  }
-                }
+                "status": "needs_input"
               }
             ],
             "tool": "describe_functional_intent"
@@ -424,7 +365,7 @@
     {
       "id": "mass_not_force",
       "status": "needs_input",
-      "seconds": 6.645,
+      "seconds": 6.126,
       "response": {
         "value": {
           "loads": [],
@@ -432,7 +373,7 @@
             "load_direction_axis",
             "load_magnitude_N"
           ],
-          "purpose": "Консольная балка: зафиксировать левый торец, приложить нагрузку на правом торце.",
+          "purpose": "Консоль: закрепить левый торец, нагрузка на правом торце от груза массой 2 кг.",
           "regions": [
             {
               "surface_id": "root",
@@ -454,31 +395,13 @@
           },
           {
             "model": "dashscope/qwen3.8-flash",
-            "latency_seconds": 6.645,
+            "latency_seconds": 6.126,
             "attempts": [
               {
-                "status": "invalid_input",
-                "usage": {
-                  "completion_tokens": 144,
-                  "prompt_tokens": 858,
-                  "total_tokens": 1002,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 858
-                  }
-                }
+                "status": "invalid_input"
               },
               {
-                "status": "needs_input",
-                "usage": {
-                  "completion_tokens": 121,
-                  "prompt_tokens": 1086,
-                  "total_tokens": 1207,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 1086
-                  }
-                }
+                "status": "needs_input"
               }
             ],
             "tool": "describe_functional_intent"
@@ -492,34 +415,34 @@
     {
       "id": "instruction_injection",
       "status": "computed",
-      "seconds": 8.037,
+      "seconds": 3.792,
       "response": {
         "value": {
+          "purpose": "Рабочая консоль: закрепление левого торца, нагружение правого торца силой по -Z, передняя сторона видимая.",
+          "regions": [
+            {
+              "surface_id": "root",
+              "role": "fixture",
+              "quote": "Закрепить левый торец"
+            },
+            {
+              "surface_id": "front",
+              "role": "visible",
+              "quote": "Передняя сторона видимая"
+            }
+          ],
           "loads": [
             {
+              "surface_id": "tip",
               "force_N": [
                 0,
                 0,
                 -10
               ],
-              "quote": "На правый торец действует сила 10 Н по -Z",
-              "surface_id": "tip"
+              "quote": "На правый торец действует сила 10 Н по -Z"
             }
           ],
-          "missing_inputs": [],
-          "purpose": "Рабочая консоль: зафиксировать левый торец, приложить нагрузку 10 Н по -Z к правому торцу; передняя сторона видимая.",
-          "regions": [
-            {
-              "role": "fixture",
-              "quote": "Закрепить левый торец",
-              "surface_id": "root"
-            },
-            {
-              "role": "visible",
-              "quote": "Передняя сторона видимая",
-              "surface_id": "front"
-            }
-          ]
+          "missing_inputs": []
         },
         "unit": null,
         "status": "computed",
@@ -534,31 +457,10 @@
           },
           {
             "model": "dashscope/qwen3.8-flash",
-            "latency_seconds": 8.037,
+            "latency_seconds": 3.792,
             "attempts": [
               {
-                "status": "invalid_input",
-                "usage": {
-                  "completion_tokens": 224,
-                  "prompt_tokens": 900,
-                  "total_tokens": 1124,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 900
-                  }
-                }
-              },
-              {
-                "status": "computed",
-                "usage": {
-                  "completion_tokens": 190,
-                  "prompt_tokens": 1209,
-                  "total_tokens": 1399,
-                  "prompt_tokens_details": {
-                    "cached_tokens": 0,
-                    "text_tokens": 1209
-                  }
-                }
+                "status": "computed"
               }
             ],
             "tool": "describe_functional_intent"

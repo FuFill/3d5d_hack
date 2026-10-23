@@ -15,11 +15,88 @@ KNOWN_M = {"82", "83", "84", "104", "105", "106", "107", "109", "110", "117", "1
            "204", "205", "220", "221", "400", "18", "201", "203"}
 KNOWN_WORDS = {"START", "END"}
 
+
+def inspect_support_contacts(text, regions, line_width_mm, top_distance_mm, layer_height_mm):
+    """Capsule/triangle contact check for horizontal underside patches in G-code coordinates.
+
+    Includes the line radius and top-gap rounding by one layer. This checks
+    contact presence/absence, not complete support coverage or load capacity.
+    Other coordinate systems, spatial resets or non-horizontal patches remain
+    unknown. TYPE identifies support; actual extruded segment geometry decides
+    contact. Region triangles must include the engine's bed-origin offset once.
+    """
+    import numpy as np
+    params = (line_width_mm, top_distance_mm, layer_height_mm)
+    if any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) for v in params):
+        raise ValueError("finite contact dimensions required")
+    if line_width_mm <= 0 or top_distance_mm < 0 or layer_height_mm <= 0:
+        raise ValueError("invalid contact dimensions")
+    parsed = parse_gcode(text, collect_segments=True)
+    segments = [s for s in parsed["extrusion_segments"] if s["feature"].startswith("SUPPORT")]
+
+    def cross(a, b):
+        return a[0] * b[1] - a[1] * b[0]
+
+    def point_distance(p, a, b):
+        v = b - a
+        t = max(0., min(1., float((p - a).dot(v)) / max(float(v.dot(v)), 1e-30)))
+        return float(np.linalg.norm(p - a - t * v))
+
+    def inside(p, tri):
+        signs = [cross(tri[(i + 1) % 3] - tri[i], p - tri[i]) for i in range(3)]
+        return min(signs) >= -1e-9 or max(signs) <= 1e-9
+
+    def distance(a, b, tri):
+        if inside(a, tri) or inside(b, tri):
+            return 0.
+        result = float("inf")
+        for i in range(3):
+            c, d = tri[i], tri[(i + 1) % 3]
+            ab, cd = b - a, d - c
+            den = cross(ab, cd)
+            if abs(den) > 1e-12:
+                t, u = cross(c - a, cd) / den, cross(c - a, ab) / den
+                if 0 <= t <= 1 and 0 <= u <= 1:
+                    return 0.
+            result = min(result, point_distance(a, c, d), point_distance(b, c, d),
+                         point_distance(c, a, b), point_distance(d, a, b))
+        return result
+
+    output = []
+    for region in regions:
+        triangles = np.asarray(region["triangles_mm"], dtype=float)
+        valid = (triangles.ndim == 3 and triangles.shape[1:] == (3, 3) and len(triangles)
+                 and np.isfinite(triangles).all())
+        planar = valid and all(np.ptp(t[:, 2]) < 1e-6 and abs(cross(t[1, :2] - t[0, :2], t[2, :2] - t[0, :2])) > 1e-10 for t in triangles)
+        uncertain = (not planar or parsed["spatial_resets"] or parsed["parse_errors"] or
+                     any(s["cs"] != "G54" or s["rotary"] or abs(s["start"][2] - s["end"][2]) > .011 for s in segments))
+        contacts = 0
+        samples = []
+        if not uncertain:
+            for segment in segments:
+                a, b = np.asarray(segment["start"]), np.asarray(segment["end"])
+                for triangle in triangles:
+                    gap = triangle[0, 2] - a[2]
+                    if (-.011 <= gap <= top_distance_mm + layer_height_mm + .011 and
+                            distance(a[:2], b[:2], triangle[:, :2]) <= line_width_mm / 2. + 1e-6):
+                        contacts += 1
+                        if len(samples) < 5:
+                            samples.append({"start": segment["start"], "end": segment["end"], "gap_mm": float(gap)})
+                        break
+        required = region["role"] == "required"
+        if region["role"] not in ("required", "forbidden"):
+            raise ValueError("contact role must be required or forbidden")
+        output.append({"id": region["id"], "role": region["role"], "contact_segments": contacts,
+                       "contact_samples": samples,
+                       "status": "unknown" if uncertain else ("pass" if bool(contacts) == required else "fail")})
+    return {"regions": output, "support_segments": len(segments),
+            "scope": "horizontal patch capsule intersection; no support coverage/strength or physical qualification"}
+
 _WORD = re.compile(r"([A-Z])\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)")
 _NONFINITE = re.compile(r"[XYZACEFS]\s*[-+]?(?:NAN|INF(?:INITY)?)(?=$|\s)")
 
 
-def parse_gcode(text, filament_diameter=1.75):
+def parse_gcode(text, filament_diameter=1.75, collect_segments=False):
     if (isinstance(filament_diameter, bool) or not isinstance(filament_diameter, (int, float))
             or not math.isfinite(filament_diameter) or filament_diameter <= 0):
         raise ValueError("finite positive filament diameter required")
@@ -32,6 +109,8 @@ def parse_gcode(text, filament_diameter=1.75):
             "rotary_extrusion_moves": 0, "moves": 0, "retractions": 0, "lines": 0,
             "feature_extruded_mm": {}, "parse_errors": [], "spatial_resets": 0}
     layer = None
+    if collect_segments:
+        info["extrusion_segments"] = []
     feature = "UNKNOWN"
     for raw in text.splitlines():
         info["lines"] += 1
@@ -130,6 +209,10 @@ def parse_gcode(text, filament_diameter=1.75):
             if de > 0:
                 dist = math.sqrt(sum((state["pos"][ax] - old[ax]) ** 2 for ax in ("X", "Y", "Z")))
                 if dist > 1e-6:
+                    if collect_segments:
+                        info["extrusion_segments"].append({"start": [old[a] for a in ("X", "Y", "Z")],
+                            "end": [state["pos"][a] for a in ("X", "Y", "Z")], "feature": feature,
+                            "cs": state["cs"], "rotary": any(abs(state["pos"][a] - old[a]) > 1e-9 for a in ("A", "C"))})
                     info["feature_extruded_mm"][feature] = info["feature_extruded_mm"].get(feature, 0.0) + de
                     if layer is not None:
                         layer["extrusion_z"].append(state["pos"]["Z"])
@@ -212,6 +295,26 @@ def inspect_toolpath(text, expected=None, filament_diameter=1.75):
             add("mode_consistency", "pass" if five else "fail",
                 "5D markers: coordinate systems %s, rotary extrusion moves %d" %
                 (info["coordinate_systems"], info["rotary_extrusion_moves"]))
+    if mode == "classic":
+        indices = [l["index"] for l in info["layers"] if l["index"] >= 0]
+        try:
+            declared = int(info["header"].get("LAYER_COUNT", len(indices)))
+        except (TypeError, ValueError):
+            declared = -1
+        complete = bool(indices) and indices == list(range(indices[-1] + 1))
+        add("layer_sequence", "pass" if complete else "fail",
+            "observed %s..%s (%d); declared %d" % (indices[0] if indices else None,
+              indices[-1] if indices else None, len(indices), declared))
+        add("declared_layer_count", "pass" if len(indices) == declared else "unknown",
+            "native header declares %d; %d extruding layer records; mismatch requires review" % (declared, len(indices)))
+        terminated = bool(re.search(r";\s*End of Gcode\s*$", text, re.I | re.M))
+        add("program_termination", "pass" if terminated else "unknown", "native end-of-program marker present=%s" % terminated)
+        if expected.get("model_top_z") is not None:
+            zs = [z for layer in info["layers"] for z in layer["extrusion_z"]]
+            tolerance = float(expected.get("layer_height", 0)) / 2 + .011
+            covered = bool(zs) and abs(max(zs) - expected["model_top_z"]) <= tolerance
+            add("model_height_coverage", "unknown" if info["spatial_resets"] else ("pass" if covered else "fail"),
+                "top extrusion Z=%s vs model top=%s, tolerance=%g" % (max(zs) if zs else None, expected["model_top_z"], tolerance))
     q = expected.get("q_limit")
     if q:
         status = "fail" if info["max_linear_flow_mm3_s"] > q else ("unknown" if info["rotary_extrusion_moves"] else "pass")

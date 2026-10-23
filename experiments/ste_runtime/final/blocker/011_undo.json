@@ -1,0 +1,152 @@
+{
+  "status": "computed",
+  "nodes": [
+    {
+      "name": "shelf.stl",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "Root",
+      "world_bounds": [
+        [
+          -15.0,
+          0.0,
+          -5.0
+        ],
+        [
+          15.0,
+          24.0,
+          5.0
+        ]
+      ],
+      "modifier": {
+        "support_mesh": false,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false
+      },
+      "vertices": 14,
+      "mesh_sha256": "f43c7a6e07da3c4239cb3f267f94967f32e4fc9c1757187825ea6ab665ce592c"
+    },
+    {
+      "name": "support_enforcer",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "shelf.stl",
+      "world_bounds": [
+        [
+          -10.09000015258789,
+          0.0,
+          -4.090000152587891
+        ],
+        [
+          4.090000152587891,
+          20.399999618530273,
+          4.090000152587891
+        ]
+      ],
+      "modifier": {
+        "support_mesh": true,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false
+      },
+      "vertices": 12,
+      "mesh_sha256": "2cc760c7205aa13003c5cf1c63c3b9e9f06ced4cf61a929a4d8be96d96f34724"
+    },
+    {
+      "name": "support_blocker",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "shelf.stl",
+      "world_bounds": [
+        [
+          2.8030662536621094,
+          19.5,
+          -7.196934700012207
+        ],
+        [
+          17.19693374633789,
+          20.5,
+          7.196934223175049
+        ]
+      ],
+      "modifier": {
+        "support_mesh": false,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": true
+      },
+      "vertices": 12,
+      "mesh_sha256": "b5ee4169ede60ba18762bdd20a18a25f8a46f191da797177fa971f9e989ba8a1"
+    }
+  ]
+}

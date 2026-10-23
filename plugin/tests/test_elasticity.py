@@ -36,6 +36,21 @@ def test_block_energy_is_additive_and_not_inverse_local_stiffness():
         assert_close(block["energy_share"], 0.5, rel=1e-8)
 
 
+def test_adjacent_block_boundary_centroids_are_assigned_once():
+    mesh = structured_bar(nx=4)
+    centers = np.asarray(mesh["nodes_mm"])[np.asarray(mesh["elements"])[:, :4]].mean(axis=1)
+    cut = float(centers[len(centers) // 2, 0])
+    assert (centers[:, 0] == cut).any()
+    blocks = [{"id": "left", "bounds_mm": [[-1, -1, -1], [cut, 3, 3]]},
+              {"id": "right", "bounds_mm": [[cut, -1, -1], [11, 3, 3]]}]
+    result = E.solve(mesh, *axial_inputs(mesh), blocks=blocks)
+    assert result.ok, result.trace
+    case = result.value["cases"][0]
+    assert_close(sum(b["compliance_contribution_Nmm"] for b in case["blocks"]), case["compliance_Nmm"])
+    blocks[1]["bounds_mm"][0][0] = cut - 0.1
+    assert E.solve(mesh, *axial_inputs(mesh), blocks=blocks).status == "invalid_input"
+
+
 def test_orthotropic_rotation_energy_and_positive_definiteness():
     c = E.constitutive({"E_xy_MPa": 2000, "E_z_MPa": 800, "nu_xy": 0.25,
                         "nu_xz": 0.1, "G_xz_MPa": 400})

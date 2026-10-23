@@ -1,0 +1,360 @@
+{
+  "backend": "CuraEngineBackend",
+  "expected": {
+    "bed_temperature": 60.0,
+    "build_volume": [
+      351,
+      300.3,
+      300
+    ],
+    "layer_height": 0.2,
+    "xy_centered": false,
+    "model_top_z": 24.0,
+    "nozzle_temperature": 235.0,
+    "printing_mode": "classic"
+  },
+  "nodes": [
+    {
+      "name": "shelf.stl",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "Root",
+      "world_bounds": [
+        [
+          -15.0,
+          0.0,
+          -5.0
+        ],
+        [
+          15.0,
+          24.0,
+          5.0
+        ]
+      ],
+      "modifier": {
+        "support_mesh": false,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false
+      },
+      "vertices": 14,
+      "mesh_sha256": "f43c7a6e07da3c4239cb3f267f94967f32e4fc9c1757187825ea6ab665ce592c"
+    },
+    {
+      "name": "support_enforcer",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "shelf.stl",
+      "world_bounds": [
+        [
+          -10.09000015258789,
+          0.0,
+          -4.090000152587891
+        ],
+        [
+          4.090000152587891,
+          20.399999618530273,
+          4.090000152587891
+        ]
+      ],
+      "modifier": {
+        "support_mesh": true,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false
+      },
+      "vertices": 12,
+      "mesh_sha256": "2cc760c7205aa13003c5cf1c63c3b9e9f06ced4cf61a929a4d8be96d96f34724"
+    },
+    {
+      "name": "support_blocker",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "shelf.stl",
+      "world_bounds": [
+        [
+          2.8030662536621094,
+          19.5,
+          -7.196934700012207
+        ],
+        [
+          17.19693374633789,
+          20.5,
+          7.196934223175049
+        ]
+      ],
+      "modifier": {
+        "support_mesh": false,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": true
+      },
+      "vertices": 12,
+      "mesh_sha256": "b5ee4169ede60ba18762bdd20a18a25f8a46f191da797177fa971f9e989ba8a1"
+    }
+  ],
+  "backend_state": 3,
+  "status": "slice_completed",
+  "readback": {
+    "machine_definition": "hte530v5.2.4",
+    "differences": [],
+    "material_id": "enduse_petg",
+    "status": "pass",
+    "actual": {
+      "material_flow": 100,
+      "speed_print": 45.0,
+      "retraction_amount": 1.5,
+      "cool_fan_enabled": true,
+      "bottom_layers": 5,
+      "support_enable": true,
+      "cool_fan_speed": 20.0,
+      "adhesion_type": "brim",
+      "support_xy_distance": 0.7,
+      "support_type": "everywhere",
+      "support_interface_enable": false,
+      "wall_line_count": 3,
+      "material_bed_temperature": 60.0,
+      "infill_pattern": "lines",
+      "cylindrical_mode_base_diameter": 6,
+      "cylindrical_mode_overlap": 0,
+      "material_print_temperature": 235.0,
+      "machine_width": 351,
+      "non_printing_base_diameter": 6,
+      "machine_center_is_zero": false,
+      "support_bottom_enable": false,
+      "support_roof_enable": false,
+      "machine_depth": 300.3,
+      "layer_height_0": 0.3,
+      "machine_height": 300,
+      "layer_height": 0.2,
+      "line_width": 0.4,
+      "top_layers": 5,
+      "infill_sparse_density": 30.0,
+      "support_line_width": 0.4,
+      "retraction_speed": 11.5,
+      "machine_heated_bed": true,
+      "support_bottom_distance": 0.1,
+      "support_top_distance": 0.1,
+      "support_angle": 50,
+      "wall_thickness": 0.8,
+      "retraction_enable": true,
+      "machine_nozzle_size": 0.4,
+      "printing_mode": "classic"
+    },
+    "quality_id": "normal"
+  },
+  "inspection": {
+    "checks": [
+      {
+        "check": "has_layers",
+        "status": "pass",
+        "note": "120 layers"
+      },
+      {
+        "check": "no_empty_layers",
+        "status": "pass",
+        "note": "empty layers: none"
+      },
+      {
+        "check": "extrusion_present",
+        "status": "pass",
+        "note": "filament mm per tool: {0: 1344.4}"
+      },
+      {
+        "check": "finite_coordinates",
+        "status": "pass",
+        "note": "nonfinite numbers on lines: []"
+      },
+      {
+        "check": "supported_commands",
+        "status": "pass",
+        "note": "unrecognised: none"
+      },
+      {
+        "check": "single_extrusion_mode",
+        "status": "pass",
+        "note": "modes: ['absolute']"
+      },
+      {
+        "check": "nozzle_temperature",
+        "status": "pass",
+        "note": "expected 235, found [235.0]"
+      },
+      {
+        "check": "bed_temperature",
+        "status": "pass",
+        "note": "expected 60, found [0.0, 60.0]"
+      },
+      {
+        "check": "mode_consistency",
+        "status": "pass",
+        "note": "rotary extrusion moves: 0; systems: ['G54']"
+      },
+      {
+        "check": "layer_sequence",
+        "status": "pass",
+        "note": "observed 0..119 (120); declared 120"
+      },
+      {
+        "check": "declared_layer_count",
+        "status": "pass",
+        "note": "native header declares 120; 120 extruding layer records; mismatch requires review"
+      },
+      {
+        "check": "program_termination",
+        "status": "pass",
+        "note": "native end-of-program marker present=True"
+      },
+      {
+        "check": "model_height_coverage",
+        "status": "pass",
+        "note": "top extrusion Z=24.1 vs model top=24.0, tolerance=0.111"
+      },
+      {
+        "check": "volumetric_flow",
+        "status": "unknown",
+        "note": "max linear 3.60 mm3/s; no calibrated Q_limit"
+      },
+      {
+        "check": "z_within_build_volume",
+        "status": "pass",
+        "note": "max Z 24.10 vs 300.0"
+      },
+      {
+        "check": "extrusion_within_build_volume",
+        "status": "pass",
+        "note": "extrusion bounds [[0.0, 0.0, 0.0], [190.3, 163.15, 24.1]]; spatial G92 needs a coordinate transform"
+      },
+      {
+        "check": "layer_schedule",
+        "status": "pass",
+        "note": "planar=True; observed increments=[0.2] mm"
+      }
+    ],
+    "summary": {
+      "coordinate_systems": [
+        "G54"
+      ],
+      "filament_used_header": "1.03092m, 0m",
+      "label": "slicer estimate",
+      "filament_volume_mm3": {
+        "0": 3233.6975857370267
+      },
+      "bbox": {
+        "G54": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            190.3,
+            163.15,
+            24.1
+          ]
+        ]
+      },
+      "retractions": 201,
+      "max_linear_flow_mm3_s": 3.601067759763845,
+      "feature_extruded_mm": {
+        "SUPPORT": 292.1744799999998,
+        "WALL-INNER": 242.3200499999997,
+        "WALL-OUTER": 140.39768000000066,
+        "FILL": 85.51857999999973,
+        "SKIRT": 93.68103,
+        "SKIN": 176.82341000000014
+      },
+      "support_extruded_mm": 292.1744799999998,
+      "time_header": "1352",
+      "layers": 120,
+      "rotary_ranges": {
+        "A": [
+          0.0,
+          0.0
+        ],
+        "C": [
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "gcode": {
+    "bytes": 310317,
+    "path": "part.gcode",
+    "sha256": "814387f1bf63b3cbdcb1dff71efd94bf864657c652c516a4c1fb4eb191190673"
+  },
+  "project": {
+    "path": "part.3mf",
+    "sha256": "17a578185a54386061e2e5b4d64bbe3e7ee213c43a676eef182eb61019bbf2d1"
+  }
+}

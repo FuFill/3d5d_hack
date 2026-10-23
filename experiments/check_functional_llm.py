@@ -80,6 +80,7 @@ def main():
                                   resources_dir=resources_dir(), forced_mode="classic")
     functional = e2e["functional_analysis"]
     result = {"source": "live_LLM_on_synthetic_texts; mechanical_properties_are_software_fixtures",
+              "evaluation_split": "development_regression; not held-out generalization accuracy",
               "model": os.environ.get("LLM_MODEL"), "case_count": len(rows), "cases": rows,
               "metrics": {"golden_case_accuracy": sum(r["correct"] for r in rows) / len(rows),
                           "exact_force_accuracy": sum(r["force_exact_match"] for r in valid) / len(valid),

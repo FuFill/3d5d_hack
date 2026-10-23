@@ -224,14 +224,25 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
             raise ValueError("all nodes are constrained")
         centers = nodes[elements[:, :4]].mean(axis=1)
         labels = np.full(len(elements), "unassigned", dtype=object)
-        block_ids = set()
+        block_ids, block_bounds = set(), []
         for block in blocks or []:
             name = block["id"]
             if not isinstance(name, str) or not name.strip() or name in block_ids or name == "unassigned":
                 raise ValueError("distinct nonempty block ids required")
             block_ids.add(name)
             selected = select_points(centers, {"bounds_mm": block["bounds_mm"]})
-            if not selected.any() or (labels[selected] != "unassigned").any():
+            bounds = np.asarray(block["bounds_mm"], dtype=float)
+            # Adjacent closed boxes share a face. A centroid on that face must
+            # belong to exactly one block, independently of Gmsh/platform noise.
+            # Reject intersections with positive volume, even if no centroid
+            # happens to land inside the overlap. Boundary ties use input order.
+            for previous in block_bounds:
+                overlap = np.minimum(bounds[1], previous[1]) - np.maximum(bounds[0], previous[0])
+                if (overlap > 1e-9).all():
+                    raise ValueError("overlapping block volumes")
+            block_bounds.append(bounds)
+            selected &= labels == "unassigned"
+            if not selected.any():
                 raise ValueError("empty or overlapping element blocks")
             labels[selected] = name
         outcomes, case_ids = [], set()

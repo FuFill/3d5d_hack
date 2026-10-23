@@ -40,6 +40,7 @@ def _experiment(context):
             "design": "software fixture of a randomized, controlled physical-test record",
             "context": copy.deepcopy(context), "treatment": "infill_sparse_density",
             "covariates": ["wall_line_count"],
+            "covariate_timing": {"wall_line_count": "assigned_control"},
             "units": {"infill_sparse_density": "%", "wall_line_count": "count"},
             "outcome": {"name": "breaking_load", "unit": "N"}, "observations": rows}
 
@@ -72,6 +73,28 @@ def test_calibration_rejects_synthetic_data_and_context_transfer():
         data["context"][key] = "different"
         result = calibration.assess_double_ml([data], context, resolver)
         assert result.value[0]["status"] == "out_of_domain", key
+
+
+def test_calibration_rejects_post_treatment_control_and_requests_missing_timing():
+    resolver = _resolver()
+    context = _context(resolver)
+    data = _experiment(context)
+    data.pop("covariate_timing")
+    assert calibration.assess_double_ml([data], context, resolver).value[0]["status"] == "needs_input"
+    data["covariate_timing"] = {"wall_line_count": "post_treatment"}
+    assert calibration.assess_double_ml([data], context, resolver).value[0]["status"] == "invalid_input"
+
+
+def test_calibration_can_group_correlated_jobs_but_never_split_one_job():
+    resolver = _resolver()
+    context = _context(resolver)
+    data = _experiment(context)
+    for row in data["observations"]:
+        row["independence_group_id"] = "batch_" + str(int(row["print_job_id"]) // 3)
+    result = calibration.assess_double_ml([data], context, resolver)
+    assert result.value[0]["value"]["fit"]["value"]["independent_groups"] == 30
+    data["observations"][0]["independence_group_id"] = "split_job"
+    assert calibration.assess_double_ml([data], context, resolver).value[0]["status"] == "invalid_input"
 
 
 def test_calibration_refuses_unit_errors_missing_outcomes_and_duplicate_samples():
@@ -140,6 +163,7 @@ def test_causal_support_does_not_bypass_slicer_bounds_or_fixed_controls():
 
     data = _experiment(context)
     data["treatment"], data["covariates"] = "layer_height", ["top_layers"]
+    data["covariate_timing"] = {"top_layers": "assigned_control"}
     data["units"] = {"layer_height": "mm", "top_layers": "count"}
     del data["context"]["fixed_settings"]["layer_height"]
     for i, row in enumerate(data["observations"]):

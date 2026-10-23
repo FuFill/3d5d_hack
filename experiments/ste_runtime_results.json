@@ -1,0 +1,1017 @@
+{
+  "status": "pass",
+  "native_slicing_successes": 5,
+  "native_slicing_scenarios": 5,
+  "runtime": {
+    "loaded_kernel_source_sha256": {
+      "structure.py": "e73cd83791b249f0e728267fb9038bbe164cdd76d028bd6c95f6df6683aad127",
+      "optimize.py": "9105296ef0df9d921b1899a1689025e49e79864eaa4072cd616325d1e4110ad6",
+      "planner.py": "13261a8cef15a223ae8abbc7e4bdd39e7fc335111125f9418a4be8f9f06a7cb9",
+      "qwen_assistant.py": "1847ad70e5d134f57ba25d7b000504d104389a5ffae96610c65608b2acbac600",
+      "qwen_client.py": "4075f7c7ca33c21fcd49f2ec6d908c8ee54ac3d704358366f17b1a2d177e0bda",
+      "process_plan.py": "0eadb15df1636bd4cf93b69ef027a5124f2358e61e9d84ec2a034b7dce50b4aa",
+      "gcode.py": "98e03e7358d5241e0b456ce12670052252db9781af4248f0ab1a7ce0ab6e042f",
+      "elasticity.py": "3d63d135271b2ba536763e7457d703f368148e7691b665e5f04a5d4ba3e494bf",
+      "assistant.py": "d5e922b3851dc00472425fb72852991a5991ed83bcb44938e5f481ae30fe9623",
+      "surrogate.py": "e59067e46bc4674dc50a206f6b765c5f3a4265b052f40d4ec83a6cde5a76b299",
+      "calibration.py": "8b4c598ab7c94debf27bd4b9296dc840a01d7b0c050358247b412b06ec47ab46",
+      "process.py": "ad2e955ef28f701728158f022a00bded02db8caefab6eb2ca5e40d8abb4843f0",
+      "result.py": "cacad1db8b94d85e29ec06e6f65dcb6aea641c5c53642d6d943fe055d4da8162",
+      "geometry.py": "87ed4ba0a23aaef2d63617499fb9d999cafef8cde34f58758b23251d73ab2ec9",
+      "__init__.py": "f1001a69b255f4de82ce7f365e9bfbe22ced86db2fa99b4f1619c136c1b51734",
+      "requirements.py": "b97b9e02ae36374b768ff59c84adc021298ab3388b82a65ccc0ce0ed950d08b5",
+      "verification.py": "1ee4091a339e14c8a9ee64e06f7d777fd3a56b4118ca8ce3e60d860130fd50c3",
+      "runtime_adapter.py": "ee6703883d33ba545e9840fa60381a9fe1cbdcd267488b4feeaf8c8c18a594cb",
+      "robustness.py": "1f2421ee03c152707b5d40f1cdfc069455ea2cd52d4dca1e38f4cc51a53f1737",
+      "materials.py": "50fe21e1566a3ffff5621f5c9fb6a9f223cff044432683c52413656c1ba4a2c9",
+      "compiler.py": "6a29ab47d94efd3df800c771bd0eab394612a30dc0d68b1df512d7dd2fefab10",
+      "llm_requirements.py": "2ebd56509e87d4802873bbefff6a6a89bd93df0ffc76324eebf7a433d844fcf5",
+      "volume_mesh.py": "44f4c09c22e0cbc23a37762d588b911ee3e750c00fd2004b3a0099e16d9b9fea",
+      "routes.py": "1027d5aff441372d10a646e20e10319dc45cbb52d7841e21821eab00bf0aa28e",
+      "functional.py": "383667b622b93fb1bf7f50c778cfdd086b479aab714dcf5797f4da97112fbd64",
+      "settings_schema.py": "97969aed221f5df5463c2cb4807892092ccfbc7d6b2625f9143e085dd37b4c86",
+      "mechanics.py": "69230ec945ab7697df1e1d79908e4565d097e7ad0a9712ae8bcbbabef4287b42",
+      "causal_bridge.py": "c158d487da5ea482c2629f0cca7f944af22c5ee4e8269fa6f9d6472a3664ace8",
+      "units.py": "a2d86065caa47f759b3b52d421aa00f63c97e74278c8917407b20a5fadab939e"
+    },
+    "python": "3.5.7 (default, Oct 23 2020, 08:07:59) [MSC v.1900 64 bit (AMD64)]",
+    "machine": {
+      "extruders": {
+        "1": {
+          "id": "stereotech_v5.2.4_extruder_second #2",
+          "material": "generic_pla_175",
+          "variant": "empty_variant"
+        },
+        "0": {
+          "id": "stereotech_v5.2.4_extruder_main #2",
+          "material": "generic_pla_175",
+          "variant": "empty_variant"
+        }
+      },
+      "id": "Stereotech Hybrid 530 V5.2.4",
+      "definition": "hte530v5.2.4"
+    },
+    "qt_thread": true,
+    "status": "computed",
+    "ste_version": "7.10.12",
+    "pyqt": "5.10",
+    "qt": "5.10.0",
+    "material_api": "(position:str, root_material_id:str) -> None",
+    "os": "Windows-10-10.0.19041",
+    "engines": {
+      "DiscreteSlicer.exe": {
+        "sha256": "affeae99fae730b840f10bb110996dbf9118c4b1fe0294dc4f6c715b91006d03",
+        "bytes": 6325258
+      },
+      "STESlicer.exe": {
+        "sha256": "7571fe289e0a5011fb6b7c664a514e5344c18069ead5a400d5d103fbdb1dc6e4",
+        "bytes": 135680
+      },
+      "CliParser.exe": {
+        "sha256": "2cf28a09b32c3016cef46e777a536b2cd77922bec1db0cdbfb682dd85a5db158",
+        "bytes": 5623946
+      },
+      "python35.dll": {
+        "sha256": "27333273a1c65c2e9eabc066b567fa5ce54913fb1aaa352bcb15a344cf15f417",
+        "bytes": 3953664
+      },
+      "CuraEngine.exe": {
+        "sha256": "f14e686a52e467e2b9704a0616ef2937bd0731305f7006c6f83ab30523622440",
+        "bytes": 5323833
+      },
+      "glicer_console.exe": {
+        "sha256": "128b1013285279a927cf71c6193e456edf8d60f0d8e8515172877072a7916ae3",
+        "bytes": 8198144
+      }
+    },
+    "api": {
+      "backend": {
+        "module": "CylindricalBackend.CylindricalBackend",
+        "methods": {
+          "getLog": "()",
+          "setCurrent": "(current=True)",
+          "setProperty": "Qt builtin",
+          "getVersion": "() -> str",
+          "setParent": "Qt builtin",
+          "getPluginId": "()",
+          "getBackends": "() -> Dict[str, UM.Backend.Backend.Backend]",
+          "setVersion": "(version:str)",
+          "setPluginId": "(plugin_id)",
+          "getEngineCommand": "()",
+          "setObjectName": "Qt builtin",
+          "forceSlice": "() -> None"
+        },
+        "class": "CylindricalBackend"
+      },
+      "application": {
+        "module": "steslicer.SteSlicerApplication",
+        "methods": {
+          "getRequiredPlugins": "() -> List[str]",
+          "getOutputDeviceManager": "() -> UM.OutputDevice.OutputDeviceManager.OutputDeviceManager",
+          "getApplicationLanguage": "() -> str",
+          "setWheelScrollLines": "Qt builtin",
+          "getExtensions": "() -> List[_ForwardRef('Extension')]",
+          "setActiveWindow": "Qt builtin",
+          "getVariantManager": "(*args) -> steslicer.Machines.VariantManager.VariantManager",
+          "setMainWindow": "(window:UM.Qt.Bindings.MainWindow.MainWindow) -> None",
+          "setStartDragDistance": "Qt builtin",
+          "getApplicationName": "() -> str",
+          "setDoubleClickInterval": "Qt builtin",
+          "getObjectsModel": "(*args)",
+          "setWindowIcon": "Qt builtin",
+          "setFallbackSessionManagementEnabled": "Qt builtin",
+          "setEffectEnabled": "Qt builtin",
+          "getBackend": "() -> UM.Backend.Backend.Backend",
+          "getSettingVisibilityPresetsModel": "(*args) -> steslicer.Machines.Models.SettingVisibilityPresetsModel.SettingVisibilityPresetsModel",
+          "getDefaultPath": "(key)",
+          "getInstallPrefix": "() -> str",
+          "getVersion": "() -> str",
+          "setParent": "Qt builtin",
+          "getBackends": "() -> List[_ForwardRef('Backend')]",
+          "setFont": "Qt builtin",
+          "getBuildVolume": "()",
+          "getUseExternalBackend": "() -> bool",
+          "getOperationStack": "() -> UM.Operations.OperationStack.OperationStack",
+          "getBackendManager": "() -> <module 'steslicer.BackendManager.BackendManager' from 'C:\\\\Program Files\\\\Stereotech STE Slicer 7.10\\\\python35.zip\\\\steslicer\\\\BackendManager\\\\BackendManager.pyc'>",
+          "setDesktopFileName": "Qt builtin",
+          "setOrganizationDomain": "Qt builtin",
+          "setExpandedCategories": "(categories)",
+          "getSimpleModeSettingsManager": "(*args)",
+          "setSetuidAllowed": "Qt builtin",
+          "getQualityProfilesDropDownMenuModel": "(*args, **kwargs)",
+          "getMainThread": "() -> threading.Thread",
+          "getMultiBuildPlateModel": "(*args) -> steslicer.Machines.Models.MultiBuildPlateModel.MultiBuildPlateModel",
+          "getRenderer": "() -> UM.Qt.QtRenderer.QtRenderer",
+          "setKeyboardInputInterval": "Qt builtin",
+          "setPalette": "Qt builtin",
+          "getBuildType": "() -> str",
+          "setMinimumWindowSize": "(size)",
+          "getTheme": "() -> Union[UM.Qt.Bindings.Theme.Theme, NoneType]",
+          "getPrintInformation": "()",
+          "getIsDebugMode": "() -> bool",
+          "setDesktopSettingsAware": "Qt builtin",
+          "setLibraryPaths": "Qt builtin",
+          "getPackageManager": "() -> UM.PackageManager.PackageManager",
+          "setGlobalContainerStack": "(stack:'GlobalStack') -> None",
+          "setProperty": "Qt builtin",
+          "getSceneBoundingBox": "()",
+          "setNeedToShowUserAgreement": "(set_value=True) -> None",
+          "setQuitLockEnabled": "Qt builtin",
+          "setConfirmExitDialogCallback": "(callback:Callable) -> None",
+          "getQualityManager": "(*args) -> 'QualityManager'",
+          "setVisible": "(visible:bool) -> None",
+          "setOrganizationName": "Qt builtin",
+          "getMainWindow": "() -> Union[UM.Qt.Bindings.MainWindow.MainWindow, NoneType]",
+          "setAttribute": "Qt builtin",
+          "getMeshFileHandler": "() -> UM.Mesh.MeshFileHandler.MeshFileHandler",
+          "setQuitOnLastWindowClosed": "Qt builtin",
+          "getOnExitCallbackManager": "() -> 'OnExitCallbackManager'",
+          "setSaveDataEnabled": "(enabled:bool) -> None",
+          "setRequiredPlugins": "(plugin_names:List[str]) -> None",
+          "getEngineLog": "()",
+          "getAutoSave": "()",
+          "setBackend": "(backend:'Backend') -> None",
+          "getIsHeadLess": "() -> bool",
+          "setCursorFlashTime": "Qt builtin",
+          "setMainQml": "(path:str) -> None",
+          "getExtruderManager": "(*args) -> steslicer.Settings.ExtruderManager.ExtruderManager",
+          "getController": "() -> UM.Controller.Controller",
+          "setAutoSipEnabled": "Qt builtin",
+          "setApplicationName": "Qt builtin",
+          "getMachineActionManager": "(*args)",
+          "getSettingInheritanceManager": "(*args) -> steslicer.Settings.SettingInheritanceManager.SettingInheritanceManager",
+          "getWorkspaceFileHandler": "() -> UM.Workspace.WorkspaceFileHandler.WorkspaceFileHandler",
+          "setStyleSheet": "Qt builtin",
+          "getSteSlicerSceneController": "(*args) -> steslicer.Scene.SteSlicerSceneController.SteSlicerSceneController",
+          "getMachineErrorChecker": "(*args) -> steslicer.Machines.MachineErrorChecker.MachineErrorChecker",
+          "setEventDispatcher": "Qt builtin",
+          "getPreferences": "() -> UM.Preferences.Preferences",
+          "setObjectName": "Qt builtin",
+          "setApplicationDisplayName": "Qt builtin",
+          "getGlobalContainerStack": "() -> Union[_ForwardRef('GlobalStack'), NoneType]",
+          "getApplicationLockFilename": "() -> str",
+          "setDefaultPath": "(key, default_path)",
+          "getCustomQualityProfilesDropDownMenuModel": "(*args, **kwargs)",
+          "setLayoutDirection": "Qt builtin",
+          "setStartDragTime": "Qt builtin",
+          "setStyle": "Qt builtin",
+          "getSteSlicerFormulaFunctions": "(*args) -> 'SteSlicerFormulaFunctions'",
+          "setColorSpec": "Qt builtin",
+          "getContainerRegistry": "() -> 'SteSlicerContainerRegistry'",
+          "getInstance": "(*args, **kwargs) -> 'QtApplication'",
+          "getSidebarCustomMenuItems": "() -> list",
+          "setOverrideCursor": "Qt builtin",
+          "setApplicationVersion": "Qt builtin",
+          "getIsAllChecksPassed": "() -> bool",
+          "getVisibleMessages": "() -> List[UM.Message.Message]",
+          "getBuildPlateModel": "(*args) -> steslicer.Machines.Models.BuildPlateModel.BuildPlateModel",
+          "getMachineManager": "(*args) -> steslicer.Settings.MachineManager.MachineManager",
+          "getMaterialManager": "(*args) -> 'MaterialManager'",
+          "getPluginRegistry": "() -> UM.PluginRegistry.PluginRegistry",
+          "setGlobalStrut": "Qt builtin"
+        },
+        "class": "SteSlicerApplication"
+      },
+      "global_stack": {
+        "module": "steslicer.Settings.GlobalStack",
+        "methods": {
+          "getProperty": "(key:str, property_name:str, context:Union[UM.Settings.PropertyEvaluationContext.PropertyEvaluationContext, NoneType]=None) -> Any",
+          "getNextStack": "() -> Union[_ForwardRef('ContainerStack'), NoneType]",
+          "getName": "() -> str",
+          "getErrorKeys": "() -> List[str]",
+          "setVariant": "(new_variant:UM.Settings.InstanceContainer.InstanceContainer) -> None",
+          "getPath": "() -> str",
+          "setVersion": "(version:str)",
+          "setNextStack": "(stack:steslicer.Settings.SteSlicerContainerStack.SteSlicerContainerStack, connect_signals:bool=True) -> None",
+          "setDefinitionChanges": "(new_definition_changes:UM.Settings.InstanceContainer.InstanceContainer) -> None",
+          "setMetaDataEntry": "(key:str, value:Any) -> None",
+          "getLoadingPriority": "() -> int",
+          "setQuality": "(new_quality:UM.Settings.InstanceContainer.InstanceContainer, postpone_emit:bool=False) -> None",
+          "setReadOnly": "(read_only:bool) -> None",
+          "getVersion": "() -> str",
+          "setParent": "Qt builtin",
+          "setDirty": "(dirty:bool) -> None",
+          "getBuildplateName": "() -> Union[str, NoneType]",
+          "getHasVariants": "() -> bool",
+          "getRawProperty": "(key:str, property_name:str, *, context:Union[UM.Settings.PropertyEvaluationContext.PropertyEvaluationContext, NoneType]=None, use_next:bool=True, skip_until_container:Union[UM.Settings.Interfaces.ContainerInterface, NoneType]=None) -> Any",
+          "getContainers": "() -> List[UM.Settings.Interfaces.ContainerInterface]",
+          "setName": "(name:str) -> None",
+          "getDefaultFirmwareName": "() -> str",
+          "getHasMaterials": "() -> bool",
+          "getConfigurationTypeFromSerialized": "(serialized:str) -> Union[str, NoneType]",
+          "getTop": "() -> 'InstanceContainer'",
+          "getAllKeys": "() -> Set[str]",
+          "setMaterial": "(new_material:UM.Settings.InstanceContainer.InstanceContainer, postpone_emit:bool=False) -> None",
+          "setMetaData": "(meta_data:Dict[str, Any]) -> None",
+          "getHasMachineQuality": "() -> bool",
+          "getBottom": "() -> 'DefinitionContainer'",
+          "getHeadAndFansCoordinates": "()",
+          "getMetaData": "() -> Dict[str, Any]",
+          "getId": "() -> str",
+          "setObjectName": "Qt builtin",
+          "getMetaDataEntry": "(entry:str, default=None) -> Any",
+          "getContainerIndex": "(container:UM.Settings.Interfaces.ContainerInterface) -> int",
+          "getExtruderPositionValueWithDefault": "(key)",
+          "setPath": "(path:str) -> None",
+          "setQualityChanges": "(new_quality_changes:UM.Settings.InstanceContainer.InstanceContainer, postpone_emit=False) -> None",
+          "setProperty": "(key:str, property_name:str, property_value:Any, container:'ContainerInterface'=None, set_from_cache:bool=False) -> None",
+          "getContainer": "(index:int) -> UM.Settings.Interfaces.ContainerInterface",
+          "getPluginId": "()",
+          "setUserChanges": "(new_user_changes:UM.Settings.InstanceContainer.InstanceContainer) -> None",
+          "setPluginId": "(plugin_id)",
+          "getVersionFromSerialized": "(serialized:str) -> Union[int, NoneType]",
+          "setDefinition": "(new_definition:UM.Settings.Interfaces.DefinitionContainerInterface) -> None",
+          "getDefinition": "() -> 'DefinitionContainer'",
+          "getSettingDefinition": "(key:str) -> Union[UM.Settings.SettingDefinition.SettingDefinition, NoneType]"
+        },
+        "class": "GlobalStack"
+      }
+    },
+    "backends": {
+      "CylindricalBackend": {
+        "methods": [
+          "backendStateChange",
+          "forceSlice",
+          "processingProgress",
+          "slice",
+          "stopSlicing"
+        ],
+        "class": "CylindricalBackend"
+      },
+      "CuraEngineBackend": {
+        "methods": [
+          "backendStateChange",
+          "forceSlice",
+          "processingProgress",
+          "slice",
+          "stopSlicing"
+        ],
+        "class": "CuraEngineBackend"
+      },
+      "CLIParserBackend": {
+        "methods": [
+          "backendStateChange",
+          "forceSlice",
+          "processingProgress",
+          "slice",
+          "stopSlicing"
+        ],
+        "class": "CliParserBackend"
+      },
+      "DescreteSlicerBackend": {
+        "methods": [
+          "backendStateChange",
+          "forceSlice",
+          "processingProgress",
+          "slice",
+          "stopSlicing"
+        ],
+        "class": "DescreteSlicerBackend"
+      }
+    }
+  },
+  "cases": {
+    "baseline": {
+      "status": "slice_verified_unqualified",
+      "layers": 40,
+      "readback_differences": 0,
+      "native_time_estimate_s": 1851.0,
+      "native_filament_estimate": "1.63523m, 0m",
+      "positive_extrusion_volume_mm3": {
+        "0": 3976.4859588366953
+      },
+      "volume_note": "sum of positive E including priming/unretraction; use native filament header for cost estimates",
+      "gcode": {
+        "path": "part.gcode",
+        "bytes": 227689,
+        "sha256": "d2b143d87633006361df4b969f638a92c7765deddeccb1c5d876f4c2bde01819"
+      },
+      "project": {
+        "path": "part.3mf",
+        "sha256": "30fcb2373264ff5aaeddb6eaee755cee1fbb9c807dfce2b23afe888a2dea3e7a"
+      },
+      "unknown_checks": [
+        "volumetric_flow"
+      ],
+      "undo_redo_geometry": "pass"
+    },
+    "live_demo": {
+      "status": "slice_completed_needs_review",
+      "layers": 118,
+      "readback_differences": 0,
+      "native_time_estimate_s": 4479.0,
+      "native_filament_estimate": "2.25156m, 0m",
+      "positive_extrusion_volume_mm3": {
+        "0": 5458.9372577143195
+      },
+      "volume_note": "sum of positive E including priming/unretraction; use native filament header for cost estimates",
+      "gcode": {
+        "sha256": "b86bb0ab74896b130d3656f7c1a1ed2ddd79a9e2892681cc45514d76a52c096e",
+        "bytes": 805480,
+        "path": "part.gcode"
+      },
+      "project": {
+        "sha256": "6fa7ec512973bf3e70f84ac48d4bbe54530d4125d8b59ffecc75ba4606bcd05c",
+        "path": "part.3mf"
+      },
+      "unknown_checks": [
+        "declared_layer_count",
+        "volumetric_flow"
+      ],
+      "undo_redo_geometry": "pass"
+    },
+    "enforcer": {
+      "status": "slice_verified_unqualified",
+      "layers": 120,
+      "readback_differences": 0,
+      "native_time_estimate_s": 1535.0,
+      "native_filament_estimate": "1.2216m, 0m",
+      "positive_extrusion_volume_mm3": {
+        "0": 3692.3396200774137
+      },
+      "volume_note": "sum of positive E including priming/unretraction; use native filament header for cost estimates",
+      "gcode": {
+        "sha256": "f077f65f725079a8fbb31acf8c2479da7b3ad68b9a53ab3ce11d4498e0ee8e3d",
+        "bytes": 339415,
+        "path": "part.gcode"
+      },
+      "project": {
+        "sha256": "061b60ff4140f1ffa68007624e4f1a04f59417d497efe3da66e57834f862e9bb",
+        "path": "part.3mf"
+      },
+      "unknown_checks": [
+        "volumetric_flow"
+      ],
+      "undo_redo_geometry": "pass",
+      "contact_check": {
+        "regions": [
+          {
+            "id": "left_underside",
+            "role": "required",
+            "contact_segments": 26,
+            "contact_samples": [
+              {
+                "start": [
+                  168.021,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  170.688,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  170.688,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  170.688,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  170.688,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  173.355,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  173.355,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  173.355,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  173.355,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  176.022,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              }
+            ],
+            "status": "pass"
+          },
+          {
+            "id": "right_underside",
+            "role": "required",
+            "contact_segments": 26,
+            "contact_samples": [
+              {
+                "start": [
+                  178.689,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  181.356,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  181.356,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  181.356,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  181.356,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  184.023,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  184.023,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  184.023,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  184.023,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  186.69,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              }
+            ],
+            "status": "pass"
+          }
+        ],
+        "support_segments": 2468,
+        "scope": "horizontal patch capsule intersection; no support coverage/strength or physical qualification"
+      }
+    },
+    "blocker": {
+      "status": "slice_verified_unqualified",
+      "layers": 120,
+      "readback_differences": 0,
+      "native_time_estimate_s": 1352.0,
+      "native_filament_estimate": "1.03092m, 0m",
+      "positive_extrusion_volume_mm3": {
+        "0": 3233.6975857370267
+      },
+      "volume_note": "sum of positive E including priming/unretraction; use native filament header for cost estimates",
+      "gcode": {
+        "bytes": 310317,
+        "path": "part.gcode",
+        "sha256": "814387f1bf63b3cbdcb1dff71efd94bf864657c652c516a4c1fb4eb191190673"
+      },
+      "project": {
+        "path": "part.3mf",
+        "sha256": "17a578185a54386061e2e5b4d64bbe3e7ee213c43a676eef182eb61019bbf2d1"
+      },
+      "unknown_checks": [
+        "volumetric_flow"
+      ],
+      "undo_redo_geometry": "pass",
+      "contact_check": {
+        "regions": [
+          {
+            "id": "left_underside",
+            "role": "required",
+            "contact_segments": 32,
+            "contact_samples": [
+              {
+                "start": [
+                  168.021,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  170.688,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  170.688,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  170.688,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  170.688,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  173.355,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  173.355,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  173.355,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  173.355,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  176.022,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              }
+            ],
+            "status": "pass"
+          },
+          {
+            "id": "right_underside",
+            "role": "forbidden",
+            "contact_segments": 0,
+            "contact_samples": [],
+            "status": "pass"
+          }
+        ],
+        "support_segments": 1581,
+        "scope": "horizontal patch capsule intersection; no support coverage/strength or physical qualification"
+      },
+      "parent_move_duplicate_and_undo": "pass"
+    },
+    "batch": {
+      "status": "slice_verified_unqualified",
+      "layers": 120,
+      "readback_differences": 0,
+      "native_time_estimate_s": 2930.0,
+      "native_filament_estimate": "2.06084m, 0m",
+      "positive_extrusion_volume_mm3": {
+        "0": 6580.477574620611
+      },
+      "volume_note": "sum of positive E including priming/unretraction; use native filament header for cost estimates",
+      "gcode": {
+        "path": "part.gcode",
+        "bytes": 625722,
+        "sha256": "0d6cf03df482ea7ed2a656073237dce676c3de38f4101623c198048926170da6"
+      },
+      "project": {
+        "path": "part.3mf",
+        "sha256": "0bf5abca4a9bc972e9d9e5087eac32efaa14ba5fb9d309c581124c61a9beced7"
+      },
+      "unknown_checks": [
+        "volumetric_flow"
+      ],
+      "undo_redo_geometry": "pass",
+      "copies_and_parented_modifiers": "2 models, 2 enforcers, 2 blockers",
+      "contact_check_all_copies": {
+        "regions": [
+          {
+            "id": "copy_1_required",
+            "role": "required",
+            "contact_segments": 32,
+            "contact_samples": [
+              {
+                "start": [
+                  146.685,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  149.352,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  149.352,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  149.352,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  149.352,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  152.019,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  152.019,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  152.019,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  152.019,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  154.686,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              }
+            ],
+            "status": "pass"
+          },
+          {
+            "id": "copy_1_forbidden",
+            "role": "forbidden",
+            "contact_segments": 0,
+            "contact_samples": [],
+            "status": "pass"
+          },
+          {
+            "id": "copy_2_required",
+            "role": "required",
+            "contact_segments": 32,
+            "contact_samples": [
+              {
+                "start": [
+                  186.69,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  185.4,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  185.4,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  185.4,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  185.4,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  186.69,
+                  155.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  186.69,
+                  155.15,
+                  19.7
+                ],
+                "end": [
+                  186.69,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              },
+              {
+                "start": [
+                  186.69,
+                  145.15,
+                  19.7
+                ],
+                "end": [
+                  189.357,
+                  145.15,
+                  19.7
+                ],
+                "gap_mm": 0.3000000000000007
+              }
+            ],
+            "status": "pass"
+          },
+          {
+            "id": "copy_2_forbidden",
+            "role": "forbidden",
+            "contact_segments": 0,
+            "contact_samples": [],
+            "status": "pass"
+          }
+        ],
+        "support_segments": 3160,
+        "scope": "horizontal patch capsule intersection; no support coverage/strength or physical qualification"
+      }
+    }
+  },
+  "refusal_tests": [
+    {
+      "scenario": "SHA-256",
+      "status": "refused_and_exact_state_preserved"
+    },
+    {
+      "scenario": "readback",
+      "status": "refused_and_exact_state_preserved"
+    },
+    {
+      "scenario": "5D",
+      "status": "refused_and_exact_state_preserved"
+    },
+    {
+      "scenario": "5D",
+      "status": "refused_and_exact_state_preserved"
+    },
+    {
+      "scenario": "existing_project",
+      "status": "refused_and_exact_state_preserved"
+    }
+  ],
+  "functional_live_path": {
+    "llm_intake_status": "computed",
+    "source": "software_fixture",
+    "core_applied": false,
+    "demo_profile_isolation": true,
+    "candidate_count": 40,
+    "feasible_count": 16,
+    "finite_candidate_oracle_match": true,
+    "selected_objective": [
+      0.0,
+      0.0,
+      7.088835404584307,
+      12.0
+    ],
+    "objective_order": [
+      "visible geometric staircase",
+      "support volume proxy",
+      "compliance",
+      "height"
+    ],
+    "global_continuous_optimum": null,
+    "physical_optimum": null,
+    "baseline_mechanics": {
+      "blocks": [
+        {
+          "compliance_contribution_Nmm": 5.731039048445013,
+          "energy_share": 0.40080390694682694,
+          "failure_index_max": 0.18663352680010953,
+          "id": "middle_block",
+          "max_displacement_mm": 1.017305680877961,
+          "safety_factor_min": 5.358094106376889,
+          "volume_mm3": 2847.7447790097126
+        },
+        {
+          "compliance_contribution_Nmm": 8.267383721737394,
+          "energy_share": 0.5781848052143381,
+          "failure_index_max": 0.27111376989827907,
+          "id": "root_block",
+          "max_displacement_mm": 0.18993241744927308,
+          "safety_factor_min": 3.6884884171512073,
+          "volume_mm3": 1471.9081135441777
+        },
+        {
+          "compliance_contribution_Nmm": 0.30043746823097,
+          "energy_share": 0.021011287838434506,
+          "failure_index_max": 0.06566743948476701,
+          "id": "tip_block",
+          "max_displacement_mm": 1.4371427248682989,
+          "safety_factor_min": 15.22824717768951,
+          "volume_mm3": 1440.3471074461095
+        }
+      ],
+      "compliance_Nmm": 14.298860238419103,
+      "effective_stiffness_N_per_mm": 6.993564405316274,
+      "energy_relative_error": 4.001469546736963e-13,
+      "equilibrium_relative_residual": 1.3904982091124889e-11,
+      "failure_index_max": 0.27111376989827907,
+      "id": "load_0",
+      "load_weighted_deflection_mm": 1.4298860238419102,
+      "max_displacement_mm": 1.4371427248682989,
+      "reaction_N": [
+        -1.5268690836116358e-12,
+        -1.9435139911903285e-12,
+        10.00000000000787
+      ],
+      "safety_factor_min": 3.6884884171512073
+    },
+    "selected_mechanics": {
+      "blocks": [
+        {
+          "compliance_contribution_Nmm": 2.823246969069812,
+          "energy_share": 0.3982666838679927,
+          "failure_index_max": 0.09320099223084236,
+          "id": "middle_block",
+          "max_displacement_mm": 0.5041429804482038,
+          "safety_factor_min": 10.729499504932061,
+          "volume_mm3": 2847.7447790097126
+        },
+        {
+          "compliance_contribution_Nmm": 4.136370073733179,
+          "energy_share": 0.5835048830528938,
+          "failure_index_max": 0.1264689154888012,
+          "id": "root_block",
+          "max_displacement_mm": 0.09429471046728377,
+          "safety_factor_min": 7.907081326150454,
+          "volume_mm3": 1471.9081135441777
+        },
+        {
+          "compliance_contribution_Nmm": 0.1292183617918413,
+          "energy_share": 0.01822843308059834,
+          "failure_index_max": 0.031875374416671924,
+          "id": "tip_block",
+          "max_displacement_mm": 0.712451349515995,
+          "safety_factor_min": 31.372180509257497,
+          "volume_mm3": 1440.3471074461095
+        }
+      ],
+      "compliance_Nmm": 7.088835404584307,
+      "effective_stiffness_N_per_mm": 14.106689504362112,
+      "energy_relative_error": 1.4847169771553851e-12,
+      "equilibrium_relative_residual": 2.826659226743084e-11,
+      "failure_index_max": 0.1264689154888012,
+      "id": "load_0",
+      "load_weighted_deflection_mm": 0.7088835404584307,
+      "max_displacement_mm": 0.712451349515995,
+      "reaction_N": [
+        -1.0026198456783714e-12,
+        -2.289121554556489e-12,
+        10.000000000080853
+      ],
+      "safety_factor_min": 7.907081326150454
+    },
+    "mesh_convergence": {
+      "cases": [
+        {
+          "compliance_relative_change": 0.0013220422295392702,
+          "displacement_relative_change": 0.0013075797585976655,
+          "failure_index_relative_change": 0.004072397957071506,
+          "id": "load_0"
+        }
+      ],
+      "coarse_elements": 324,
+      "fine_elements": 613,
+      "refined_limit_failures": [],
+      "status": "pass",
+      "tolerances": {
+        "compliance": 0.05,
+        "displacement": 0.05,
+        "failure_index": 0.1
+      }
+    }
+  },
+  "cost_tradeoff": {
+    "baseline_native_time_s": 1851.0,
+    "selected_native_time_s": 4479.0,
+    "time_change_percent": 141.97730956239872,
+    "physical_print_time": null,
+    "note": "Current objective prioritizes surface/mechanics; print time and material are reported, not optimized"
+  },
+  "physical_metrics": {
+    "Ra_um": null,
+    "flatness_mm": null,
+    "breaking_load_N": null,
+    "measured_stiffness_N_per_mm": null,
+    "calibrated_Q_limit_mm3_s": null
+  },
+  "limitations": [
+    "finite candidate optimality only under software constitutive assumptions",
+    "linear elastic simulation does not qualify a printed part",
+    "support checker covers controlled horizontal patches only",
+    "native headless Qt/engine validation, not a manual GUI acceptance test",
+    "Spiral/Full are refused without real kinematics, head/mandrel and full trajectory checks"
+  ]
+}

@@ -27,46 +27,46 @@
       "baseline": {
         "mechanics": {
           "id": "bending",
-          "compliance_Nmm": 14.298941051435175,
-          "effective_stiffness_N_per_mm": 6.993524879939488,
-          "load_weighted_deflection_mm": 1.4298941051435174,
-          "max_displacement_mm": 1.43712369286976,
-          "failure_index_max": 0.2686174359301228,
-          "safety_factor_min": 3.722766530539501,
-          "equilibrium_relative_residual": 1.2926890325914021e-11,
-          "energy_relative_error": 1.0878817380023181e-12,
+          "compliance_Nmm": 14.298860238419103,
+          "effective_stiffness_N_per_mm": 6.993564405316274,
+          "load_weighted_deflection_mm": 1.4298860238419102,
+          "max_displacement_mm": 1.4371427248682989,
+          "failure_index_max": 0.27111376989827907,
+          "safety_factor_min": 3.6884884171512073,
+          "equilibrium_relative_residual": 1.3904982091124889e-11,
+          "energy_relative_error": 4.001469546736963e-13,
           "reaction_N": [
-            2.1022884164027955e-12,
-            1.9471756195972037e-12,
-            10.000000000000478
+            -1.5268690836116358e-12,
+            -1.9435139911903285e-12,
+            10.00000000000787
           ],
           "blocks": [
             {
               "id": "middle_block",
-              "volume_mm3": 2853.448046195453,
-              "compliance_contribution_Nmm": 5.727780573281198,
-              "energy_share": 0.4005737594607612,
-              "max_displacement_mm": 1.0173620246619843,
-              "failure_index_max": 0.18687591019179944,
-              "safety_factor_min": 5.351144505322561
+              "volume_mm3": 2847.7447790097126,
+              "compliance_contribution_Nmm": 5.731039048445013,
+              "energy_share": 0.40080390694682694,
+              "max_displacement_mm": 1.017305680877961,
+              "failure_index_max": 0.18663352680010953,
+              "safety_factor_min": 5.358094106376889
             },
             {
               "id": "root_block",
-              "volume_mm3": 1471.8554540652412,
-              "compliance_contribution_Nmm": 8.266568785847195,
-              "energy_share": 0.5781245447555352,
-              "max_displacement_mm": 0.18993420245411238,
-              "failure_index_max": 0.2686174359301228,
-              "safety_factor_min": 3.722766530539501
+              "volume_mm3": 1471.9081135441777,
+              "compliance_contribution_Nmm": 8.267383721737394,
+              "energy_share": 0.5781848052143381,
+              "max_displacement_mm": 0.18993241744927308,
+              "failure_index_max": 0.27111376989827907,
+              "safety_factor_min": 3.6884884171512073
             },
             {
               "id": "tip_block",
-              "volume_mm3": 1434.6964997393059,
-              "compliance_contribution_Nmm": 0.3045916923223383,
-              "energy_share": 0.021301695784791463,
-              "max_displacement_mm": 1.43712369286976,
-              "failure_index_max": 0.06894205082372587,
-              "safety_factor_min": 14.504935493677797
+              "volume_mm3": 1440.3471074461095,
+              "compliance_contribution_Nmm": 0.30043746823097,
+              "energy_share": 0.021011287838434506,
+              "max_displacement_mm": 1.4371427248682989,
+              "failure_index_max": 0.06566743948476701,
+              "safety_factor_min": 15.22824717768951
             }
           ]
         },
@@ -130,46 +130,46 @@
       "selected": {
         "mechanics": {
           "id": "bending",
-          "compliance_Nmm": 7.08912618445251,
-          "effective_stiffness_N_per_mm": 14.106110879972007,
-          "load_weighted_deflection_mm": 0.708912618445251,
-          "max_displacement_mm": 0.7124669610516557,
-          "failure_index_max": 0.12680334655781939,
-          "safety_factor_min": 7.886227194674418,
-          "equilibrium_relative_residual": 2.2296873227873138e-11,
-          "energy_relative_error": 1.1166868876094903e-12,
+          "compliance_Nmm": 7.088835404584307,
+          "effective_stiffness_N_per_mm": 14.106689504362112,
+          "load_weighted_deflection_mm": 0.7088835404584307,
+          "max_displacement_mm": 0.712451349515995,
+          "failure_index_max": 0.1264689154888012,
+          "safety_factor_min": 7.907081326150454,
+          "equilibrium_relative_residual": 2.826659226743084e-11,
+          "energy_relative_error": 1.4847169771553851e-12,
           "reaction_N": [
-            -3.729697815755972e-12,
-            9.178716651918553e-13,
-            9.99999999995929
+            -1.0026198456783714e-12,
+            -2.289121554556489e-12,
+            10.000000000080853
           ],
           "blocks": [
             {
               "id": "middle_block",
-              "volume_mm3": 2853.448046195453,
-              "compliance_contribution_Nmm": 2.821266201270132,
-              "energy_share": 0.39797093857033905,
-              "max_displacement_mm": 0.5041799385831619,
-              "failure_index_max": 0.0932155193465813,
-              "safety_factor_min": 10.72782737262811
+              "volume_mm3": 2847.7447790097126,
+              "compliance_contribution_Nmm": 2.823246969069812,
+              "energy_share": 0.3982666838679927,
+              "max_displacement_mm": 0.5041429804482038,
+              "failure_index_max": 0.09320099223084236,
+              "safety_factor_min": 10.729499504932061
             },
             {
               "id": "root_block",
-              "volume_mm3": 1471.8554540652412,
-              "compliance_contribution_Nmm": 4.1365970346635,
-              "energy_share": 0.5835129643672674,
-              "max_displacement_mm": 0.09429988512239282,
-              "failure_index_max": 0.12680334655781939,
-              "safety_factor_min": 7.886227194674418
+              "volume_mm3": 1471.9081135441777,
+              "compliance_contribution_Nmm": 4.136370073733179,
+              "energy_share": 0.5835048830528938,
+              "max_displacement_mm": 0.09429471046728377,
+              "failure_index_max": 0.1264689154888012,
+              "safety_factor_min": 7.907081326150454
             },
             {
               "id": "tip_block",
-              "volume_mm3": 1434.6964997393059,
-              "compliance_contribution_Nmm": 0.13126294851096265,
-              "energy_share": 0.018516097061276958,
-              "max_displacement_mm": 0.7124669610516557,
-              "failure_index_max": 0.03445016628966791,
-              "safety_factor_min": 29.027436082359753
+              "volume_mm3": 1440.3471074461095,
+              "compliance_contribution_Nmm": 0.1292183617918413,
+              "energy_share": 0.01822843308059834,
+              "max_displacement_mm": 0.712451349515995,
+              "failure_index_max": 0.031875374416671924,
+              "safety_factor_min": 31.372180509257497
             }
           ]
         },
@@ -235,13 +235,13 @@
         "cases": [
           {
             "id": "bending",
-            "compliance_relative_change": 0.0012715220842185633,
-            "displacement_relative_change": 0.001278328557028563,
-            "failure_index_relative_change": 0.0012127360025130903
+            "compliance_relative_change": 0.0013120353493117304,
+            "displacement_relative_change": 0.001299264897061455,
+            "failure_index_relative_change": 0.0032215854715782533
           }
         ],
         "coarse_elements": 324,
-        "fine_elements": 620,
+        "fine_elements": 621,
         "tolerances": {
           "compliance": 0.05,
           "displacement": 0.05,
@@ -256,13 +256,13 @@
         "software_fixture_applied": false
       },
       "changes": {
-        "stiffness_percent": 101.70244793772811,
-        "compliance_percent": -50.422019652000884,
-        "max_displacement_percent": -50.424103047877075,
+        "stiffness_percent": 101.70958164964748,
+        "compliance_percent": -50.423773039353414,
+        "max_displacement_percent": -50.42584586848987,
         "visible_staircase_before_mm": 0.0,
         "visible_staircase_after_mm": 0.0
       },
-      "seconds_including_meshing": 2.926
+      "seconds_including_meshing": 4.848
     },
     "wedge": {
       "status": "needs_calibration",
@@ -290,46 +290,46 @@
       "baseline": {
         "mechanics": {
           "id": "bending",
-          "compliance_Nmm": 6.194978308961916,
-          "effective_stiffness_N_per_mm": 16.14210655997549,
-          "load_weighted_deflection_mm": 0.6194978308961916,
-          "max_displacement_mm": 0.6374574114935151,
-          "failure_index_max": 0.1751602045050475,
-          "safety_factor_min": 5.709059331288824,
-          "equilibrium_relative_residual": 1.1426869786456624e-11,
-          "energy_relative_error": 1.4629546937249481e-12,
+          "compliance_Nmm": 6.194621003929597,
+          "effective_stiffness_N_per_mm": 16.14303763483906,
+          "load_weighted_deflection_mm": 0.6194621003929597,
+          "max_displacement_mm": 0.6374110544227469,
+          "failure_index_max": 0.1751601877588981,
+          "safety_factor_min": 5.709059877102125,
+          "equilibrium_relative_residual": 1.2370524436270992e-11,
+          "energy_relative_error": 2.010890146207858e-12,
           "reaction_N": [
-            2.2354220770996903e-12,
-            2.7600713391027286e-12,
-            9.999999999999034
+            -4.285636658330913e-12,
+            1.4096409985056564e-12,
+            9.999999999982546
           ],
           "blocks": [
             {
               "id": "middle_block",
-              "volume_mm3": 3701.2429042618237,
-              "compliance_contribution_Nmm": 2.5059820014611063,
-              "energy_share": 0.40451828504965825,
-              "max_displacement_mm": 0.45443129039936553,
-              "failure_index_max": 0.12820971879422502,
-              "safety_factor_min": 7.799720718559467
+              "volume_mm3": 3694.738245354094,
+              "compliance_contribution_Nmm": 2.505444263881032,
+              "energy_share": 0.40445481043823145,
+              "max_displacement_mm": 0.45440250811578137,
+              "failure_index_max": 0.1282096688227547,
+              "safety_factor_min": 7.799723758607195
             },
             {
               "id": "root_block",
-              "volume_mm3": 1923.7332058452737,
-              "compliance_contribution_Nmm": 3.5574519100018454,
-              "energy_share": 0.5742476781323811,
-              "max_displacement_mm": 0.09367278119288024,
-              "failure_index_max": 0.1751602045050475,
-              "safety_factor_min": 5.709059331288824
+              "volume_mm3": 1923.7332058452735,
+              "compliance_contribution_Nmm": 3.5574525537804,
+              "energy_share": 0.5742809045983132,
+              "max_displacement_mm": 0.0936726885480191,
+              "failure_index_max": 0.1751601877588981,
+              "safety_factor_min": 5.709059877102125
             },
             {
               "id": "tip_block",
-              "volume_mm3": 1863.0239585574532,
-              "compliance_contribution_Nmm": 0.13154439750802704,
-              "energy_share": 0.021234036819423464,
-              "max_displacement_mm": 0.6374574114935151,
-              "failure_index_max": 0.041118760224077816,
-              "safety_factor_min": 24.31979939449712
+              "volume_mm3": 1869.5286174651833,
+              "compliance_contribution_Nmm": 0.13172418628062194,
+              "energy_share": 0.02126428496546631,
+              "max_displacement_mm": 0.6374110544227469,
+              "failure_index_max": 0.04070939443449279,
+              "safety_factor_min": 24.564354589188063
             }
           ]
         },
@@ -393,46 +393,46 @@
       "selected": {
         "mechanics": {
           "id": "bending",
-          "compliance_Nmm": 3.097489154480958,
-          "effective_stiffness_N_per_mm": 32.28421311995098,
-          "load_weighted_deflection_mm": 0.3097489154480958,
-          "max_displacement_mm": 0.31872870574675755,
-          "failure_index_max": 0.08758010225252374,
-          "safety_factor_min": 11.418118662577648,
-          "equilibrium_relative_residual": 1.1426869786456624e-11,
-          "energy_relative_error": 1.4629546937249481e-12,
+          "compliance_Nmm": 3.0973105019647984,
+          "effective_stiffness_N_per_mm": 32.28607526967812,
+          "load_weighted_deflection_mm": 0.30973105019647984,
+          "max_displacement_mm": 0.31870552721137346,
+          "failure_index_max": 0.08758009387944905,
+          "safety_factor_min": 11.41811975420425,
+          "equilibrium_relative_residual": 1.2370524436270992e-11,
+          "energy_relative_error": 2.010890146207858e-12,
           "reaction_N": [
-            2.2354220770996903e-12,
-            2.7600713391027286e-12,
-            9.999999999999034
+            -4.285636658330913e-12,
+            1.4096409985056564e-12,
+            9.999999999982546
           ],
           "blocks": [
             {
               "id": "middle_block",
-              "volume_mm3": 3701.2429042618237,
-              "compliance_contribution_Nmm": 1.2529910007305531,
-              "energy_share": 0.40451828504965825,
-              "max_displacement_mm": 0.22721564519968276,
-              "failure_index_max": 0.06410485939711251,
-              "safety_factor_min": 15.599441437118934
+              "volume_mm3": 3694.738245354094,
+              "compliance_contribution_Nmm": 1.252722131940516,
+              "energy_share": 0.40445481043823145,
+              "max_displacement_mm": 0.22720125405789068,
+              "failure_index_max": 0.06410483441137735,
+              "safety_factor_min": 15.59944751721439
             },
             {
               "id": "root_block",
-              "volume_mm3": 1923.7332058452737,
-              "compliance_contribution_Nmm": 1.7787259550009227,
-              "energy_share": 0.5742476781323811,
-              "max_displacement_mm": 0.04683639059644012,
-              "failure_index_max": 0.08758010225252374,
-              "safety_factor_min": 11.418118662577648
+              "volume_mm3": 1923.7332058452735,
+              "compliance_contribution_Nmm": 1.7787262768902,
+              "energy_share": 0.5742809045983132,
+              "max_displacement_mm": 0.04683634427400955,
+              "failure_index_max": 0.08758009387944905,
+              "safety_factor_min": 11.41811975420425
             },
             {
               "id": "tip_block",
-              "volume_mm3": 1863.0239585574532,
-              "compliance_contribution_Nmm": 0.06577219875401352,
-              "energy_share": 0.021234036819423464,
-              "max_displacement_mm": 0.31872870574675755,
-              "failure_index_max": 0.020559380112038908,
-              "safety_factor_min": 48.63959878899424
+              "volume_mm3": 1869.5286174651833,
+              "compliance_contribution_Nmm": 0.06586209314031097,
+              "energy_share": 0.02126428496546631,
+              "max_displacement_mm": 0.31870552721137346,
+              "failure_index_max": 0.020354697217246396,
+              "safety_factor_min": 49.12870917837613
             }
           ]
         },
@@ -498,13 +498,13 @@
         "cases": [
           {
             "id": "bending",
-            "compliance_relative_change": 0.0010092405829236378,
-            "displacement_relative_change": 0.0009830111495083376,
-            "failure_index_relative_change": 0.044300016392970945
+            "compliance_relative_change": 0.0010658720142850784,
+            "displacement_relative_change": 0.0010553550768155943,
+            "failure_index_relative_change": 0.044545120195994735
           }
         ],
-        "coarse_elements": 383,
-        "fine_elements": 817,
+        "coarse_elements": 381,
+        "fine_elements": 810,
         "tolerances": {
           "compliance": 0.05,
           "displacement": 0.05,
@@ -525,47 +525,53 @@
         "visible_staircase_before_mm": 0.01924449499013355,
         "visible_staircase_after_mm": 0.009622247495066774
       },
-      "seconds_including_meshing": 4.266
+      "seconds_including_meshing": 6.345
     }
   },
   "cantilever_reference": {
     "method": "Euler-Bernoulli solid beam; transverse shear and clamp effects omitted",
     "stiffness_N_per_mm": 14.222222222222221,
-    "relative_stiffness_error": 0.008164078751968173
+    "relative_stiffness_error": 0.008123394224538921
   },
-  "python35_grammar_modules": 23,
+  "python35_grammar_modules": 29,
   "source_sha256": {
-    "plugin/ste_planner/__init__.py": "5f93671a1c641d413f3f6620f493fb3209dece4e28d80ff95f495ebf9a158263",
-    "plugin/ste_planner/assistant.py": "fd0842ac204b693a9c0bfd26fabf7bbd73e42c2a6ddfd6dce30782094167a686",
-    "plugin/ste_planner/calibration.py": "5e02b51998fc51dec3b966c7a4377cf5c42b529e1f3c235ff389de1a9755dacc",
-    "plugin/ste_planner/compiler.py": "fe78d3901165ea3cc5eff68617af09ed751108a03220a7467dcaad6eb553f783",
-    "plugin/ste_planner/elasticity.py": "7a64e2f19fe163b51243b83e7427fb4a060170ee702bbfb995d4071640bba34c",
-    "plugin/ste_planner/functional.py": "50ec7c208fd3fed84e0c4daff2dce7fa63d2b0d3748d391c6248cfadf4e583c7",
-    "plugin/ste_planner/gcode.py": "ce9af408988ea6712027365db3f9990ea4c99da504f901b09b285de9affeaa07",
-    "plugin/ste_planner/geometry.py": "1ea6f74abea528bd1a6a120deedc8524fa9efc6221dc9c6d4a90d2b3ac0ead7c",
-    "plugin/ste_planner/materials.py": "2ae833095811135b5731b9b512234759e17329f40b9c270e310db861cd06fc42",
-    "plugin/ste_planner/mechanics.py": "7720f611db3fb5ebf10736da5eaa58c0dbbf7fe3ce8f807d9bb2bfc4426ffd0f",
-    "plugin/ste_planner/optimize.py": "c134059b2202da802d6398637a4010be44feacfc87ad239612a383044bf2db3c",
-    "plugin/ste_planner/planner.py": "995823a047b9c70aa1c2557d0347217c3c50631fb01c6559c8fcca2687724196",
-    "plugin/ste_planner/process.py": "6f529d7bf47359a0ad1c3866be39ffb4b19fff2bede0deab26e23d64d30adb8a",
-    "plugin/ste_planner/process_plan.py": "a43d8dbec9243da6ce692aeb04c8cffd82058d52a8aefcde6fdc47bcb0af42fd",
-    "plugin/ste_planner/requirements.py": "e894e41ecca539d1511cb053ee3285edd7223b02538e2de67c72896ce36e8beb",
-    "plugin/ste_planner/result.py": "fd1fe0127f1469501ea4fffedd2e0835f8431081bdfd0e3f512ae85da91d2918",
-    "plugin/ste_planner/routes.py": "178a53888a69d5a017ed2a6a113f36766213e0d611da3c38ee972d51e8bc3a6a",
-    "plugin/ste_planner/settings_schema.py": "b26024d167908b9720c1b01c9feccc14123855c6e7d5cc3486da1ef13c976e95",
-    "plugin/ste_planner/structure.py": "342c2bb6b5bf5c418f47542b10e9c5c4d6f1a71658ccf5f8ffaf0e8e64d37a90",
-    "plugin/ste_planner/surrogate.py": "724efca1245517110581d182b5da735212f1ca44743b9e5fca3550a6061867bb",
-    "plugin/ste_planner/units.py": "c270bfa45fea5b3b6c654b3a1ded97ffba44a1b3354e563e74d7368d3172b529",
-    "plugin/ste_planner/verification.py": "c800387798a9306620aaf61a608ceb5d743e7caa677541b23e1d6fb059ce5b2f",
-    "plugin/ste_planner/volume_mesh.py": "d730df6734db4ec17dce68ff74be3ac017f7cf2d20550f44100194bec20585e3"
+    "plugin\\ste_planner\\__init__.py": "f1001a69b255f4de82ce7f365e9bfbe22ced86db2fa99b4f1619c136c1b51734",
+    "plugin\\ste_planner\\assistant.py": "d5e922b3851dc00472425fb72852991a5991ed83bcb44938e5f481ae30fe9623",
+    "plugin\\ste_planner\\calibration.py": "8b4c598ab7c94debf27bd4b9296dc840a01d7b0c050358247b412b06ec47ab46",
+    "plugin\\ste_planner\\causal_bridge.py": "c158d487da5ea482c2629f0cca7f944af22c5ee4e8269fa6f9d6472a3664ace8",
+    "plugin\\ste_planner\\compiler.py": "6a29ab47d94efd3df800c771bd0eab394612a30dc0d68b1df512d7dd2fefab10",
+    "plugin\\ste_planner\\elasticity.py": "3d63d135271b2ba536763e7457d703f368148e7691b665e5f04a5d4ba3e494bf",
+    "plugin\\ste_planner\\functional.py": "383667b622b93fb1bf7f50c778cfdd086b479aab714dcf5797f4da97112fbd64",
+    "plugin\\ste_planner\\gcode.py": "98e03e7358d5241e0b456ce12670052252db9781af4248f0ab1a7ce0ab6e042f",
+    "plugin\\ste_planner\\geometry.py": "87ed4ba0a23aaef2d63617499fb9d999cafef8cde34f58758b23251d73ab2ec9",
+    "plugin\\ste_planner\\llm_requirements.py": "2ebd56509e87d4802873bbefff6a6a89bd93df0ffc76324eebf7a433d844fcf5",
+    "plugin\\ste_planner\\materials.py": "50fe21e1566a3ffff5621f5c9fb6a9f223cff044432683c52413656c1ba4a2c9",
+    "plugin\\ste_planner\\mechanics.py": "69230ec945ab7697df1e1d79908e4565d097e7ad0a9712ae8bcbbabef4287b42",
+    "plugin\\ste_planner\\optimize.py": "9105296ef0df9d921b1899a1689025e49e79864eaa4072cd616325d1e4110ad6",
+    "plugin\\ste_planner\\planner.py": "13261a8cef15a223ae8abbc7e4bdd39e7fc335111125f9418a4be8f9f06a7cb9",
+    "plugin\\ste_planner\\process.py": "ad2e955ef28f701728158f022a00bded02db8caefab6eb2ca5e40d8abb4843f0",
+    "plugin\\ste_planner\\process_plan.py": "0eadb15df1636bd4cf93b69ef027a5124f2358e61e9d84ec2a034b7dce50b4aa",
+    "plugin\\ste_planner\\qwen_assistant.py": "1847ad70e5d134f57ba25d7b000504d104389a5ffae96610c65608b2acbac600",
+    "plugin\\ste_planner\\qwen_client.py": "4075f7c7ca33c21fcd49f2ec6d908c8ee54ac3d704358366f17b1a2d177e0bda",
+    "plugin\\ste_planner\\requirements.py": "b97b9e02ae36374b768ff59c84adc021298ab3388b82a65ccc0ce0ed950d08b5",
+    "plugin\\ste_planner\\result.py": "cacad1db8b94d85e29ec06e6f65dcb6aea641c5c53642d6d943fe055d4da8162",
+    "plugin\\ste_planner\\robustness.py": "1f2421ee03c152707b5d40f1cdfc069455ea2cd52d4dca1e38f4cc51a53f1737",
+    "plugin\\ste_planner\\routes.py": "1027d5aff441372d10a646e20e10319dc45cbb52d7841e21821eab00bf0aa28e",
+    "plugin\\ste_planner\\runtime_adapter.py": "ee6703883d33ba545e9840fa60381a9fe1cbdcd267488b4feeaf8c8c18a594cb",
+    "plugin\\ste_planner\\settings_schema.py": "97969aed221f5df5463c2cb4807892092ccfbc7d6b2625f9143e085dd37b4c86",
+    "plugin\\ste_planner\\structure.py": "e73cd83791b249f0e728267fb9038bbe164cdd76d028bd6c95f6df6683aad127",
+    "plugin\\ste_planner\\surrogate.py": "e59067e46bc4674dc50a206f6b765c5f3a4265b052f40d4ec83a6cde5a76b299",
+    "plugin\\ste_planner\\units.py": "a2d86065caa47f759b3b52d421aa00f63c97e74278c8917407b20a5fadab939e",
+    "plugin\\ste_planner\\verification.py": "1ee4091a339e14c8a9ee64e06f7d777fd3a56b4118ca8ce3e60d860130fd50c3",
+    "plugin\\ste_planner\\volume_mesh.py": "44f4c09c22e0cbc23a37762d588b911ee3e750c00fd2004b3a0099e16d9b9fea"
   },
   "Ra_um": null,
   "flatness_mm": null,
+  "runtime_evidence": "experiments/ste_runtime_results.json (separate native validation scope)",
   "not_verified": [
     "physical material calibration",
-    "actual STE runtime modifier/G-code application",
     "5D head/fixture collision clearance",
     "physical surface Ra and thermal flatness",
-    "embedded Windows Python 3.5 execution"
+    "physical process-noise response"
   ]
 }

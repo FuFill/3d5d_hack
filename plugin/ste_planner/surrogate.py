@@ -13,6 +13,7 @@ Every prediction carries the training domain; outside it domain_check() fails.
 """
 
 import math
+import hashlib
 
 import numpy
 
@@ -167,13 +168,24 @@ def fit_double_ml(x, d, y, groups=None, n_folds=5, seed=0, outcome_unit=None):
         if len(group_ids) < n_folds:
             return unknown(model_id, "fewer independent print jobs than folds", status="needs_calibration")
         residual_y, residual_d = numpy.empty(len(d)), numpy.empty(len(d))
-        for train, test in _dml_splits(groups, n_folds, seed):
+        fold_index = numpy.full(len(d), -1, dtype=int)
+        fold_audit = []
+        for fold, (train, test) in enumerate(_dml_splits(groups, n_folds, seed)):
+            overlap = len(set(group_index[train]).intersection(group_index[test]))
+            if overlap or numpy.any(fold_index[test] >= 0):
+                return invalid(model_id, "cross-fitting split leaks print jobs or repeats test rows")
+            fold_index[test] = fold
+            fold_audit.append({"train_rows": len(train), "test_rows": len(test),
+                               "train_groups": len(numpy.unique(group_index[train])),
+                               "test_groups": len(numpy.unique(group_index[test])), "group_overlap": overlap})
             try:
                 predicted = _dml_predict(x[train], numpy.column_stack((y[train], d[train])), x[test])
             except ValueError as exc:
                 return unknown(model_id, str(exc), status="needs_calibration")
             residual_y[test] = y[test] - predicted[:, 0]
             residual_d[test] = d[test] - predicted[:, 1]
+        if numpy.any(fold_index < 0):
+            return invalid(model_id, "cross-fitting did not cover every observation exactly once")
         denominator = float(residual_d.dot(residual_d))
         numerical_floor = numpy.finfo(float).eps * max(float(d.dot(d)), 1.0)
         if not math.isfinite(denominator) or denominator <= numerical_floor:
@@ -197,7 +209,13 @@ def fit_double_ml(x, d, y, groups=None, n_folds=5, seed=0, outcome_unit=None):
                  "numpy_version": numpy.__version__, "diagnostics": {
                      "out_of_fold_rmse_y": float(numpy.sqrt(numpy.mean(residual_y ** 2))),
                      "out_of_fold_rmse_d": float(numpy.sqrt(numpy.mean(residual_d ** 2))),
-                     "residual_treatment_variance": denominator / len(d)},
+                     "residual_treatment_variance": denominator / len(d),
+                     "cross_fitting": {"folds": fold_audit, "test_coverage_exactly_once": True,
+                         "fold_assignment_sha256": hashlib.sha256(
+                             ",".join(str(int(v)) for v in fold_index).encode("ascii")).hexdigest(),
+                         "preprocessing_fit_scope": "training fold only; supplied X only",
+                         "covariate_provenance_review_required": True,
+                         "hyperparameter_search": False, "independent_test_evaluation": False}},
                  "inference": "cluster-robust asymptotic normal; not a prediction interval"}
         return computed(value, None, model_id, MODEL_EXPERIMENTAL, evidence=None, domain=domain,
                         uncertainty={"standard_error": se, "confidence_interval_95": interval},

@@ -85,9 +85,9 @@ def main():
                                        "stiffness_N_per_mm": theoretical_k, "relative_stiffness_error": stiffness_error},
               "python35_grammar_modules": len(grammar), "source_sha256": hashes,
               "Ra_um": None, "flatness_mm": None,
-              "not_verified": ["physical material calibration", "actual STE runtime modifier/G-code application",
-                               "5D head/fixture collision clearance", "physical surface Ra and thermal flatness",
-                               "embedded Windows Python 3.5 execution"]}
+              "runtime_evidence": "experiments/ste_runtime_results.json (separate native validation scope)",
+              "not_verified": ["physical material calibration", "5D head/fixture collision clearance",
+                               "physical surface Ra and thermal flatness", "physical process-noise response"]}
     (ROOT / "experiments" / "functional_results.json").write_text(json.dumps(report, indent=2, ensure_ascii=False, allow_nan=False) + "\n", encoding="utf-8")
     module = importlib.util.spec_from_file_location("render_functional_maps", ROOT / "plugin" / "tools" / "render_functional_maps.py")
     renderer = importlib.util.module_from_spec(module)

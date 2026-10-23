@@ -1,0 +1,54 @@
+{
+  "status": "computed",
+  "nodes": [
+    {
+      "vertices": 8,
+      "mesh_sha256": "4389f884e4b5f92cb9a5e36a714270ad7b287240bd4c329ca6bbfcbc4ec4d451",
+      "name": "beam.stl",
+      "modifier": {
+        "support_mesh": false,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false
+      },
+      "world_bounds": [
+        [
+          -30.0,
+          0.0,
+          -4.0
+        ],
+        [
+          30.0,
+          12.0,
+          4.0
+        ]
+      ],
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -30.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -4.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "Root"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "error": "AttributeError",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\Ilya\\Working projects\\3d5d_hack\\.runtime\\ste\\run_bb3206b712\\appdata\\steslicer\\7.10\\plugins\\STEPlannerRuntime\\RuntimeExtension.py\", line 350, in poll_once\n    result = self.wait_pending()\n  File \"C:\\Users\\Ilya\\Working projects\\3d5d_hack\\.runtime\\ste\\run_bb3206b712\\appdata\\steslicer\\7.10\\plugins\\STEPlannerRuntime\\RuntimeExtension.py\", line 279, in wait_pending\n    if pending[\"kind\"] == \"load\" and self.nodes() and time.monotonic() - pending[\"started\"] > 3:\n  File \"C:\\Users\\Ilya\\Working projects\\3d5d_hack\\.runtime\\ste\\run_bb3206b712\\appdata\\steslicer\\7.10\\plugins\\STEPlannerRuntime\\RuntimeExtension.py\", line 118, in nodes\n    for n in self.app.getController().getScene().getRoot().getAllChildren()\n  File \"C:\\Users\\Ilya\\Working projects\\3d5d_hack\\.runtime\\ste\\run_bb3206b712\\appdata\\steslicer\\7.10\\plugins\\STEPlannerRuntime\\RuntimeExtension.py\", line 119, in <listcomp>\n    if n.callDecoration(\"isSliceable\") and n.getMeshData()]\nAttributeError: 'NoneType' object has no attribute 'tobytes'\n",
+  "status": "error",
+  "message": "'NoneType' object has no attribute 'tobytes'"
+}

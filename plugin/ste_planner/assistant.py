@@ -11,15 +11,8 @@ import math
 import os
 import re
 import time
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, build_opener, HTTPRedirectHandler
-
 from .result import computed, invalid, unknown, MODEL_POLICY
-
-
-class _NoRedirect(HTTPRedirectHandler):
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        raise HTTPError(req.full_url, code, "LLM redirects are disabled", headers, fp)
+from .qwen_client import QwenClient, QwenError
 
 
 def load_env(path):
@@ -36,6 +29,10 @@ def load_env(path):
 
 def _quoted(quote, text):
     return isinstance(quote, str) and bool(quote.strip()) and quote in text
+
+
+def _support_prohibition(text):
+    return bool(re.search(r"(?:без|запре|недопуст|no\s|without|forbid)[^.!?;\n]{0,80}(?:поддерж|support)", text, re.IGNORECASE))
 
 
 def validate_intent(intent, text, surface_ids):
@@ -71,6 +68,12 @@ def validate_intent(intent, text, surface_ids):
             if key in seen:
                 raise ValueError("duplicate region role")
             seen.add(key)
+        if _support_prohibition(text) and not any(r["role"] == "no_support" for r in intent["regions"]):
+            raise ValueError("explicit support prohibition was omitted; preserve it with its source surface and quote")
+        for region in intent["regions"]:
+            if (_support_prohibition(region["quote"]) and
+                    (region["surface_id"], "no_support") not in seen):
+                raise ValueError("support prohibition in a cited region must also have no_support on that same surface")
         for load in intent["loads"]:
             if set(load) != {"surface_id", "force_N", "quote"} or load["surface_id"] not in surface_ids:
                 raise ValueError("unknown load surface or unexpected load fields")
@@ -153,20 +156,15 @@ def extract_intent(text, surfaces, timeout=45, config=None):
     started = time.time()
     try:
         attempts = []
+        client = QwenClient(token, base_url=base, model=model, timeout=timeout)
         for attempt in range(2):
-            request = Request(base.rstrip("/") + "/chat/completions", json.dumps(payload).encode("utf-8"),
-                              {"Authorization": "Bearer " + token, "Content-Type": "application/json"})
-            with build_opener(_NoRedirect()).open(request, timeout=timeout) as response:
-                raw = response.read(1024 * 1024 + 1)
-            if len(raw) > 1024 * 1024:
-                return invalid("llm_intake", "LLM response exceeds bounded size")
-            data = json.loads(raw.decode("utf-8"))
-            message = data["choices"][0]["message"]
+            message = client.complete(payload["messages"], tools=[tool], max_tokens=2500,
+                                      tool_choice=payload["tool_choice"])
             calls = message.get("tool_calls", [])
             if len(calls) != 1 or calls[0]["function"]["name"] != "describe_functional_intent":
                 return invalid("llm_intake", "expected exactly one authorized intent tool call")
             result = validate_intent(json.loads(calls[0]["function"]["arguments"]), text, surface_ids)
-            attempts.append({"status": result.status, "usage": data.get("usage")})
+            attempts.append({"status": result.status})
             if result.status != "invalid_input" or attempt == 1:
                 break
             # One repair with deterministic validator feedback. The validator is
@@ -180,11 +178,16 @@ def extract_intent(text, surfaces, timeout=45, config=None):
                                                        "Use missing_inputs for absent facts."}, ensure_ascii=False)}])
         result.trace.append({"model": model, "latency_seconds": round(time.time() - started, 3),
                              "attempts": attempts, "tool": "describe_functional_intent"})
+        if result.status == "invalid_input" and not re.search(r"\d+(?:[.,]\d+)?\s*(?:Н|N)(?![A-Za-zА-Яа-я])", text):
+            # An invalid role proposal does not manufacture a force from kg.
+            # Preserve the validation failure, return no accepted intent, and
+            # explicitly request the missing physical load instead of retrying.
+            result.status = "needs_input"
+            result.trace.append({"reason": "no_explicit_force_in_newtons; intent remains unaccepted",
+                                 "missing": ["load_magnitude_N", "load_direction_axis"]})
         return result
-    except HTTPError as exc:
-        return unknown("llm_intake", "LLM HTTP status %d" % exc.code, status="needs_input")
-    except (URLError, TimeoutError, OSError):
-        return unknown("llm_intake", "LLM connection failed or timed out", status="needs_input")
+    except QwenError as exc:
+        return unknown("llm_intake", "LLM request failed: " + exc.code, status="needs_input")
     except (ValueError, KeyError, TypeError, IndexError):
         return invalid("llm_intake", "invalid LLM response structure")
 

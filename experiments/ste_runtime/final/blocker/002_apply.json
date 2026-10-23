@@ -1,0 +1,202 @@
+{
+  "status": "applied",
+  "nodes": [
+    {
+      "name": "shelf.stl",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "Root",
+      "world_bounds": [
+        [
+          -15.0,
+          0.0,
+          -5.0
+        ],
+        [
+          15.0,
+          24.0,
+          5.0
+        ]
+      ],
+      "modifier": {
+        "support_mesh": false,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false
+      },
+      "vertices": 14,
+      "mesh_sha256": "f43c7a6e07da3c4239cb3f267f94967f32e4fc9c1757187825ea6ab665ce592c"
+    },
+    {
+      "name": "support_enforcer",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "shelf.stl",
+      "world_bounds": [
+        [
+          -10.09000015258789,
+          0.0,
+          -4.090000152587891
+        ],
+        [
+          4.090000152587891,
+          20.399999618530273,
+          4.090000152587891
+        ]
+      ],
+      "modifier": {
+        "support_mesh": true,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false
+      },
+      "vertices": 12,
+      "mesh_sha256": "2cc760c7205aa13003c5cf1c63c3b9e9f06ced4cf61a929a4d8be96d96f34724"
+    },
+    {
+      "name": "support_blocker",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -15.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          5.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "parent": "shelf.stl",
+      "world_bounds": [
+        [
+          2.8030662536621094,
+          19.5,
+          -7.196934700012207
+        ],
+        [
+          17.19693374633789,
+          20.5,
+          7.196934223175049
+        ]
+      ],
+      "modifier": {
+        "support_mesh": false,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": true
+      },
+      "vertices": 12,
+      "mesh_sha256": "b5ee4169ede60ba18762bdd20a18a25f8a46f191da797177fa971f9e989ba8a1"
+    }
+  ],
+  "readback": {
+    "machine_definition": "hte530v5.2.4",
+    "differences": [],
+    "material_id": "enduse_petg",
+    "status": "pass",
+    "actual": {
+      "material_flow": 100,
+      "speed_print": 45.0,
+      "retraction_amount": 1.5,
+      "cool_fan_enabled": true,
+      "bottom_layers": 5,
+      "support_enable": true,
+      "cool_fan_speed": 20.0,
+      "adhesion_type": "brim",
+      "support_xy_distance": 0.7,
+      "support_type": "everywhere",
+      "support_interface_enable": false,
+      "wall_line_count": 3,
+      "material_bed_temperature": 60.0,
+      "infill_pattern": "lines",
+      "cylindrical_mode_base_diameter": 6,
+      "cylindrical_mode_overlap": 0,
+      "material_print_temperature": 235.0,
+      "machine_width": 351,
+      "non_printing_base_diameter": 6,
+      "machine_center_is_zero": false,
+      "support_bottom_enable": false,
+      "support_roof_enable": false,
+      "machine_depth": 300.3,
+      "layer_height_0": 0.3,
+      "machine_height": 300,
+      "layer_height": 0.2,
+      "line_width": 0.4,
+      "top_layers": 5,
+      "infill_sparse_density": 30.0,
+      "support_line_width": 0.4,
+      "retraction_speed": 11.5,
+      "machine_heated_bed": true,
+      "support_bottom_distance": 0.1,
+      "support_top_distance": 0.1,
+      "support_angle": 50,
+      "wall_thickness": 0.8,
+      "retraction_enable": true,
+      "machine_nozzle_size": 0.4,
+      "printing_mode": "classic"
+    },
+    "quality_id": "ste_planner_quality_ce11fb771fb848db9e6f1defc44704b5"
+  },
+  "qt_thread": true,
+  "decision_sha256": "a69cc32c00049abbb44d588719a38d12504476c6352ebbce93e6836047c0cfae"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "STE Planner Runtime",
+  "author": "3d5d_hack",
+  "version": "0.1.0",
+  "api": 5,
+  "description": "Transactional planner application and readback in STE Slicer 7.10."
+}

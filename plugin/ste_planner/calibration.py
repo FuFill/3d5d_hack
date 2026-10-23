@@ -74,6 +74,12 @@ def _assess_one(data, context, resolver, changes):
     keys = [treatment] + controls
     if not all(isinstance(k, str) for k in keys) or len(set(keys)) != len(keys):
         return invalid(model_id, "treatment and pre-treatment covariates must be distinct keys")
+    timing = data.get("covariate_timing")
+    if controls and (not isinstance(timing, dict) or any(k not in timing for k in controls)):
+        return unknown(model_id, "declare when every control was assigned/measured; exclude post-treatment outcomes",
+                       ["covariate_timing"], status="needs_input")
+    if controls and any(timing[k] not in ("pre_treatment", "assigned_control") for k in controls):
+        return invalid(model_id, "post-treatment or unspecified control timing risks outcome leakage")
     if set(fixed).intersection(keys):
         return invalid(model_id, "varied treatment/covariates cannot also be declared fixed")
     units = data.get("units")
@@ -93,7 +99,7 @@ def _assess_one(data, context, resolver, changes):
     observations = data.get("observations")
     if not isinstance(observations, list) or not observations:
         return unknown(model_id, "no measured observations", status="needs_calibration")
-    x, d, y, groups, samples = [], [], [], [], set()
+    x, d, y, groups, samples, job_groups = [], [], [], [], set(), {}
     for row in observations:
         if not isinstance(row, dict) or not isinstance(row.get("settings"), dict):
             return invalid(model_id, "each observation needs settings and measured outcome")
@@ -101,6 +107,12 @@ def _assess_one(data, context, resolver, changes):
         if not all(isinstance(v, str) and v.strip() for v in (sample, group)) or sample in samples:
             return invalid(model_id, "unique sample_id and nonempty print_job_id required")
         samples.add(sample)
+        independent = row.get("independence_group_id", group)
+        if not isinstance(independent, str) or not independent.strip():
+            return invalid(model_id, "nonempty independence_group_id required when supplied")
+        if group in job_groups and job_groups[group] != independent:
+            return invalid(model_id, "one print job cannot be split across independence groups")
+        job_groups[group] = independent
         values = [row["settings"].get(key) for key in keys] + [row.get("outcome")]
         if not all(is_number(v) for v in values):
             return invalid(model_id, "missing/non-finite observed values; do not silently discard failed prints")
@@ -114,7 +126,7 @@ def _assess_one(data, context, resolver, changes):
         d.append(float(values[0]))
         x.append([float(v) for v in values[1:-1]])
         y.append(float(values[-1]))
-        groups.append(group)
+        groups.append(independent)
     fitted = surrogate.fit_double_ml(x, d, y, groups=groups, n_folds=data.get("n_folds", 5),
                                     seed=data.get("seed", 0), outcome_unit=outcome["unit"])
     if not fitted.ok:
@@ -142,6 +154,8 @@ def _assess_one(data, context, resolver, changes):
                             .encode("utf-8")).hexdigest()
     value = {"dataset_id": dataset_id, "dataset_sha256": digest, "source": "physical_test",
              "design": data["design"], "treatment": treatment, "treatment_unit": units[treatment],
+             "covariate_timing": timing or {},
+             "cross_fit_grouping": "independence_group_id when supplied, otherwise print_job_id",
              "outcome": outcome, "fit": fitted.to_dict(),
              "change": contrast.to_dict() if treatment in changes else None,
              "proposed_patch": ({"payload": compiler.patch_to_slicer_payload(proposal),

@@ -1,0 +1,3 @@
+# Preserve native output bytes: evidence SHA-256 must survive Git transport.
+experiments/ste_runtime/**/*.gcode -text -diff -whitespace
+experiments/ste_runtime/**/*.3mf -text -diff
