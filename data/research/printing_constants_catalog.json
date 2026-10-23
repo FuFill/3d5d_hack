@@ -1,0 +1,189 @@
+{
+  "schema_version": "1.0",
+  "research_date": "2026-10-23",
+  "purpose": "Evidence-backed candidate windows and explicitly proposed search policies; not a deployable printer profile",
+  "installed_machine_verified": false,
+  "physical_tests_performed": false,
+  "material_records": [
+    {
+      "id": "polymaker_petg_tds_v2_20251117",
+      "sku": "Polymaker PETG",
+      "source_url": "https://polymaker.com/wp-content/uploads/lana-downloads/TDS_Polymaker_PETG_V2.0_2025-11-17.pdf",
+      "source_type": "manufacturer_tds",
+      "version": "V2.0 / 2025-11-17",
+      "data_class": "manufacturer_candidate_window",
+      "baseline_nozzle_mm": 0.4,
+      "process_windows": {
+        "nozzle_temperature": {"min": 240, "max": 260, "unit": "degC"},
+        "bed_temperature": {"min": 60, "max": 70, "unit": "degC"},
+        "fan": {"min": 20, "max": 60, "unit": "percent"},
+        "drying": {"temperature": 55, "unit": "degC", "duration_h": 6}
+      },
+      "conflicts": [
+        {
+          "field": "drying_temperature",
+          "other_source_url": "https://polymaker.com/product/polymaker-petg",
+          "other_value": 60,
+          "unit": "degC",
+          "resolution": "Confirm SKU/spool documentation and version; no automatic averaging"
+        }
+      ],
+      "qualification_note": "Specimen production uses different bed/fan conditions; typical properties do not qualify arbitrary settings inside these windows",
+      "automatic_application_allowed": false
+    },
+    {
+      "id": "polylite_asa_tds_v53",
+      "sku": "PolyLite ASA",
+      "source_url": "https://polymaker.com.cn/wp-content/uploads/lana-downloads/PolyLite_ASA_TDS_V5.3.pdf",
+      "source_type": "manufacturer_tds",
+      "version": "V5.3",
+      "data_class": "manufacturer_candidate_window",
+      "baseline_nozzle_mm": 0.4,
+      "process_windows": {
+        "nozzle_temperature": {"min": 240, "max": 260, "unit": "degC"},
+        "bed_temperature": {"min": 75, "max": 95, "unit": "degC"},
+        "fan": {"value": "OFF", "numeric_percent": 0}
+      },
+      "selected_typical_properties": {
+        "tensile_strength_xy": {"value": 38.6, "unit": "MPa"},
+        "tensile_strength_z": {"value": 30.0, "unit": "MPa"}
+      },
+      "derived_comparison_only": {
+        "strength_z_to_xy_ratio": 0.7772020725,
+        "transferable_process_constant": false
+      },
+      "specimen_condition": {"environment_temperature": 70, "unit": "degC", "instruction_for_other_machines": false},
+      "automatic_application_allowed": false
+    },
+    {
+      "id": "polyflex_tpu95_wiki_v54",
+      "sku": "PolyFlex TPU95",
+      "source_url": "https://wiki.polymaker.com/polymaker-products/more-about-our-products/documents/technical-data-sheets/tpu/polyflex-tm-tpu95",
+      "source_type": "manufacturer_wiki_with_linked_tds",
+      "version": "linked PDF V5.4; wiki snapshot accessed 2026-10-23",
+      "data_class": "manufacturer_candidate_window",
+      "baseline_nozzle_mm": 0.4,
+      "process_windows": {
+        "nozzle_temperature": {"min": 210, "max": 230, "unit": "degC"},
+        "bed_temperature": {"min": 25, "max": 60, "unit": "degC"},
+        "fan": {"value": "ON", "numeric_percent": null},
+        "drying": {"temperature": 70, "unit": "degC", "duration_h": 8}
+      },
+      "unresolved_fields": ["direct-drive-specific retraction", "validated volumetric flow", "fatigue in grease and service environment"],
+      "automatic_application_allowed": false
+    },
+    {
+      "id": "ultrafuse_ppgf30_filament_v23",
+      "sku": "Ultrafuse PP GF30 filament",
+      "source_url": "https://forward-am.com/wp-content/uploads/2021/07/Ultrafuse_PP_GF30_TDS_EN_v2.3-2.pdf",
+      "source_type": "manufacturer_tds",
+      "version": "V2.3",
+      "data_class": "manufacturer_candidate_window",
+      "process_windows": {
+        "nozzle_temperature": {"min": 240, "max": 260, "unit": "degC"},
+        "nozzle_diameter": {"min": 0.6, "unit": "mm"},
+        "bed_temperature_by_surface": [
+          {"surface": "PP strapping tape", "min": 20, "max": 40, "unit": "degC"},
+          {"surface": "PPGF adhesive specified by TDS", "min": 70, "max": 90, "unit": "degC"}
+        ]
+      },
+      "selected_typical_properties": {
+        "tensile_modulus_xy": {"value": 2628, "unit": "MPa"},
+        "tensile_strength_xy": {"value": 41.7, "unit": "MPa"},
+        "tensile_strength_zx": {"value": 15.9, "unit": "MPa"}
+      },
+      "derived_comparison_only": {
+        "strength_zx_to_xy_ratio": 0.3812949640,
+        "transferable_process_constant": false
+      },
+      "screening_for_case_wilo": {
+        "evidence_supports_acceptance": false,
+        "reason": "Selected typical modulus and tensile strength do not meet required 4500 MPa and 50 MPa; no process qualification established"
+      },
+      "automatic_application_allowed": false
+    }
+  ],
+  "proposed_search_policies": [
+    {
+      "id": "layer_height_doe_seed",
+      "data_class": "proposed_policy_not_experimental_optimum",
+      "parameter": "layer_height_over_nozzle_diameter",
+      "values": [0.375, 0.5, 0.625],
+      "unit": "ratio",
+      "must_intersect_with": ["machine", "material", "profile", "mode-specific calibrated layer window"],
+      "mode_transfer_validated": false
+    },
+    {
+      "id": "wall_count_doe_seed",
+      "data_class": "proposed_policy_not_experimental_optimum",
+      "parameter": "wall_line_count",
+      "values": [2, 3, 4, 6],
+      "unit": "count",
+      "must_intersect_with": ["geometry", "load solution", "printable wall layout"]
+    },
+    {
+      "id": "infill_doe_seed",
+      "data_class": "proposed_policy_not_experimental_optimum",
+      "parameter": "infill_fraction",
+      "values": [0.15, 0.3, 0.5, 0.8, 1.0],
+      "unit": "ratio",
+      "must_intersect_with": ["mechanical feasibility", "mass constraint", "thermal/process feasibility"]
+    },
+    {
+      "id": "temperature_doe_seed",
+      "data_class": "proposed_policy_not_experimental_optimum",
+      "parameter": "nozzle_temperature",
+      "relative_levels": ["intersection_min", "intersection_midpoint", "intersection_max"],
+      "must_intersect_with": ["specific SKU/version", "hotend", "profile", "extruder", "calibrated process window"]
+    },
+    {
+      "id": "flow_margin_policy",
+      "data_class": "requires_measurement_and_explicit_risk_policy",
+      "parameter": "volumetric_flow_limit",
+      "universal_numeric_value": null,
+      "rule": "Use calibrated lower bound of successful volumetric flow in matching context, with any extra reserve documented separately"
+    },
+    {
+      "id": "safety_factor_policy",
+      "data_class": "application_dependent_policy",
+      "parameter": "structural_safety_factor",
+      "universal_numeric_value": null,
+      "rule": "Select from application consequence, model error, load uncertainty and required reliability; does not replace unknown fatigue/creep data"
+    }
+  ],
+  "calibration_methods": [
+    {
+      "id": "orca_flow_legacy",
+      "source_url": "https://github.com/OrcaSlicer/OrcaSlicer/wiki/Calibration/dcd7b12fdc58a3663d2fe69d4d36075eaeebcc9d",
+      "formula": "new_ratio = old_ratio * (100 + modifier_percent) / 100",
+      "modifier_unit": "percent",
+      "test_type": "Legacy Pass 1/Pass 2"
+    },
+    {
+      "id": "orca_flow_yolo",
+      "source_url": "https://github.com/OrcaSlicer/OrcaSlicer/wiki/Calibration/dcd7b12fdc58a3663d2fe69d4d36075eaeebcc9d",
+      "formula": "new_ratio = old_ratio + modifier_decimal",
+      "modifier_unit": "additive_ratio",
+      "test_type": "YOLO"
+    },
+    {
+      "id": "klipper_pa_tower",
+      "source_url": "https://www.klipper3d.org/Pressure_Advance.html?h=pressure_advance",
+      "formula": "pressure_advance = start + measured_height * factor",
+      "coefficient_unit": "s",
+      "transferable_to_other_firmware_without_validation": false
+    }
+  ],
+  "required_missing_calibrations": [
+    "Hybrid 530 installed profile and hardware",
+    "SKU/spool/humidity and drying",
+    "flow ratio under chosen thermal conditions",
+    "volumetric flow by nozzle/material/temperature",
+    "extruder/firmware-specific PA and retraction",
+    "directional strength and fatigue/creep",
+    "external and hole dimensional compensation",
+    "seam and leak rate",
+    "friction and wear for actual counterface",
+    "separate cylindrical-mode geometry and properties"
+  ]
+}
