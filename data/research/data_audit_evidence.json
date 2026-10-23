@@ -1,0 +1,716 @@
+{
+  "settings": {
+    "source_sha256": "5464d87316ad778e7488ac115aa95841ff24590d2c01873105c6dcbae3a59f71",
+    "claimed_sha256": "5464d87316ad778e7488ac115aa95841ff24590d2c01873105c6dcbae3a59f71",
+    "count": 47,
+    "unique_count": 47,
+    "source_settings_count": 658,
+    "duplicate_json_keys": [
+      "enabled"
+    ],
+    "metadata_differences": [],
+    "missing_keys_checks": {
+      "hole_xy_offset": true
+    }
+  },
+  "documents": [
+    {
+      "path": "data/examples/1. Шестерня - 3D/Техническое задание для шестерни.docx",
+      "zip_error": null
+    },
+    {
+      "path": "data/examples/2. Колесо конвейерной линии - 5D/Техническое задание для колеса конвейерной линии.docx",
+      "zip_error": null
+    },
+    {
+      "path": "data/examples/3. Пыльник Шруса - 3D/Техническое задание для пыльника шруса.docx",
+      "zip_error": null
+    },
+    {
+      "path": "data/examples/4. Фигурка/Техническое задание для декоративной фигурки.docx",
+      "zip_error": null
+    },
+    {
+      "path": "data/examples/5. Рабочее колесо насоса Wilo - 5D/Техническое задания для рабочего колеса насоса.docx",
+      "zip_error": null
+    },
+    {
+      "path": "data/examples/6. Крыльчатка охлаждения электродвигателя - 3D/Техническое задание для крыльчатки охлаждения электродвигателя.docx",
+      "zip_error": null
+    },
+    {
+      "path": "data/examples/7. Ось вращения передающих звёзд формовщика коробов Krones - 5D/Ось вращения передающих звёзд.docx",
+      "zip_error": null
+    }
+  ],
+  "models": [
+    {
+      "path": "data/examples/1. Шестерня - 3D/Шестерня.stl",
+      "file_size": 1246084,
+      "triangles": 24920,
+      "binary_length_valid": true,
+      "nonfinite_coordinates": 0,
+      "bbox_min": [
+        -16.54962730407715,
+        0.0,
+        -16.54962730407715
+      ],
+      "bbox_max": [
+        16.54962730407715,
+        10.100000381469727,
+        16.54962730407715
+      ],
+      "bbox_dimensions": [
+        33.0992546081543,
+        10.100000381469727,
+        33.0992546081543
+      ],
+      "zero_area_triangles": 0,
+      "tiny_area_triangles_1e-12": 0,
+      "signed_volume_model_units3": 3795.5893969939025,
+      "unique_vertices": 12458,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0
+    },
+    {
+      "path": "data/examples/2. Колесо конвейерной линии - 5D/Колесо.STL",
+      "file_size": 121484,
+      "triangles": 2428,
+      "binary_length_valid": true,
+      "nonfinite_coordinates": 0,
+      "bbox_min": [
+        0.0012740492820739746,
+        0.0,
+        0.0050961971282958984
+      ],
+      "bbox_max": [
+        58.99872589111328,
+        25.0,
+        59.0
+      ],
+      "bbox_dimensions": [
+        58.99745184183121,
+        25.0,
+        58.994903802871704
+      ],
+      "zero_area_triangles": 0,
+      "tiny_area_triangles_1e-12": 0,
+      "signed_volume_model_units3": 46704.105889584665,
+      "unique_vertices": 1214,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0
+    },
+    {
+      "path": "data/examples/3. Пыльник Шруса - 3D/Пыльник шруса.STL",
+      "file_size": 16926384,
+      "triangles": 338526,
+      "binary_length_valid": true,
+      "nonfinite_coordinates": 0,
+      "bbox_min": [
+        0.0,
+        0.0017881393432617188,
+        4.842877388000488e-05
+      ],
+      "bbox_max": [
+        111.0,
+        102.98960876464844,
+        102.98438262939453
+      ],
+      "bbox_dimensions": [
+        111.0,
+        102.98782062530518,
+        102.98433420062065
+      ],
+      "zero_area_triangles": 0,
+      "tiny_area_triangles_1e-12": 0,
+      "signed_volume_model_units3": 71422.00051447854,
+      "unique_vertices": 169263,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0
+    },
+    {
+      "path": "data/examples/4. Фигурка/Декоративная фигурка.stl",
+      "file_size": 28234884,
+      "triangles": 564696,
+      "binary_length_valid": true,
+      "nonfinite_coordinates": 0,
+      "bbox_min": [
+        -82.03059387207031,
+        -48.904747009277344,
+        -40.064090728759766
+      ],
+      "bbox_max": [
+        21.261898040771484,
+        79.84668731689453,
+        109.9151840209961
+      ],
+      "bbox_dimensions": [
+        103.2924919128418,
+        128.75143432617188,
+        149.97927474975586
+      ],
+      "zero_area_triangles": 0,
+      "tiny_area_triangles_1e-12": 0,
+      "signed_volume_model_units3": 725696.2574637183,
+      "unique_vertices": 282344,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 1301
+    },
+    {
+      "path": "data/examples/5. Рабочее колесо насоса Wilo - 5D/Рабочее_колесо насоса Wilo IPL 80140-42. 2063106.STL",
+      "file_size": 3680284,
+      "triangles": 73604,
+      "binary_length_valid": true,
+      "nonfinite_coordinates": 0,
+      "bbox_min": [
+        -170.0237579345703,
+        -0.18400616943836212,
+        8.9884033203125
+      ],
+      "bbox_max": [
+        -35.38397216796875,
+        50.5510139465332,
+        143.63406372070312
+      ],
+      "bbox_dimensions": [
+        134.63978576660156,
+        50.735020115971565,
+        134.64566040039062
+      ],
+      "zero_area_triangles": 0,
+      "tiny_area_triangles_1e-12": 0,
+      "signed_volume_model_units3": 152622.59632033843,
+      "unique_vertices": 36788,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0
+    },
+    {
+      "path": "data/examples/6. Крыльчатка охлаждения электродвигателя - 3D/Крыльчатка охлаждения электродвигателя.STL",
+      "file_size": 562684,
+      "triangles": 11252,
+      "binary_length_valid": true,
+      "nonfinite_coordinates": 0,
+      "bbox_min": [
+        0.0,
+        0.0024999999441206455,
+        0.0
+      ],
+      "bbox_max": [
+        169.0,
+        22.002500534057617,
+        169.0
+      ],
+      "bbox_dimensions": [
+        169.0,
+        22.000000534113497,
+        169.0
+      ],
+      "zero_area_triangles": 0,
+      "tiny_area_triangles_1e-12": 0,
+      "signed_volume_model_units3": 53179.15182597229,
+      "unique_vertices": 5626,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0
+    },
+    {
+      "path": "data/examples/7. Ось вращения передающих звёзд формовщика коробов Krones - 5D/Ось вращения передающих звёзд.STL",
+      "file_size": 353484,
+      "triangles": 7068,
+      "binary_length_valid": true,
+      "nonfinite_coordinates": 0,
+      "bbox_min": [
+        0.0,
+        11.331624984741211,
+        0.0
+      ],
+      "bbox_max": [
+        61.70000076293945,
+        34.827945709228516,
+        40.5
+      ],
+      "bbox_dimensions": [
+        61.70000076293945,
+        23.496320724487305,
+        40.5
+      ],
+      "zero_area_triangles": 0,
+      "tiny_area_triangles_1e-12": 0,
+      "signed_volume_model_units3": 15229.289881584882,
+      "unique_vertices": 3536,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "inconsistent_winding_edges": 0,
+      "duplicate_triangles": 0,
+      "opposed_stored_normals": 0
+    }
+  ],
+  "images": [
+    {
+      "path": "data/examples/1. Шестерня - 3D/Шестерня.jpg",
+      "size": [
+        851,
+        788
+      ],
+      "format": "JPEG"
+    },
+    {
+      "path": "data/examples/2. Колесо конвейерной линии - 5D/Колесо.jpg",
+      "size": [
+        871,
+        860
+      ],
+      "format": "JPEG"
+    },
+    {
+      "path": "data/examples/3. Пыльник Шруса - 3D/Пыльник шруса.jpg",
+      "size": [
+        838,
+        695
+      ],
+      "format": "JPEG"
+    },
+    {
+      "path": "data/examples/4. Фигурка/Декоративная фигурка.jpg",
+      "size": [
+        598,
+        740
+      ],
+      "format": "JPEG"
+    },
+    {
+      "path": "data/examples/5. Рабочее колесо насоса Wilo - 5D/Рабочее колесо насоса Wilo.jpg",
+      "size": [
+        663,
+        816
+      ],
+      "format": "JPEG"
+    },
+    {
+      "path": "data/examples/6. Крыльчатка охлаждения электродвигателя - 3D/Крыльчатка охлаждения электродвигателя.jpg",
+      "size": [
+        961,
+        807
+      ],
+      "format": "JPEG"
+    },
+    {
+      "path": "data/examples/7. Ось вращения передающих звёзд формовщика коробов Krones - 5D/Ось вращения передающих звёзд.jpg",
+      "size": [
+        691,
+        698
+      ],
+      "format": "JPEG"
+    }
+  ],
+  "sources": {
+    "ste_backend": {
+      "url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/steslicer/MultiBackend.py",
+      "final_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/steslicer/MultiBackend.py",
+      "bytes": 1898,
+      "sha256": "247fafb5cb8fcec9e076d6e2b2a2dcc316cfc47aac0023c896bd2fcf4075db2e",
+      "byte_identical_to_repo": true
+    },
+    "hackathon": {
+      "url": "https://665dc1hack2026.k8s.stereotech.cloud/",
+      "final_url": "https://665dc1hack2026.k8s.stereotech.cloud/",
+      "bytes": 29839,
+      "sha256": "ce346e691ba2e8a68b2b88fa21857a9eec8f312bedd69a43dcd733c889f1e169"
+    },
+    "ste_schema": {
+      "url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/definitions/fdmprinter.def.json",
+      "final_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/definitions/fdmprinter.def.json",
+      "bytes": 486399,
+      "sha256": "5464d87316ad778e7488ac115aa95841ff24590d2c01873105c6dcbae3a59f71",
+      "byte_identical_to_repo": true
+    },
+    "10.3390/coatings15101117": {
+      "url": "https://api.crossref.org/works/10.3390/coatings15101117",
+      "final_url": "https://api.crossref.org/works/10.3390/coatings15101117",
+      "bytes": 18427,
+      "sha256": "d92485b3538fd0e208897e2ac5f30fae497b864f92cf221e9ec17dd4808323e3",
+      "metadata": {
+        "title": [
+          "Optimizing FDM Printing Parameters via Orthogonal Experiments and Neural Networks for Enhanced Dimensional Accuracy and Efficiency"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2025,
+              9,
+              24
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2025,
+              9,
+              24
+            ]
+          ]
+        },
+        "volume": "15",
+        "issue": "10",
+        "page": "1117"
+      }
+    },
+    "10.12044/j.issn.1007-2330.2025.S1.015": {
+      "url": "https://api.crossref.org/works/10.12044/j.issn.1007-2330.2025.S1.015",
+      "error": "HTTP Error 404: Not Found"
+    },
+    "10.19287/j.mtmt.1005-2402.2025.01.004": {
+      "url": "https://api.crossref.org/works/10.19287/j.mtmt.1005-2402.2025.01.004",
+      "error": "HTTP Error 404: Not Found"
+    },
+    "10.1016/j.addma.2025.105027": {
+      "url": "https://api.crossref.org/works/10.1016/j.addma.2025.105027",
+      "final_url": "https://api.crossref.org/works/10.1016/j.addma.2025.105027",
+      "bytes": 31338,
+      "sha256": "ac2fc04f4289ccfcae29ec3de9126d8978d589e97854d0eb4736283cd2703b41",
+      "metadata": {
+        "title": [
+          "LLM-3D print: Large Language Models to monitor and control 3D printing"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2025,
+              9
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2025,
+              9
+            ]
+          ]
+        },
+        "volume": "114",
+        "page": "105027",
+        "article-number": "105027"
+      }
+    },
+    "10.1007/s00170-025-16110-9": {
+      "url": "https://api.crossref.org/works/10.1007/s00170-025-16110-9",
+      "final_url": "https://api.crossref.org/works/10.1007/s00170-025-16110-9",
+      "bytes": 16018,
+      "sha256": "2541fc34af3e3bc2a611bb0ea8b2664aec032896d582e03aff32e45c305f01a6",
+      "metadata": {
+        "title": [
+          "Optimizing process parameters in manufacturing to reduce carbon footprint with contextual Bayesian optimization"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2025,
+              7,
+              17
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2025,
+              7,
+              17
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2025,
+              8
+            ]
+          ]
+        },
+        "volume": "139",
+        "issue": "7-8",
+        "page": "3381-3390"
+      }
+    },
+    "10.1016/j.addma.2025.105059": {
+      "url": "https://api.crossref.org/works/10.1016/j.addma.2025.105059",
+      "final_url": "https://api.crossref.org/works/10.1016/j.addma.2025.105059",
+      "bytes": 83588,
+      "sha256": "2abae390a288f2e8b7dfeec6360fd86e84af2faab8746550b074123765cd6064",
+      "metadata": {
+        "title": [
+          "Non-planar additive manufacturing: A comprehensive review of path planning, system integration, process control, and applications"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              1
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2026,
+              1
+            ]
+          ]
+        },
+        "volume": "115",
+        "page": "105059",
+        "article-number": "105059"
+      }
+    },
+    "10.1007/s40964-026-01680-1": {
+      "url": "https://api.crossref.org/works/10.1007/s40964-026-01680-1",
+      "final_url": "https://api.crossref.org/works/10.1007/s40964-026-01680-1",
+      "bytes": 15102,
+      "sha256": "3bd3c64e0b0406ea43ce4617934a0786caf63471c0fd653d7e4f70f475afa198",
+      "metadata": {
+        "title": [
+          "Multi-objective optimization of fused deposition modeling parameters for enhanced compressive strength and dimensional accuracy"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              4,
+              2
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2026,
+              4,
+              2
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2026,
+              5
+            ]
+          ]
+        },
+        "volume": "11",
+        "issue": "5",
+        "page": "5177-5195"
+      }
+    },
+    "10.1007/s42452-026-08873-x": {
+      "url": "https://api.crossref.org/works/10.1007/s42452-026-08873-x",
+      "final_url": "https://api.crossref.org/works/10.1007/s42452-026-08873-x",
+      "bytes": 59463,
+      "sha256": "dca3efdf2d7bd8f27d3a371e4a8a9fc9515bb5507473b886a85d507504b6718c",
+      "metadata": {
+        "title": [
+          "A review on additive manufacturing techniques and process parameter optimization methods"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              5,
+              21
+            ]
+          ]
+        },
+        "published-online": {
+          "date-parts": [
+            [
+              2026,
+              5,
+              21
+            ]
+          ]
+        },
+        "volume": "8",
+        "issue": "7",
+        "article-number": "817"
+      }
+    },
+    "10.1016/j.jmsy.2026.03.013": {
+      "url": "https://api.crossref.org/works/10.1016/j.jmsy.2026.03.013",
+      "final_url": "https://api.crossref.org/works/10.1016/j.jmsy.2026.03.013",
+      "bytes": 71599,
+      "sha256": "25c443d3e55b6d7e5f6643e73044738bf1884ddc5054867194088239e9d99c55",
+      "metadata": {
+        "title": [
+          "A review of Generative Artificial Intelligence for additive manufacturing: Bridging design, process monitoring, and beyond"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2026,
+              6
+            ]
+          ]
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2026,
+              6
+            ]
+          ]
+        },
+        "volume": "86",
+        "page": "393-416"
+      }
+    },
+    "examples_archive": {
+      "url": "https://storage.yandexcloud.net/software.stereotech.org/%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80%D1%8B%20%D0%B4%D0%B5%D1%82%D0%B0%D0%BB%D0%B5%D0%B9.zip",
+      "final_url": "https://storage.yandexcloud.net/software.stereotech.org/%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80%D1%8B%20%D0%B4%D0%B5%D1%82%D0%B0%D0%BB%D0%B5%D0%B9.zip",
+      "bytes": 26648134,
+      "sha256": "c7c43cd8103cbc3851d6b5fa99eff8e75fd9aeffce6d8b253b64b17132b54190",
+      "archive_entries": 28,
+      "local_file_hash_checks": [
+        {
+          "file": "data/examples/1. Шестерня - 3D/Техническое задание для шестерни.docx",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/1. Шестерня - 3D/Шестерня.jpg",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/1. Шестерня - 3D/Шестерня.stl",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/2. Колесо конвейерной линии - 5D/Колесо.STL",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/2. Колесо конвейерной линии - 5D/Колесо.jpg",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/2. Колесо конвейерной линии - 5D/Техническое задание для колеса конвейерной линии.docx",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/3. Пыльник Шруса - 3D/Пыльник шруса.STL",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/3. Пыльник Шруса - 3D/Пыльник шруса.jpg",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/3. Пыльник Шруса - 3D/Техническое задание для пыльника шруса.docx",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/4. Фигурка/Декоративная фигурка.jpg",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/4. Фигурка/Декоративная фигурка.stl",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/4. Фигурка/Техническое задание для декоративной фигурки.docx",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/5. Рабочее колесо насоса Wilo - 5D/Рабочее колесо насоса Wilo.jpg",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/5. Рабочее колесо насоса Wilo - 5D/Рабочее_колесо насоса Wilo IPL 80140-42. 2063106.STL",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/5. Рабочее колесо насоса Wilo - 5D/Техническое задания для рабочего колеса насоса.docx",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/6. Крыльчатка охлаждения электродвигателя - 3D/Крыльчатка охлаждения электродвигателя.STL",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/6. Крыльчатка охлаждения электродвигателя - 3D/Крыльчатка охлаждения электродвигателя.jpg",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/6. Крыльчатка охлаждения электродвигателя - 3D/Техническое задание для крыльчатки охлаждения электродвигателя.docx",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/7. Ось вращения передающих звёзд формовщика коробов Krones - 5D/Ось вращения передающих звёзд.STL",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/7. Ось вращения передающих звёзд формовщика коробов Krones - 5D/Ось вращения передающих звёзд.docx",
+          "hash_in_archive": true
+        },
+        {
+          "file": "data/examples/7. Ось вращения передающих звёзд формовщика коробов Krones - 5D/Ось вращения передающих звёзд.jpg",
+          "hash_in_archive": true
+        }
+      ]
+    }
+  },
+  "commit": "6542aa6b148399188ece336eaa514683940cd256",
+  "normal_check_followup": {
+    "file": "data/examples/4. Фигурка/Декоративная фигурка.stl",
+    "facets_with_normal_error_gt_5_degrees": 562590,
+    "median_angle_degrees": 74.11520883226997,
+    "note": "Negative dot products in the initial check do not mean reversed winding; facet traversal is consistent. Stored normals are generally misaligned."
+  },
+  "rotation_consistency": [
+    {
+      "case": "conveyor_wheel",
+      "diameter_mm_approx": 59,
+      "rpm": 450,
+      "calculated_m_s": 1.3901547492134834,
+      "claimed_m_s": 2.2
+    },
+    {
+      "case": "wilo",
+      "diameter_mm_approx": 134.65,
+      "rpm": 2900,
+      "calculated_m_s": 20.445746788950174,
+      "claimed_m_s": 24
+    },
+    {
+      "case": "motor_impeller",
+      "diameter_mm_approx": 169,
+      "rpm": 2950,
+      "calculated_m_s": 26.104016957453194,
+      "claimed_m_s": 32
+    }
+  ],
+  "scope_limits": [
+    "No installed STE Slicer or printing tests",
+    "No full self-intersection audit",
+    "STL coordinates interpreted in millimetres",
+    "No complete re-review of all paper full texts",
+    "DOCX text and OOXML structure only"
+  ]
+}
