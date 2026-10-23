@@ -533,6 +533,19 @@ def rotation_to_z(up):
     return numpy.eye(3) + vx + vx.dot(vx) * ((1 - c) / (s * s))
 
 
+def place_on_axis(mesh, rotation, axis_center):
+    """5D placement: align the actual tooling axis, not the asymmetric bounding box."""
+    rotation = numpy.asarray(rotation, dtype=float)
+    center = numpy.asarray(axis_center, dtype=float)
+    if center.shape != (3,) or not numpy.isfinite(center).all():
+        raise ValueError("finite tooling-axis point required")
+    placed = mesh.transformed(rotation)
+    rotated_center = rotation.dot(center)
+    shift = numpy.array([-rotated_center[0], -rotated_center[1], -placed.vertices[:, 2].min()])
+    placed.vertices += shift
+    return placed, shift
+
+
 def overhang_mask(normals, centroids_z, z_min, support_angle_deg, bed_tolerance=0.05):
     """Faces needing support with a Cura-style overhang angle measured from vertical.
 
@@ -547,9 +560,11 @@ def overhang_mask(normals, centroids_z, z_min, support_angle_deg, bed_tolerance=
 
 
 def evaluate_orientation(mesh, up, support_angle_deg=50.0, layer_height=0.2, build_volume=None,
-                         critical_face_mask=None):
+                         critical_face_mask=None, rotation=None):
     """Metrics of one orientation; feasibility first, score only afterwards."""
-    rot = rotation_to_z(up)
+    rot = rotation_to_z(up) if rotation is None else numpy.asarray(rotation, dtype=float)
+    if rot.shape != (3, 3) or not numpy.isfinite(rot).all() or not numpy.allclose(rot.T.dot(rot), numpy.eye(3), atol=1e-8) or abs(numpy.linalg.det(rot) - 1) > 1e-8:
+        raise ValueError("orientation must be a proper finite rotation")
     m = mesh.transformed(rot)
     normals, areas = face_normals_areas(m)
     t = m.triangles
@@ -569,9 +584,12 @@ def evaluate_orientation(mesh, up, support_angle_deg=50.0, layer_height=0.2, bui
     size = (t.reshape(-1, 3).max(axis=0) - t.reshape(-1, 3).min(axis=0))
     fits = None
     if build_volume is not None:
-        fits = bool(size[2] <= build_volume[2] + 1e-9 and
-                    (min(size[0], size[1]) <= min(build_volume[0], build_volume[1]) + 1e-9) and
-                    (max(size[0], size[1]) <= max(build_volume[0], build_volume[1]) + 1e-9))
+        if rotation is not None:
+            fits = bool((size <= numpy.asarray(build_volume) + 1e-9).all())
+        else:
+            fits = bool(size[2] <= build_volume[2] + 1e-9 and
+                        (min(size[0], size[1]) <= min(build_volume[0], build_volume[1]) + 1e-9) and
+                        (max(size[0], size[1]) <= max(build_volume[0], build_volume[1]) + 1e-9))
     critical_support_contact = None
     if critical_face_mask is not None:
         critical_support_contact = float(areas[over & numpy.asarray(critical_face_mask)].sum())

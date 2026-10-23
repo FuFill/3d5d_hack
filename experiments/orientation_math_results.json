@@ -1,0 +1,53 @@
+{
+  "source": "analytical_software_demonstration",
+  "physical_test": false,
+  "model": "solid_rectangular_Euler_Bernoulli_cantilever",
+  "inputs": {
+    "length_mm": 100,
+    "width_mm": 20,
+    "height_mm": 10,
+    "tip_force_N": 20,
+    "illustrative_E_XY_MPa": 2000,
+    "illustrative_E_Z_MPa": 800,
+    "illustrative_strength_XY_MPa": 40,
+    "illustrative_strength_Z_MPa": 12
+  },
+  "load_along_layer_plane": {
+    "I_mm4": 1666.6666666666667,
+    "tip_deflection_mm": 2.0,
+    "effective_stiffness_N_per_mm": 10.0,
+    "sigma_max_MPa": 6.0,
+    "failure_index_max": 0.15,
+    "safety_factor_min": 6.666666666666667,
+    "compliance_Nmm": 40.0,
+    "compliance_volume_integral_Nmm": 39.99999999999999,
+    "strain_energy_Nmm": 19.999999999999996,
+    "compliance_density_max_MPa": 0.018
+  },
+  "load_across_layer_interfaces": {
+    "I_mm4": 1666.6666666666667,
+    "tip_deflection_mm": 5.0,
+    "effective_stiffness_N_per_mm": 4.0,
+    "sigma_max_MPa": 6.0,
+    "failure_index_max": 0.5,
+    "safety_factor_min": 2.0,
+    "compliance_Nmm": 100.0,
+    "compliance_volume_integral_Nmm": 99.99999999999999,
+    "strain_energy_Nmm": 49.99999999999999,
+    "compliance_density_max_MPa": 0.045
+  },
+  "checks": {
+    "energy_equals_force_times_displacement": true,
+    "XY_tip_2_mm_Z_tip_5_mm": true,
+    "both_directions_sigma_6_MPa": true,
+    "double_force_quadruples_compliance": true,
+    "double_force_doubles_displacement_and_FI": true,
+    "double_E_halves_displacement_and_compliance": true
+  },
+  "limitations": [
+    "illustrative printed properties, not material calibration",
+    "solid beam, no infill model",
+    "small deflections, bending only, no shear or clamp concentration",
+    "not a general STL finite-element solver or a surface roughness prediction"
+  ]
+}

@@ -3,3 +3,5 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+# Large reproducible FE field dumps stay local; metrics, input recipes and maps are versioned.
+/experiments/functional_artifacts/*_decision.json

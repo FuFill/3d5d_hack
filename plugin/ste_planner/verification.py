@@ -132,6 +132,18 @@ def explain_decision(decision):
     if unk:
         lines.append("Не подтверждено расчётом/данными (нужны испытания): " + ", ".join(unk))
     causal = decision.get("causal_analysis") or {}
+    functional = decision.get("functional_analysis") or {}
+    if functional.get("value"):
+        value = functional["value"]
+        selected = value.get("selected")
+        if selected:
+            lines.append("Функциональная ориентация: %s, профиль %s; проверено %d кандидатов. %s" %
+                         (functional["status"], selected["profile_id"], value["candidate_count"],
+                          "Предложение включено в план." if value["applied"] else "Основной план сохранён; предложенный вариант требует подтверждающих данных."))
+            for case in selected["mechanics"]["cases"]:
+                lines.append("  %s: жёсткость %.4g Н/мм, перемещение %.4g мм, запас %.4g; расчётная оценка." %
+                             (case["id"], case["effective_stiffness_N_per_mm"], case["max_displacement_mm"], case["safety_factor_min"]))
+            lines.append("Гладкость оценивается геометрической ступенчатостью; Ra и плоскостность без калибровки не подтверждены.")
     if causal.get("status") != "computed":
         lines.append("Double ML: оценка отсутствует или часть изменений не подтверждена; "
                      "нужны измеренные испытания в тех же условиях.")
