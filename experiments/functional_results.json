@@ -1,0 +1,571 @@
+{
+  "source": "numerical_software_benchmarks_not_physical_prints",
+  "models": {
+    "beam": {
+      "status": "needs_calibration",
+      "source": "software_fixture",
+      "candidate_count": 40,
+      "feasible_count": 16,
+      "selected_profile": "fine_strong",
+      "selected_settings": {
+        "global": {
+          "printing_mode": "classic",
+          "layer_height": 0.1,
+          "material_bed_temperature": 60.0,
+          "support_enable": false
+        },
+        "extruders": {
+          "0": {
+            "bottom_layers": 5,
+            "infill_sparse_density": 60.0,
+            "top_layers": 5,
+            "wall_line_count": 6,
+            "speed_print": 45.0
+          }
+        }
+      },
+      "baseline": {
+        "mechanics": {
+          "id": "bending",
+          "compliance_Nmm": 14.298941051435175,
+          "effective_stiffness_N_per_mm": 6.993524879939488,
+          "load_weighted_deflection_mm": 1.4298941051435174,
+          "max_displacement_mm": 1.43712369286976,
+          "failure_index_max": 0.2686174359301228,
+          "safety_factor_min": 3.722766530539501,
+          "equilibrium_relative_residual": 1.2926890325914021e-11,
+          "energy_relative_error": 1.0878817380023181e-12,
+          "reaction_N": [
+            2.1022884164027955e-12,
+            1.9471756195972037e-12,
+            10.000000000000478
+          ],
+          "blocks": [
+            {
+              "id": "middle_block",
+              "volume_mm3": 2853.448046195453,
+              "compliance_contribution_Nmm": 5.727780573281198,
+              "energy_share": 0.4005737594607612,
+              "max_displacement_mm": 1.0173620246619843,
+              "failure_index_max": 0.18687591019179944,
+              "safety_factor_min": 5.351144505322561
+            },
+            {
+              "id": "root_block",
+              "volume_mm3": 1471.8554540652412,
+              "compliance_contribution_Nmm": 8.266568785847195,
+              "energy_share": 0.5781245447555352,
+              "max_displacement_mm": 0.18993420245411238,
+              "failure_index_max": 0.2686174359301228,
+              "safety_factor_min": 3.722766530539501
+            },
+            {
+              "id": "tip_block",
+              "volume_mm3": 1434.6964997393059,
+              "compliance_contribution_Nmm": 0.3045916923223383,
+              "energy_share": 0.021301695784791463,
+              "max_displacement_mm": 1.43712369286976,
+              "failure_index_max": 0.06894205082372587,
+              "safety_factor_min": 14.504935493677797
+            }
+          ]
+        },
+        "surface": {
+          "up": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rotation": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "height": 8.0,
+          "size": [
+            60.0,
+            12.0,
+            8.0
+          ],
+          "overhang_area": 0.0,
+          "support_volume_upper": 0.0,
+          "base_area": 720.0,
+          "staircase_mean_mm": 0.0,
+          "fits_build_volume": true,
+          "critical_support_contact": null,
+          "support_angle_deg": 50.0,
+          "regions": [
+            {
+              "id": "visible",
+              "importance": 1.0,
+              "staircase_mean_mm": 0.0,
+              "staircase_max_mm": 0.0,
+              "support_contact_upper_mm2": 0.0,
+              "Ra_um": null,
+              "flatness_mm": null,
+              "surface_evidence": "geometric_proxy; Ra and thermal flatness require calibration"
+            }
+          ],
+          "visible_staircase_mm": 0.0,
+          "support_plan": {
+            "required_face_ids": [],
+            "blocked_face_ids": [],
+            "status": "needs_slice_verification",
+            "note": "face masks are geometric requests, not an engine-verified support toolpath"
+          }
+        }
+      },
+      "selected": {
+        "mechanics": {
+          "id": "bending",
+          "compliance_Nmm": 7.08912618445251,
+          "effective_stiffness_N_per_mm": 14.106110879972007,
+          "load_weighted_deflection_mm": 0.708912618445251,
+          "max_displacement_mm": 0.7124669610516557,
+          "failure_index_max": 0.12680334655781939,
+          "safety_factor_min": 7.886227194674418,
+          "equilibrium_relative_residual": 2.2296873227873138e-11,
+          "energy_relative_error": 1.1166868876094903e-12,
+          "reaction_N": [
+            -3.729697815755972e-12,
+            9.178716651918553e-13,
+            9.99999999995929
+          ],
+          "blocks": [
+            {
+              "id": "middle_block",
+              "volume_mm3": 2853.448046195453,
+              "compliance_contribution_Nmm": 2.821266201270132,
+              "energy_share": 0.39797093857033905,
+              "max_displacement_mm": 0.5041799385831619,
+              "failure_index_max": 0.0932155193465813,
+              "safety_factor_min": 10.72782737262811
+            },
+            {
+              "id": "root_block",
+              "volume_mm3": 1471.8554540652412,
+              "compliance_contribution_Nmm": 4.1365970346635,
+              "energy_share": 0.5835129643672674,
+              "max_displacement_mm": 0.09429988512239282,
+              "failure_index_max": 0.12680334655781939,
+              "safety_factor_min": 7.886227194674418
+            },
+            {
+              "id": "tip_block",
+              "volume_mm3": 1434.6964997393059,
+              "compliance_contribution_Nmm": 0.13126294851096265,
+              "energy_share": 0.018516097061276958,
+              "max_displacement_mm": 0.7124669610516557,
+              "failure_index_max": 0.03445016628966791,
+              "safety_factor_min": 29.027436082359753
+            }
+          ]
+        },
+        "surface": {
+          "up": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "rotation": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ],
+          "height": 12.0,
+          "size": [
+            60.0,
+            8.0,
+            12.0
+          ],
+          "overhang_area": 0.0,
+          "support_volume_upper": 0.0,
+          "base_area": 480.0,
+          "staircase_mean_mm": 0.0,
+          "fits_build_volume": true,
+          "critical_support_contact": null,
+          "support_angle_deg": 50.0,
+          "regions": [
+            {
+              "id": "visible",
+              "importance": 1.0,
+              "staircase_mean_mm": 0.0,
+              "staircase_max_mm": 0.0,
+              "support_contact_upper_mm2": 0.0,
+              "Ra_um": null,
+              "flatness_mm": null,
+              "surface_evidence": "geometric_proxy; Ra and thermal flatness require calibration"
+            }
+          ],
+          "visible_staircase_mm": 0.0,
+          "support_plan": {
+            "required_face_ids": [],
+            "blocked_face_ids": [],
+            "status": "needs_slice_verification",
+            "note": "face masks are geometric requests, not an engine-verified support toolpath"
+          }
+        }
+      },
+      "mesh_convergence": {
+        "status": "pass",
+        "cases": [
+          {
+            "id": "bending",
+            "compliance_relative_change": 0.0012715220842185633,
+            "displacement_relative_change": 0.001278328557028563,
+            "failure_index_relative_change": 0.0012127360025130903
+          }
+        ],
+        "coarse_elements": 324,
+        "fine_elements": 620,
+        "tolerances": {
+          "compliance": 0.05,
+          "displacement": 0.05,
+          "failure_index": 0.1
+        },
+        "refined_limit_failures": []
+      },
+      "quality": {
+        "selected_hard_violations": 0,
+        "matches_exhaustive_tested_candidate_oracle": true,
+        "slicer_setting_errors": 0,
+        "software_fixture_applied": false
+      },
+      "changes": {
+        "stiffness_percent": 101.70244793772811,
+        "compliance_percent": -50.422019652000884,
+        "max_displacement_percent": -50.424103047877075,
+        "visible_staircase_before_mm": 0.0,
+        "visible_staircase_after_mm": 0.0
+      },
+      "seconds_including_meshing": 2.061
+    },
+    "wedge": {
+      "status": "needs_calibration",
+      "source": "software_fixture",
+      "candidate_count": 60,
+      "feasible_count": 8,
+      "selected_profile": "fine_strong",
+      "selected_settings": {
+        "global": {
+          "printing_mode": "classic",
+          "layer_height": 0.1,
+          "material_bed_temperature": 60.0,
+          "support_enable": false
+        },
+        "extruders": {
+          "0": {
+            "bottom_layers": 5,
+            "infill_sparse_density": 60.0,
+            "top_layers": 5,
+            "wall_line_count": 6,
+            "speed_print": 45.0
+          }
+        }
+      },
+      "baseline": {
+        "mechanics": {
+          "id": "bending",
+          "compliance_Nmm": 6.194978308961916,
+          "effective_stiffness_N_per_mm": 16.14210655997549,
+          "load_weighted_deflection_mm": 0.6194978308961916,
+          "max_displacement_mm": 0.6374574114935151,
+          "failure_index_max": 0.1751602045050475,
+          "safety_factor_min": 5.709059331288824,
+          "equilibrium_relative_residual": 1.1426869786456624e-11,
+          "energy_relative_error": 1.4629546937249481e-12,
+          "reaction_N": [
+            2.2354220770996903e-12,
+            2.7600713391027286e-12,
+            9.999999999999034
+          ],
+          "blocks": [
+            {
+              "id": "middle_block",
+              "volume_mm3": 3701.2429042618237,
+              "compliance_contribution_Nmm": 2.5059820014611063,
+              "energy_share": 0.40451828504965825,
+              "max_displacement_mm": 0.45443129039936553,
+              "failure_index_max": 0.12820971879422502,
+              "safety_factor_min": 7.799720718559467
+            },
+            {
+              "id": "root_block",
+              "volume_mm3": 1923.7332058452737,
+              "compliance_contribution_Nmm": 3.5574519100018454,
+              "energy_share": 0.5742476781323811,
+              "max_displacement_mm": 0.09367278119288024,
+              "failure_index_max": 0.1751602045050475,
+              "safety_factor_min": 5.709059331288824
+            },
+            {
+              "id": "tip_block",
+              "volume_mm3": 1863.0239585574532,
+              "compliance_contribution_Nmm": 0.13154439750802704,
+              "energy_share": 0.021234036819423464,
+              "max_displacement_mm": 0.6374574114935151,
+              "failure_index_max": 0.041118760224077816,
+              "safety_factor_min": 24.31979939449712
+            }
+          ]
+        },
+        "surface": {
+          "up": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "rotation": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ],
+          "height": 12.0,
+          "size": [
+            60.0,
+            12.8,
+            12.0
+          ],
+          "overhang_area": 0.0,
+          "support_volume_upper": 0.0,
+          "base_area": 480.0,
+          "staircase_mean_mm": 0.01924449499013355,
+          "fits_build_volume": true,
+          "critical_support_contact": null,
+          "support_angle_deg": 50.0,
+          "regions": [
+            {
+              "id": "visible",
+              "importance": 1.0,
+              "staircase_mean_mm": 0.01924449499013355,
+              "staircase_max_mm": 0.07427813527082076,
+              "support_contact_upper_mm2": 0.0,
+              "Ra_um": null,
+              "flatness_mm": null,
+              "surface_evidence": "geometric_proxy; Ra and thermal flatness require calibration"
+            }
+          ],
+          "visible_staircase_mm": 0.01924449499013355,
+          "support_plan": {
+            "required_face_ids": [],
+            "blocked_face_ids": [],
+            "status": "needs_slice_verification",
+            "note": "face masks are geometric requests, not an engine-verified support toolpath"
+          }
+        }
+      },
+      "selected": {
+        "mechanics": {
+          "id": "bending",
+          "compliance_Nmm": 3.097489154480958,
+          "effective_stiffness_N_per_mm": 32.28421311995098,
+          "load_weighted_deflection_mm": 0.3097489154480958,
+          "max_displacement_mm": 0.31872870574675755,
+          "failure_index_max": 0.08758010225252374,
+          "safety_factor_min": 11.418118662577648,
+          "equilibrium_relative_residual": 1.1426869786456624e-11,
+          "energy_relative_error": 1.4629546937249481e-12,
+          "reaction_N": [
+            2.2354220770996903e-12,
+            2.7600713391027286e-12,
+            9.999999999999034
+          ],
+          "blocks": [
+            {
+              "id": "middle_block",
+              "volume_mm3": 3701.2429042618237,
+              "compliance_contribution_Nmm": 1.2529910007305531,
+              "energy_share": 0.40451828504965825,
+              "max_displacement_mm": 0.22721564519968276,
+              "failure_index_max": 0.06410485939711251,
+              "safety_factor_min": 15.599441437118934
+            },
+            {
+              "id": "root_block",
+              "volume_mm3": 1923.7332058452737,
+              "compliance_contribution_Nmm": 1.7787259550009227,
+              "energy_share": 0.5742476781323811,
+              "max_displacement_mm": 0.04683639059644012,
+              "failure_index_max": 0.08758010225252374,
+              "safety_factor_min": 11.418118662577648
+            },
+            {
+              "id": "tip_block",
+              "volume_mm3": 1863.0239585574532,
+              "compliance_contribution_Nmm": 0.06577219875401352,
+              "energy_share": 0.021234036819423464,
+              "max_displacement_mm": 0.31872870574675755,
+              "failure_index_max": 0.020559380112038908,
+              "safety_factor_min": 48.63959878899424
+            }
+          ]
+        },
+        "surface": {
+          "up": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "rotation": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ],
+          "height": 12.0,
+          "size": [
+            60.0,
+            12.8,
+            12.0
+          ],
+          "overhang_area": 0.0,
+          "support_volume_upper": 0.0,
+          "base_area": 480.0,
+          "staircase_mean_mm": 0.009622247495066774,
+          "fits_build_volume": true,
+          "critical_support_contact": null,
+          "support_angle_deg": 50.0,
+          "regions": [
+            {
+              "id": "visible",
+              "importance": 1.0,
+              "staircase_mean_mm": 0.009622247495066774,
+              "staircase_max_mm": 0.03713906763541038,
+              "support_contact_upper_mm2": 0.0,
+              "Ra_um": null,
+              "flatness_mm": null,
+              "surface_evidence": "geometric_proxy; Ra and thermal flatness require calibration"
+            }
+          ],
+          "visible_staircase_mm": 0.009622247495066774,
+          "support_plan": {
+            "required_face_ids": [],
+            "blocked_face_ids": [],
+            "status": "needs_slice_verification",
+            "note": "face masks are geometric requests, not an engine-verified support toolpath"
+          }
+        }
+      },
+      "mesh_convergence": {
+        "status": "pass",
+        "cases": [
+          {
+            "id": "bending",
+            "compliance_relative_change": 0.0010092405829236378,
+            "displacement_relative_change": 0.0009830111495083376,
+            "failure_index_relative_change": 0.044300016392970945
+          }
+        ],
+        "coarse_elements": 383,
+        "fine_elements": 817,
+        "tolerances": {
+          "compliance": 0.05,
+          "displacement": 0.05,
+          "failure_index": 0.1
+        },
+        "refined_limit_failures": []
+      },
+      "quality": {
+        "selected_hard_violations": 0,
+        "matches_exhaustive_tested_candidate_oracle": true,
+        "slicer_setting_errors": 0,
+        "software_fixture_applied": false
+      },
+      "changes": {
+        "stiffness_percent": 100.0,
+        "compliance_percent": -50.0,
+        "max_displacement_percent": -50.0,
+        "visible_staircase_before_mm": 0.01924449499013355,
+        "visible_staircase_after_mm": 0.009622247495066774
+      },
+      "seconds_including_meshing": 2.796
+    }
+  },
+  "cantilever_reference": {
+    "method": "Euler-Bernoulli solid beam; transverse shear and clamp effects omitted",
+    "stiffness_N_per_mm": 14.222222222222221,
+    "relative_stiffness_error": 0.008164078751968173
+  },
+  "python35_grammar_modules": 23,
+  "source_sha256": {
+    "plugin/ste_planner/__init__.py": "5f93671a1c641d413f3f6620f493fb3209dece4e28d80ff95f495ebf9a158263",
+    "plugin/ste_planner/assistant.py": "fd0842ac204b693a9c0bfd26fabf7bbd73e42c2a6ddfd6dce30782094167a686",
+    "plugin/ste_planner/calibration.py": "5e02b51998fc51dec3b966c7a4377cf5c42b529e1f3c235ff389de1a9755dacc",
+    "plugin/ste_planner/compiler.py": "fe78d3901165ea3cc5eff68617af09ed751108a03220a7467dcaad6eb553f783",
+    "plugin/ste_planner/elasticity.py": "7a64e2f19fe163b51243b83e7427fb4a060170ee702bbfb995d4071640bba34c",
+    "plugin/ste_planner/functional.py": "50ec7c208fd3fed84e0c4daff2dce7fa63d2b0d3748d391c6248cfadf4e583c7",
+    "plugin/ste_planner/gcode.py": "f67ea67293470dffbea37d70b3be88a0321d48c537160f5d71e2d0add64fb573",
+    "plugin/ste_planner/geometry.py": "1ea6f74abea528bd1a6a120deedc8524fa9efc6221dc9c6d4a90d2b3ac0ead7c",
+    "plugin/ste_planner/materials.py": "2ae833095811135b5731b9b512234759e17329f40b9c270e310db861cd06fc42",
+    "plugin/ste_planner/mechanics.py": "7720f611db3fb5ebf10736da5eaa58c0dbbf7fe3ce8f807d9bb2bfc4426ffd0f",
+    "plugin/ste_planner/optimize.py": "c134059b2202da802d6398637a4010be44feacfc87ad239612a383044bf2db3c",
+    "plugin/ste_planner/planner.py": "995823a047b9c70aa1c2557d0347217c3c50631fb01c6559c8fcca2687724196",
+    "plugin/ste_planner/process.py": "6f529d7bf47359a0ad1c3866be39ffb4b19fff2bede0deab26e23d64d30adb8a",
+    "plugin/ste_planner/process_plan.py": "a43d8dbec9243da6ce692aeb04c8cffd82058d52a8aefcde6fdc47bcb0af42fd",
+    "plugin/ste_planner/requirements.py": "e894e41ecca539d1511cb053ee3285edd7223b02538e2de67c72896ce36e8beb",
+    "plugin/ste_planner/result.py": "fd1fe0127f1469501ea4fffedd2e0835f8431081bdfd0e3f512ae85da91d2918",
+    "plugin/ste_planner/routes.py": "178a53888a69d5a017ed2a6a113f36766213e0d611da3c38ee972d51e8bc3a6a",
+    "plugin/ste_planner/settings_schema.py": "b26024d167908b9720c1b01c9feccc14123855c6e7d5cc3486da1ef13c976e95",
+    "plugin/ste_planner/structure.py": "342c2bb6b5bf5c418f47542b10e9c5c4d6f1a71658ccf5f8ffaf0e8e64d37a90",
+    "plugin/ste_planner/surrogate.py": "724efca1245517110581d182b5da735212f1ca44743b9e5fca3550a6061867bb",
+    "plugin/ste_planner/units.py": "c270bfa45fea5b3b6c654b3a1ded97ffba44a1b3354e563e74d7368d3172b529",
+    "plugin/ste_planner/verification.py": "c800387798a9306620aaf61a608ceb5d743e7caa677541b23e1d6fb059ce5b2f",
+    "plugin/ste_planner/volume_mesh.py": "d730df6734db4ec17dce68ff74be3ac017f7cf2d20550f44100194bec20585e3"
+  },
+  "Ra_um": null,
+  "flatness_mm": null,
+  "not_verified": [
+    "physical material calibration",
+    "actual STE runtime modifier/G-code application",
+    "5D head/fixture collision clearance",
+    "physical surface Ra and thermal flatness",
+    "embedded Windows Python 3.5 execution"
+  ]
+}

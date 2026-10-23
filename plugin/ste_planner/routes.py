@@ -190,7 +190,7 @@ def plan_5d(mesh, route, caps=None, eps_path=0.05, round_segments_max=256):
     """
     p = route["parameters"]
     rot = geometry.rotation_to_z(p["axis"])
-    placed, shift = geometry.place_on_bed(mesh, rot)
+    placed, shift = geometry.place_on_axis(mesh, rot, p["center"])
     v = placed.vertices[placed.faces.reshape(-1)]
     r_max = float((v[:, 0] ** 2 + v[:, 1] ** 2).max() ** 0.5)
     chord = geometry.segments_for_chord_error(r_max, eps_path) if r_max > eps_path else None
