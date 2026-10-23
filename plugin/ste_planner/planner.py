@@ -9,10 +9,11 @@ in the slicer adapter; plan_case() returns everything needed to apply the
 patch and to check the result afterwards.
 """
 
+import hashlib
 import os
 
 from . import requirements as reqmod
-from . import geometry, materials, routes, process_plan, structure, compiler, verification
+from . import geometry, materials, routes, process_plan, structure, compiler, verification, calibration
 from .settings_schema import load_machine_schema, SettingResolver, material_settings_from_file
 from .result import (PASS, FAIL, UNKNOWN, EVIDENCE_DOCUMENT, EVIDENCE_ANALYTICAL, DECISION_INFEASIBLE, to_json)
 
@@ -38,7 +39,7 @@ def default_resources_dir():
 
 
 def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE, catalog=None,
-              preferred_materials=None, forced_mode=None, source=None):
+              preferred_materials=None, forced_mode=None, source=None, calibration_data=None, setting_changes=None):
     trace = []
     resources_dir = resources_dir or default_resources_dir()
     catalog = catalog or materials.load_catalog()
@@ -162,6 +163,18 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     trace.append({"step": "compile_patch", "items": len(patch["items"]), "errors": patch["errors"],
                   "warnings": patch["warnings"], "process_notes": notes})
 
+    # Calibration concerns this exact part/material/route and the planned process.
+    # These are effects of proposed changes, not evidence of absolute part strength.
+    digest = hashlib.sha256()
+    with open(mesh_path, "rb") as mesh_file:
+        for block in iter(lambda: mesh_file.read(1024 * 1024), b""):
+            digest.update(block)
+    calibration_context = {"machine_id": machine_id, "material_id": material.id if material else None,
+                           "printing_mode": mode, "geometry_sha256": digest.hexdigest(),
+                           "rotation": scene_ops[1]["rotation"], "settings": dict(effective)}
+    causal = calibration.assess_double_ml(calibration_data, calibration_context, patch["resolver"], setting_changes)
+    trace.append({"step": "assess_double_ml", "status": causal.status,
+                  "note": "independent single-setting comparisons; deterministic patch and qualification unchanged"})
 
     # verification
     evidence = []
@@ -219,6 +232,8 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
         "setting_patch": {"items": patch["items"], "errors": patch["errors"], "warnings": patch["warnings"],
                           "payload": compiler.patch_to_slicer_payload(patch)},
         "effective_settings": effective,
+        "calibration_context": calibration_context,
+        "causal_analysis": causal.to_dict(),
         "scene_operations": scene_ops,
         "structural_checks": struct,
         "verification": ver,

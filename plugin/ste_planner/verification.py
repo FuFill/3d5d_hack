@@ -131,4 +131,28 @@ def explain_decision(decision):
     unk = [v["property"] for v in decision.get("verification", []) if v["status"] == UNKNOWN and v["mandatory"]]
     if unk:
         lines.append("Не подтверждено расчётом/данными (нужны испытания): " + ", ".join(unk))
+    causal = decision.get("causal_analysis") or {}
+    if causal.get("status") != "computed":
+        lines.append("Double ML: оценка отсутствует или часть изменений не подтверждена; "
+                     "нужны измеренные испытания в тех же условиях.")
+    for entry in causal.get("value") or []:
+        if entry.get("status") != "computed":
+            reasons = [t["reason"] for t in entry.get("trace", []) if t.get("reason")]
+            if reasons:
+                lines.append("Double ML (%s): %s." % (entry.get("dataset_id") or "данные", reasons[0]))
+            continue
+        value = entry["value"]
+        change = value.get("change")
+        if change:
+            contrast = change["value"]
+            lo, hi = contrast["confidence_interval_95"]
+            lines.append("Double ML (%s): %s %g -> %g %s; изменение %s: %+.4g %s "
+                         "(95%% интервал [%+.4g; %+.4g]). Это оценка разницы, не подтверждение "
+                         "прочности детали; предложенный patch не применён." %
+                         (value["dataset_id"], value["treatment"], contrast["baseline"], contrast["target"],
+                          value["treatment_unit"], value["outcome"]["name"], contrast["expected_change"],
+                          value["outcome"]["unit"], lo, hi))
+        else:
+            lines.append("Double ML (%s): оценка эффекта %s доступна; целевое изменение не запрошено." %
+                         (value["dataset_id"], value["treatment"]))
     return lines
