@@ -1,0 +1,960 @@
+{
+ "assumptions": [
+  "material properties are manufacturer typical values (Stereotech wiki), not batch data",
+  "process settings start from the Stereotech material profile; volumetric flow limit uncalibrated"
+ ],
+ "candidates": {
+  "materials": [
+   {
+    "id": "fiberpart_tpu_c5",
+    "summary": {
+     "hinted_unknown": [
+      "R06"
+     ],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R04",
+      "R05",
+      "R07"
+     ],
+     "mandatory_unknown": [
+      "R02",
+      "R03",
+      "R06",
+      "R08"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 4.0
+   },
+   {
+    "id": "sealant_tpu_A95",
+    "summary": {
+     "hinted_unknown": [
+      "R06"
+     ],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R04",
+      "R05",
+      "R07"
+     ],
+     "mandatory_unknown": [
+      "R02",
+      "R03",
+      "R06",
+      "R08"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 3.5
+   },
+   {
+    "id": "enduse_pa6",
+    "summary": {
+     "hinted_unknown": [
+      "R06"
+     ],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R04",
+      "R05",
+      "R07"
+     ],
+     "mandatory_unknown": [
+      "R02",
+      "R03",
+      "R06",
+      "R08"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 3.5
+   },
+   {
+    "id": "enduse_tpu_d70",
+    "summary": {
+     "hinted_unknown": [
+      "R06"
+     ],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R04",
+      "R05",
+      "R07"
+     ],
+     "mandatory_unknown": [
+      "R02",
+      "R03",
+      "R06",
+      "R08"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 3.5
+   },
+   {
+    "id": "fiberpart_abspa_g8",
+    "summary": {
+     "hinted_unknown": [
+      "R06"
+     ],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R04",
+      "R05",
+      "R07"
+     ],
+     "mandatory_unknown": [
+      "R02",
+      "R03",
+      "R06",
+      "R08"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 3.5
+   },
+   {
+    "id": "enduse_petg",
+    "summary": {
+     "hinted_unknown": [
+      "R06"
+     ],
+     "mandatory_fail": [],
+     "mandatory_pass": [
+      "R04",
+      "R05"
+     ],
+     "mandatory_unknown": [
+      "R02",
+      "R03",
+      "R06",
+      "R07",
+      "R08"
+     ],
+     "optional_fail": [],
+     "optional_pass": []
+    },
+    "support": 3.5
+   }
+  ],
+  "routes": [
+   {
+    "feasible": true,
+    "mode": "classic",
+    "score": 0.0
+   },
+   {
+    "feasible": false,
+    "mode": "cylindrical",
+    "score": -3.0
+   },
+   {
+    "feasible": false,
+    "mode": "cylindrical_full",
+    "score": -3.0
+   }
+  ]
+ },
+ "chosen_material": {
+  "base_polymer": "TPU",
+  "excluded": null,
+  "filler": {
+   "mass_percent": 5.0,
+   "type": "carbon"
+  },
+  "id": "fiberpart_tpu_c5",
+  "label": "Fiberpart TPU C5",
+  "selectable": true,
+  "series": "Fiberpart",
+  "slicer_file": "fiberpart_tpu_c5.xml.fdm_material",
+  "wiki_url": "https://wiki.stereotech.org/ru/fdm-materials/fiberpart/tpu-c5"
+ },
+ "effective_settings": {
+  "adhesion_type": "brim",
+  "bottom_layers": 10,
+  "cool_fan_enabled": true,
+  "cool_fan_speed": 20.0,
+  "cylindrical_mode_base_diameter": 6.0,
+  "cylindrical_mode_overlap": 0.0,
+  "infill_pattern": "grid",
+  "infill_sparse_density": 25.0,
+  "layer_height": 0.1,
+  "layer_height_0": 0.3,
+  "line_width": 0.4,
+  "machine_heated_bed": true,
+  "machine_height": 300.0,
+  "machine_nozzle_size": 0.4,
+  "material_bed_temperature": 95.0,
+  "material_flow": 100.0,
+  "material_print_temperature": 230.0,
+  "non_printing_base_diameter": 6.0,
+  "printing_mode": "classic",
+  "retraction_amount": 1.5,
+  "retraction_enable": true,
+  "retraction_speed": 18.0,
+  "speed_print": 40.0,
+  "support_angle": 50.0,
+  "support_enable": true,
+  "top_layers": 10,
+  "wall_line_count": 3,
+  "wall_thickness": 0.8
+ },
+ "evidence_level": "document",
+ "explanation": [
+  "Статус: candidate; уровень доказательности: document.",
+  "Материал: Fiberpart TPU C5 — выбран из 13 допустимых; отклонено 7 (обязательное требование не выполнено).",
+  "Режим: classic. no documented 5D benefit above threshold; classic is simpler",
+  "  printing_mode = classic (было classic): route selected by documented policy",
+  "  bottom_layers = 10 (было 8): skin_layers, policy:skin",
+  "  infill_sparse_density = 25.0 (было 20.0): no calibrated relation load -> infill exists; policy by load class decorative",
+  "  layer_height = 0.1 (было 0.1): choose_layer_height, policy:layer",
+  "  top_layers = 10 (было 8): skin_layers, policy:skin",
+  "  wall_line_count = 3 (было 2): shell 1.20 mm -> 3 walls (1.20 mm)",
+  "  material_bed_temperature = 95.0 (было 95.0): material profile value; explicit because STE takes max() over extruders",
+  "  speed_print = 40.0 (было 60.0): material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+  "  support_enable = True (было False): overhang 3352 mm2, support volume bound 36737 mm3 (thresholds 25 mm2, 200 mm3)",
+  "Не подтверждено расчётом/данными (нужны испытания): no_visible_layers, no_support_marks, alcohol_wipe_resistance, uv_color_stability"
+ ],
+ "materials_considered": 13,
+ "materials_rejected": 7,
+ "missing_inputs": [],
+ "part_name": "Декоративная фигурка",
+ "part_type": "decorative",
+ "prototype_only": false,
+ "qualification_plan": [
+  {
+   "conditions": "расстояние/освещение/Ra",
+   "mandatory": true,
+   "property": "no_visible_layers",
+   "reason": "unverified",
+   "requirement_id": "R02",
+   "test": "Оценка поверхности по согласованному критерию"
+  },
+  {
+   "conditions": "или согласованная постобработка",
+   "mandatory": true,
+   "property": "no_support_marks",
+   "reason": "unverified",
+   "requirement_id": "R03",
+   "test": "Визуальный контроль зон контакта поддержек"
+  },
+  {
+   "conditions": "внешний вид",
+   "mandatory": true,
+   "property": "alcohol_wipe_resistance",
+   "reason": "unverified",
+   "requirement_id": "R06",
+   "test": "Циклы протирки спиртовыми салфетками"
+  },
+  {
+   "conditions": "критерий ΔE согласовать",
+   "mandatory": true,
+   "property": "uv_color_stability",
+   "reason": "unverified",
+   "requirement_id": "R08",
+   "test": "UV старение с измерением ΔE"
+  }
+ ],
+ "requirement_issues": [],
+ "requirements": [
+  {
+   "comparator": "==",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R01",
+   "interpretation_status": "explicit",
+   "kind": "condition",
+   "load_case": null,
+   "mandatory": true,
+   "note": null,
+   "property": "batch_quantity",
+   "provenance": {
+    "file": "Техническое задание для декоративной фигурки.docx",
+    "fragment": "Заказчику необходимо изготовить партию из 15 фигурок."
+   },
+   "region": null,
+   "unit": "count",
+   "value": 15.0
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R02",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужен критерий наблюдения (расстояние, освещение, Ra) или разрешение постобработки",
+   "property": "no_visible_layers",
+   "provenance": {
+    "file": "Техническое задание для декоративной фигурки.docx",
+    "fragment": "Детали, напечатанные на FDM не должны содержать видимых слоёв, следов от поддержек и иных дефектов печати."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R03",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужна зона без контакта поддержек или разрешённая постобработка",
+   "property": "no_support_marks",
+   "provenance": {
+    "file": "Техническое задание для декоративной фигурки.docx",
+    "fragment": "Детали, напечатанные на FDM не должны содержать видимых слоёв, следов от поддержек и иных дефектов печати."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "in",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R04",
+   "interpretation_status": "explicit",
+   "kind": "condition",
+   "load_case": null,
+   "mandatory": true,
+   "note": null,
+   "property": "service_temperature",
+   "provenance": {
+    "file": "Техническое задание для декоративной фигурки.docx",
+    "fragment": "Температура может быть в диапазоне от +15°C до +60°C (под прямыми солнечными лучами)."
+   },
+   "region": null,
+   "unit": "degC",
+   "value": [
+    15.0,
+    60.0
+   ]
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R05",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужны данные старения UV для SKU",
+   "property": "uv_resistance",
+   "provenance": {
+    "file": "Техническое задание для декоративной фигурки.docx",
+    "fragment": "Температура может быть в диапазоне от +15°C до +60°C (под прямыми солнечными лучами)."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R06",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужен состав салфеток и режим протирки",
+   "property": "alcohol_wipe_resistance",
+   "provenance": {
+    "file": "Техническое задание для декоративной фигурки.docx",
+    "fragment": "Допускается обработка антистатическими и спиртовыми салфетками (для электроники)."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R07",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужна ударная вязкость тонких элементов",
+   "property": "toughness",
+   "provenance": {
+    "file": "Техническое задание для декоративной фигурки.docx",
+    "fragment": "Материал должен обладать вязкостью, чтобы тонкие элементы не отламывались при касании."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "qual",
+   "conditions": {},
+   "cycles": null,
+   "duration": null,
+   "environment": null,
+   "id": "R08",
+   "interpretation_status": "unknown",
+   "kind": "qualitative",
+   "load_case": null,
+   "mandatory": true,
+   "note": "Нужен критерий цвета (ΔE) и режим старения",
+   "property": "uv_color_stability",
+   "provenance": {
+    "file": "Техническое задание для декоративной фигурки.docx",
+    "fragment": "УФ-стабильность: Материал не должен желтеть под воздействием ультрафиолета из окна."
+   },
+   "region": null,
+   "unit": null,
+   "value": true
+  }
+ ],
+ "route": {
+  "mode": "classic",
+  "note": "no documented 5D benefit above threshold; classic is simpler",
+  "parameters": {}
+ },
+ "scene_operations": [
+  {
+   "coordinates": "printer (Z up); the adapter converts to the Uranium scene (Y up)",
+   "op": "load_mesh",
+   "path": "C:\\Users\\Matvey\\3d5d_hack\\data\\examples\\4. Фигурка\\Декоративная фигурка.stl",
+   "units": "mm"
+  },
+  {
+   "note": "original orientation kept (within 5% of best J_R)",
+   "op": "set_transform",
+   "rotation": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "translation": [
+    30.384347999999996,
+    -15.470970000000001,
+    40.064091
+   ]
+  },
+  {
+   "count": 6,
+   "op": "multiply",
+   "plates": 3,
+   "requirement_id": "R01",
+   "then": "arrange"
+  }
+ ],
+ "setting_patch": {
+  "errors": [],
+  "items": [
+   {
+    "decision_unit": null,
+    "enabled_after_patch": true,
+    "key": "printing_mode",
+    "model_ids": [
+     "choose_route"
+    ],
+    "note": "route selected by documented policy",
+    "old_effective_value": "classic",
+    "reason_requirement_ids": [],
+    "scope": "global",
+    "stage": "configuration",
+    "target": "global",
+    "unit": null,
+    "validation": "valid",
+    "value": "classic"
+   },
+   {
+    "decision_unit": "count",
+    "enabled_after_patch": true,
+    "key": "bottom_layers",
+    "model_ids": [
+     "skin_layers",
+     "policy:skin"
+    ],
+    "note": null,
+    "old_effective_value": 8,
+    "reason_requirement_ids": [],
+    "scope": "extruder",
+    "stage": "geometry",
+    "target": "extruder_0",
+    "unit": "count",
+    "validation": "valid",
+    "value": 10
+   },
+   {
+    "decision_unit": "fraction",
+    "enabled_after_patch": true,
+    "key": "infill_sparse_density",
+    "model_ids": [
+     "policy:infill"
+    ],
+    "note": "no calibrated relation load -> infill exists; policy by load class decorative",
+    "old_effective_value": 20.0,
+    "reason_requirement_ids": [
+     "R07"
+    ],
+    "scope": "extruder",
+    "stage": "geometry",
+    "target": "extruder_0",
+    "unit": "%",
+    "validation": "valid",
+    "value": 25.0
+   },
+   {
+    "decision_unit": "mm",
+    "enabled_after_patch": true,
+    "key": "layer_height",
+    "model_ids": [
+     "choose_layer_height",
+     "policy:layer"
+    ],
+    "note": null,
+    "old_effective_value": 0.1,
+    "reason_requirement_ids": [
+     "R02"
+    ],
+    "scope": "global",
+    "stage": "geometry",
+    "target": "global",
+    "unit": "mm",
+    "validation": "valid",
+    "value": 0.1
+   },
+   {
+    "decision_unit": "count",
+    "enabled_after_patch": true,
+    "key": "top_layers",
+    "model_ids": [
+     "skin_layers",
+     "policy:skin"
+    ],
+    "note": null,
+    "old_effective_value": 8,
+    "reason_requirement_ids": [],
+    "scope": "extruder",
+    "stage": "geometry",
+    "target": "extruder_0",
+    "unit": "count",
+    "validation": "valid",
+    "value": 10
+   },
+   {
+    "decision_unit": "count",
+    "enabled_after_patch": true,
+    "key": "wall_line_count",
+    "model_ids": [
+     "wall_count",
+     "policy:shell"
+    ],
+    "note": "shell 1.20 mm -> 3 walls (1.20 mm)",
+    "old_effective_value": 2,
+    "reason_requirement_ids": [],
+    "scope": "extruder",
+    "stage": "geometry",
+    "target": "extruder_0",
+    "unit": "count",
+    "validation": "valid",
+    "value": 3
+   },
+   {
+    "decision_unit": "degC",
+    "enabled_after_patch": true,
+    "key": "material_bed_temperature",
+    "model_ids": [
+     "thermal_window"
+    ],
+    "note": "material profile value; explicit because STE takes max() over extruders",
+    "old_effective_value": 95.0,
+    "reason_requirement_ids": [],
+    "scope": "global",
+    "stage": "thermal_flow",
+    "target": "global",
+    "unit": "°C",
+    "validation": "valid",
+    "value": 95.0
+   },
+   {
+    "decision_unit": "mm/s",
+    "enabled_after_patch": true,
+    "key": "speed_print",
+    "model_ids": [
+     "role_speed",
+     "material_datasheet"
+    ],
+    "note": "material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+    "old_effective_value": 60.0,
+    "reason_requirement_ids": [],
+    "scope": "extruder",
+    "stage": "motion",
+    "target": "extruder_0",
+    "unit": "mm/s",
+    "validation": "valid",
+    "value": 40.0
+   },
+   {
+    "decision_unit": null,
+    "enabled_after_patch": true,
+    "key": "support_enable",
+    "model_ids": [
+     "support_plan"
+    ],
+    "note": "overhang 3352 mm2, support volume bound 36737 mm3 (thresholds 25 mm2, 200 mm3)",
+    "old_effective_value": false,
+    "reason_requirement_ids": [
+     "R03"
+    ],
+    "scope": "global",
+    "stage": "support_adhesion",
+    "target": "global",
+    "unit": null,
+    "validation": "valid",
+    "value": true
+   }
+  ],
+  "payload": {
+   "extruders": {
+    "0": {
+     "bottom_layers": 10,
+     "infill_sparse_density": 25.0,
+     "speed_print": 40.0,
+     "top_layers": 10,
+     "wall_line_count": 3
+    }
+   },
+   "global": {
+    "layer_height": 0.1,
+    "material_bed_temperature": 95.0,
+    "printing_mode": "classic",
+    "support_enable": true
+   }
+  },
+  "warnings": []
+ },
+ "status": "candidate",
+ "structural_checks": [],
+ "trace": [
+  {
+   "count": 8,
+   "issues": [],
+   "part_type": "decorative",
+   "step": "parse_requirements"
+  },
+  {
+   "errors": [],
+   "rotational": {
+    "axial_length": 157.00053110195137,
+    "axis": [
+     -0.028404718335671146,
+     -0.23047779681471892,
+     0.9726629206213756
+    ],
+    "bore_radius": null,
+    "is_rotational_candidate": false,
+    "moment_mismatch": 0.03266773322178235,
+    "r_max": 56.97823539303769,
+    "sector_cv": 0.04228382746434292
+   },
+   "size": [
+    103.292492,
+    128.75143400000002,
+    149.979275
+   ],
+   "status": "ok",
+   "step": "analyze_mesh",
+   "volume_mm3": 725696.2574169034,
+   "warnings": []
+  },
+  {
+   "build_volume": {
+    "classic": [
+     351.0,
+     300.3,
+     300.0
+    ],
+    "cylindrical": [
+     351.0,
+     300.3,
+     231.1
+    ],
+    "cylindrical_full": [
+     351.0,
+     300.3,
+     231.1
+    ]
+   },
+   "chain": [
+    "fdmprinter",
+    "steprinter_v5",
+    "steprinter530_v5.2.4",
+    "hte530v5.2.4"
+   ],
+   "machine": "hte530v5.2.4",
+   "note": "offline schema from the slicer resources; installed runtime confirmed by read-back",
+   "nozzles": [
+    0.4
+   ],
+   "step": "inspect_machine"
+  },
+  {
+   "chosen": "fiberpart_tpu_c5",
+   "policy": "hard constraints first (any mandatory fail rejects); ranking by support = passes + 0.5*hinted unknowns + 1*manufacturer application match + 0.25*optional passes, then fewer unknowns, printability, print difficulty (Stereotech memo)",
+   "prototype_only": false,
+   "ranked": [
+    "fiberpart_tpu_c5",
+    "sealant_tpu_A95",
+    "enduse_pa6",
+    "enduse_tpu_d70",
+    "fiberpart_abspa_g8",
+    "enduse_petg",
+    "fiberpart_abs_g13",
+    "sealant_sebs"
+   ],
+   "rejected": 39,
+   "step": "screen_materials"
+  },
+  {
+   "chosen": "classic",
+   "routes": [
+    {
+     "feasible": true,
+     "mode": "classic",
+     "reasons": [
+      "flat layers, heated platform"
+     ],
+     "score": 0.0
+    },
+    {
+     "feasible": false,
+     "mode": "cylindrical",
+     "reasons": [
+      "axis: long axis through end sections",
+      "against: decorative part: classic route recommended by Stereotech",
+      "no axial bore for a mandrel: 5D Spiral would cut the part"
+     ],
+     "score": -3.0
+    },
+    {
+     "feasible": false,
+     "mode": "cylindrical_full",
+     "reasons": [
+      "axis: long axis through end sections",
+      "against: decorative part: classic route recommended by Stereotech",
+      "no core of >= 4 mm fits inside the part along the axis"
+     ],
+     "score": -3.0
+    }
+   ],
+   "step": "enumerate_routes"
+  },
+  {
+   "candidates": [
+    {
+     "height": 149.979275,
+     "score": 2.8,
+     "support_volume": 36736.953820593466,
+     "up": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   ],
+   "chosen_up": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "step": "orientation"
+  },
+  {
+   "chosen": "fiberpart_tpu_c5",
+   "rejected_by_structure": [],
+   "step": "solve_structure"
+  },
+  {
+   "errors": [],
+   "items": 9,
+   "process_notes": [
+    {
+     "item": "load_class",
+     "model": "P",
+     "value": "decorative"
+    },
+    {
+     "item": "layer_height",
+     "model": "P",
+     "note": "smallest allowed layer for visible surfaces",
+     "value": 0.1
+    },
+    {
+     "item": "infill",
+     "model": "S",
+     "note": "raised to material minimum 25%"
+    },
+    {
+     "item": "nozzle_temperature",
+     "model": "S",
+     "note": "material profile value inside data-sheet window 215..240 C",
+     "value": 230.0
+    },
+    {
+     "item": "support",
+     "model": "S",
+     "note": "supports are needed for this orientation although marks are not allowed: post-processing or another route must be agreed",
+     "status": "conflict"
+    }
+   ],
+   "step": "compile_patch",
+   "warnings": []
+  }
+ ],
+ "verification": [
+  {
+   "evidence_level": null,
+   "fragment": "Заказчику необходимо изготовить партию из 15 фигурок.",
+   "mandatory": true,
+   "notes": [],
+   "property": "batch_quantity",
+   "requirement_id": "R01",
+   "sources": [],
+   "status": "input"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Детали, напечатанные на FDM не должны содержать видимых слоёв, следов от поддержек и иных дефектов печати.",
+   "mandatory": true,
+   "notes": [
+    "Нужен критерий наблюдения (расстояние, освещение, Ra) или разрешение постобработки"
+   ],
+   "property": "no_visible_layers",
+   "requirement_id": "R02",
+   "sources": [
+    "material:fiberpart_tpu_c5"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": null,
+   "fragment": "Детали, напечатанные на FDM не должны содержать видимых слоёв, следов от поддержек и иных дефектов печати.",
+   "mandatory": true,
+   "notes": [
+    "Нужна зона без контакта поддержек или разрешённая постобработка"
+   ],
+   "property": "no_support_marks",
+   "requirement_id": "R03",
+   "sources": [
+    "material:fiberpart_tpu_c5"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": "document",
+   "fragment": "Температура может быть в диапазоне от +15°C до +60°C (под прямыми солнечными лучами).",
+   "mandatory": true,
+   "notes": [
+    "manufacturer operating range -50..120 C"
+   ],
+   "property": "service_temperature",
+   "requirement_id": "R04",
+   "sources": [
+    "material:fiberpart_tpu_c5"
+   ],
+   "status": "pass"
+  },
+  {
+   "evidence_level": "document",
+   "fragment": "Температура может быть в диапазоне от +15°C до +60°C (под прямыми солнечными лучами).",
+   "mandatory": true,
+   "notes": [
+    "UV resistant per manufacturer"
+   ],
+   "property": "uv_resistance",
+   "requirement_id": "R05",
+   "sources": [
+    "material:fiberpart_tpu_c5"
+   ],
+   "status": "pass"
+  },
+  {
+   "evidence_level": "document",
+   "fragment": "Допускается обработка антистатическими и спиртовыми салфетками (для электроники).",
+   "mandatory": true,
+   "notes": [
+    "manufacturer text claims resistance; no table data for Изопропанол, Этанол 96%"
+   ],
+   "property": "alcohol_wipe_resistance",
+   "requirement_id": "R06",
+   "sources": [
+    "material:fiberpart_tpu_c5"
+   ],
+   "status": "unknown"
+  },
+  {
+   "evidence_level": "document",
+   "fragment": "Материал должен обладать вязкостью, чтобы тонкие элементы не отламывались при касании.",
+   "mandatory": true,
+   "notes": [
+    "elongation 0.14 vs policy 0.05"
+   ],
+   "property": "toughness",
+   "requirement_id": "R07",
+   "sources": [
+    "material:fiberpart_tpu_c5"
+   ],
+   "status": "pass"
+  },
+  {
+   "evidence_level": "document",
+   "fragment": "УФ-стабильность: Материал не должен желтеть под воздействием ультрафиолета из окна.",
+   "mandatory": true,
+   "notes": [
+    "UV resistant per manufacturer, colour stability needs ΔE criterion"
+   ],
+   "property": "uv_color_stability",
+   "requirement_id": "R08",
+   "sources": [
+    "material:fiberpart_tpu_c5"
+   ],
+   "status": "unknown"
+  }
+ ]
+}

@@ -1,0 +1,52 @@
+{
+ "schema_version": "1.0",
+ "source": "https://wiki.stereotech.org/ru/fdm-materials/material-selection",
+ "document": "Stereotech: памятка по принципам выбора материала для печати, редакция 07-12-2023",
+ "retrieved": "2026-10-23",
+ "evidence": "document",
+ "note": "Structured transcription of the manufacturer's selection memo. Entries 'series:X' cover all materials of a series, 'base:X' all materials with this base polymer. Materials absent from the slicer (ASA, HIPS, TPU A70/A90) are kept for completeness. Enduse PC is listed under both medium and low moisture uptake in the memo.",
+ "part_type": {
+  "decorative": ["proto_pla", "enduse_petg"]
+ },
+ "temperature_classes": [
+  {"class": "frost_resistant", "min_service_c": -30, "materials": ["enduse_asa", "sealant_tpu_a90"]},
+  {"class": "normal", "max_service_c": 80, "materials": ["enduse_petg", "enduse_sbs", "enduse_asa", "enduse_pa6", "enduse_pp", "sealant_sebs"]},
+  {"class": "elevated", "max_service_c": 100, "materials": ["enduse_abs", "enduse_pa6", "enduse_pc", "sealant_tpu", "series:Fiberpart"]},
+  {"class": "high", "max_service_c": 130, "materials": ["fiberpart_tpu_g30", "fiberpart_pp_g30", "fiberpart_pc_g20"], "notes": {"fiberpart_pc_g20": "up to 150 C"}},
+  {"class": "extreme", "min_service_c": 150, "materials": ["series:Metalcast"]}
+ ],
+ "stiffness": {
+  "soft_elastic": ["series:Sealant"],
+  "soft_inelastic": ["enduse_pp", "sealant_sebs"],
+  "medium_flexible": ["enduse_petg", "enduse_tpu_d70", "enduse_pa6"],
+  "hard_rigid": ["proto_pla", "enduse_abs", "enduse_pc", "series:Fiberpart"]
+ },
+ "chemical": {
+  "hydrocarbons": ["base:TPU", "base:PA12", "base:PA6", "base:PP"],
+  "alkali": ["base:PA12", "base:PA6", "base:ABSPA", "base:PP"],
+  "acids": ["base:TPU", "base:ABS", "base:ABSPA", "base:PP"],
+  "uv": ["enduse_petg", "enduse_asa", "enduse_pa6", "fiberpart_abspa_g8"]
+ },
+ "abrasion": {
+  "low": ["enduse_abs"],
+  "medium": ["enduse_petg", "series:Fiberpart TPU"],
+  "high": ["enduse_pp", "enduse_pa6", "fiberpart_pa12_g12", "series:Sealant TPU"]
+ },
+ "strength": {
+  "tensile": ["contifiber_cpa", "series:Fiberpart", "enduse_pc", "enduse_pa6"],
+  "flexural": ["fiberpart_pa12_g12", "proto_pla", "enduse_petg", "enduse_abs"],
+  "compressive": ["series:Fiberpart", "proto_pla", "enduse_petg", "enduse_abs"],
+  "impact": ["enduse_hips", "fiberpart_pc_g20", "enduse_pc", "fiberpart_abs_g13", "enduse_abs"]
+ },
+ "moisture_uptake": {
+  "high": ["series:Sealant", "proto_pva", "enduse_pa6", "fiberpart_pa12_g12"],
+  "medium": ["series:Fiberpart", "enduse_pc", "enduse_abs", "series:Metalcast"],
+  "low": ["enduse_petg", "enduse_sbs", "enduse_pc", "series:ContiFiber"]
+ },
+ "print_difficulty_hardest_first": [
+  "series:ContiFiber", "series:Metalcast", "fiberpart_pc_g20", "enduse_pc", "enduse_pa6", "sealant_sebs",
+  "fiberpart_pa12_g12", "sealant_tpu_a70", "fiberpart_pp_g30", "enduse_pp", "sealant_tpu_a90",
+  "fiberpart_tpu_g30", "fiberpart_abspa_g8", "fiberpart_tpu_c5", "sealant_tpu_a95", "enduse_sbs",
+  "fiberpart_abs_g13", "fiberpart_abs_g4", "enduse_abs", "proto_pla", "enduse_petg"
+ ]
+}
