@@ -1,0 +1,673 @@
+{
+ "assumptions": [
+  {
+   "comparator": "==",
+   "id": "R3",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "абразивный наполнитель изнашивает контртело",
+   "property": "no_abrasive_filler",
+   "provenance": "Напечатанная деталь не должна вызывать ускоренный износ ответных POM-роликов.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": ">=",
+   "id": "R10",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Температура и среда +15°C...+35°C.",
+   "unit": "degC",
+   "value": 35.0
+  }
+ ],
+ "candidates": {
+  "materials": [
+   {
+    "label": "Enduse PA6",
+    "mandatory_fails": 0,
+    "material_id": "enduse_pa6",
+    "score": 7.4,
+    "unknown": 2
+   },
+   {
+    "label": "Enduse PP",
+    "mandatory_fails": 0,
+    "material_id": "enduse_pp",
+    "score": 3.6,
+    "unknown": 4
+   },
+   {
+    "label": "Fiberpart PA12 G12",
+    "mandatory_fails": 1,
+    "material_id": "fiberpart_pa12_g12",
+    "score": 6.15,
+    "unknown": 2
+   },
+   {
+    "label": "Enduse PETG",
+    "mandatory_fails": 1,
+    "material_id": "enduse_petg",
+    "score": 4.15,
+    "unknown": 3
+   },
+   {
+    "label": "Fiberpart PP G30",
+    "mandatory_fails": 1,
+    "material_id": "fiberpart_pp_g30",
+    "score": 2.7,
+    "unknown": 4
+   }
+  ],
+  "orientations": [
+   {
+    "J": 0.2514,
+    "bed_contact_area": 793.6589457865578,
+    "height": 40.5,
+    "overhang_area": 100.06552944420582,
+    "overhang_fraction": 0.0204,
+    "stair_area": 67.38946449531105,
+    "up": [
+     -0.0,
+     -0.0,
+     -1.0
+    ]
+   },
+   {
+    "J": 0.5442,
+    "bed_contact_area": 139.99605456292215,
+    "height": 40.5,
+    "overhang_area": 746.2786929011297,
+    "overhang_fraction": 0.1521,
+    "stair_area": 67.38946449531105,
+    "up": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  ],
+  "routes": [
+   {
+    "mode": "classic",
+    "why_not": "в задании указан режим 5D"
+   }
+  ]
+ },
+ "chosen_candidate": {
+  "batch": null,
+  "material": {
+   "checks": [
+    {
+     "evidence": "оценка класса: excellent",
+     "manufacturer_claim": true,
+     "property": "wear",
+     "requirement_id": "R1",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: excellent",
+     "manufacturer_claim": true,
+     "property": "oil",
+     "requirement_id": "R2",
+     "status": "pass"
+    },
+    {
+     "evidence": "без наполнителя",
+     "manufacturer_claim": false,
+     "property": "no_abrasive_filler",
+     "requirement_id": "R3",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: excellent",
+     "manufacturer_claim": true,
+     "property": "alkali",
+     "requirement_id": "R4",
+     "status": "pass"
+    },
+    {
+     "evidence": "печатаемость: fair",
+     "manufacturer_claim": false,
+     "property": "surface_no_layers",
+     "requirement_id": "R5",
+     "status": "unknown"
+    },
+    {
+     "evidence": "печатаемость: fair",
+     "manufacturer_claim": false,
+     "property": "tolerance_mm",
+     "requirement_id": "R6",
+     "status": "unknown"
+    },
+    {
+     "evidence": "оценка класса: excellent",
+     "manufacturer_claim": true,
+     "property": "friction_low",
+     "requirement_id": "R7",
+     "status": "pass"
+    },
+    {
+     "evidence": "типично 215…225",
+     "manufacturer_claim": false,
+     "property": "short_contact_c",
+     "requirement_id": "R8",
+     "status": "pass"
+    },
+    {
+     "evidence": "нет заявления о пищевом контакте",
+     "manufacturer_claim": false,
+     "property": "food_safe",
+     "requirement_id": "R9",
+     "status": "unknown"
+    },
+    {
+     "evidence": "HDT 150…190 ≥ 45 (T+запас)",
+     "manufacturer_claim": false,
+     "property": "service_temp_max_c",
+     "requirement_id": "R10",
+     "status": "pass"
+    }
+   ],
+   "guid": "51d24a11-e727-4117-b36d-61719b161581",
+   "id": "enduse_pa6",
+   "label": "Enduse PA6"
+  },
+  "orientation": {
+   "placement": "ось детали совмещена с осью вращения 5D (X=0, Y=0)",
+   "rotation_axis_angle": {
+    "angle_deg": 180.0,
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ]
+   },
+   "rule": "axis_vertical",
+   "size_after_mm": [
+    61.7,
+    23.5,
+    40.5
+   ],
+   "translation_mm": [
+    -31.024,
+    23.957,
+    40.5
+   ],
+   "up_vector_model": [
+    -0.0,
+    -0.0,
+    -1.0
+   ]
+  },
+  "printing_mode": "cylindrical",
+  "quality": {
+   "layer_height": 0.1,
+   "name": "Fine",
+   "quality_type": "normal"
+  },
+  "route_reasons": [
+   "в задании указан 5D; у детали найдена ось вращения (доля поверхностей вращения 0.46)",
+   "нет сквозного отверстия: ядро Ø17 мм (наименьший наружный диаметр вдоль оси) печатается классически, всё снаружи — радиальными слоями 5D Spiral"
+  ]
+ },
+ "effective_settings": {
+  "cool_fan_speed": 0.0,
+  "cylindrical_mode_base_diameter": 17.0,
+  "infill_sparse_density": 100.0,
+  "layer_height": 0.1,
+  "material_bed_temperature": 100.0,
+  "material_print_temperature": 260.0,
+  "material_standby_temperature": 175.0,
+  "printing_mode": "cylindrical",
+  "retraction_amount": 7.0,
+  "retraction_speed": 25.0,
+  "speed_print": 40.0,
+  "speed_wall_0": 20.0,
+  "support_enable": false,
+  "top_bottom_thickness": 2.4,
+  "wall_line_count": 6,
+  "z_seam_type": "sharpest_corner"
+ },
+ "evidence_level": "analytical_screen",
+ "flags": [
+  "load_bearing"
+ ],
+ "geometry": {
+  "area_mm2": 4906.710482407887,
+  "bbox_size": [
+   61.70000076293945,
+   23.496320724487305,
+   40.5
+  ],
+  "open_edges": 0,
+  "rotation_axis": {
+   "axis_line_hits": 2,
+   "axisymmetric": false,
+   "bore_radius": null,
+   "centroid_offset": 1.8390875990471824,
+   "length": 40.5,
+   "max_outer_radius": 15.097435793116,
+   "min_outer_radius": 8.789225712132264,
+   "point": [
+    31.02371355907174,
+    23.956831994743066,
+    26.437532473650393
+   ],
+   "r_max": 32.764877359899245,
+   "revolution_score": 0.46117870609614875,
+   "revolved_area_fraction": 0.2962702547599478,
+   "through_bore": false,
+   "vector": [
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  "triangles": 7068,
+  "volume_mm3": 15229.289881584884
+ },
+ "machine": {
+  "definition_id": "hte530v5.2",
+  "name": "Stereotech Hybrid 530 V5.2"
+ },
+ "missing_inputs": [
+  "закрепление и контакт (без них напряжения по STL не определены, раздел 6)",
+  "пара трения и условия испытания (μ определяется парой, не материалом)"
+ ],
+ "notes": [
+  "Высота слоя 0.10 мм задаётся профилем качества normal.",
+  "Адгезия в 5D: печать на столе: Нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: Наклеить малярный скотч на основание. Для изделий с толщиной меньше 3 мм - нанести на скотч клей-адгезив.",
+  "Допуск ±0.15 мм: xy_offset не задаём (он меняет и наружный контур); нужна калибровка отверстий/контура и компенсация в CAD.",
+  "Материал гигроскопичен: сушка перед печатью обязательна."
+ ],
+ "numbers": {
+  "load_n": 35.0,
+  "rpm": 65.0,
+  "service_temp_max_c": 35.0,
+  "service_temp_min_c": 15.0,
+  "torque_nm": 18.0
+ },
+ "policy": {
+  "decision": {
+   "flexible_speed_max": 25.0,
+   "full_mode_min_bore_mm": 10.0,
+   "infill_decorative_pct": 10.0,
+   "infill_default_pct": 20.0,
+   "infill_loaded_pct": 50.0,
+   "min_base_diameter_mm": 6.0,
+   "nozzle_mm": 0.4,
+   "orientation_weights": {
+    "contact": 0.6,
+    "height": 0.3,
+    "overhang": 2.0,
+    "stair": 0.2,
+    "stair_surface": 1.0
+   },
+   "plate_clearance_mm": 10.0,
+   "precision_outer_wall_speed": 20.0,
+   "raft_layers_min": 5,
+   "rotor_axis_score": 0.6,
+   "skin_min_mm": 1.2,
+   "solid_volume_limit_cm3": 200.0,
+   "support_overhang_fraction": 0.01,
+   "wall_default_mm": 1.2,
+   "wall_flexible_mm": 1.6,
+   "wall_load_mm": 2.0
+  },
+  "requirements": {
+   "heat_margin_c": 10.0,
+   "hydrophobic_max_water_pct": 0.5,
+   "non_brittle_min_elongation_pct": 3.0,
+   "stiff_min_modulus_mpa": 3000.0
+  }
+ },
+ "qualification_plan": [
+  {
+   "property": "tolerance_mm",
+   "requirement_id": "R6",
+   "test": "измерение отверстий/контура тестовой детали, калибровка компенсации"
+  },
+  {
+   "property": "friction_low",
+   "requirement_id": "R7",
+   "test": "коэффициент трения в реальной паре (по POM)"
+  },
+  {
+   "property": "food_safe",
+   "requirement_id": "R9",
+   "test": "подтверждение допуска материала и процесса для пищевого контакта"
+  },
+  {
+   "property": "surface_no_layers",
+   "requirement_id": "R5",
+   "test": "подтвердить свойство по паспорту партии/испытанию (печатаемость: fair)"
+  }
+ ],
+ "rejected_settings": [],
+ "requirements": [
+  {
+   "comparator": "rating>=",
+   "id": "R1",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": "износостойкость",
+   "property": "wear",
+   "provenance": "В цеху присутствует мелкая абразивная целлюлозная пыль (от гофрокартона).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R2",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "oil",
+   "provenance": "Смазка на оси смешивается с пылью, образуя густую абразивную пасту.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "==",
+   "id": "R3",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "абразивный наполнитель изнашивает контртело",
+   "property": "no_abrasive_filler",
+   "provenance": "Напечатанная деталь не должна вызывать ускоренный износ ответных POM-роликов.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R4",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "alkali",
+   "provenance": "Еженедельная мойка оборудования щелочными пенными средствами (pH 10-11) для удаления клеевых остатков.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "==",
+   "id": "R5",
+   "interpretation_status": "explicit",
+   "kind": "process",
+   "mandatory": true,
+   "note": null,
+   "property": "surface_no_layers",
+   "provenance": "Причина замены оригинала: выработка (износ) широкого копирного профиля на 1.5–2 мм, появление «ступенек», заклинивание роликов.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "<=",
+   "id": "R6",
+   "interpretation_status": "explicit",
+   "kind": "process",
+   "mandatory": true,
+   "note": null,
+   "property": "tolerance_mm",
+   "provenance": "Отклонение от теоретического контура не должно превышать ±0.15 мм.",
+   "unit": "mm",
+   "value": 0.15
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R7",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": "низкое трение",
+   "property": "friction_low",
+   "provenance": "Материал должен иметь низкий коэффициент трения скольжения по POM-пластику без применения внешних смазок.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": ">=",
+   "id": "R8",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": "кратковременный контакт: материал не должен плавиться",
+   "property": "short_contact_c",
+   "provenance": "Устойчивость к щелочным моющим средствам (pH 11) и возможным попаданиям горячего клея (расплава EVA), используемого на формовщике (температура капания клея до 160°C, материал не должен плавиться или размягчаться при крат",
+   "unit": "degC",
+   "value": 160.0
+  },
+  {
+   "comparator": "verified",
+   "id": "R9",
+   "interpretation_status": "explicit",
+   "kind": "qualification",
+   "mandatory": true,
+   "note": "пищевой контакт/нетоксичность",
+   "property": "food_safe",
+   "provenance": "Материал не должен выделять токсичных веществ (оборудование может использоваться для упаковки пищевой продукции, например, тетрапакетов с соком).",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": ">=",
+   "id": "R10",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Температура и среда +15°C...+35°C.",
+   "unit": "degC",
+   "value": 35.0
+  }
+ ],
+ "scene_operations": [
+  {
+   "op": "load",
+   "path": "data/examples/7. Ось вращения передающих звёзд формовщика коробов Krones - 5D/Ось вращения передающих звёзд.STL"
+  },
+  {
+   "axis_angle": {
+    "angle_deg": 180.0,
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ]
+   },
+   "frame": "STL/принтер, Z вверх (в сцене Cura Y вверх: (x, y, z) → (x, z, -y))",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "op": "rotate"
+  },
+  {
+   "op": "translate",
+   "placement": "ось детали совмещена с осью вращения 5D (X=0, Y=0)",
+   "vector_mm": [
+    -31.024,
+    23.957,
+    40.5
+   ]
+  }
+ ],
+ "setting_patch": [
+  {
+   "key": "printing_mode",
+   "reason": "в задании указан 5D; у детали найдена ось вращения (доля поверхностей вращения 0.46); нет сквозного отверстия: ядро Ø17 мм (наименьший наружный диаметр вдоль оси) печатается классически, всё снаружи — радиальными слоями 5D Spiral",
+   "requirement_ids": [],
+   "rule": "route",
+   "schema_default": "classic",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "cylindrical"
+  },
+  {
+   "key": "cylindrical_mode_base_diameter",
+   "reason": "нет сквозного отверстия: ядро Ø17 мм (наименьший наружный диаметр вдоль оси) печатается классически, всё снаружи — радиальными слоями 5D Spiral",
+   "requirement_ids": [],
+   "rule": "route_5d",
+   "schema_default": 6,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 17.0
+  },
+  {
+   "key": "wall_line_count",
+   "reason": "нагрузка/вращение/износ: материал у наружного контура (момент инерции сечения); +1 стенка под точную/изнашиваемую поверхность; t=2.4 мм → N=6 при ширине 0.4 мм",
+   "requirement_ids": [
+    "R1",
+    "R6"
+   ],
+   "rule": "walls",
+   "schema_default": 2,
+   "scope": "global",
+   "type": "int",
+   "unit": null,
+   "value": 6
+  },
+  {
+   "key": "top_bottom_thickness",
+   "reason": "кожа не тоньше стенки: 24 слоёв по 0.10 мм",
+   "requirement_ids": [],
+   "rule": "skin",
+   "schema_default": 0.8,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 2.4
+  },
+  {
+   "key": "infill_sparse_density",
+   "reason": "нагруженная деталь объёмом 15 см³ ≤ 200 см³",
+   "requirement_ids": [],
+   "rule": "infill",
+   "schema_default": 20,
+   "scope": "global",
+   "type": "float",
+   "unit": "%",
+   "value": 100.0
+  },
+  {
+   "key": "speed_wall_0",
+   "reason": "точная/видимая наружная поверхность",
+   "requirement_ids": [
+    "R5",
+    "R6"
+   ],
+   "rule": "speed_outer",
+   "schema_default": 30,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm/s",
+   "value": 20.0
+  },
+  {
+   "key": "support_enable",
+   "reason": "5D: радиальные слои наращиваются от оси, классические поддержки не используются",
+   "requirement_ids": [],
+   "rule": "support_5d",
+   "schema_default": false,
+   "scope": "global",
+   "type": "bool",
+   "unit": null,
+   "value": false
+  },
+  {
+   "key": "z_seam_type",
+   "reason": "шов в углах: меньше влияния на посадку/уплотнение",
+   "requirement_ids": [],
+   "rule": "seam",
+   "schema_default": "sharpest_corner",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "sharpest_corner"
+  }
+ ],
+ "status": "needs_calibration",
+ "trace": [
+  {
+   "detail": {
+    "fails": 0,
+    "material": "enduse_pa6",
+    "score": 7.4
+   },
+   "rule": "screen_rank",
+   "step": "material"
+  },
+  {
+   "detail": {
+    "hint": "5D",
+    "mode": "cylindrical",
+    "revolution_score": 0.46117870609614875,
+    "through_bore": false
+   },
+   "rule": "mode_hint+axis",
+   "step": "route"
+  },
+  {
+   "detail": {
+    "J": 0.2514,
+    "candidates": 2,
+    "chosen_up": [
+     -0.0,
+     -0.0,
+     -1.0
+    ]
+   },
+   "rule": "axis_vertical",
+   "step": "orientation"
+  },
+  {
+   "detail": {
+    "layer": 0.1,
+    "quality": "normal"
+   },
+   "rule": "tolerance/surface/material",
+   "step": "layer"
+  },
+  {
+   "detail": {
+    "infill": 100.0,
+    "support": 0.0204,
+    "walls": 6
+   },
+   "rule": "rules",
+   "step": "settings"
+  }
+ ],
+ "verification": {
+  "fits_build_volume": true,
+  "patch_valid": true,
+  "slice_verified": false
+ },
+ "version": "baseline-0.1.0",
+ "warnings": []
+}

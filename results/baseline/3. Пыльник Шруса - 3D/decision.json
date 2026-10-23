@@ -1,0 +1,634 @@
+{
+ "assumptions": [
+  {
+   "comparator": "rating>=",
+   "id": "R1",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "деталь должна быть эластичной",
+   "property": "elasticity",
+   "provenance": "Наименование детали: Эластичный защитный чехол (пыльник) наружного ШРУСа",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R6",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "отсутствие хрупкого разрушения",
+   "property": "impact",
+   "provenance": "Снаружи: Дорожные реагенты (хлорид натрия, хлорид кальция), тормозная пыль, брызги бензина/дизеля, удары мелких камней и крошки.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": ">=",
+   "id": "R8",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Рабочий диапазон: от 0°C до +75°C (нагрев от тормозных механизмов и трения в ШРУСе при длительном буксовании).",
+   "unit": "degC",
+   "value": 75.0
+  }
+ ],
+ "candidates": {
+  "materials": [
+   {
+    "label": "Sealant TPV80",
+    "mandatory_fails": 0,
+    "material_id": "sealant_tpv80",
+    "score": 7.75,
+    "unknown": 0
+   },
+   {
+    "label": "Sealant TPU",
+    "mandatory_fails": 0,
+    "material_id": "sealant_tpu",
+    "score": 6.75,
+    "unknown": 1
+   },
+   {
+    "label": "Sealant TPU93",
+    "mandatory_fails": 0,
+    "material_id": "sealant_tpu93",
+    "score": 6.75,
+    "unknown": 1
+   },
+   {
+    "label": "Sealant TPU A95",
+    "mandatory_fails": 0,
+    "material_id": "sealant_tpu_A95",
+    "score": 6.75,
+    "unknown": 1
+   },
+   {
+    "label": "Enduse TPU D70",
+    "mandatory_fails": 0,
+    "material_id": "enduse_tpu_d70",
+    "score": 5.4,
+    "unknown": 2
+   }
+  ],
+  "orientations": [
+   {
+    "J": 1.2412,
+    "bed_contact_area": 654.0825796167937,
+    "height": 111.0,
+    "overhang_area": 12259.687995156157,
+    "overhang_fraction": 0.1775,
+    "stair_area": 60638.765982116085,
+    "up": [
+     1.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "J": 1.4504,
+    "bed_contact_area": 221.75751232143375,
+    "height": 111.0,
+    "overhang_area": 15161.335064053375,
+    "overhang_fraction": 0.2195,
+    "stair_area": 60638.765982116085,
+    "up": [
+     -1.0,
+     -0.0,
+     -0.0
+    ]
+   }
+  ],
+  "routes": []
+ },
+ "chosen_candidate": {
+  "batch": null,
+  "material": {
+   "checks": [
+    {
+     "evidence": "эластомер, Shore 80A",
+     "manufacturer_claim": true,
+     "property": "elasticity",
+     "requirement_id": "R1",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: excellent",
+     "manufacturer_claim": false,
+     "property": "acids_salts",
+     "requirement_id": "R2",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": true,
+     "property": "oil",
+     "requirement_id": "R3",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": false,
+     "property": "wear",
+     "requirement_id": "R4",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": true,
+     "property": "fuel",
+     "requirement_id": "R5",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: excellent",
+     "manufacturer_claim": false,
+     "property": "impact",
+     "requirement_id": "R6",
+     "status": "pass"
+    },
+    {
+     "evidence": "подтверждается только испытаниями",
+     "manufacturer_claim": false,
+     "property": "sealing",
+     "requirement_id": "R7",
+     "status": "unknown"
+    },
+    {
+     "evidence": "T_max эксплуатации 110…130 ≥ 85 (T+запас)",
+     "manufacturer_claim": false,
+     "property": "service_temp_max_c",
+     "requirement_id": "R8",
+     "status": "pass"
+    }
+   ],
+   "guid": "d79a48a0-bce9-4bba-b5fb-ac54296d9f3f",
+   "id": "sealant_tpv80",
+   "label": "Sealant TPV80"
+  },
+  "orientation": {
+   "placement": "центр стола (затем arrangeAll)",
+   "rotation_axis_angle": {
+    "angle_deg": 90.0,
+    "axis": [
+     0.0,
+     -1.0,
+     0.0
+    ]
+   },
+   "rule": "axis_vertical",
+   "size_after_mm": [
+    102.98,
+    102.99,
+    111.0
+   ],
+   "translation_mm": [
+    51.492,
+    -51.496,
+    -0.0
+   ],
+   "up_vector_model": [
+    1.0,
+    0.0,
+    0.0
+   ]
+  },
+  "printing_mode": "classic",
+  "quality": {
+   "layer_height": 0.2,
+   "name": "Draft",
+   "quality_type": "draft"
+  },
+  "route_reasons": [
+   "в задании указан 3D"
+  ]
+ },
+ "effective_settings": {
+  "adhesion_type": "skirt",
+  "cool_fan_speed": 0.0,
+  "infill_sparse_density": 100.0,
+  "layer_height": 0.2,
+  "material_bed_temperature": 50.0,
+  "material_print_temperature": 280.0,
+  "material_standby_temperature": 175.0,
+  "printing_mode": "classic",
+  "retraction_amount": 2.0,
+  "retraction_speed": 10.0,
+  "speed_print": 25.0,
+  "support_enable": true,
+  "support_type": "buildplate",
+  "top_bottom_thickness": 2.0,
+  "wall_line_count": 5,
+  "z_seam_type": "sharpest_corner"
+ },
+ "evidence_level": "analytical_screen",
+ "flags": [
+  "cyclic_deformation"
+ ],
+ "geometry": {
+  "area_mm2": 69073.73996738213,
+  "bbox_size": [
+   111.0,
+   102.98782062530518,
+   102.98433420062065
+  ],
+  "open_edges": 0,
+  "rotation_axis": {
+   "axis_line_hits": 0,
+   "axisymmetric": true,
+   "bore_radius": 13.197205747614806,
+   "centroid_offset": 9.886431416680705e-05,
+   "length": 111.0,
+   "max_outer_radius": 51.48916059532802,
+   "min_outer_radius": 15.49672376510529,
+   "point": [
+    47.483365912386795,
+    51.495697374928554,
+    51.49569737791248
+   ],
+   "r_max": 51.48916059532802,
+   "revolution_score": 0.9999999999999998,
+   "revolved_area_fraction": 0.11029810006384874,
+   "through_bore": true,
+   "vector": [
+    1.0,
+    0.0,
+    0.0
+   ]
+  },
+  "triangles": 338526,
+  "volume_mm3": 71422.00051447854
+ },
+ "machine": {
+  "definition_id": "hte530v5.2",
+  "name": "Stereotech Hybrid 530 V5.2"
+ },
+ "missing_inputs": [
+  "давление, среда и допустимая утечка для герметичности"
+ ],
+ "notes": [
+  "Высота слоя 0.20 мм задаётся профилем качества draft."
+ ],
+ "numbers": {
+  "rpm": 1000.0,
+  "service_temp_max_c": 75.0,
+  "service_temp_min_c": 0.0
+ },
+ "policy": {
+  "decision": {
+   "flexible_speed_max": 25.0,
+   "full_mode_min_bore_mm": 10.0,
+   "infill_decorative_pct": 10.0,
+   "infill_default_pct": 20.0,
+   "infill_loaded_pct": 50.0,
+   "min_base_diameter_mm": 6.0,
+   "nozzle_mm": 0.4,
+   "orientation_weights": {
+    "contact": 0.6,
+    "height": 0.3,
+    "overhang": 2.0,
+    "stair": 0.2,
+    "stair_surface": 1.0
+   },
+   "plate_clearance_mm": 10.0,
+   "precision_outer_wall_speed": 20.0,
+   "raft_layers_min": 5,
+   "rotor_axis_score": 0.6,
+   "skin_min_mm": 1.2,
+   "solid_volume_limit_cm3": 200.0,
+   "support_overhang_fraction": 0.01,
+   "wall_default_mm": 1.2,
+   "wall_flexible_mm": 1.6,
+   "wall_load_mm": 2.0
+  },
+  "requirements": {
+   "heat_margin_c": 10.0,
+   "hydrophobic_max_water_pct": 0.5,
+   "non_brittle_min_elongation_pct": 3.0,
+   "stiff_min_modulus_mpa": 3000.0
+  }
+ },
+ "qualification_plan": [
+  {
+   "property": "sealing",
+   "requirement_id": "R7",
+   "test": "испытание на утечку при заданном давлении и среде"
+  }
+ ],
+ "rejected_settings": [],
+ "requirements": [
+  {
+   "comparator": "rating>=",
+   "id": "R1",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "деталь должна быть эластичной",
+   "property": "elasticity",
+   "provenance": "Наименование детали: Эластичный защитный чехол (пыльник) наружного ШРУСа",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R2",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "acids_salts",
+   "provenance": "Функционал: Защита шарнира равных угловых скоростей от попадания воды, абразивной грязи и реагентов, а также удержание специализированной смазки внутри узла при постоянных изгибах и осевых перемещениях подвески.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R3",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "oil",
+   "provenance": "Функционал: Защита шарнира равных угловых скоростей от попадания воды, абразивной грязи и реагентов, а также удержание специализированной смазки внутри узла при постоянных изгибах и осевых перемещениях подвески.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R4",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": "износостойкость",
+   "property": "wear",
+   "provenance": "Функционал: Защита шарнира равных угловых скоростей от попадания воды, абразивной грязи и реагентов, а также удержание специализированной смазки внутри узла при постоянных изгибах и осевых перемещениях подвески.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R5",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "fuel",
+   "provenance": "Снаружи: Дорожные реагенты (хлорид натрия, хлорид кальция), тормозная пыль, брызги бензина/дизеля, удары мелких камней и крошки.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R6",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "отсутствие хрупкого разрушения",
+   "property": "impact",
+   "provenance": "Снаружи: Дорожные реагенты (хлорид натрия, хлорид кальция), тормозная пыль, брызги бензина/дизеля, удары мелких камней и крошки.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "verified",
+   "id": "R7",
+   "interpretation_status": "explicit",
+   "kind": "qualification",
+   "mandatory": true,
+   "note": "герметичность: только испытания",
+   "property": "sealing",
+   "provenance": "Герметичность: Узел должен быть абсолютно герметичен.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": ">=",
+   "id": "R8",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Рабочий диапазон: от 0°C до +75°C (нагрев от тормозных механизмов и трения в ШРУСе при длительном буксовании).",
+   "unit": "degC",
+   "value": 75.0
+  }
+ ],
+ "scene_operations": [
+  {
+   "op": "load",
+   "path": "data/examples/3. Пыльник Шруса - 3D/Пыльник шруса.STL"
+  },
+  {
+   "axis_angle": {
+    "angle_deg": 90.0,
+    "axis": [
+     0.0,
+     -1.0,
+     0.0
+    ]
+   },
+   "frame": "STL/принтер, Z вверх (в сцене Cura Y вверх: (x, y, z) → (x, z, -y))",
+   "matrix": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "op": "rotate"
+  },
+  {
+   "op": "translate",
+   "placement": "центр стола (затем arrangeAll)",
+   "vector_mm": [
+    51.492,
+    -51.496,
+    -0.0
+   ]
+  },
+  {
+   "op": "arrangeAll"
+  }
+ ],
+ "setting_patch": [
+  {
+   "key": "printing_mode",
+   "reason": "в задании указан 3D",
+   "requirement_ids": [],
+   "rule": "route",
+   "schema_default": "classic",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "classic"
+  },
+  {
+   "key": "wall_line_count",
+   "reason": "эластомер/уплотнение: сплошная оболочка без пор; +1 стенка под точную/изнашиваемую поверхность; t=2.0 мм → N=5 при ширине 0.4 мм",
+   "requirement_ids": [
+    "R1",
+    "R4",
+    "R6"
+   ],
+   "rule": "walls",
+   "schema_default": 2,
+   "scope": "global",
+   "type": "int",
+   "unit": null,
+   "value": 5
+  },
+  {
+   "key": "top_bottom_thickness",
+   "reason": "кожа не тоньше стенки: 10 слоёв по 0.20 мм",
+   "requirement_ids": [],
+   "rule": "skin",
+   "schema_default": 0.8,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 2.0
+  },
+  {
+   "key": "infill_sparse_density",
+   "reason": "герметичность",
+   "requirement_ids": [
+    "R7"
+   ],
+   "rule": "infill",
+   "schema_default": 20,
+   "scope": "global",
+   "type": "float",
+   "unit": "%",
+   "value": 100.0
+  },
+  {
+   "key": "speed_print",
+   "reason": "эластомер: ограничение подачи гибкого прутка",
+   "requirement_ids": [],
+   "rule": "speed_flex",
+   "schema_default": 60,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm/s",
+   "value": 25.0
+  },
+  {
+   "key": "support_enable",
+   "reason": "нависания 17.8% площади поверхности",
+   "requirement_ids": [],
+   "rule": "support",
+   "schema_default": false,
+   "scope": "global",
+   "type": "bool",
+   "unit": null,
+   "value": true
+  },
+  {
+   "key": "support_type",
+   "reason": "поддержки только от стола: внутри полости их не удалить",
+   "requirement_ids": [],
+   "rule": "support_type",
+   "schema_default": "everywhere",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "buildplate"
+  },
+  {
+   "key": "adhesion_type",
+   "reason": "эластомер хорошо держится на столе, кайма мешает снятию",
+   "requirement_ids": [],
+   "rule": "adhesion",
+   "schema_default": "brim",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "skirt"
+  },
+  {
+   "key": "z_seam_type",
+   "reason": "шов в углах: меньше влияния на посадку/уплотнение",
+   "requirement_ids": [],
+   "rule": "seam",
+   "schema_default": "sharpest_corner",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "sharpest_corner"
+  }
+ ],
+ "status": "needs_calibration",
+ "trace": [
+  {
+   "detail": {
+    "fails": 0,
+    "material": "sealant_tpv80",
+    "score": 7.75
+   },
+   "rule": "screen_rank",
+   "step": "material"
+  },
+  {
+   "detail": {
+    "hint": "3D",
+    "mode": "classic",
+    "revolution_score": 0.9999999999999998,
+    "through_bore": true
+   },
+   "rule": "mode_hint+axis",
+   "step": "route"
+  },
+  {
+   "detail": {
+    "J": 1.2412,
+    "candidates": 2,
+    "chosen_up": [
+     1.0,
+     0.0,
+     0.0
+    ]
+   },
+   "rule": "axis_vertical",
+   "step": "orientation"
+  },
+  {
+   "detail": {
+    "layer": 0.2,
+    "quality": "draft"
+   },
+   "rule": "tolerance/surface/material",
+   "step": "layer"
+  },
+  {
+   "detail": {
+    "infill": 100.0,
+    "support": 0.1775,
+    "walls": 5
+   },
+   "rule": "rules",
+   "step": "settings"
+  }
+ ],
+ "verification": {
+  "fits_build_volume": true,
+  "patch_valid": true,
+  "slice_verified": false
+ },
+ "version": "baseline-0.1.0",
+ "warnings": []
+}

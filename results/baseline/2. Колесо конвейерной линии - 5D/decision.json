@@ -1,0 +1,708 @@
+{
+ "assumptions": [
+  {
+   "comparator": "rating>=",
+   "id": "R2",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "отсутствие хрупкого разрушения",
+   "property": "impact",
+   "provenance": "Радиальная нагрузка на одно колесо: до 18 кг (возможны микроудары при схождении пачек с соседних линий).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": ">=",
+   "id": "R10",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Температурный режим: Строго +20°C ± 2°C.",
+   "unit": "degC",
+   "value": 22.0
+  }
+ ],
+ "candidates": {
+  "materials": [
+   {
+    "label": "Enduse TPU D70",
+    "mandatory_fails": 0,
+    "material_id": "enduse_tpu_d70",
+    "score": 4.85,
+    "unknown": 1
+   },
+   {
+    "label": "Sealant TPU",
+    "mandatory_fails": 0,
+    "material_id": "sealant_tpu",
+    "score": 4.75,
+    "unknown": 1
+   },
+   {
+    "label": "Sealant TPU93",
+    "mandatory_fails": 0,
+    "material_id": "sealant_tpu93",
+    "score": 4.75,
+    "unknown": 1
+   },
+   {
+    "label": "Sealant TPU A95",
+    "mandatory_fails": 0,
+    "material_id": "sealant_tpu_A95",
+    "score": 4.75,
+    "unknown": 1
+   },
+   {
+    "label": "Sealant TPV80",
+    "mandatory_fails": 0,
+    "material_id": "sealant_tpv80",
+    "score": 4.65,
+    "unknown": 1
+   }
+  ],
+  "orientations": [
+   {
+    "J": 0.2479,
+    "bed_contact_area": 1801.5557464588883,
+    "height": 25.0,
+    "overhang_area": 569.1438566588856,
+    "overhang_fraction": 0.0561,
+    "stair_area": 435.59884548447303,
+    "up": [
+     0.0,
+     1.0,
+     0.0
+    ]
+   },
+   {
+    "J": 0.6067,
+    "bed_contact_area": 289.715811043181,
+    "height": 25.0,
+    "overhang_area": 2242.7342234121716,
+    "overhang_fraction": 0.221,
+    "stair_area": 435.59884548447303,
+    "up": [
+     -0.0,
+     -1.0,
+     -0.0
+    ]
+   }
+  ],
+  "routes": [
+   {
+    "mode": "classic",
+    "why_not": "в задании указан режим 5D"
+   }
+  ]
+ },
+ "chosen_candidate": {
+  "batch": null,
+  "material": {
+   "checks": [
+    {
+     "evidence": "подтверждается только испытаниями",
+     "manufacturer_claim": false,
+     "property": "fatigue",
+     "requirement_id": "R1",
+     "status": "unknown"
+    },
+    {
+     "evidence": "оценка класса: excellent",
+     "manufacturer_claim": false,
+     "property": "impact",
+     "requirement_id": "R2",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": false,
+     "property": "alcohol",
+     "requirement_id": "R3",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: excellent",
+     "manufacturer_claim": false,
+     "property": "wear",
+     "requirement_id": "R4",
+     "status": "pass"
+    },
+    {
+     "evidence": "подтверждается только испытаниями",
+     "manufacturer_claim": false,
+     "property": "dust_free",
+     "requirement_id": "R5",
+     "status": "unknown"
+    },
+    {
+     "evidence": "печатаемость: fair",
+     "manufacturer_claim": false,
+     "property": "tolerance_mm",
+     "requirement_id": "R6",
+     "status": "unknown"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": false,
+     "property": "friction_high",
+     "requirement_id": "R7",
+     "status": "pass"
+    },
+    {
+     "evidence": "требуется испытание на контртеле",
+     "manufacturer_claim": false,
+     "property": "no_marks",
+     "requirement_id": "R8",
+     "status": "unknown"
+    },
+    {
+     "evidence": "антистатические свойства не заявлены",
+     "manufacturer_claim": false,
+     "property": "esd",
+     "requirement_id": "R9",
+     "status": "unknown"
+    },
+    {
+     "evidence": "T_max эксплуатации 80…100 ≥ 32 (T+запас)",
+     "manufacturer_claim": false,
+     "property": "service_temp_max_c",
+     "requirement_id": "R10",
+     "status": "pass"
+    }
+   ],
+   "guid": "86ce8c3b-59c3-4cda-994e-2e26e11d53a3",
+   "id": "enduse_tpu_d70",
+   "label": "Enduse TPU D70"
+  },
+  "orientation": {
+   "placement": "ось детали совмещена с осью вращения 5D (X=0, Y=0)",
+   "rotation_axis_angle": {
+    "angle_deg": 90.0,
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ]
+   },
+   "rule": "axis_vertical",
+   "size_after_mm": [
+    59.0,
+    58.99,
+    25.0
+   ],
+   "translation_mm": [
+    -29.5,
+    29.5,
+    -0.0
+   ],
+   "up_vector_model": [
+    0.0,
+    1.0,
+    0.0
+   ]
+  },
+  "printing_mode": "cylindrical_full",
+  "quality": {
+   "layer_height": 0.1,
+   "name": "Fine",
+   "quality_type": "normal"
+  },
+  "route_reasons": [
+   "в задании указан 5D; у детали найдена ось вращения (доля поверхностей вращения 1.00)",
+   "сквозное отверстие Ø16.0 мм ≥ 10 мм: деталь целиком печатается радиальными слоями на оправке Ø12 мм с helix-raft до Ø15.9"
+  ]
+ },
+ "effective_settings": {
+  "cool_fan_speed": 0.0,
+  "cylindrical_mode_base_diameter": 15.9,
+  "infill_sparse_density": 100.0,
+  "layer_height": 0.1,
+  "material_bed_temperature": 60.0,
+  "material_print_temperature": 220.0,
+  "material_standby_temperature": 175.0,
+  "non_printing_base_diameter": 12.0,
+  "printing_mode": "cylindrical_full",
+  "retraction_amount": 3.5,
+  "retraction_speed": 25.0,
+  "speed_print": 25.0,
+  "speed_wall_0": 12.5,
+  "support_enable": false,
+  "top_bottom_thickness": 2.0,
+  "wall_line_count": 5,
+  "z_seam_type": "sharpest_corner"
+ },
+ "evidence_level": "analytical_screen",
+ "flags": [
+  "load_bearing",
+  "rotor"
+ ],
+ "geometry": {
+  "area_mm2": 10148.806199185306,
+  "bbox_size": [
+   58.99745184183121,
+   25.0,
+   58.994903802871704
+  ],
+  "open_edges": 0,
+  "rotation_axis": {
+   "axis_line_hits": 0,
+   "axisymmetric": true,
+   "bore_radius": 7.995468055346893,
+   "centroid_offset": 1.5856142226269327e-07,
+   "length": 25.0,
+   "max_outer_radius": 29.495471312460673,
+   "min_outer_radius": 12.495470079666324,
+   "point": [
+    29.500000261259544,
+    11.79481866345644,
+    29.500000212631896
+   ],
+   "r_max": 29.495471312460673,
+   "revolution_score": 1.0,
+   "revolved_area_fraction": 0.473953056322411,
+   "through_bore": true,
+   "vector": [
+    0.0,
+    1.0,
+    0.0
+   ]
+  },
+  "triangles": 2428,
+  "volume_mm3": 46704.105889584665
+ },
+ "machine": {
+  "definition_id": "hte530v5.2",
+  "name": "Stereotech Hybrid 530 V5.2"
+ },
+ "missing_inputs": [
+  "закрепление и контакт (без них напряжения по STL не определены, раздел 6)",
+  "пара трения и условия испытания (μ определяется парой, не материалом)"
+ ],
+ "notes": [
+  "Высота слоя 0.10 мм задаётся профилем качества normal.",
+  "Адгезия в 5D: печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив",
+  "Допуск ±0.10 мм: xy_offset не задаём (он меняет и наружный контур); нужна калибровка отверстий/контура и компенсация в CAD.",
+  "Материал гигроскопичен: сушка перед печатью обязательна."
+ ],
+ "numbers": {
+  "load_n": 176.58,
+  "rpm": 450.0,
+  "service_temp_max_c": 22.0,
+  "service_temp_min_c": 18.0
+ },
+ "policy": {
+  "decision": {
+   "flexible_speed_max": 25.0,
+   "full_mode_min_bore_mm": 10.0,
+   "infill_decorative_pct": 10.0,
+   "infill_default_pct": 20.0,
+   "infill_loaded_pct": 50.0,
+   "min_base_diameter_mm": 6.0,
+   "nozzle_mm": 0.4,
+   "orientation_weights": {
+    "contact": 0.6,
+    "height": 0.3,
+    "overhang": 2.0,
+    "stair": 0.2,
+    "stair_surface": 1.0
+   },
+   "plate_clearance_mm": 10.0,
+   "precision_outer_wall_speed": 20.0,
+   "raft_layers_min": 5,
+   "rotor_axis_score": 0.6,
+   "skin_min_mm": 1.2,
+   "solid_volume_limit_cm3": 200.0,
+   "support_overhang_fraction": 0.01,
+   "wall_default_mm": 1.2,
+   "wall_flexible_mm": 1.6,
+   "wall_load_mm": 2.0
+  },
+  "requirements": {
+   "heat_margin_c": 10.0,
+   "hydrophobic_max_water_pct": 0.5,
+   "non_brittle_min_elongation_pct": 3.0,
+   "stiff_min_modulus_mpa": 3000.0
+  }
+ },
+ "qualification_plan": [
+  {
+   "property": "fatigue",
+   "requirement_id": "R1",
+   "test": "циклические испытания детали/зуба на рабочем спектре нагрузки"
+  },
+  {
+   "property": "dust_free",
+   "requirement_id": "R5",
+   "test": "износ в паре с бумагой, контроль частиц"
+  },
+  {
+   "property": "tolerance_mm",
+   "requirement_id": "R6",
+   "test": "измерение отверстий/контура тестовой детали, калибровка компенсации"
+  },
+  {
+   "property": "friction_high",
+   "requirement_id": "R7",
+   "test": "коэффициент трения по бумаге/крафту"
+  },
+  {
+   "property": "no_marks",
+   "requirement_id": "R8",
+   "test": "трение по белой бумаге/картону, контроль следов"
+  },
+  {
+   "property": "esd",
+   "requirement_id": "R9",
+   "test": "измерение поверхностного сопротивления"
+  }
+ ],
+ "rejected_settings": [],
+ "requirements": [
+  {
+   "comparator": "verified",
+   "id": "R1",
+   "interpretation_status": "explicit",
+   "kind": "qualification",
+   "mandatory": true,
+   "note": "ресурс/усталость: только испытания",
+   "property": "fatigue",
+   "provenance": "Режим работы: Непрерывный, 24/7 (около 8000 моточасов до планового ТО).",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R2",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "отсутствие хрупкого разрушения",
+   "property": "impact",
+   "provenance": "Радиальная нагрузка на одно колесо: до 18 кг (возможны микроудары при схождении пачек с соседних линий).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R3",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "alcohol",
+   "provenance": "Химическое воздействие: Еженедельная санитарная обработка ветошью, смоченной в 70% изопропиловом спирте (IPA) или перекиси водорода.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R4",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": "износостойкость",
+   "property": "wear",
+   "provenance": "Требования к чистоте: Деталь не должна выделять микропыль (абразивный износ пластика недопустим) и не должна выделять летучие органические соединения (VOC), которые могут осесть на бумаге и повлиять на её дальнейшую печа",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "verified",
+   "id": "R5",
+   "interpretation_status": "explicit",
+   "kind": "qualification",
+   "mandatory": true,
+   "note": "отсутствие пыления",
+   "property": "dust_free",
+   "provenance": "Требования к чистоте: Деталь не должна выделять микропыль (абразивный износ пластика недопустим) и не должна выделять летучие органические соединения (VOC), которые могут осесть на бумаге и повлиять на её дальнейшую печа",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "<=",
+   "id": "R6",
+   "interpretation_status": "explicit",
+   "kind": "process",
+   "mandatory": true,
+   "note": null,
+   "property": "tolerance_mm",
+   "provenance": "Требуется обеспечить точность отверстия (допуск ±0.1 мм) с учетом усадки FDM-пластиков.",
+   "unit": "mm",
+   "value": 0.1
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R7",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": "высокое трение",
+   "property": "friction_high",
+   "provenance": "Материал должен обладать высоким коэффициентом трения по скольжению к бумаге и крафт-картону (во избежание проскальзывания ролика).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "verified",
+   "id": "R8",
+   "interpretation_status": "explicit",
+   "kind": "qualification",
+   "mandatory": true,
+   "note": "отсутствие следов на контртеле",
+   "property": "no_marks",
+   "provenance": "Материал не должен оставлять черных или цветных следов (следов пластификаторов) на белой бумаге при трении.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "verified",
+   "id": "R9",
+   "interpretation_status": "explicit",
+   "kind": "qualification",
+   "mandatory": false,
+   "note": "антистатические свойства",
+   "property": "esd",
+   "provenance": "Желательно, чтобы материал обладал антистатическими (ESD) свойствами, чтобы не притягивать бумажную пыль к оси и не накапливать статику.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": ">=",
+   "id": "R10",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Температурный режим: Строго +20°C ± 2°C.",
+   "unit": "degC",
+   "value": 22.0
+  }
+ ],
+ "scene_operations": [
+  {
+   "op": "load",
+   "path": "data/examples/2. Колесо конвейерной линии - 5D/Колесо.STL"
+  },
+  {
+   "axis_angle": {
+    "angle_deg": 90.0,
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ]
+   },
+   "frame": "STL/принтер, Z вверх (в сцене Cura Y вверх: (x, y, z) → (x, z, -y))",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "op": "rotate"
+  },
+  {
+   "op": "translate",
+   "placement": "ось детали совмещена с осью вращения 5D (X=0, Y=0)",
+   "vector_mm": [
+    -29.5,
+    29.5,
+    -0.0
+   ]
+  }
+ ],
+ "setting_patch": [
+  {
+   "key": "printing_mode",
+   "reason": "в задании указан 5D; у детали найдена ось вращения (доля поверхностей вращения 1.00); сквозное отверстие Ø16.0 мм ≥ 10 мм: деталь целиком печатается радиальными слоями на оправке Ø12 мм с helix-raft до Ø15.9",
+   "requirement_ids": [],
+   "rule": "route",
+   "schema_default": "classic",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "cylindrical_full"
+  },
+  {
+   "key": "cylindrical_mode_base_diameter",
+   "reason": "сквозное отверстие Ø16.0 мм ≥ 10 мм: деталь целиком печатается радиальными слоями на оправке Ø12 мм с helix-raft до Ø15.9",
+   "requirement_ids": [],
+   "rule": "route_5d",
+   "schema_default": 6,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 15.9
+  },
+  {
+   "key": "non_printing_base_diameter",
+   "reason": "сквозное отверстие Ø16.0 мм ≥ 10 мм: деталь целиком печатается радиальными слоями на оправке Ø12 мм с helix-raft до Ø15.9",
+   "requirement_ids": [],
+   "rule": "route_5d",
+   "schema_default": 6,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 12.0
+  },
+  {
+   "key": "wall_line_count",
+   "reason": "эластомер/уплотнение: сплошная оболочка без пор; +1 стенка под точную/изнашиваемую поверхность; t=2.0 мм → N=5 при ширине 0.4 мм",
+   "requirement_ids": [
+    "R2",
+    "R4",
+    "R6"
+   ],
+   "rule": "walls",
+   "schema_default": 2,
+   "scope": "global",
+   "type": "int",
+   "unit": null,
+   "value": 5
+  },
+  {
+   "key": "top_bottom_thickness",
+   "reason": "кожа не тоньше стенки: 20 слоёв по 0.10 мм",
+   "requirement_ids": [],
+   "rule": "skin",
+   "schema_default": 0.8,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 2.0
+  },
+  {
+   "key": "infill_sparse_density",
+   "reason": "ротор: однородная плотность для балансировки",
+   "requirement_ids": [],
+   "rule": "infill",
+   "schema_default": 20,
+   "scope": "global",
+   "type": "float",
+   "unit": "%",
+   "value": 100.0
+  },
+  {
+   "key": "speed_print",
+   "reason": "эластомер: ограничение подачи гибкого прутка",
+   "requirement_ids": [],
+   "rule": "speed_flex",
+   "schema_default": 60,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm/s",
+   "value": 25.0
+  },
+  {
+   "key": "speed_wall_0",
+   "reason": "точная/видимая наружная поверхность",
+   "requirement_ids": [
+    "R6"
+   ],
+   "rule": "speed_outer",
+   "schema_default": 30,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm/s",
+   "value": 12.5
+  },
+  {
+   "key": "support_enable",
+   "reason": "5D: радиальные слои наращиваются от оси, классические поддержки не используются",
+   "requirement_ids": [],
+   "rule": "support_5d",
+   "schema_default": false,
+   "scope": "global",
+   "type": "bool",
+   "unit": null,
+   "value": false
+  },
+  {
+   "key": "z_seam_type",
+   "reason": "шов в углах: меньше влияния на посадку/уплотнение",
+   "requirement_ids": [],
+   "rule": "seam",
+   "schema_default": "sharpest_corner",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "sharpest_corner"
+  }
+ ],
+ "status": "needs_calibration",
+ "trace": [
+  {
+   "detail": {
+    "fails": 0,
+    "material": "enduse_tpu_d70",
+    "score": 4.85
+   },
+   "rule": "screen_rank",
+   "step": "material"
+  },
+  {
+   "detail": {
+    "hint": "5D",
+    "mode": "cylindrical_full",
+    "revolution_score": 1.0,
+    "through_bore": true
+   },
+   "rule": "mode_hint+axis",
+   "step": "route"
+  },
+  {
+   "detail": {
+    "J": 0.2479,
+    "candidates": 2,
+    "chosen_up": [
+     0.0,
+     1.0,
+     0.0
+    ]
+   },
+   "rule": "axis_vertical",
+   "step": "orientation"
+  },
+  {
+   "detail": {
+    "layer": 0.1,
+    "quality": "normal"
+   },
+   "rule": "tolerance/surface/material",
+   "step": "layer"
+  },
+  {
+   "detail": {
+    "infill": 100.0,
+    "support": 0.0561,
+    "walls": 5
+   },
+   "rule": "rules",
+   "step": "settings"
+  }
+ ],
+ "verification": {
+  "fits_build_volume": true,
+  "patch_valid": true,
+  "slice_verified": false
+ },
+ "version": "baseline-0.1.0",
+ "warnings": [
+  "Наличие оправки Ø12 мм у Hybrid 530 нужно подтвердить; иначе подобрать ближайшую."
+ ]
+}

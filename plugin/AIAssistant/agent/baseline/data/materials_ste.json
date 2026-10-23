@@ -1,0 +1,1917 @@
+{
+ "schema_version": "1.0",
+ "research_date": "2026-10-23",
+ "automatic_qualification_allowed": false,
+ "materials": [
+  {
+   "id": "proto_pla",
+   "label": "Proto PLA",
+   "brand": "Stereotech",
+   "guid": "466bc1af-1556-4067-939e-21cb753fbb80",
+   "description_ru": "Полимерный материал на основе PLA. Прост в печати и не требует специальных температурных условий, имеет низкую усадку. Предназначен для печати любых декоративных и функциональных моделей, макетов и прототипов.",
+   "adhesion_info_ru": "печать на столе: Нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: Наклеить малярный скотч на основание. Для изделий с толщиной меньше 3 мм - нанести на скотч клей-адгезив.",
+   "density_g_cm3": 1.25,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 210.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 60.0,
+    "cool_fan_speed": 100.0,
+    "retraction_amount": 3.0,
+    "retraction_speed": 30.0,
+    "speed_print": 60.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/proto_pla.xml.fdm_material",
+   "polymer": "PLA",
+   "filler": null,
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [],
+   "typical": {
+    "elongation_pct": [
+     2,
+     6
+    ],
+    "hdt_c": [
+     50,
+     60
+    ],
+    "tensile_modulus_mpa": [
+     2500,
+     3600
+    ],
+    "tensile_strength_mpa": [
+     40,
+     60
+    ],
+    "tg_c": [
+     55,
+     65
+    ],
+    "vicat_b50_c": [
+     55,
+     65
+    ],
+    "water_absorption_24h_pct": [
+     0.3,
+     0.6
+    ]
+   },
+   "ratings": {
+    "acids_salts": "fair",
+    "alcohol": "fair",
+    "alkali": "poor",
+    "fine_detail": "excellent",
+    "friction_high": "poor",
+    "friction_low": "fair",
+    "fuel": "poor",
+    "hot_water": "poor",
+    "impact": "poor",
+    "layer_hiding": "fair",
+    "oil": "fair",
+    "ozone": "good",
+    "printability": "excellent",
+    "uv": "fair",
+    "wear": "fair"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "enduse_petg",
+   "label": "Enduse PETG",
+   "brand": "Stereotech",
+   "guid": "b8d13d29-6eb3-40ec-aace-4a46ccf3519c",
+   "description_ru": "Полимерный материал с высокой ударопрочностью, высокой адгезией между слоев и низкой усадкой. Предназначен для корпусов, держателей и габаритных изделий.",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание и нанести клей- адгезив",
+   "density_g_cm3": 1.3,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 240.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 60.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 3.0,
+    "retraction_speed": 40.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/enduse_petg.xml.fdm_material",
+   "polymer": "PETG",
+   "filler": null,
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "impact",
+    "low_shrinkage"
+   ],
+   "typical": {
+    "elongation_pct": [
+     5,
+     100
+    ],
+    "hdt_c": [
+     65,
+     75
+    ],
+    "tensile_modulus_mpa": [
+     1800,
+     2200
+    ],
+    "tensile_strength_mpa": [
+     40,
+     55
+    ],
+    "tg_c": [
+     75,
+     85
+    ],
+    "vicat_b50_c": [
+     75,
+     85
+    ],
+    "water_absorption_24h_pct": [
+     0.1,
+     0.3
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "good",
+    "alkali": "fair",
+    "fine_detail": "good",
+    "friction_high": "poor",
+    "friction_low": "fair",
+    "fuel": "fair",
+    "hot_water": "fair",
+    "impact": "good",
+    "layer_hiding": "fair",
+    "oil": "good",
+    "ozone": "good",
+    "printability": "good",
+    "uv": "fair",
+    "wear": "fair"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "enduse_abs",
+   "label": "Enduse ABS",
+   "brand": "Stereotech",
+   "guid": "15332acf-86f6-438f-81e9-f3e7c1288d8a",
+   "description_ru": "Предназначен для производства разнообразных функциональных деталей, в первую очередь корпусов,рукояток, крючков, держателей и оснастки. Не стоек к атмосферным воздействиям(УФ-излучение, высокая влажность).",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.05,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 250.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 100.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 3.0,
+    "retraction_speed": 25.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/enduse_abs.xml.fdm_material",
+   "polymer": "ABS",
+   "filler": null,
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "not_uv_resistant",
+    "not_humidity_resistant"
+   ],
+   "typical": {
+    "elongation_pct": [
+     3,
+     30
+    ],
+    "hdt_c": [
+     85,
+     98
+    ],
+    "tensile_modulus_mpa": [
+     1800,
+     2400
+    ],
+    "tensile_strength_mpa": [
+     30,
+     45
+    ],
+    "tg_c": [
+     100,
+     110
+    ],
+    "vicat_b50_c": [
+     95,
+     105
+    ],
+    "water_absorption_24h_pct": [
+     0.2,
+     0.45
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "fair",
+    "alkali": "good",
+    "fine_detail": "good",
+    "friction_high": "poor",
+    "friction_low": "fair",
+    "fuel": "poor",
+    "hot_water": "fair",
+    "impact": "good",
+    "layer_hiding": "fair",
+    "oil": "fair",
+    "ozone": "fair",
+    "printability": "fair",
+    "uv": "poor",
+    "wear": "fair"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "enduse_pc",
+   "label": "Enduse PC",
+   "brand": "Stereotech",
+   "guid": "992436d4-1e90-4bd4-9123-855596c9edd5",
+   "description_ru": "Поликарбонат (PC) выделяется оптической прозрачностью, термостойкостью и невероятной прочностью. Это делает его идеальным для использования в электронных корпусах, автомобильных деталях, элементах беспилотных летательных аппаратов и других подобных деталях, требующих долговечности.",
+   "adhesion_info_ru": "печать на столе: Нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: Наклеить малярный скотч на основание. Для изделий с толщиной меньше 3 мм - нанести на скотч клей-адгезив.",
+   "density_g_cm3": 1.2,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 280.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 100.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 5.0,
+    "retraction_speed": 25.0,
+    "speed_print": 40.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/enduse_pc.xml.fdm_material",
+   "polymer": "PC",
+   "filler": null,
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "heat_resistant",
+    "high_strength"
+   ],
+   "typical": {
+    "elongation_pct": [
+     5,
+     100
+    ],
+    "hdt_c": [
+     130,
+     140
+    ],
+    "tensile_modulus_mpa": [
+     2000,
+     2500
+    ],
+    "tensile_strength_mpa": [
+     55,
+     70
+    ],
+    "tg_c": [
+     140,
+     150
+    ],
+    "vicat_b50_c": [
+     140,
+     150
+    ],
+    "water_absorption_24h_pct": [
+     0.12,
+     0.2
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "fair",
+    "alkali": "poor",
+    "fine_detail": "good",
+    "friction_high": "poor",
+    "friction_low": "fair",
+    "fuel": "poor",
+    "hot_water": "poor",
+    "impact": "excellent",
+    "layer_hiding": "fair",
+    "oil": "fair",
+    "ozone": "good",
+    "printability": "fair",
+    "uv": "fair",
+    "wear": "fair"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "enduse_pa6",
+   "label": "Enduse PA6",
+   "brand": "Stereotech",
+   "guid": "51d24a11-e727-4117-b36d-61719b161581",
+   "description_ru": "Полимерный материал на основе полиамида-6. Обладает высокой химической стойкостью, в том числе к разбавленным щелочам и кислотам, маслам, спиртам, смазочным жидкостям, бензину. Также отличается упругостью, эластичностью, очень стоек к истиранию и ударным нагрузкам. Предназначен для печати изделий, работающих в агрессивной среде, особенно для элементов скольжения (направляющие кольца, вкладыши подшипников трения).",
+   "adhesion_info_ru": "печать на столе: Нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: Наклеить малярный скотч на основание. Для изделий с толщиной меньше 3 мм - нанести на скотч клей-адгезив.",
+   "density_g_cm3": 1.05,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 260.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 100.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 7.0,
+    "retraction_speed": 25.0,
+    "speed_print": 40.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/enduse_pa6.xml.fdm_material",
+   "polymer": "PA6",
+   "filler": null,
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "alkali",
+    "acids",
+    "oil",
+    "alcohol",
+    "fuel",
+    "wear",
+    "impact",
+    "sliding_parts"
+   ],
+   "typical": {
+    "elongation_pct": [
+     20,
+     200
+    ],
+    "hdt_c": [
+     150,
+     190
+    ],
+    "melting_c": [
+     215,
+     225
+    ],
+    "tensile_modulus_mpa": [
+     1000,
+     2800
+    ],
+    "tensile_strength_mpa": [
+     40,
+     80
+    ],
+    "tg_c": [
+     45,
+     60
+    ],
+    "vicat_b50_c": [
+     180,
+     210
+    ],
+    "water_absorption_24h_pct": [
+     1.3,
+     1.9
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "excellent",
+    "alkali": "excellent",
+    "fine_detail": "fair",
+    "friction_high": "poor",
+    "friction_low": "excellent",
+    "fuel": "excellent",
+    "hot_water": "fair",
+    "impact": "excellent",
+    "layer_hiding": "fair",
+    "oil": "excellent",
+    "ozone": "good",
+    "printability": "fair",
+    "uv": "fair",
+    "wear": "excellent"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "enduse_pp",
+   "label": "Enduse PP",
+   "brand": "Stereotech",
+   "guid": "9ce250c9-db0b-4993-a4e9-1e9fbb31146f",
+   "description_ru": "Полимерный материал с высокой химической стойкостью и эластичностью. Предназначен для печати изделий, работающих в агрессивной среде.",
+   "adhesion_info_ru": "печать на столе: наклеить на стол прозрачный скотч; печать на цилиндрическом основании: наклеить прозрачный скотч на основание",
+   "density_g_cm3": 0.9,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 230.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 60.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 3.0,
+    "retraction_speed": 25.0,
+    "speed_print": 40.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/enduse_pp.xml.fdm_material",
+   "polymer": "PP",
+   "filler": null,
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "chemical_resistance",
+    "elastic"
+   ],
+   "typical": {
+    "elongation_pct": [
+     100,
+     600
+    ],
+    "hdt_c": [
+     80,
+     100
+    ],
+    "melting_c": [
+     160,
+     168
+    ],
+    "tensile_modulus_mpa": [
+     1100,
+     1600
+    ],
+    "tensile_strength_mpa": [
+     25,
+     35
+    ],
+    "tg_c": [
+     -20,
+     0
+    ],
+    "vicat_b50_c": [
+     80,
+     95
+    ],
+    "water_absorption_24h_pct": [
+     0.01,
+     0.03
+    ]
+   },
+   "ratings": {
+    "acids_salts": "excellent",
+    "alcohol": "excellent",
+    "alkali": "excellent",
+    "fine_detail": "poor",
+    "friction_high": "poor",
+    "friction_low": "good",
+    "fuel": "fair",
+    "hot_water": "good",
+    "impact": "good",
+    "layer_hiding": "fair",
+    "oil": "fair",
+    "ozone": "fair",
+    "printability": "poor",
+    "uv": "poor",
+    "wear": "fair"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "enduse_sbs",
+   "label": "Enduse SBS",
+   "brand": "Stereotech",
+   "guid": "f81d9901-bb3c-457e-8b83-2bd81965cc25",
+   "description_ru": "Полимерный материал с допуском для контакта с пищей (в том числе горячей). Предназначен для печати ударопрочных корпусов, тактильно приятных конечных изделий (накладок, ручек, панелей).",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание и нанести клей- адгезив",
+   "density_g_cm3": 1.01,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 240.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 70.0,
+    "cool_fan_speed": 20.0,
+    "retraction_amount": 2.0,
+    "retraction_speed": 20.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/enduse_sbs.xml.fdm_material",
+   "polymer": "SBS",
+   "filler": null,
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "food_contact",
+    "impact"
+   ],
+   "typical": {
+    "elongation_pct": [
+     10,
+     200
+    ],
+    "hdt_c": [
+     65,
+     75
+    ],
+    "tensile_modulus_mpa": [
+     1200,
+     1700
+    ],
+    "tensile_strength_mpa": [
+     20,
+     30
+    ],
+    "tg_c": [
+     70,
+     95
+    ],
+    "vicat_b50_c": [
+     70,
+     85
+    ],
+    "water_absorption_24h_pct": [
+     0.05,
+     0.1
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "fair",
+    "alkali": "good",
+    "fine_detail": "good",
+    "friction_high": "fair",
+    "friction_low": "fair",
+    "fuel": "poor",
+    "hot_water": "fair",
+    "impact": "good",
+    "layer_hiding": "good",
+    "oil": "poor",
+    "ozone": "fair",
+    "printability": "good",
+    "uv": "poor",
+    "wear": "fair"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "enduse_tpu_d70",
+   "label": "Enduse TPU D70",
+   "brand": "Stereotech",
+   "guid": "86ce8c3b-59c3-4cda-994e-2e26e11d53a3",
+   "description_ru": "Термопластичный полиуретан с твёрдостью 70 по шкале Шора D. Обладает высокой химической стойкостью к растворам кислот и щелочей, жирам, маслам, ксилолу, дизельному топливу. Подходит для изготовления различных уплотнений, в том числе для подвижных соединений – О-образных колец, манжетных уплотнений.",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.23,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 220.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 60.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 3.5,
+    "retraction_speed": 25.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/enduse_tpu_d70.xml.fdm_material",
+   "polymer": "TPU",
+   "filler": null,
+   "flexible": true,
+   "shore": "70D",
+   "marks_risk": false,
+   "claims": [
+    "alkali",
+    "acids",
+    "oil",
+    "diesel",
+    "seals"
+   ],
+   "typical": {
+    "elongation_pct": [
+     200,
+     450
+    ],
+    "service_max_c": [
+     80,
+     100
+    ],
+    "tensile_modulus_mpa": [
+     150,
+     500
+    ],
+    "tensile_strength_mpa": [
+     35,
+     50
+    ],
+    "tg_c": [
+     -40,
+     -20
+    ],
+    "water_absorption_24h_pct": [
+     0.5,
+     1.2
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "good",
+    "alkali": "good",
+    "elasticity": "fair",
+    "fine_detail": "fair",
+    "friction_high": "good",
+    "friction_low": "poor",
+    "fuel": "good",
+    "hot_water": "fair",
+    "impact": "excellent",
+    "layer_hiding": "fair",
+    "oil": "excellent",
+    "ozone": "good",
+    "printability": "fair",
+    "uv": "fair",
+    "wear": "excellent"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "fiberpart_abs_g4",
+   "label": "Fiberpart ABS G4",
+   "brand": "Stereotech",
+   "guid": "52b4f16f-e5ea-4595-9963-d8c97da3a935",
+   "description_ru": "Полимерный материал на основе ABS с добавлением небольшого количества стекловолокна(4%). От простого ABS-пластика отличается повышенной прочностью и шероховатой поверхностью после печати. Применяется для печати функциональных изделий, конструктивных элементов.",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.1,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 240.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 100.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 6.0,
+    "retraction_speed": 25.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/fiberpart_abs_g4.xml.fdm_material",
+   "polymer": "ABS",
+   "filler": "GF4",
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "rough_surface"
+   ],
+   "typical": {
+    "elongation_pct": [
+     2,
+     6
+    ],
+    "hdt_c": [
+     90,
+     100
+    ],
+    "tensile_modulus_mpa": [
+     2300,
+     3200
+    ],
+    "tensile_strength_mpa": [
+     35,
+     50
+    ],
+    "tg_c": [
+     100,
+     110
+    ],
+    "vicat_b50_c": [
+     98,
+     108
+    ],
+    "water_absorption_24h_pct": [
+     0.2,
+     0.45
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "fair",
+    "alkali": "good",
+    "fine_detail": "fair",
+    "friction_high": "poor",
+    "friction_low": "fair",
+    "fuel": "poor",
+    "hot_water": "fair",
+    "impact": "fair",
+    "layer_hiding": "good",
+    "oil": "fair",
+    "ozone": "fair",
+    "printability": "fair",
+    "uv": "poor",
+    "wear": "fair"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "fiberpart_abs_g13",
+   "label": "Fiberpart ABS G13",
+   "brand": "Stereotech",
+   "guid": "28b26a72-47e9-41ec-b81e-908232199eab",
+   "description_ru": "Прочный композитный материал на основе ABS-пластика с высоким содержанием стекловолокна (13%). Отличается от ненаполненного ABS лучшей прочностью (в том числе на межслойный разрыв) и теплостойкостью, меньшей температурной усадкой; после печати даёт ровную шероховатую поверхность без ярко выраженного перехода между слоями. Как и обычный ABS, хорошо обрабатывается резанием, шлифованием и растворением (с помощью ацетона или другого органического растворителя). Предназначен для изготовления корпусов, кронштейнов, держателей, оснастки и других изделий, для которых прочности обычного ABS недостаточно.",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.15,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 270.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 100.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 6.5,
+    "retraction_speed": 25.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/fiberpart_abs_g13.xml.fdm_material",
+   "polymer": "ABS",
+   "filler": "GF13",
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "no_visible_layer_transition",
+    "interlayer_strength",
+    "heat_resistant"
+   ],
+   "typical": {
+    "elongation_pct": [
+     1.5,
+     4
+    ],
+    "hdt_c": [
+     95,
+     105
+    ],
+    "tensile_modulus_mpa": [
+     3500,
+     5500
+    ],
+    "tensile_strength_mpa": [
+     40,
+     60
+    ],
+    "tg_c": [
+     100,
+     112
+    ],
+    "vicat_b50_c": [
+     100,
+     112
+    ],
+    "water_absorption_24h_pct": [
+     0.2,
+     0.45
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "fair",
+    "alkali": "good",
+    "fine_detail": "fair",
+    "friction_high": "poor",
+    "friction_low": "fair",
+    "fuel": "poor",
+    "hot_water": "fair",
+    "impact": "fair",
+    "layer_hiding": "excellent",
+    "oil": "fair",
+    "ozone": "fair",
+    "printability": "fair",
+    "uv": "poor",
+    "wear": "fair"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "fiberpart_abspa_g8",
+   "label": "Fiberpart ABSPA G8",
+   "brand": "Stereotech",
+   "guid": "3a747b85-c844-473e-80fe-5cd4aa73eefe",
+   "description_ru": "Композит на основе ABS/PA армированный стекловолокном. Применяется для печати функциональных изделий, конструктивных элементов, где требуется высокая ударопрочность и стойкость к ультрафиолету. Инертен к большинству доступных химических растворителей",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.12,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 280.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 110.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 7.0,
+    "retraction_speed": 20.0,
+    "speed_print": 40.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/fiberpart_abspa_g8.xml.fdm_material",
+   "polymer": "ABS/PA",
+   "filler": "GF8",
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "uv",
+    "impact",
+    "chemical_inert"
+   ],
+   "typical": {
+    "elongation_pct": [
+     2,
+     5
+    ],
+    "hdt_c": [
+     95,
+     115
+    ],
+    "tensile_modulus_mpa": [
+     3000,
+     5000
+    ],
+    "tensile_strength_mpa": [
+     40,
+     60
+    ],
+    "tg_c": [
+     100,
+     115
+    ],
+    "vicat_b50_c": [
+     100,
+     120
+    ],
+    "water_absorption_24h_pct": [
+     0.5,
+     1.2
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "good",
+    "alkali": "good",
+    "fine_detail": "fair",
+    "friction_high": "poor",
+    "friction_low": "fair",
+    "fuel": "fair",
+    "hot_water": "fair",
+    "impact": "good",
+    "layer_hiding": "good",
+    "oil": "good",
+    "ozone": "good",
+    "printability": "fair",
+    "uv": "good",
+    "wear": "good"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "fiberpart_pa12_g12",
+   "label": "Fiberpart PA12 G12",
+   "brand": "Stereotech",
+   "guid": "04df40fb-3747-41b7-acdd-8d22974bb977",
+   "description_ru": "Композитный материал на основе полиамида PA12, армированный стекловолокном (12%). Материал, отличающийся повышенной прочностью, термостойкостью и стойкостью к истиранию. Способен выдерживать циклические нагрузки. Сохраняет свои характеристики в широком диапазоне температур. Растворяется в концентрированной серной кислоте, в феноле, крезоле, хлорале и трифторэтаноле. Устойчив к действию спиртов, щелочей, масел и бензина.",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.05,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 250.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 100.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 5.0,
+    "retraction_speed": 30.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/fiberpart_pa12_g12.xml.fdm_material",
+   "polymer": "PA12",
+   "filler": "GF12",
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "alcohol",
+    "alkali",
+    "oil",
+    "fuel",
+    "wear",
+    "cyclic_loads",
+    "heat_resistant"
+   ],
+   "typical": {
+    "elongation_pct": [
+     3,
+     8
+    ],
+    "hdt_c": [
+     150,
+     175
+    ],
+    "melting_c": [
+     175,
+     180
+    ],
+    "tensile_modulus_mpa": [
+     2500,
+     4500
+    ],
+    "tensile_strength_mpa": [
+     45,
+     65
+    ],
+    "tg_c": [
+     40,
+     50
+    ],
+    "vicat_b50_c": [
+     160,
+     180
+    ],
+    "water_absorption_24h_pct": [
+     0.2,
+     0.5
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "excellent",
+    "alkali": "excellent",
+    "fine_detail": "fair",
+    "friction_high": "poor",
+    "friction_low": "good",
+    "fuel": "excellent",
+    "hot_water": "good",
+    "impact": "good",
+    "layer_hiding": "good",
+    "oil": "excellent",
+    "ozone": "good",
+    "printability": "fair",
+    "uv": "fair",
+    "wear": "excellent"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "fiberpart_pc_g20",
+   "label": "Fiberpart PC G20",
+   "brand": "Stereotech",
+   "guid": "21c7f710-c23e-4799-a8f7-595f92ebec62",
+   "description_ru": "Очень прочный и жёсткий композит на основе PC с высоким содержанием стекловолокна (20%). Максимально широкий диапазон температур, высокая химстойкость. Для нагруженных функциональных деталей.",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.18,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 290.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 110.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 6.5,
+    "retraction_speed": 25.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/fiberpart_pc_g20.xml.fdm_material",
+   "polymer": "PC",
+   "filler": "GF20",
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "very_stiff",
+    "wide_temperature_range",
+    "chemical_resistance"
+   ],
+   "typical": {
+    "elongation_pct": [
+     1.5,
+     3
+    ],
+    "hdt_c": [
+     140,
+     150
+    ],
+    "tensile_modulus_mpa": [
+     5000,
+     7000
+    ],
+    "tensile_strength_mpa": [
+     60,
+     90
+    ],
+    "tg_c": [
+     145,
+     155
+    ],
+    "vicat_b50_c": [
+     145,
+     155
+    ],
+    "water_absorption_24h_pct": [
+     0.1,
+     0.2
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "fair",
+    "alkali": "poor",
+    "fine_detail": "fair",
+    "friction_high": "poor",
+    "friction_low": "fair",
+    "fuel": "poor",
+    "hot_water": "poor",
+    "impact": "fair",
+    "layer_hiding": "good",
+    "oil": "fair",
+    "ozone": "good",
+    "printability": "poor",
+    "uv": "fair",
+    "wear": "good"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "fiberpart_pp_g30",
+   "label": "Fiberpart PP G30",
+   "brand": "Stereotech",
+   "guid": "0ada3b54-5805-4d08-89fc-8bb9502cd429",
+   "description_ru": "Материал на основе полипропилена с добавлением стекловолокна. Применяется для печати функциональных изделий, инженерного и промышленного применения. Обладает высокой химической стойкостью к большинству кислот и органических растворителей, морозостойкостью, гидролизостоек, устойчив к горячему тосолу.",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.18,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 270.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 100.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 4.5,
+    "retraction_speed": 25.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/fiberpart_pp_g30.xml.fdm_material",
+   "polymer": "PP",
+   "filler": "GF30",
+   "flexible": false,
+   "shore": null,
+   "marks_risk": false,
+   "claims": [
+    "acids",
+    "solvents",
+    "hydrolysis",
+    "hot_coolant",
+    "frost"
+   ],
+   "typical": {
+    "elongation_pct": [
+     2,
+     4
+    ],
+    "hdt_c": [
+     140,
+     160
+    ],
+    "melting_c": [
+     160,
+     168
+    ],
+    "tensile_modulus_mpa": [
+     2600,
+     6000
+    ],
+    "tensile_strength_mpa": [
+     40,
+     70
+    ],
+    "tg_c": [
+     -20,
+     0
+    ],
+    "vicat_b50_c": [
+     120,
+     150
+    ],
+    "water_absorption_24h_pct": [
+     0.01,
+     0.05
+    ]
+   },
+   "ratings": {
+    "acids_salts": "excellent",
+    "alcohol": "excellent",
+    "alkali": "excellent",
+    "fine_detail": "poor",
+    "friction_high": "poor",
+    "friction_low": "fair",
+    "fuel": "fair",
+    "hot_water": "excellent",
+    "impact": "fair",
+    "layer_hiding": "good",
+    "oil": "fair",
+    "ozone": "fair",
+    "printability": "fair",
+    "uv": "fair",
+    "wear": "good"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "fiberpart_tpu_c5",
+   "label": "Fiberpart TPU C5",
+   "brand": "Stereotech",
+   "guid": "d75839c9-7e46-41d0-b39e-b33c9e26055a",
+   "description_ru": "Полимерный материал на основе TPU с добавлением углеволокна. Применяется для печати шестерён, механически нагруженных деталей. Обладает высокой химической стойкостью к растворам кислот и щелочей, жирам, маслам, ксилолу, бензину, керосину.",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной меньше 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.16,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 240.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 100.0,
+    "cool_fan_speed": 10.0,
+    "retraction_amount": 6.0,
+    "retraction_speed": 20.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/fiberpart_tpu_c5.xml.fdm_material",
+   "polymer": "TPU",
+   "filler": "CF5",
+   "flexible": true,
+   "shore": "semi-rigid",
+   "marks_risk": true,
+   "claims": [
+    "gears",
+    "alkali",
+    "acids",
+    "oil",
+    "fuel"
+   ],
+   "typical": {
+    "elongation_pct": [
+     50,
+     300
+    ],
+    "service_max_c": [
+     80,
+     100
+    ],
+    "tensile_modulus_mpa": [
+     300,
+     900
+    ],
+    "tensile_strength_mpa": [
+     35,
+     55
+    ],
+    "tg_c": [
+     -40,
+     -20
+    ],
+    "water_absorption_24h_pct": [
+     0.5,
+     1.2
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "good",
+    "alkali": "good",
+    "elasticity": "poor",
+    "fine_detail": "fair",
+    "friction_high": "fair",
+    "friction_low": "fair",
+    "fuel": "good",
+    "hot_water": "fair",
+    "impact": "excellent",
+    "layer_hiding": "good",
+    "oil": "excellent",
+    "ozone": "good",
+    "printability": "fair",
+    "uv": "fair",
+    "wear": "excellent"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "fiberpart_tpu_g30",
+   "label": "Fiberpart TPU G30",
+   "brand": "Stereotech",
+   "guid": "56984f1d-acfb-40b4-9d9b-5f870af88bad",
+   "description_ru": "Полимерный материал на основе твёрдого TPU с добавлением стекловолокна (30%), подходит для производства изделий с повышенными требованиями к нагрузке и ударопрочности. Обладает высокой теплостойкостью и применяется для печати крупных шестерён, прочных корпусов, механически нагруженных деталей, аэродинамических обвесов для автомобилей.",
+   "adhesion_info_ru": "печать на столе: нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: наклеить малярный скотч на основание. Для изделий с толщиной меньше 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.45,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 240.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 100.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 7.5,
+    "retraction_speed": 40.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/fiberpart_tpu_g30.xml.fdm_material",
+   "polymer": "TPU",
+   "filler": "GF30",
+   "flexible": false,
+   "shore": "rigid",
+   "marks_risk": false,
+   "claims": [
+    "impact",
+    "heat_resistant",
+    "large_gears"
+   ],
+   "typical": {
+    "elongation_pct": [
+     5,
+     50
+    ],
+    "service_max_c": [
+     90,
+     110
+    ],
+    "tensile_modulus_mpa": [
+     800,
+     2500
+    ],
+    "tensile_strength_mpa": [
+     35,
+     60
+    ],
+    "tg_c": [
+     -40,
+     -20
+    ],
+    "water_absorption_24h_pct": [
+     0.5,
+     1.2
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "good",
+    "alkali": "good",
+    "fine_detail": "poor",
+    "friction_high": "fair",
+    "friction_low": "fair",
+    "fuel": "good",
+    "hot_water": "fair",
+    "impact": "excellent",
+    "layer_hiding": "good",
+    "oil": "excellent",
+    "ozone": "good",
+    "printability": "fair",
+    "uv": "fair",
+    "wear": "good"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "sealant_tpu",
+   "label": "Sealant TPU",
+   "brand": "Stereotech",
+   "guid": "4785515a-6098-4dac-8efc-f7f48d1366e7",
+   "description_ru": "Гибкий термополиуретан. Обладает высокой химической стойкостью к растворам кислот и щелочей, жирам, маслам, ксилолу, дизельному топливу и предназначен для печати уплотнений, прокладок и гибких элементов.",
+   "adhesion_info_ru": "Печать на столе: чистое обезжиренное стекло, для больших деталей нанести клей-адгезив тонким слоем Печать на цилиндрическом основании: наклеить малярный скотч",
+   "density_g_cm3": 1.15,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 220.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 60.0,
+    "cool_fan_speed": 20.0,
+    "retraction_amount": 2.0,
+    "retraction_speed": 10.0,
+    "speed_print": 40.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/sealant_tpu.xml.fdm_material",
+   "polymer": "TPU",
+   "filler": null,
+   "flexible": true,
+   "shore": "A (не указана)",
+   "marks_risk": false,
+   "claims": [
+    "alkali",
+    "acids",
+    "oil",
+    "diesel",
+    "seals"
+   ],
+   "typical": {
+    "elongation_pct": [
+     400,
+     600
+    ],
+    "service_max_c": [
+     80,
+     100
+    ],
+    "tensile_modulus_mpa": [
+     10,
+     60
+    ],
+    "tensile_strength_mpa": [
+     25,
+     45
+    ],
+    "tg_c": [
+     -45,
+     -25
+    ],
+    "water_absorption_24h_pct": [
+     0.7,
+     1.5
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "good",
+    "alkali": "good",
+    "elasticity": "excellent",
+    "fine_detail": "fair",
+    "friction_high": "excellent",
+    "friction_low": "poor",
+    "fuel": "good",
+    "hot_water": "fair",
+    "impact": "excellent",
+    "layer_hiding": "fair",
+    "oil": "excellent",
+    "ozone": "good",
+    "printability": "fair",
+    "uv": "fair",
+    "wear": "excellent"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "sealant_tpu93",
+   "label": "Sealant TPU93",
+   "brand": "Stereotech",
+   "guid": "16939bc5-42e3-4d1c-8550-e077a43b7431",
+   "description_ru": "Термополиуретан повышенной гибкости. Обладает высокой химической стойкостью к растворам кислот и щелочей, жирам, маслам, ксилолу, дизельному топливу и предназначен для печати уплотнений, прокладок и гибких элементов.",
+   "adhesion_info_ru": "Печать на столе: чистое обезжиренное стекло, для больших деталей нанести клей-адгезив тонким слоем Печать на цилиндрическом основании: наклеить малярный скотч",
+   "density_g_cm3": 1.13,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 240.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 50.0,
+    "cool_fan_speed": 20.0,
+    "retraction_amount": 2.0,
+    "retraction_speed": 10.0,
+    "speed_print": 30.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/sealant_tpu93.xml.fdm_material",
+   "polymer": "TPU",
+   "filler": null,
+   "flexible": true,
+   "shore": "93A",
+   "marks_risk": false,
+   "claims": [
+    "high_flexibility",
+    "alkali",
+    "acids",
+    "oil",
+    "diesel",
+    "seals"
+   ],
+   "typical": {
+    "elongation_pct": [
+     450,
+     650
+    ],
+    "service_max_c": [
+     80,
+     100
+    ],
+    "tensile_modulus_mpa": [
+     10,
+     40
+    ],
+    "tensile_strength_mpa": [
+     25,
+     45
+    ],
+    "tg_c": [
+     -45,
+     -25
+    ],
+    "water_absorption_24h_pct": [
+     0.7,
+     1.5
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "good",
+    "alkali": "good",
+    "elasticity": "excellent",
+    "fine_detail": "fair",
+    "friction_high": "excellent",
+    "friction_low": "poor",
+    "fuel": "good",
+    "hot_water": "fair",
+    "impact": "excellent",
+    "layer_hiding": "fair",
+    "oil": "excellent",
+    "ozone": "good",
+    "printability": "fair",
+    "uv": "fair",
+    "wear": "excellent"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "sealant_tpu_A95",
+   "label": "Sealant TPU A95",
+   "brand": "Stereotech",
+   "guid": "0568a03d-8d33-4f9a-aa41-899feadf11b7",
+   "description_ru": "Гибкий термополиуретан. Обладает высокой химической стойкостью к растворам кислот и щелочей, жирам, маслам, ксилолу, дизельному топливу. Термопластичный полиуретан весьма гигроскопичен, то есть хорошо впитывает влагу. При правильной температуре 3D-печати и использовании сухого материала получаемые изделия будут демонстрировать очень высокую прочность на разрыв. Предназначен для печати уплотнений, прокладок и гибких элементов.",
+   "adhesion_info_ru": "Печать на столе: Нанести клей-адгезив на чистое обезжиренное стекло Печать на цилиндрическом основании: Наклеить малярный скотч на основание. Для изделий с толщиной более 3 мм - нанесите на скотч клей-адгезив",
+   "density_g_cm3": 1.15,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 220.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 50.0,
+    "cool_fan_speed": 20.0,
+    "retraction_amount": 2.0,
+    "retraction_speed": 10.0,
+    "speed_print": 30.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/sealant_tpu_A95.xml.fdm_material",
+   "polymer": "TPU",
+   "filler": null,
+   "flexible": true,
+   "shore": "95A",
+   "marks_risk": false,
+   "claims": [
+    "alkali",
+    "acids",
+    "oil",
+    "diesel",
+    "seals",
+    "hygroscopic"
+   ],
+   "typical": {
+    "elongation_pct": [
+     450,
+     600
+    ],
+    "service_max_c": [
+     80,
+     100
+    ],
+    "tensile_modulus_mpa": [
+     20,
+     60
+    ],
+    "tensile_strength_mpa": [
+     30,
+     50
+    ],
+    "tg_c": [
+     -40,
+     -20
+    ],
+    "water_absorption_24h_pct": [
+     0.7,
+     1.5
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "good",
+    "alkali": "good",
+    "elasticity": "good",
+    "fine_detail": "fair",
+    "friction_high": "excellent",
+    "friction_low": "poor",
+    "fuel": "good",
+    "hot_water": "fair",
+    "impact": "excellent",
+    "layer_hiding": "fair",
+    "oil": "excellent",
+    "ozone": "good",
+    "printability": "fair",
+    "uv": "fair",
+    "wear": "excellent"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "sealant_tpe",
+   "label": "Sealant TPE",
+   "brand": "Stereotech",
+   "guid": "7b87e013-0b21-4104-9db3-209a64e8e717",
+   "description_ru": "Гибкий полимер, по свойствам похожий на твердый силикон. предназначен для печати кнопок, патрубков, уплотнений, прокладок и гибких элементов.",
+   "adhesion_info_ru": "печать на столе: чистое обезжиренное стекло, для больших деталей нанести клей-адгезив тонким слоем печать на цилиндрическом основании: наклеить малярный скотч",
+   "density_g_cm3": 1.1,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 230.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 70.0,
+    "cool_fan_speed": 30.0,
+    "retraction_amount": 2.0,
+    "retraction_speed": 20.0,
+    "speed_print": 50.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/sealant_tpe.xml.fdm_material",
+   "polymer": "TPE",
+   "filler": null,
+   "flexible": true,
+   "shore": "A (мягкий)",
+   "marks_risk": false,
+   "claims": [
+    "seals",
+    "flexible"
+   ],
+   "typical": {
+    "elongation_pct": [
+     300,
+     700
+    ],
+    "service_max_c": [
+     60,
+     80
+    ],
+    "tensile_modulus_mpa": [
+     3,
+     20
+    ],
+    "tensile_strength_mpa": [
+     5,
+     15
+    ],
+    "tg_c": [
+     -50,
+     -30
+    ],
+    "water_absorption_24h_pct": [
+     0.1,
+     0.5
+    ]
+   },
+   "ratings": {
+    "acids_salts": "good",
+    "alcohol": "fair",
+    "alkali": "good",
+    "elasticity": "excellent",
+    "fine_detail": "poor",
+    "friction_high": "excellent",
+    "friction_low": "poor",
+    "fuel": "poor",
+    "hot_water": "fair",
+    "impact": "excellent",
+    "layer_hiding": "fair",
+    "oil": "fair",
+    "ozone": "good",
+    "printability": "poor",
+    "uv": "fair",
+    "wear": "fair"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "sealant_sebs",
+   "label": "Sealant SEBS",
+   "brand": "Stereotech",
+   "guid": "7b87e013-0b21-4104-9db3-209a64e8e718",
+   "description_ru": "Синтетический каучук. Специальный материал, который своим свойствам очень близок к настоящей резине, повторяя все её свойства. Предназначен для изготовления кнопок, уплотнителей, амортизаторов.",
+   "adhesion_info_ru": "Печать на столе: чистое обезжиренное стекло, для больших деталей нанести клей-адгезив тонким слоем Печать на цилиндрическом основании: наклеить малярный скотч",
+   "density_g_cm3": 0.95,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 240.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 50.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 2.0,
+    "retraction_speed": 10.0,
+    "speed_print": 40.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/sealant_sebs.xml.fdm_material",
+   "polymer": "SEBS",
+   "filler": null,
+   "flexible": true,
+   "shore": "A (резиноподобный)",
+   "marks_risk": false,
+   "claims": [
+    "rubber_like",
+    "seals",
+    "dampers"
+   ],
+   "typical": {
+    "elongation_pct": [
+     400,
+     800
+    ],
+    "service_max_c": [
+     60,
+     80
+    ],
+    "tensile_modulus_mpa": [
+     2,
+     10
+    ],
+    "tensile_strength_mpa": [
+     5,
+     15
+    ],
+    "tg_c": [
+     -60,
+     -40
+    ],
+    "water_absorption_24h_pct": [
+     0.01,
+     0.1
+    ]
+   },
+   "ratings": {
+    "acids_salts": "excellent",
+    "alcohol": "good",
+    "alkali": "excellent",
+    "elasticity": "excellent",
+    "fine_detail": "poor",
+    "friction_high": "excellent",
+    "friction_low": "poor",
+    "fuel": "poor",
+    "hot_water": "good",
+    "impact": "excellent",
+    "layer_hiding": "fair",
+    "oil": "poor",
+    "ozone": "excellent",
+    "printability": "poor",
+    "uv": "good",
+    "wear": "fair"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "sealant_tpv80",
+   "label": "Sealant TPV80",
+   "brand": "Stereotech",
+   "guid": "d79a48a0-bce9-4bba-b5fb-ac54296d9f3f",
+   "description_ru": "Термопластичный вулканизат. Жиро-, масло-, бензостойкий термоэластопласт на основе полипропилена, применяется для изготовления химически стойких уплотнений, прокладок и гибких элементов.",
+   "adhesion_info_ru": "Печать на столе и на цилиндрическом основании: наклеить тонкий слой полипропиленового скотча или использовать основание из PP",
+   "density_g_cm3": 1.13,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 280.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 50.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 2.0,
+    "retraction_speed": 10.0,
+    "speed_print": 30.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/sealant_tpv80.xml.fdm_material",
+   "polymer": "TPV",
+   "filler": null,
+   "flexible": true,
+   "shore": "80A",
+   "marks_risk": false,
+   "claims": [
+    "oil",
+    "fat",
+    "fuel",
+    "chemical_seals"
+   ],
+   "typical": {
+    "elongation_pct": [
+     300,
+     550
+    ],
+    "service_max_c": [
+     110,
+     130
+    ],
+    "tensile_modulus_mpa": [
+     5,
+     15
+    ],
+    "tensile_strength_mpa": [
+     5,
+     12
+    ],
+    "tg_c": [
+     -60,
+     -40
+    ],
+    "water_absorption_24h_pct": [
+     0.01,
+     0.1
+    ]
+   },
+   "ratings": {
+    "acids_salts": "excellent",
+    "alcohol": "good",
+    "alkali": "excellent",
+    "elasticity": "excellent",
+    "fine_detail": "poor",
+    "friction_high": "excellent",
+    "friction_low": "poor",
+    "fuel": "good",
+    "hot_water": "good",
+    "impact": "excellent",
+    "layer_hiding": "fair",
+    "oil": "good",
+    "ozone": "excellent",
+    "printability": "poor",
+    "uv": "good",
+    "wear": "good"
+   },
+   "evidence": {
+    "profile": "ste_material_profile",
+    "claims": "ste_material_description",
+    "typical": "polymer_class_typical: приблизительные интервалы класса полимера, не паспорт SKU",
+    "ratings": "polymer_class_typical + ste_material_description"
+   }
+  },
+  {
+   "id": "contifiber_cpa",
+   "label": "ContiFiber CPA",
+   "brand": "Stereotech",
+   "guid": "0d5a3633-17e5-463f-a572-f1517ac9770b",
+   "description_ru": "Непрерывное углеволокно со связующим из полиамида для 5D печати. Применяется для печати прочных и легких функциональных изделий, конструктивных элементов, применяющихся в производстве, аэрокосмической отрасли, медицине и робототехнике.",
+   "adhesion_info_ru": "Печать на столе: чистое стекло, для больших моделей нанести клей-адгезив Печать на цилиндрическом основании: наклеить малярный скотч или использовать основание из PA6",
+   "density_g_cm3": 1.45,
+   "diameter_mm": 0.6,
+   "profile": {
+    "material_print_temperature": 250.0,
+    "material_standby_temperature": 200.0,
+    "material_bed_temperature": 100.0,
+    "cool_fan_speed": 0.0,
+    "retraction_amount": 0.0,
+    "retraction_speed": 0.0,
+    "speed_print": 20.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/contifiber_cpa.xml.fdm_material",
+   "excluded": "непрерывное волокно — нужен fiber-экструдер (Fiber 530), не Hybrid"
+  },
+  {
+   "id": "metalcast_316l",
+   "label": "Metalcast 316L",
+   "brand": "Stereotech",
+   "guid": "8b3f79a1-38ea-4f37-96ae-aba7bcda488e",
+   "description_ru": "Нержавеющая конструкционная сталь марки AISI 316L. Предназначена для изготовления деталей промышленного оборудования в химической, пищевой, фармацевтической и химической промышленностях.",
+   "adhesion_info_ru": "Печать на столе: чистое стекло или каптоновая плёнка Печать на цилиндрическом основании: каптоновая плёнка (spiral – закрепить плёнку клеящим слоем наружу или использовать кольцевые поддержки для снятия детали)",
+   "density_g_cm3": 7.5,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 160.0,
+    "material_standby_temperature": 100.0,
+    "material_bed_temperature": 40.0,
+    "cool_fan_speed": 20.0,
+    "retraction_amount": 2.0,
+    "retraction_speed": 10.0,
+    "speed_print": 30.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/metalcast_316l.xml.fdm_material",
+   "excluded": "металлонаполненный, требует спекания; не полимерная деталь"
+  },
+  {
+   "id": "metalcast_al99",
+   "label": "Metalcast AL99",
+   "brand": "Stereotech",
+   "guid": "e31cce39-404a-438a-9a65-20cb7a303d36",
+   "description_ru": "Оксидная керамика высокой чистоты. Предназначена для изготовления изоляторов и износостойких элементов, например, подложек резисторов, нитенаправителей или носителей катализаторов.",
+   "adhesion_info_ru": "Печать на столе: чистое стекло или каптоновая плёнка Печать на цилиндрическом основании: каптоновая плёнка (spiral – закрепить плёнку клеящим слоем наружу или использовать кольцевые поддержки для снятия детали)",
+   "density_g_cm3": 2.54,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 160.0,
+    "material_standby_temperature": 100.0,
+    "material_bed_temperature": 50.0,
+    "cool_fan_speed": 20.0,
+    "retraction_amount": 4.0,
+    "retraction_speed": 15.0,
+    "speed_print": 30.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/metalcast_al99.xml.fdm_material",
+   "excluded": "керамика, требует спекания"
+  },
+  {
+   "id": "proto_pva",
+   "label": "Proto PVA",
+   "brand": "Stereotech",
+   "guid": "ac7f462e-2f70-4ddf-b323-200c04d387a2",
+   "description_ru": "Полимерный материал на основе поливинилового спирта PVA. Этот материал нетоксичен и легко растворяется в ванне с тёплой водой (35-50°С), поэтому он отлично подходит для печати поддерживающих структур изделий со сложной геометрией.",
+   "adhesion_info_ru": "печать на столе: Нанести клей-адгезив на чистое обезжиренное стекло; печать на цилиндрическом основании: Наклеить малярный скотч на основание. Для изделий с толщиной меньше 3 мм - нанести на скотч клей-адгезив.",
+   "density_g_cm3": 1.05,
+   "diameter_mm": 1.75,
+   "profile": {
+    "material_print_temperature": 210.0,
+    "material_standby_temperature": 175.0,
+    "material_bed_temperature": 60.0,
+    "cool_fan_speed": 75.0,
+    "retraction_amount": 4.0,
+    "retraction_speed": 30.0,
+    "speed_print": 35.0
+   },
+   "source_url": "https://raw.githubusercontent.com/stereotech/STE-Slicer/develop/resources/materials/proto_pva.xml.fdm_material",
+   "excluded": "растворимый материал поддержек"
+  }
+ ]
+}

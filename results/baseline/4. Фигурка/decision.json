@@ -1,0 +1,722 @@
+{
+ "assumptions": [
+  {
+   "comparator": "rating>=",
+   "id": "R6",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "отсутствие хрупкого разрушения",
+   "property": "impact",
+   "provenance": "Материал должен обладать вязкостью, чтобы тонкие элементы не отламывались при касании.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": ">=",
+   "id": "R8",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Температура может быть в диапазоне от +15°C до +60°C (под прямыми солнечными лучами).",
+   "unit": "degC",
+   "value": 60.0
+  }
+ ],
+ "candidates": {
+  "materials": [
+   {
+    "label": "Fiberpart ABSPA G8",
+    "mandatory_fails": 0,
+    "material_id": "fiberpart_abspa_g8",
+    "score": 4.9,
+    "unknown": 2
+   },
+   {
+    "label": "Enduse PETG",
+    "mandatory_fails": 0,
+    "material_id": "enduse_petg",
+    "score": 3.4,
+    "unknown": 3
+   },
+   {
+    "label": "Fiberpart PA12 G12",
+    "mandatory_fails": 0,
+    "material_id": "fiberpart_pa12_g12",
+    "score": 3.3,
+    "unknown": 3
+   },
+   {
+    "label": "Fiberpart TPU C5",
+    "mandatory_fails": 0,
+    "material_id": "fiberpart_tpu_c5",
+    "score": 3.05,
+    "unknown": 3
+   },
+   {
+    "label": "Enduse PA6",
+    "mandatory_fails": 0,
+    "material_id": "enduse_pa6",
+    "score": 2.2,
+    "unknown": 4
+   }
+  ],
+  "orientations": [
+   {
+    "J": 1.355,
+    "bed_contact_area": 1378.6609218155409,
+    "height": 149.97927474975586,
+    "overhang_area": 3687.3868101494336,
+    "overhang_fraction": 0.0777,
+    "stair_area": 41802.87453730595,
+    "up": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   {
+    "J": 1.9183,
+    "bed_contact_area": 0.3705145264975762,
+    "height": 149.97927474975586,
+    "overhang_area": 3276.8443526180017,
+    "overhang_fraction": 0.069,
+    "stair_area": 41802.87453730595,
+    "up": [
+     -0.0,
+     -0.0,
+     -1.0
+    ]
+   },
+   {
+    "J": 1.9422,
+    "bed_contact_area": 0.4531527714168677,
+    "height": 157.00726647701265,
+    "overhang_area": 3165.2442056146783,
+    "overhang_fraction": 0.0667,
+    "stair_area": 42493.38311368268,
+    "up": [
+     0.0284,
+     0.2305,
+     -0.9727
+    ]
+   },
+   {
+    "J": 1.9801,
+    "bed_contact_area": 0.5306561744443066,
+    "height": 103.2924919128418,
+    "overhang_area": 6673.287307603311,
+    "overhang_fraction": 0.1405,
+    "stair_area": 42380.6968281303,
+    "up": [
+     -1.0,
+     -0.0,
+     -0.0
+    ]
+   },
+   {
+    "J": 1.9844,
+    "bed_contact_area": 0.2938492879054625,
+    "height": 103.63818268270494,
+    "overhang_area": 6756.321371904152,
+    "overhang_fraction": 0.1423,
+    "stair_area": 42383.80423525674,
+    "up": [
+     -0.9885,
+     0.1512,
+     0.007
+    ]
+   },
+   {
+    "J": 1.9906,
+    "bed_contact_area": 1.110555096952142,
+    "height": 103.63818268270494,
+    "overhang_area": 6909.498093518323,
+    "overhang_fraction": 0.1455,
+    "stair_area": 42383.80423525674,
+    "up": [
+     0.9885,
+     -0.1512,
+     -0.007
+    ]
+   }
+  ],
+  "routes": []
+ },
+ "chosen_candidate": {
+  "batch": {
+   "per_plate": 4,
+   "plates": 4,
+   "quantity": 15
+  },
+  "material": {
+   "checks": [
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": false,
+     "property": "layer_hiding",
+     "requirement_id": "R1",
+     "status": "pass"
+    },
+    {
+     "evidence": "печатаемость: fair",
+     "manufacturer_claim": false,
+     "property": "surface_no_layers",
+     "requirement_id": "R2",
+     "status": "unknown"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": true,
+     "property": "uv",
+     "requirement_id": "R4",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": false,
+     "property": "alcohol",
+     "requirement_id": "R5",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": true,
+     "property": "impact",
+     "requirement_id": "R6",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: fair",
+     "manufacturer_claim": false,
+     "property": "fine_detail",
+     "requirement_id": "R7",
+     "status": "unknown"
+    },
+    {
+     "evidence": "HDT 95…115 ≥ 70 (T+запас)",
+     "manufacturer_claim": false,
+     "property": "service_temp_max_c",
+     "requirement_id": "R8",
+     "status": "pass"
+    }
+   ],
+   "guid": "3a747b85-c844-473e-80fe-5cd4aa73eefe",
+   "id": "fiberpart_abspa_g8",
+   "label": "Fiberpart ABSPA G8"
+  },
+  "orientation": {
+   "placement": "центр стола (затем arrangeAll)",
+   "rotation_axis_angle": {
+    "angle_deg": 0.0,
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "rule": "min_J",
+   "size_after_mm": [
+    103.29,
+    128.75,
+    149.98
+   ],
+   "translation_mm": [
+    30.384,
+    -15.471,
+    40.064
+   ],
+   "up_vector_model": [
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  "printing_mode": "classic",
+  "quality": {
+   "layer_height": 0.1,
+   "name": "Fine",
+   "quality_type": "normal"
+  },
+  "route_reasons": [
+   "режим не указан: по умолчанию classic"
+  ]
+ },
+ "effective_settings": {
+  "adaptive_layer_height_enabled": true,
+  "adaptive_layer_height_variation": 0.04,
+  "adhesion_type": "brim",
+  "cool_fan_speed": 0.0,
+  "infill_pattern": "gyroid",
+  "infill_sparse_density": 10.0,
+  "layer_height": 0.1,
+  "material_bed_temperature": 110.0,
+  "material_print_temperature": 280.0,
+  "material_standby_temperature": 175.0,
+  "printing_mode": "classic",
+  "retraction_amount": 7.0,
+  "retraction_speed": 20.0,
+  "speed_print": 40.0,
+  "speed_wall_0": 20.0,
+  "support_enable": true,
+  "support_type": "buildplate",
+  "support_z_distance": 0.2,
+  "top_bottom_thickness": 1.6,
+  "wall_line_count": 4
+ },
+ "evidence_level": "analytical_screen",
+ "flags": [],
+ "geometry": {
+  "area_mm2": 47480.02266445389,
+  "bbox_size": [
+   103.2924919128418,
+   128.75143432617188,
+   149.97927474975586
+  ],
+  "open_edges": 0,
+  "rotation_axis": {
+   "axis_line_hits": 2,
+   "axisymmetric": false,
+   "bore_radius": null,
+   "centroid_offset": 0.19967888284966226,
+   "length": 156.98049004952793,
+   "max_outer_radius": 57.13008824471094,
+   "min_outer_radius": 41.579891214322075,
+   "point": [
+    -31.306656531483082,
+    11.043727030523035,
+    16.912920241183162
+   ],
+   "r_max": 57.15450753336023,
+   "revolution_score": 0.08794397624567617,
+   "revolved_area_fraction": 0.026125776444464573,
+   "through_bore": false,
+   "vector": [
+    -0.0284,
+    -0.2305,
+    0.9727
+   ]
+  },
+  "triangles": 564696,
+  "volume_mm3": 725696.2574637183
+ },
+ "machine": {
+  "definition_id": "hte530v5.2",
+  "name": "Stereotech Hybrid 530 V5.2"
+ },
+ "missing_inputs": [],
+ "notes": [
+  "Высота слоя 0.10 мм задаётся профилем качества normal.",
+  "«Без следов поддержек» не гарантируется настройками: нужна постобработка мест контакта или иная ориентация.",
+  "Наполненный материал (GF8): нужно закалённое/износостойкое сопло."
+ ],
+ "numbers": {
+  "batch_qty": 15,
+  "service_temp_max_c": 60.0,
+  "service_temp_min_c": 15.0
+ },
+ "policy": {
+  "decision": {
+   "flexible_speed_max": 25.0,
+   "full_mode_min_bore_mm": 10.0,
+   "infill_decorative_pct": 10.0,
+   "infill_default_pct": 20.0,
+   "infill_loaded_pct": 50.0,
+   "min_base_diameter_mm": 6.0,
+   "nozzle_mm": 0.4,
+   "orientation_weights": {
+    "contact": 0.6,
+    "height": 0.3,
+    "overhang": 2.0,
+    "stair": 0.2,
+    "stair_surface": 1.0
+   },
+   "plate_clearance_mm": 10.0,
+   "precision_outer_wall_speed": 20.0,
+   "raft_layers_min": 5,
+   "rotor_axis_score": 0.6,
+   "skin_min_mm": 1.2,
+   "solid_volume_limit_cm3": 200.0,
+   "support_overhang_fraction": 0.01,
+   "wall_default_mm": 1.2,
+   "wall_flexible_mm": 1.6,
+   "wall_load_mm": 2.0
+  },
+  "requirements": {
+   "heat_margin_c": 10.0,
+   "hydrophobic_max_water_pct": 0.5,
+   "non_brittle_min_elongation_pct": 3.0,
+   "stiff_min_modulus_mpa": 3000.0
+  }
+ },
+ "qualification_plan": [
+  {
+   "property": "surface_no_layers",
+   "requirement_id": "R2",
+   "test": "подтвердить свойство по паспорту партии/испытанию (печатаемость: fair)"
+  },
+  {
+   "property": "fine_detail",
+   "requirement_id": "R7",
+   "test": "подтвердить свойство по паспорту партии/испытанию (оценка класса: fair)"
+  }
+ ],
+ "rejected_settings": [],
+ "requirements": [
+  {
+   "comparator": "rating>=",
+   "id": "R1",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": "поверхность без видимых слоёв",
+   "property": "layer_hiding",
+   "provenance": "Детали, напечатанные на FDM не должны содержать видимых слоёв, следов от поддержек и иных дефектов печати.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "==",
+   "id": "R2",
+   "interpretation_status": "explicit",
+   "kind": "process",
+   "mandatory": true,
+   "note": null,
+   "property": "surface_no_layers",
+   "provenance": "Детали, напечатанные на FDM не должны содержать видимых слоёв, следов от поддержек и иных дефектов печати.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "==",
+   "id": "R3",
+   "interpretation_status": "explicit",
+   "kind": "process",
+   "mandatory": true,
+   "note": null,
+   "property": "no_support_marks",
+   "provenance": "Детали, напечатанные на FDM не должны содержать видимых слоёв, следов от поддержек и иных дефектов печати.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R4",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "uv",
+   "provenance": "Температура может быть в диапазоне от +15°C до +60°C (под прямыми солнечными лучами).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R5",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "alcohol",
+   "provenance": "Допускается обработка антистатическими и спиртовыми салфетками (для электроники).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R6",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "отсутствие хрупкого разрушения",
+   "property": "impact",
+   "provenance": "Материал должен обладать вязкостью, чтобы тонкие элементы не отламывались при касании.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R7",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": "мелкие элементы",
+   "property": "fine_detail",
+   "provenance": "Материал должен обладать вязкостью, чтобы тонкие элементы не отламывались при касании.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": ">=",
+   "id": "R8",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Температура может быть в диапазоне от +15°C до +60°C (под прямыми солнечными лучами).",
+   "unit": "degC",
+   "value": 60.0
+  }
+ ],
+ "scene_operations": [
+  {
+   "op": "load",
+   "path": "data/examples/4. Фигурка/Декоративная фигурка.stl"
+  },
+  {
+   "axis_angle": {
+    "angle_deg": 0.0,
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "frame": "STL/принтер, Z вверх (в сцене Cura Y вверх: (x, y, z) → (x, z, -y))",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "op": "rotate"
+  },
+  {
+   "op": "translate",
+   "placement": "центр стола (затем arrangeAll)",
+   "vector_mm": [
+    30.384,
+    -15.471,
+    40.064
+   ]
+  },
+  {
+   "copies": 3,
+   "op": "multiply",
+   "then": "arrangeAll"
+  }
+ ],
+ "setting_patch": [
+  {
+   "key": "printing_mode",
+   "reason": "режим не указан: по умолчанию classic",
+   "requirement_ids": [],
+   "rule": "route",
+   "schema_default": "classic",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "classic"
+  },
+  {
+   "key": "adaptive_layer_height_enabled",
+   "reason": "скрыть ступеньки на наклонных поверхностях без перехода на 0.06 мм по всей высоте",
+   "requirement_ids": [
+    "R1"
+   ],
+   "rule": "adaptive_layer",
+   "schema_default": false,
+   "scope": "global",
+   "type": "bool",
+   "unit": null,
+   "value": true
+  },
+  {
+   "key": "adaptive_layer_height_variation",
+   "reason": "диапазон слоя 0.06…0.14 мм",
+   "requirement_ids": [
+    "R1"
+   ],
+   "rule": "adaptive_layer",
+   "schema_default": 0.1,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 0.04
+  },
+  {
+   "key": "wall_line_count",
+   "reason": "ненагруженная деталь; +1 стенка под точную/изнашиваемую поверхность; t=1.6 мм → N=4 при ширине 0.4 мм",
+   "requirement_ids": [
+    "R6"
+   ],
+   "rule": "walls",
+   "schema_default": 2,
+   "scope": "global",
+   "type": "int",
+   "unit": null,
+   "value": 4
+  },
+  {
+   "key": "top_bottom_thickness",
+   "reason": "кожа не тоньше стенки: 16 слоёв по 0.10 мм",
+   "requirement_ids": [],
+   "rule": "skin",
+   "schema_default": 0.8,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 1.6
+  },
+  {
+   "key": "infill_sparse_density",
+   "reason": "декоративная деталь: прочность задаёт оболочка",
+   "requirement_ids": [],
+   "rule": "infill",
+   "schema_default": 20,
+   "scope": "global",
+   "type": "float",
+   "unit": "%",
+   "value": 10.0
+  },
+  {
+   "key": "infill_pattern",
+   "reason": "изотропное заполнение без пересечений дорожек в слое",
+   "requirement_ids": [],
+   "rule": "infill_pattern",
+   "schema_default": "grid",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "gyroid"
+  },
+  {
+   "key": "speed_wall_0",
+   "reason": "точная/видимая наружная поверхность",
+   "requirement_ids": [
+    "R1",
+    "R2"
+   ],
+   "rule": "speed_outer",
+   "schema_default": 30,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm/s",
+   "value": 20.0
+  },
+  {
+   "key": "support_enable",
+   "reason": "нависания 7.8% площади поверхности",
+   "requirement_ids": [],
+   "rule": "support",
+   "schema_default": false,
+   "scope": "global",
+   "type": "bool",
+   "unit": null,
+   "value": true
+  },
+  {
+   "key": "support_type",
+   "reason": "поддержки только от стола: без контакта с видимой поверхностью",
+   "requirement_ids": [
+    "R3"
+   ],
+   "rule": "support_type",
+   "schema_default": "everywhere",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "buildplate"
+  },
+  {
+   "key": "support_z_distance",
+   "reason": "зазор 2 слоя: легче отделять, меньше следов",
+   "requirement_ids": [
+    "R3"
+   ],
+   "rule": "support_gap",
+   "schema_default": 0.1,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 0.2
+  },
+  {
+   "key": "adhesion_type",
+   "reason": "склонность к короблению (ABS/PA) или высокая деталь на малой опоре",
+   "requirement_ids": [],
+   "rule": "adhesion",
+   "schema_default": "brim",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "brim"
+  }
+ ],
+ "status": "candidate",
+ "trace": [
+  {
+   "detail": {
+    "fails": 0,
+    "material": "fiberpart_abspa_g8",
+    "score": 4.9
+   },
+   "rule": "screen_rank",
+   "step": "material"
+  },
+  {
+   "detail": {
+    "hint": null,
+    "mode": "classic",
+    "revolution_score": 0.08794397624567617,
+    "through_bore": false
+   },
+   "rule": "mode_hint+axis",
+   "step": "route"
+  },
+  {
+   "detail": {
+    "J": 1.355,
+    "candidates": 12,
+    "chosen_up": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "rule": "min_J",
+   "step": "orientation"
+  },
+  {
+   "detail": {
+    "layer": 0.1,
+    "quality": "normal"
+   },
+   "rule": "tolerance/surface/material",
+   "step": "layer"
+  },
+  {
+   "detail": {
+    "infill": 10.0,
+    "support": 0.0777,
+    "walls": 4
+   },
+   "rule": "rules",
+   "step": "settings"
+  }
+ ],
+ "verification": {
+  "fits_build_volume": true,
+  "patch_valid": true,
+  "slice_verified": false
+ },
+ "version": "baseline-0.1.0",
+ "warnings": [
+  "Партия 15 шт.: 4 на стол, нужно 4 запусков."
+ ]
+}

@@ -1,0 +1,96 @@
+{
+ "definition_id": "hte530v5.2",
+ "name": "Stereotech Hybrid 530 V5.2",
+ "source": "STE-Slicer develop: hte530v5.2 -> steprinter530_v5.2 -> steprinter_v5 -> fdmprinter",
+ "installed_distribution_verified": false,
+ "allowed_printing_modes": [
+  "classic",
+  "cylindrical",
+  "cylindrical_full"
+ ],
+ "build_volume_mm": {
+  "classic": [
+   315.0,
+   300.3,
+   300.0
+  ],
+  "cylindrical": [
+   315.0,
+   300.3,
+   250.0
+  ]
+ },
+ "machine_shape": {
+  "classic": "rectangular",
+  "cylindrical": "elliptic"
+ },
+ "machine_center_is_zero_5d": true,
+ "heated_bed": {
+  "classic": true,
+  "cylindrical": false
+ },
+ "extruders": [
+  {
+   "position": 0,
+   "id": "stereotech_v5_extruder_main",
+   "nozzle_mm": 0.4,
+   "filament_mm": 1.75
+  },
+  {
+   "position": 1,
+   "id": "stereotech_v5_extruder_second",
+   "nozzle_mm": 0.4,
+   "filament_mm": 1.75
+  }
+ ],
+ "max_feedrate_mm_s": {
+  "x": 150,
+  "y": 150,
+  "z": 25,
+  "e": 45
+ },
+ "acceleration_mm_s2": 1000,
+ "default_retraction_mm": 3,
+ "cylindrical_defaults": {
+  "cylindrical_mode_base_diameter": 6,
+  "non_printing_base_diameter": 6,
+  "cylindrical_raft_thickness": 0.3,
+  "cylindrical_round_segments": 64
+ },
+ "quality_profiles": [
+  {
+   "quality_type": "high",
+   "name": "Extra Fine",
+   "layer_height": 0.06
+  },
+  {
+   "quality_type": "normal",
+   "name": "Fine",
+   "layer_height": 0.1
+  },
+  {
+   "quality_type": "fast",
+   "name": "Normal",
+   "layer_height": 0.15
+  },
+  {
+   "quality_type": "draft",
+   "name": "Draft",
+   "layer_height": 0.2
+  },
+  {
+   "quality_type": "verydraft",
+   "name": "Extra Fast",
+   "layer_height": 0.3
+  },
+  {
+   "quality_type": "coarse",
+   "name": "Coarse",
+   "layer_height": 0.4
+  }
+ ],
+ "notes": [
+  "Профили качества — глобальные generic-профили публичной ветки; в выданном дистрибутиве 7.x их набор нужно перечитать через MachineManager.",
+  "В 5D-режимах высота области печати 250 мм, стол не греется, начало координат в центре."
+ ]
+}

@@ -1,0 +1,668 @@
+{
+ "assumptions": [
+  {
+   "comparator": "==",
+   "id": "R2",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": false,
+   "note": "проблема аналога: износ ответной детали",
+   "property": "no_abrasive_filler",
+   "provenance": "Проблема: Штатные шестерни из литого под давлением пластика (POM/ацеталь) со временем накапливают усталостные микротрещины в основании зуба и ломаются, а латунные аналоги стачивают ответные полимерные валы.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R4",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "отсутствие хрупкого разрушения",
+   "property": "impact",
+   "provenance": "Пиковый (стопорный) момент при натяжении троса: до 75 Н·м (возможны микроудары при порывах ветра, раскачивающих штору).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "<=",
+   "id": "R5",
+   "interpretation_status": "assumed",
+   "kind": "material",
+   "mandatory": true,
+   "note": "«гидрофобный»/высокая влажность → порог политики 0.5%",
+   "property": "water_absorption_24h_pct",
+   "provenance": "Влажность: 85–98% (тропический климат внутри оранжереи, регулярный туман).",
+   "unit": "percent",
+   "value": 0.5
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R8",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "высокая жёсткость",
+   "property": "stiffness",
+   "provenance": "Материал должен иметь высокий модуль упругости, чтобы зуб не «подгибался» под нагрузкой 75 Н·м, выходя из зацепления.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": ">=",
+   "id": "R10",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Температура: от +10°C ночью до +70°C днем (нагрев под стеклянной крышей).",
+   "unit": "degC",
+   "value": 70.0
+  }
+ ],
+ "candidates": {
+  "materials": [
+   {
+    "label": "Fiberpart ABSPA G8",
+    "mandatory_fails": 0,
+    "material_id": "fiberpart_abspa_g8",
+    "score": 6.75,
+    "unknown": 1
+   },
+   {
+    "label": "Fiberpart PC G20",
+    "mandatory_fails": 0,
+    "material_id": "fiberpart_pc_g20",
+    "score": 3.7,
+    "unknown": 3
+   },
+   {
+    "label": "Enduse PC",
+    "mandatory_fails": 1,
+    "material_id": "enduse_pc",
+    "score": 4.9,
+    "unknown": 2
+   },
+   {
+    "label": "Fiberpart PA12 G12",
+    "mandatory_fails": 1,
+    "material_id": "fiberpart_pa12_g12",
+    "score": 4.4,
+    "unknown": 2
+   },
+   {
+    "label": "Enduse PETG",
+    "mandatory_fails": 1,
+    "material_id": "enduse_petg",
+    "score": 3.9,
+    "unknown": 3
+   }
+  ],
+  "orientations": [
+   {
+    "J": 0.1435,
+    "bed_contact_area": 729.4785490028919,
+    "height": 10.100000381469727,
+    "overhang_area": 0.0,
+    "overhang_fraction": 0.0,
+    "stair_area": 761.1847131555464,
+    "up": [
+     0.0,
+     1.0,
+     0.0
+    ]
+   },
+   {
+    "J": 0.8238,
+    "bed_contact_area": 55.590207701564765,
+    "height": 10.100000381469727,
+    "overhang_area": 673.7039357208741,
+    "overhang_fraction": 0.2297,
+    "stair_area": 761.1847131555464,
+    "up": [
+     -0.0,
+     -1.0,
+     -0.0
+    ]
+   }
+  ],
+  "routes": []
+ },
+ "chosen_candidate": {
+  "batch": null,
+  "material": {
+   "checks": [
+    {
+     "evidence": "подтверждается только испытаниями",
+     "manufacturer_claim": false,
+     "property": "fatigue",
+     "requirement_id": "R1",
+     "status": "unknown"
+    },
+    {
+     "evidence": "наполнитель GF8",
+     "manufacturer_claim": false,
+     "property": "no_abrasive_filler",
+     "requirement_id": "R2",
+     "status": "fail"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": false,
+     "property": "oil",
+     "requirement_id": "R3",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": true,
+     "property": "impact",
+     "requirement_id": "R4",
+     "status": "pass"
+    },
+    {
+     "evidence": "типично 0.5…1.2 (интервал пересекает порог)",
+     "manufacturer_claim": false,
+     "property": "water_absorption_24h_pct",
+     "requirement_id": "R5",
+     "status": "unknown"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": true,
+     "property": "uv",
+     "requirement_id": "R6",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": false,
+     "property": "acids_salts",
+     "requirement_id": "R7",
+     "status": "pass"
+    },
+    {
+     "evidence": "типично 3000…5000",
+     "manufacturer_claim": false,
+     "property": "stiffness",
+     "requirement_id": "R8",
+     "status": "pass"
+    },
+    {
+     "evidence": "типично 100…115",
+     "manufacturer_claim": false,
+     "property": "tg_c",
+     "requirement_id": "R9",
+     "status": "pass"
+    },
+    {
+     "evidence": "HDT 95…115 ≥ 80 (T+запас)",
+     "manufacturer_claim": false,
+     "property": "service_temp_max_c",
+     "requirement_id": "R10",
+     "status": "pass"
+    }
+   ],
+   "guid": "3a747b85-c844-473e-80fe-5cd4aa73eefe",
+   "id": "fiberpart_abspa_g8",
+   "label": "Fiberpart ABSPA G8"
+  },
+  "orientation": {
+   "placement": "центр стола (затем arrangeAll)",
+   "rotation_axis_angle": {
+    "angle_deg": 90.0,
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ]
+   },
+   "rule": "axis_vertical",
+   "size_after_mm": [
+    33.1,
+    33.1,
+    10.1
+   ],
+   "translation_mm": [
+    -0.0,
+    -0.0,
+    -0.0
+   ],
+   "up_vector_model": [
+    0.0,
+    1.0,
+    0.0
+   ]
+  },
+  "printing_mode": "classic",
+  "quality": {
+   "layer_height": 0.1,
+   "name": "Fine",
+   "quality_type": "normal"
+  },
+  "route_reasons": [
+   "в задании указан 3D"
+  ]
+ },
+ "effective_settings": {
+  "adhesion_type": "brim",
+  "cool_fan_speed": 0.0,
+  "infill_sparse_density": 100.0,
+  "layer_height": 0.1,
+  "material_bed_temperature": 110.0,
+  "material_print_temperature": 280.0,
+  "material_standby_temperature": 175.0,
+  "printing_mode": "classic",
+  "retraction_amount": 7.0,
+  "retraction_speed": 20.0,
+  "speed_print": 40.0,
+  "support_enable": false,
+  "top_bottom_thickness": 2.0,
+  "wall_line_count": 5
+ },
+ "evidence_level": "analytical_screen",
+ "flags": [
+  "gear_teeth",
+  "load_bearing"
+ ],
+ "geometry": {
+  "area_mm2": 2932.821424347016,
+  "bbox_size": [
+   33.0992546081543,
+   10.100000381469727,
+   33.0992546081543
+  ],
+  "open_edges": 0,
+  "rotation_axis": {
+   "axis_line_hits": 0,
+   "axisymmetric": false,
+   "bore_radius": 2.1380756230334375,
+   "centroid_offset": 0.29117886420481215,
+   "length": 10.100000381469727,
+   "max_outer_radius": 16.55970188652577,
+   "min_outer_radius": 4.73270677796516,
+   "point": [
+    -0.009824461241075843,
+    2.7919048735606613,
+    4.499142377021123e-05
+   ],
+   "r_max": 16.55970188652577,
+   "revolution_score": 0.7084110218043079,
+   "revolved_area_fraction": 0.20453161805088257,
+   "through_bore": true,
+   "vector": [
+    0.0,
+    1.0,
+    0.0
+   ]
+  },
+  "triangles": 24920,
+  "volume_mm3": 3795.5893969939025
+ },
+ "machine": {
+  "definition_id": "hte530v5.2",
+  "name": "Stereotech Hybrid 530 V5.2"
+ },
+ "missing_inputs": [
+  "модуль, число зубьев и допуск зацепления (для расчёта зуба по Lewis и компенсации)",
+  "закрепление и контакт (без них напряжения по STL не определены, раздел 6)"
+ ],
+ "notes": [
+  "Высота слоя 0.10 мм задаётся профилем качества normal.",
+  "Наполненный материал (GF8): нужно закалённое/износостойкое сопло."
+ ],
+ "numbers": {
+  "rpm": 6.0,
+  "service_temp_max_c": 70.0,
+  "service_temp_min_c": 10.0,
+  "torque_nm": 75.0,
+  "torque_nominal_nm": 25.0,
+  "torque_peak_nm": 75.0
+ },
+ "policy": {
+  "decision": {
+   "flexible_speed_max": 25.0,
+   "full_mode_min_bore_mm": 10.0,
+   "infill_decorative_pct": 10.0,
+   "infill_default_pct": 20.0,
+   "infill_loaded_pct": 50.0,
+   "min_base_diameter_mm": 6.0,
+   "nozzle_mm": 0.4,
+   "orientation_weights": {
+    "contact": 0.6,
+    "height": 0.3,
+    "overhang": 2.0,
+    "stair": 0.2,
+    "stair_surface": 1.0
+   },
+   "plate_clearance_mm": 10.0,
+   "precision_outer_wall_speed": 20.0,
+   "raft_layers_min": 5,
+   "rotor_axis_score": 0.6,
+   "skin_min_mm": 1.2,
+   "solid_volume_limit_cm3": 200.0,
+   "support_overhang_fraction": 0.01,
+   "wall_default_mm": 1.2,
+   "wall_flexible_mm": 1.6,
+   "wall_load_mm": 2.0
+  },
+  "requirements": {
+   "heat_margin_c": 10.0,
+   "hydrophobic_max_water_pct": 0.5,
+   "non_brittle_min_elongation_pct": 3.0,
+   "stiff_min_modulus_mpa": 3000.0
+  }
+ },
+ "qualification_plan": [
+  {
+   "property": "fatigue",
+   "requirement_id": "R1",
+   "test": "циклические испытания детали/зуба на рабочем спектре нагрузки"
+  },
+  {
+   "property": "water_absorption_24h_pct",
+   "requirement_id": "R5",
+   "test": "подтвердить свойство по паспорту партии/испытанию (типично 0.5…1.2 (интервал пересекает порог))"
+  }
+ ],
+ "rejected_settings": [],
+ "requirements": [
+  {
+   "comparator": "verified",
+   "id": "R1",
+   "interpretation_status": "explicit",
+   "kind": "qualification",
+   "mandatory": true,
+   "note": "ресурс/усталость: только испытания",
+   "property": "fatigue",
+   "provenance": "Механизм работает в режиме «старт-стоп».",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "==",
+   "id": "R2",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": false,
+   "note": "проблема аналога: износ ответной детали",
+   "property": "no_abrasive_filler",
+   "provenance": "Проблема: Штатные шестерни из литого под давлением пластика (POM/ацеталь) со временем накапливают усталостные микротрещины в основании зуба и ломаются, а латунные аналоги стачивают ответные полимерные валы.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R3",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "oil",
+   "provenance": "Следствие: Режим граничной смазки (гидродинамический клин не образуется), работа на сухую или с густой консистентной смазкой.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R4",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "отсутствие хрупкого разрушения",
+   "property": "impact",
+   "provenance": "Пиковый (стопорный) момент при натяжении троса: до 75 Н·м (возможны микроудары при порывах ветра, раскачивающих штору).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "<=",
+   "id": "R5",
+   "interpretation_status": "assumed",
+   "kind": "material",
+   "mandatory": true,
+   "note": "«гидрофобный»/высокая влажность → порог политики 0.5%",
+   "property": "water_absorption_24h_pct",
+   "provenance": "Влажность: 85–98% (тропический климат внутри оранжереи, регулярный туман).",
+   "unit": "percent",
+   "value": 0.5
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R6",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "uv",
+   "provenance": "Химия/УФ: Постоянное воздействие жесткого ультрафиолета и периодическое попадание внекорневых подкормок (слабые кислоты, соли).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R7",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "acids_salts",
+   "provenance": "Химия/УФ: Постоянное воздействие жесткого ультрафиолета и периодическое попадание внекорневых подкормок (слабые кислоты, соли).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R8",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "высокая жёсткость",
+   "property": "stiffness",
+   "provenance": "Материал должен иметь высокий модуль упругости, чтобы зуб не «подгибался» под нагрузкой 75 Н·м, выходя из зацепления.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": ">=",
+   "id": "R9",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": "диапазон 85–90; принят нижний предел, верхний — желательный",
+   "property": "tg_c",
+   "provenance": "Температура стеклования (Tg) должна быть не ниже 85-90°C.",
+   "unit": "degC",
+   "value": 85.0
+  },
+  {
+   "comparator": ">=",
+   "id": "R10",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Температура: от +10°C ночью до +70°C днем (нагрев под стеклянной крышей).",
+   "unit": "degC",
+   "value": 70.0
+  }
+ ],
+ "scene_operations": [
+  {
+   "op": "load",
+   "path": "data/examples/1. Шестерня - 3D/Шестерня.stl"
+  },
+  {
+   "axis_angle": {
+    "angle_deg": 90.0,
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ]
+   },
+   "frame": "STL/принтер, Z вверх (в сцене Cura Y вверх: (x, y, z) → (x, z, -y))",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ]
+   ],
+   "op": "rotate"
+  },
+  {
+   "op": "translate",
+   "placement": "центр стола (затем arrangeAll)",
+   "vector_mm": [
+    -0.0,
+    -0.0,
+    -0.0
+   ]
+  },
+  {
+   "op": "arrangeAll"
+  }
+ ],
+ "setting_patch": [
+  {
+   "key": "printing_mode",
+   "reason": "в задании указан 3D",
+   "requirement_ids": [],
+   "rule": "route",
+   "schema_default": "classic",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "classic"
+  },
+  {
+   "key": "wall_line_count",
+   "reason": "нагрузка/вращение/износ: материал у наружного контура (момент инерции сечения); t=2.0 мм → N=5 при ширине 0.4 мм",
+   "requirement_ids": [
+    "R4"
+   ],
+   "rule": "walls",
+   "schema_default": 2,
+   "scope": "global",
+   "type": "int",
+   "unit": null,
+   "value": 5
+  },
+  {
+   "key": "top_bottom_thickness",
+   "reason": "кожа не тоньше стенки: 20 слоёв по 0.10 мм",
+   "requirement_ids": [],
+   "rule": "skin",
+   "schema_default": 0.8,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 2.0
+  },
+  {
+   "key": "infill_sparse_density",
+   "reason": "нагруженная деталь объёмом 4 см³ ≤ 200 см³",
+   "requirement_ids": [],
+   "rule": "infill",
+   "schema_default": 20,
+   "scope": "global",
+   "type": "float",
+   "unit": "%",
+   "value": 100.0
+  },
+  {
+   "key": "support_enable",
+   "reason": "нависаний > support_angle 0.0% площади",
+   "requirement_ids": [],
+   "rule": "support",
+   "schema_default": false,
+   "scope": "global",
+   "type": "bool",
+   "unit": null,
+   "value": false
+  },
+  {
+   "key": "adhesion_type",
+   "reason": "склонность к короблению (ABS/PA) или высокая деталь на малой опоре",
+   "requirement_ids": [],
+   "rule": "adhesion",
+   "schema_default": "brim",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "brim"
+  }
+ ],
+ "status": "needs_calibration",
+ "trace": [
+  {
+   "detail": {
+    "fails": 0,
+    "material": "fiberpart_abspa_g8",
+    "score": 6.75
+   },
+   "rule": "screen_rank",
+   "step": "material"
+  },
+  {
+   "detail": {
+    "hint": "3D",
+    "mode": "classic",
+    "revolution_score": 0.7084110218043079,
+    "through_bore": true
+   },
+   "rule": "mode_hint+axis",
+   "step": "route"
+  },
+  {
+   "detail": {
+    "J": 0.1435,
+    "candidates": 2,
+    "chosen_up": [
+     0.0,
+     1.0,
+     0.0
+    ]
+   },
+   "rule": "axis_vertical",
+   "step": "orientation"
+  },
+  {
+   "detail": {
+    "layer": 0.1,
+    "quality": "normal"
+   },
+   "rule": "tolerance/surface/material",
+   "step": "layer"
+  },
+  {
+   "detail": {
+    "infill": 100.0,
+    "support": 0.0,
+    "walls": 5
+   },
+   "rule": "rules",
+   "step": "settings"
+  }
+ ],
+ "verification": {
+  "fits_build_volume": true,
+  "patch_valid": true,
+  "slice_verified": false
+ },
+ "version": "baseline-0.1.0",
+ "warnings": []
+}

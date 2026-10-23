@@ -1,0 +1,579 @@
+{
+ "assumptions": [
+  {
+   "comparator": "rating>=",
+   "id": "R3",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "отсутствие хрупкого разрушения",
+   "property": "impact",
+   "provenance": "Штатные литые пластиковые крыльчатки со временем становятся хрупкими из-за старения полимера и воздействия озона, лопасти лопаются от случайного попадания стружки или при заклинивании кожуха.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "==",
+   "id": "R5",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "деталь не должна быть эластомером",
+   "property": "rigid",
+   "provenance": "Под действием центробежной силы размягченные лопасти начнут изгибаться, задевать за кожух и разрушатся.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": ">=",
+   "id": "R7",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Температурный режим: диапазон +10°C ... +70°C. | Температура на поверхности крыльчатки может стабильно держаться около 60-65°C. | Материал не должен размягчаться при +65°C.",
+   "unit": "degC",
+   "value": 70.0
+  }
+ ],
+ "candidates": {
+  "materials": [
+   {
+    "label": "Enduse PA6",
+    "mandatory_fails": 0,
+    "material_id": "enduse_pa6",
+    "score": 6.6,
+    "unknown": 0
+   },
+   {
+    "label": "Fiberpart ABSPA G8",
+    "mandatory_fails": 0,
+    "material_id": "fiberpart_abspa_g8",
+    "score": 6.35,
+    "unknown": 0
+   },
+   {
+    "label": "Fiberpart PA12 G12",
+    "mandatory_fails": 0,
+    "material_id": "fiberpart_pa12_g12",
+    "score": 6.35,
+    "unknown": 0
+   },
+   {
+    "label": "Enduse PC",
+    "mandatory_fails": 0,
+    "material_id": "enduse_pc",
+    "score": 4.75,
+    "unknown": 1
+   },
+   {
+    "label": "Enduse ABS",
+    "mandatory_fails": 0,
+    "material_id": "enduse_abs",
+    "score": 3.4,
+    "unknown": 2
+   }
+  ],
+  "orientations": [
+   {
+    "J": 0.2605,
+    "bed_contact_area": 7507.938681725805,
+    "height": 22.000000534113497,
+    "overhang_area": 6374.508882795057,
+    "overhang_fraction": 0.0921,
+    "stair_area": 12895.889256905353,
+    "up": [
+     -0.0,
+     -1.0,
+     -0.0
+    ]
+   },
+   {
+    "J": 0.4733,
+    "bed_contact_area": 1891.2919477236583,
+    "height": 22.000000534113497,
+    "overhang_area": 11887.309994958734,
+    "overhang_fraction": 0.1717,
+    "stair_area": 12895.889256905353,
+    "up": [
+     0.0,
+     1.0,
+     0.0
+    ]
+   }
+  ],
+  "routes": []
+ },
+ "chosen_candidate": {
+  "batch": null,
+  "material": {
+   "checks": [
+    {
+     "evidence": "оценка класса: excellent",
+     "manufacturer_claim": true,
+     "property": "oil",
+     "requirement_id": "R1",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: good",
+     "manufacturer_claim": false,
+     "property": "ozone",
+     "requirement_id": "R2",
+     "status": "pass"
+    },
+    {
+     "evidence": "оценка класса: excellent",
+     "manufacturer_claim": true,
+     "property": "impact",
+     "requirement_id": "R3",
+     "status": "pass"
+    },
+    {
+     "evidence": "подтверждается только испытаниями",
+     "manufacturer_claim": false,
+     "property": "balance",
+     "requirement_id": "R4",
+     "status": "unknown"
+    },
+    {
+     "evidence": "жёсткий",
+     "manufacturer_claim": false,
+     "property": "rigid",
+     "requirement_id": "R5",
+     "status": "pass"
+    },
+    {
+     "evidence": "профиль: 1.05 г/см³",
+     "manufacturer_claim": false,
+     "property": "density_g_cm3",
+     "requirement_id": "R6",
+     "status": "pass"
+    },
+    {
+     "evidence": "HDT 150…190 ≥ 80 (T+запас)",
+     "manufacturer_claim": false,
+     "property": "service_temp_max_c",
+     "requirement_id": "R7",
+     "status": "pass"
+    }
+   ],
+   "guid": "51d24a11-e727-4117-b36d-61719b161581",
+   "id": "enduse_pa6",
+   "label": "Enduse PA6"
+  },
+  "orientation": {
+   "placement": "центр стола (затем arrangeAll)",
+   "rotation_axis_angle": {
+    "angle_deg": 90.0,
+    "axis": [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   },
+   "rule": "axis_vertical",
+   "size_after_mm": [
+    169.0,
+    169.0,
+    22.0
+   ],
+   "translation_mm": [
+    -84.5,
+    -84.5,
+    22.003
+   ],
+   "up_vector_model": [
+    -0.0,
+    -1.0,
+    -0.0
+   ]
+  },
+  "printing_mode": "classic",
+  "quality": {
+   "layer_height": 0.2,
+   "name": "Draft",
+   "quality_type": "draft"
+  },
+  "route_reasons": [
+   "в задании указан 3D"
+  ]
+ },
+ "effective_settings": {
+  "adhesion_type": "brim",
+  "cool_fan_speed": 0.0,
+  "infill_sparse_density": 100.0,
+  "layer_height": 0.2,
+  "material_bed_temperature": 100.0,
+  "material_print_temperature": 260.0,
+  "material_standby_temperature": 175.0,
+  "printing_mode": "classic",
+  "retraction_amount": 7.0,
+  "retraction_speed": 25.0,
+  "speed_print": 40.0,
+  "support_enable": true,
+  "top_bottom_thickness": 2.0,
+  "wall_line_count": 5
+ },
+ "evidence_level": "analytical_screen",
+ "flags": [
+  "rotor"
+ ],
+ "geometry": {
+  "area_mm2": 69215.35684540257,
+  "bbox_size": [
+   169.0,
+   22.000000534113497,
+   169.0
+  ],
+  "open_edges": 0,
+  "rotation_axis": {
+   "axis_line_hits": 0,
+   "axisymmetric": false,
+   "bore_radius": 50.98991660901497,
+   "centroid_offset": 1.738184933276979e-05,
+   "length": 22.000000534113497,
+   "max_outer_radius": 84.48747847259526,
+   "min_outer_radius": 84.4874784498531,
+   "point": [
+    84.50000028387338,
+    13.168288168988896,
+    84.50000038993369
+   ],
+   "r_max": 84.48747847259526,
+   "revolution_score": 0.815806514693632,
+   "revolved_area_fraction": 0.5982238991036922,
+   "through_bore": true,
+   "vector": [
+    0.0,
+    1.0,
+    0.0
+   ]
+  },
+  "triangles": 11252,
+  "volume_mm3": 53179.1518259724
+ },
+ "machine": {
+  "definition_id": "hte530v5.2",
+  "name": "Stereotech Hybrid 530 V5.2"
+ },
+ "missing_inputs": [
+  "масса ротора и метод балансировки (класс G и г·мм не эквивалентны без массы и частоты)"
+ ],
+ "notes": [
+  "Высота слоя 0.20 мм задаётся профилем качества draft.",
+  "Материал гигроскопичен: сушка перед печатью обязательна."
+ ],
+ "numbers": {
+  "rpm": 2950.0,
+  "service_temp_max_c": 70.0,
+  "service_temp_min_c": 10.0
+ },
+ "policy": {
+  "decision": {
+   "flexible_speed_max": 25.0,
+   "full_mode_min_bore_mm": 10.0,
+   "infill_decorative_pct": 10.0,
+   "infill_default_pct": 20.0,
+   "infill_loaded_pct": 50.0,
+   "min_base_diameter_mm": 6.0,
+   "nozzle_mm": 0.4,
+   "orientation_weights": {
+    "contact": 0.6,
+    "height": 0.3,
+    "overhang": 2.0,
+    "stair": 0.2,
+    "stair_surface": 1.0
+   },
+   "plate_clearance_mm": 10.0,
+   "precision_outer_wall_speed": 20.0,
+   "raft_layers_min": 5,
+   "rotor_axis_score": 0.6,
+   "skin_min_mm": 1.2,
+   "solid_volume_limit_cm3": 200.0,
+   "support_overhang_fraction": 0.01,
+   "wall_default_mm": 1.2,
+   "wall_flexible_mm": 1.6,
+   "wall_load_mm": 2.0
+  },
+  "requirements": {
+   "heat_margin_c": 10.0,
+   "hydrophobic_max_water_pct": 0.5,
+   "non_brittle_min_elongation_pct": 3.0,
+   "stiff_min_modulus_mpa": 3000.0
+  }
+ },
+ "qualification_plan": [
+  {
+   "property": "balance",
+   "requirement_id": "R4",
+   "test": "балансировка ротора после печати"
+  }
+ ],
+ "rejected_settings": [],
+ "requirements": [
+  {
+   "comparator": "rating>=",
+   "id": "R1",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "oil",
+   "provenance": "Среда эксплуатации: Цех металлообработки (воздействие масляного тумана СОЖ, металлической пыли, озона).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R2",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "ozone",
+   "provenance": "Среда эксплуатации: Цех металлообработки (воздействие масляного тумана СОЖ, металлической пыли, озона).",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "rating>=",
+   "id": "R3",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "отсутствие хрупкого разрушения",
+   "property": "impact",
+   "provenance": "Штатные литые пластиковые крыльчатки со временем становятся хрупкими из-за старения полимера и воздействия озона, лопасти лопаются от случайного попадания стружки или при заклинивании кожуха.",
+   "unit": null,
+   "value": "good"
+  },
+  {
+   "comparator": "verified",
+   "id": "R4",
+   "interpretation_status": "explicit",
+   "kind": "qualification",
+   "mandatory": true,
+   "note": "балансировка ротора",
+   "property": "balance",
+   "provenance": "Алюминиевые аналоги создают сильный аэродинамический шум и при дисбалансе разбивают подшипники двигателя.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "==",
+   "id": "R5",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "деталь не должна быть эластомером",
+   "property": "rigid",
+   "provenance": "Под действием центробежной силы размягченные лопасти начнут изгибаться, задевать за кожух и разрушатся.",
+   "unit": null,
+   "value": true
+  },
+  {
+   "comparator": "<=",
+   "id": "R6",
+   "interpretation_status": "explicit",
+   "kind": "material",
+   "mandatory": true,
+   "note": null,
+   "property": "density_g_cm3",
+   "provenance": "Материал должен быть максимально легким (не тяжелее 1.25 гсм³), чтобы снизить момент инерции ротора и нагрузку на подшипники при пуске и торможении.",
+   "unit": "g/cm3",
+   "value": 1.25
+  },
+  {
+   "comparator": ">=",
+   "id": "R7",
+   "interpretation_status": "derived",
+   "kind": "material",
+   "mandatory": true,
+   "note": "теплостойкость ≥ T_max + запас 10 °C (политика)",
+   "property": "service_temp_max_c",
+   "provenance": "Температурный режим: диапазон +10°C ... +70°C. | Температура на поверхности крыльчатки может стабильно держаться около 60-65°C. | Материал не должен размягчаться при +65°C.",
+   "unit": "degC",
+   "value": 70.0
+  }
+ ],
+ "scene_operations": [
+  {
+   "op": "load",
+   "path": "data/examples/6. Крыльчатка охлаждения электродвигателя - 3D/Крыльчатка охлаждения электродвигателя.STL"
+  },
+  {
+   "axis_angle": {
+    "angle_deg": 90.0,
+    "axis": [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   },
+   "frame": "STL/принтер, Z вверх (в сцене Cura Y вверх: (x, y, z) → (x, z, -y))",
+   "matrix": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ]
+   ],
+   "op": "rotate"
+  },
+  {
+   "op": "translate",
+   "placement": "центр стола (затем arrangeAll)",
+   "vector_mm": [
+    -84.5,
+    -84.5,
+    22.003
+   ]
+  },
+  {
+   "op": "arrangeAll"
+  }
+ ],
+ "setting_patch": [
+  {
+   "key": "printing_mode",
+   "reason": "в задании указан 3D",
+   "requirement_ids": [],
+   "rule": "route",
+   "schema_default": "classic",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "classic"
+  },
+  {
+   "key": "wall_line_count",
+   "reason": "нагрузка/вращение/износ: материал у наружного контура (момент инерции сечения); t=2.0 мм → N=5 при ширине 0.4 мм",
+   "requirement_ids": [
+    "R3"
+   ],
+   "rule": "walls",
+   "schema_default": 2,
+   "scope": "global",
+   "type": "int",
+   "unit": null,
+   "value": 5
+  },
+  {
+   "key": "top_bottom_thickness",
+   "reason": "кожа не тоньше стенки: 10 слоёв по 0.20 мм",
+   "requirement_ids": [],
+   "rule": "skin",
+   "schema_default": 0.8,
+   "scope": "global",
+   "type": "float",
+   "unit": "mm",
+   "value": 2.0
+  },
+  {
+   "key": "infill_sparse_density",
+   "reason": "ротор: однородная плотность для балансировки",
+   "requirement_ids": [
+    "R4"
+   ],
+   "rule": "infill",
+   "schema_default": 20,
+   "scope": "global",
+   "type": "float",
+   "unit": "%",
+   "value": 100.0
+  },
+  {
+   "key": "support_enable",
+   "reason": "нависания 9.2% площади поверхности",
+   "requirement_ids": [],
+   "rule": "support",
+   "schema_default": false,
+   "scope": "global",
+   "type": "bool",
+   "unit": null,
+   "value": true
+  },
+  {
+   "key": "adhesion_type",
+   "reason": "склонность к короблению (PA6) или высокая деталь на малой опоре",
+   "requirement_ids": [],
+   "rule": "adhesion",
+   "schema_default": "brim",
+   "scope": "global",
+   "type": "enum",
+   "unit": null,
+   "value": "brim"
+  }
+ ],
+ "status": "needs_calibration",
+ "trace": [
+  {
+   "detail": {
+    "fails": 0,
+    "material": "enduse_pa6",
+    "score": 6.6
+   },
+   "rule": "screen_rank",
+   "step": "material"
+  },
+  {
+   "detail": {
+    "hint": "3D",
+    "mode": "classic",
+    "revolution_score": 0.815806514693632,
+    "through_bore": true
+   },
+   "rule": "mode_hint+axis",
+   "step": "route"
+  },
+  {
+   "detail": {
+    "J": 0.2605,
+    "candidates": 2,
+    "chosen_up": [
+     -0.0,
+     -1.0,
+     -0.0
+    ]
+   },
+   "rule": "axis_vertical",
+   "step": "orientation"
+  },
+  {
+   "detail": {
+    "layer": 0.2,
+    "quality": "draft"
+   },
+   "rule": "tolerance/surface/material",
+   "step": "layer"
+  },
+  {
+   "detail": {
+    "infill": 100.0,
+    "support": 0.0921,
+    "walls": 5
+   },
+   "rule": "rules",
+   "step": "settings"
+  }
+ ],
+ "verification": {
+  "fits_build_volume": true,
+  "patch_valid": true,
+  "slice_verified": false
+ },
+ "version": "baseline-0.1.0",
+ "warnings": []
+}
