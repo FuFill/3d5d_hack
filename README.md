@@ -89,9 +89,9 @@ Undo ([PRESETS.md](plugin/PRESETS.md), задание — [presets_creation.md](
 
 ## Проверки
 
-Последняя проверка ядра и оболочки: **286 pass, 1 skip**, из них 57 тестов
-оболочки (основной прогон и дополнительные проверки полей давления, без повторного
-подсчёта одинаковых тестов). [Отчёт](experiments/pressure_validation/software_checks.json).
+Последний полный прогон ядра и оболочки после объединения с `main`:
+**293 pass, 1 skip**, из них 64 теста оболочки.
+[Отчёт](experiments/pressure_validation/software_checks.json).
 В настоящем STE ранее проверены загрузка STL и DOCX через
 HTTP, выбор по attachment/object ID, worker, apply/readback, CuraEngine,
 G-code/3MF, единый Undo/Redo и соединение с Timeweb.
