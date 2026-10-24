@@ -162,6 +162,17 @@ def compile_patch(decisions, resolver, extruder="0"):
             "reason_requirement_ids": d.reason_requirement_ids, "model_ids": d.model_ids,
             "old_effective_value": old, "stage": stage, "note": d.note,
         })
+    patched = validate_items(items, resolver, errors, warnings)
+    return {"items": items, "errors": errors, "warnings": warnings, "ok": not errors,
+            "resolver": patched}
+
+
+def validate_items(items, resolver, errors, warnings):
+    """Order compiled items, check dependent pairs, bounds and enabled state over the whole patch.
+
+    Items are already in slicer units. Returns the patched resolver; errors and
+    warnings are appended in place.
+    """
     keys = set(i["key"] for i in items)
     for a, b in EXCLUSIVE:
         if a in keys and b in keys:
@@ -188,8 +199,7 @@ def compile_patch(decisions, resolver, extruder="0"):
         if en is False:
             warnings.append({"key": i["key"], "warning": "setting is disabled in this configuration; "
                                                          "the value will not take effect"})
-    return {"items": items, "errors": errors, "warnings": warnings, "ok": not errors,
-            "resolver": patched}
+    return patched
 
 
 def effective_settings(resolver, keys, extruder="0"):

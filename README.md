@@ -60,11 +60,12 @@
 - Успешная нарезка не подтверждает физический оптимум, прочность или стабильность:
   `physical_print_approval=false`. Native FE-поиск остаётся отдельным API/CLI.
 
-Сейчас ядро использует defaults определения принтера и данные профиля материала,
-а runtime формирует `Planner process profile`. Автоматический выбор полной
-совместимой базы native-пресетов printer/variant/material/quality и минимального
-patch поверх неё — **будущая задача**, только описанная в
-[presets_creation.md](presets_creation.md). В этой работе она не реализована.
+Оболочка передаёт ядру снимок установленного каталога STE. Ядро выбирает совместимую
+native-базу printer/variant/material/quality, наследует её значения и пишет только
+минимальный обоснованный patch; runtime применяет реальные контейнеры одной операцией
+Undo ([PRESETS.md](plugin/PRESETS.md), задание — [presets_creation.md](presets_creation.md)).
+Без каталога (CLI) сохраняется прежний `Planner process profile` с явной пометкой.
+Проверка на настоящем STE 7.10.12 для этого режима ещё не выполнена.
 
 ## Проверки
 
@@ -94,7 +95,7 @@ python plugin/tools/check_ai_assistant_runtime.py
 | Физика фактических траекторий | [plugin/TOOLPATH_PHYSICS.md](plugin/TOOLPATH_PHYSICS.md) |
 | Границы интеграции и незавершённые исследования | [plugin/SHELL_INTEGRATION_HANDOFF.md](plugin/SHELL_INTEGRATION_HANDOFF.md) |
 | Данные, источники, формулы и исследования | [data/README.md](data/README.md) |
-| Будущее использование пресетов: промпт, без реализации | [presets_creation.md](presets_creation.md) |
+| Native-пресеты как база плана | [plugin/PRESETS.md](plugin/PRESETS.md), задание — [presets_creation.md](presets_creation.md) |
 
 Исследовательские тексты и ранние отчёты сохраняют исходные даты, числа и
 условия экспериментов; текущий статус запуска и API приведён здесь.

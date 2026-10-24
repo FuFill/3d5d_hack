@@ -9,7 +9,7 @@ import hashlib
 import json
 from collections import Counter
 
-from . import compiler, surrogate
+from . import compiler, presets, surrogate
 from .result import computed, unknown, invalid, is_number, MODEL_EXPERIMENTAL
 
 CONTEXT_KEYS = ("machine_id", "material_id", "printing_mode", "geometry_sha256", "rotation")
@@ -60,6 +60,13 @@ def _assess_one(data, context, resolver, changes):
             return unknown(model_id, "missing calibration context: " + key, [key], status="needs_input")
         if not _same(training_context[key], context.get(key)):
             return unknown(model_id, "calibration context differs: " + key, status="out_of_domain")
+    if context.get("preset_base") is not None:
+        # A plan over a native preset base: the experiment must name the same containers.
+        if training_context.get("preset_base") is None:
+            return unknown(model_id, "declare the native preset base (calibration_context.preset_base) of the experiment",
+                           ["preset_base"], status="needs_input")
+        if not presets.same_base(training_context["preset_base"], context["preset_base"]):
+            return unknown(model_id, "calibration preset base differs", status="out_of_domain")
     fixed = training_context.get("fixed_settings")
     if not isinstance(fixed, dict) or not fixed:
         return unknown(model_id, "declare the non-varied process settings", ["fixed_settings"],

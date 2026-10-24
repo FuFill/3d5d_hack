@@ -14,6 +14,7 @@ import os
 
 from . import requirements as reqmod
 from . import geometry, materials, routes, process_plan, structure, compiler, verification, calibration, functional, robustness
+from . import presets
 from .settings_schema import load_machine_schema, SettingResolver, material_settings_from_file
 from .result import (PASS, FAIL, UNKNOWN, EVIDENCE_DOCUMENT, EVIDENCE_ANALYTICAL, DECISION_INFEASIBLE, to_json)
 
@@ -40,9 +41,46 @@ def default_resources_dir():
     raise IOError("STE Slicer resources directory not found; set STE_RESOURCES_DIR")
 
 
+def material_file_id(material):
+    name = os.path.basename((material.slicer if material else {}).get("file") or "")
+    return name.replace(".xml.fdm_material", "").replace(".fdm_material", "") or None
+
+
+def _preset_plan(schema, catalog, machine_id, material, mode, decisions, load_class, allowed_quality_changes):
+    """Select the native base P and the minimal validated Delta of the plan over it."""
+    context = {"machine_id": machine_id, "extruder": "0", "material_file_id": material_file_id(material),
+               "material_guid": (material.slicer if material else {}).get("guid"), "printing_mode": mode,
+               "required_nozzle_mm": next((d.value for d in decisions if d.quantity == "nozzle_size"), None),
+               "allowed_quality_changes": list(allowed_quality_changes or [])}
+    if material is None:
+        return presets._needs_input("no admissible material", ["see verification and rejected materials"], []), None
+
+    def evaluate(candidate):
+        base = presets.resolver_for(schema, catalog, candidate)
+        full = compiler.compile_patch(decisions, base)
+        if full["errors"]:
+            return {"delta_count": None, "errors": full["errors"]}
+        minimal = presets.minimal_patch(full["items"], base, load_class)
+        return {"delta_count": len(minimal["items"]), "errors": minimal["errors"], "patch": minimal,
+                "resolver": base}
+
+    selection = presets.select_base(catalog, context, evaluate)
+    return selection, (selection.get("evaluation") or {}).get("resolver")
+
+
 def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE, catalog=None,
               preferred_materials=None, forced_mode=None, source=None, calibration_data=None, setting_changes=None,
-              functional_spec=None, llm_items=None, noise_spec=None, robustness_limits=None):
+              functional_spec=None, llm_items=None, noise_spec=None, robustness_limits=None,
+              preset_catalog=None, allowed_quality_changes=None):
+    """Decision for one TZ and STL.
+
+    preset_catalog: application-owned snapshot of the installed STE registry
+    (presets.CATALOG_SCHEMA). With it the plan inherits a compatible native
+    printer/variant/material/quality base and writes only a minimal Delta.
+    allowed_quality_changes: custom profile names the user explicitly allowed.
+    Without a catalog the previous planner process profile is produced and
+    marked as such (preset_selection.status = "not_requested").
+    """
     trace = []
     resources_dir = resources_dir or default_resources_dir()
     catalog = catalog or materials.load_catalog()
@@ -70,7 +108,14 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
 
     # machine
     schema = load_machine_schema(resources_dir, machine_id)
-    base = SettingResolver(schema)
+    if preset_catalog is not None:
+        catalog_errors = presets.validate_catalog(preset_catalog)
+        if catalog_errors:
+            raise ValueError("invalid preset catalog: " + "; ".join(catalog_errors[:5]))
+        # Installed nozzle and machine settings, independent of material and quality.
+        base = presets.resolver_for(schema, preset_catalog)
+    else:
+        base = SettingResolver(schema)
     caps = routes.machine_capabilities(base)
     trace.append({"step": "inspect_machine", "machine": machine_id, "chain": schema.chain,
                   "nozzles": caps["nozzle_diameters"], "build_volume": caps["build_volume"],
@@ -164,14 +209,31 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
                   "chosen": material.id if material else None})
 
     # process decisions and patch
-    mat_settings = material_settings_from_file(material.slicer) if material else {}
-    resolver = SettingResolver(schema, {"printing_mode": mode}, material_settings=mat_settings)
     decisions, notes = process_plan.plan_process(reqset, material, mode, ptype, analysis, caps, orientation,
                                                  chosen_route) if material else ([], [])
-    patch = compiler.compile_patch(decisions, resolver)
+    load_class = next((n["value"] for n in notes if n.get("item") == "load_class"), "general")
+    selection, base_resolver = None, None
+    if preset_catalog is not None:
+        selection, base_resolver = _preset_plan(schema, preset_catalog, machine_id, material, mode, decisions,
+                                                load_class, allowed_quality_changes)
+        trace.append({"step": "select_native_preset", "status": selection["status"],
+                      "selected": selection.get("selected"), "reason": selection.get("reason"),
+                      "alternatives": selection.get("alternatives"), "rejected": selection.get("rejected")})
+    if base_resolver is not None:
+        resolver = base_resolver.copy_with({"printing_mode": mode})
+        patch = selection["evaluation"]["patch"]
+    else:
+        mat_settings = material_settings_from_file(material.slicer) if material else {}
+        resolver = SettingResolver(schema, {"printing_mode": mode}, material_settings=mat_settings)
+        patch = compiler.compile_patch(decisions, resolver)
+        if selection is not None:
+            # No compatible base: the self-made profile below is only an analysis
+            # preview and cannot be applied (patch error blocks the runtime).
+            patch["errors"].append({"error": "needs_input: no compatible native preset base: " + selection["reason"]})
     effective = compiler.effective_settings(patch["resolver"], READBACK_KEYS)
     trace.append({"step": "compile_patch", "items": len(patch["items"]), "errors": patch["errors"],
-                  "warnings": patch["warnings"], "process_notes": notes})
+                  "warnings": patch["warnings"], "process_notes": notes,
+                  "inherited_from_base": len(patch.get("inherited") or [])})
 
     # Calibration concerns this exact part/material/route and the planned process.
     # These are effects of proposed changes, not evidence of absolute part strength.
@@ -191,6 +253,8 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     if functional_patch is not None:
         selected = functional_result.value["selected"]
         patch = functional_patch
+        if base_resolver is not None:
+            patch = presets.minimal_patch(functional_patch["items"], base_resolver, load_class)
         effective = compiler.effective_settings(patch["resolver"], READBACK_KEYS)
         scene_ops[1].update({"rotation": selected["rotation"], "translation": selected["translation"],
                              "note": "functional orientation under explicit mechanical/surface constraints"})
@@ -206,6 +270,11 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     calibration_context = {"machine_id": machine_id, "material_id": material.id if material else None,
                            "printing_mode": mode, "geometry_sha256": digest.hexdigest(),
                            "rotation": scene_ops[1]["rotation"], "settings": dict(effective)}
+    base_presets = None
+    if base_resolver is not None:
+        base_presets = presets.base_presets_record(preset_catalog, selection["candidate"])
+        # DML coefficients transfer only within the same native containers P.
+        calibration_context["preset_base"] = presets.base_identity(base_presets)
     causal = calibration.assess_double_ml(calibration_data, calibration_context, patch["resolver"], setting_changes)
     trace.append({"step": "assess_double_ml", "status": causal.status,
                   "note": "independent single-setting comparisons; deterministic patch and qualification unchanged"})
@@ -236,6 +305,8 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     status = verification.decision_status(ver, missing, calibration_needed)
     if prototype_only:
         status = DECISION_INFEASIBLE
+    if selection is not None and selection["status"] != "selected" and status != DECISION_INFEASIBLE:
+        status = "needs_input"
     if functional_spec is not None and status != DECISION_INFEASIBLE:
         if functional_result.status in ("invalid_input", "out_of_domain", "needs_input"):
             status = "needs_input"
@@ -273,6 +344,8 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
         "setting_patch": {"items": patch["items"], "errors": patch["errors"], "warnings": patch["warnings"],
                           "payload": compiler.patch_to_slicer_payload(patch)},
         "effective_settings": effective,
+        "base_presets": base_presets,
+        "preset_selection": _selection_summary(selection),
         "calibration_context": calibration_context,
         "causal_analysis": causal.to_dict(),
         "functional_analysis": functional_result.to_dict(),
@@ -287,7 +360,15 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
                                               "reason": "simulation_requires_validation", "mandatory": True,
                                               "test": "Статическое нагружение напечатанной детали и контроль прогиба/поверхностей",
                                               "conditions": "те же закрепления, нагрузки, ориентация и профиль; Ra и плоскостность измерить"})
+    if base_resolver is not None:
+        keys = sorted(set(READBACK_KEYS) | set(i["key"] for i in patch["items"]))
+        decision["baseline_effective_settings"] = compiler.effective_settings(base_resolver, keys)
+        decision["setting_patch"]["changes"] = presets.change_records(patch)
+        decision["setting_patch"]["inherited_items"] = patch.get("inherited") or []
+        decision["setting_provenance"] = presets.provenance(base_resolver, patch, keys)
     decision["explanation"] = verification.explain_decision(decision)
+    if selection is not None:
+        decision["explanation"] = presets.explain(selection, patch) + decision["explanation"]
     # A separate final assessment: uncertain manufacturing inputs never become
     # invented material properties or silently replace the accepted process.
     functional_value = (functional_result.value or {})
@@ -322,6 +403,16 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     else:
         decision["robustness_analysis"] = robustness.assess_process_stability(effective, {}, noise_spec, robustness_limits).to_dict()
     return decision
+
+
+def _selection_summary(selection):
+    if selection is None:
+        return {"status": "not_requested", "native_preset": False,
+                "note": "no preset catalog: legacy planner process profile over definition defaults and "
+                        "material profile values; it is not a selected native preset"}
+    out = dict((k, v) for k, v in selection.items() if k not in ("candidate", "evaluation"))
+    out["native_preset"] = selection["status"] == "selected"
+    return out
 
 
 def plan_case_files(docx_path, stl_path, **kw):

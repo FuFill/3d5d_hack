@@ -8,6 +8,10 @@ effective values over a stack of layers:
 
     user (global/extruder) -> material -> extruder definition -> machine definition chain -> schema
 
+With a native preset base the instance layers follow STE's _ContainerIndexes
+(SteSlicerContainerStack): user -> quality_changes -> quality -> material ->
+variant -> definition_changes -> definition, for the global and every extruder stack.
+
 This is an offline preview used for validation and planning. Inside the
 running slicer the authoritative values are read back from Uranium after a
 patch is applied (resolve_settings / read-after-write).
@@ -342,16 +346,29 @@ class SettingResolver(object):
       PropertyEvaluationContext.rootStack), formula functions in their own stacks.
     All extruders of the definition are enabled (STE default); extruders without a
     material use definition defaults.
+
+    global_layers / extruder_layers: optional ordered [(name, values)] instance
+    containers below the user container (quality_changes ... definition_changes).
+    Container values beginning with "=" are setting functions, as in Uranium.
+    Any value stored in a global instance container has InstanceState.User, so
+    the definition "resolve" is skipped for it (GlobalStack._shouldResolve).
+    Without extruder_layers the material settings form the only extruder layer.
     """
 
     def __init__(self, schema, user_global=None, user_extruders=None, material_settings=None,
-                 material_by_extruder=None):
+                 material_by_extruder=None, global_layers=None, extruder_layers=None):
         self.schema = schema
         self.user_global = dict(user_global or {})
         self.user_extruders = dict((str(k), dict(v)) for k, v in (user_extruders or {}).items())
         self.material_by_extruder = dict((str(k), dict(v)) for k, v in (material_by_extruder or {}).items())
         if material_settings is not None:
             self.material_by_extruder.setdefault("0", {}).update(material_settings)
+        self.global_layers = [(str(n), dict(v)) for n, v in (global_layers or [])]
+        if extruder_layers is None:
+            self.extruder_layers = dict((pos, [("material", vals)]) for pos, vals in self.material_by_extruder.items())
+        else:
+            self.extruder_layers = dict((str(pos), [(str(n), dict(v)) for n, v in layers])
+                                        for pos, layers in extruder_layers.items())
         self._cache = {}
         self._stack = []
         self._resolving = set()
@@ -362,7 +379,13 @@ class SettingResolver(object):
         e = dict((k, dict(v)) for k, v in self.user_extruders.items())
         for pos, vals in (user_extruders or {}).items():
             e.setdefault(str(pos), {}).update(vals)
-        return SettingResolver(self.schema, g, e, None, self.material_by_extruder)
+        return SettingResolver(self.schema, g, e, None, self.material_by_extruder,
+                               self.global_layers, self.extruder_layers)
+
+    def without_user(self):
+        """The same container layers with empty user containers: Resolve(P)."""
+        return SettingResolver(self.schema, None, None, None, self.material_by_extruder,
+                               self.global_layers, self.extruder_layers)
 
     # -- public API ----------------------------------------------------------------
 
@@ -379,8 +402,13 @@ class SettingResolver(object):
             return "user_extruder_" + stack
         if key in self.user_global:
             return "user_global"
-        if stack is not None and key in self.material_by_extruder.get(stack, {}):
-            return "material"
+        if stack is not None:
+            for name, values in self.extruder_layers.get(stack, []):
+                if key in values:
+                    return name if name == "material" else name + "_extruder_" + stack
+        for name, values in self.global_layers:
+            if key in values:
+                return name + "_global"
         return "definition"
 
     def enabled(self, key, extruder=None):
@@ -451,7 +479,7 @@ class SettingResolver(object):
     def _global_get(self, key, prop, root):
         if key not in self.schema.definitions:
             return None
-        if prop == "value" and key not in self.user_global and key not in self._resolving:
+        if prop == "value" and not self._global_instance_value(key) and key not in self._resolving:
             res = self.schema.field(key, "resolve")
             if res is not None:
                 self._resolving.add(key)
@@ -479,14 +507,18 @@ class SettingResolver(object):
         raw, _ = self._raw(key, prop, stack)
         return self._eval(raw, root)
 
+    def _global_instance_value(self, key):
+        return key in self.user_global or any(key in values for _, values in self.global_layers)
+
     def _raw(self, key, prop, stack):
         """Raw property (literal or expression string) like ContainerStack.getRawProperty."""
         if prop == "value":
             if stack is not None:
                 if key in self.user_extruders.get(stack, {}):
                     return _Literal(self.user_extruders[stack][key]), stack
-                if key in self.material_by_extruder.get(stack, {}):
-                    return _Literal(self.material_by_extruder[stack][key]), stack
+                for _, values in self.extruder_layers.get(stack, []):
+                    if key in values:
+                        return _instance_raw(values[key], self.schema.definition(key)), stack
                 if key in self.schema.extruder_definitions:
                     v = self.schema.extruder_field(key, "value", stack)
                     if v is None:
@@ -494,6 +526,9 @@ class SettingResolver(object):
                     return v, stack
             if key in self.user_global:
                 return _Literal(self.user_global[key]), None
+            for _, values in self.global_layers:
+                if key in values:
+                    return _instance_raw(values[key], self.schema.definition(key)), None
             if key in self.schema.definitions:
                 v = self.schema.field(key, "value")
                 if v is None:
@@ -594,13 +629,26 @@ class _Literal(object):
         self.value = value
 
 
+def _instance_raw(value, definition):
+    """Instance container value: "=expr" is a SettingFunction (Uranium SettingInstance.setProperty);
+    a stored string literal is read with the definition type (SettingDefinition.settingValueFromString)."""
+    if isinstance(value, str) and value.strip().startswith("="):
+        return value.strip()[1:]
+    return _Literal(coerce(definition, value))
+
+
 def coerce(definition, value):
     t = definition.type if definition else None
     if value is None:
         return None
     try:
         if t == "int":
-            return int(round(float(value)))
+            # Uranium never rounds an int setting: a formula result is returned as is and
+            # a stored string goes through ast.literal_eval ("3.7" -> 3.7). STE sends
+            # str(value) and CuraEngine truncates it (stoul/atoi), so a fractional value
+            # such as the 5D raft_surface_layers 29.9 must stay fractional here.
+            number = float(value)
+            return int(number) if number.is_integer() else number
         if t == "float":
             return float(value)
         if t == "bool":

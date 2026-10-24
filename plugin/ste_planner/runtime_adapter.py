@@ -9,13 +9,155 @@ import uuid
 
 import numpy as np
 
-from . import geometry, functional
+from . import geometry, functional, presets
 
 PRINTER_TO_SCENE = np.array([[1., 0., 0.], [0., 0., 1.], [0., -1., 0.]])
+EMPTY_IDS = ("empty_quality_changes", "empty_quality", "empty_material", "empty_variant", "empty_definition_changes")
 
 
 class ApplyError(ValueError):
     pass
+
+
+# ---------------------------------------------------------------- native preset catalog (Qt thread)
+
+def _json_value(value):
+    if type(value).__name__ == "SettingFunction":
+        return str(value)               # "=expression", the form stored in .inst.cfg
+    if isinstance(value, (bool, str)) or value is None:
+        return value
+    if isinstance(value, (int, float)):
+        return value if not isinstance(value, float) or value == value else None
+    if isinstance(value, (list, tuple)):
+        return [_json_value(v) for v in value]
+    return str(value)
+
+
+def catalog_entry(app, container, kind):
+    """Serialise one instance container exactly like the worker expects (digest included)."""
+    if container is None or container.getId() in EMPTY_IDS or container.getId().startswith("empty_"):
+        return None
+    meta = container.getMetaData()
+    entry = {"id": container.getId(), "type": meta.get("type", kind), "name": container.getName(),
+             "definition": meta.get("definition"),
+             "values": dict((key, _json_value(container.getProperty(key, "value")))
+                            for key in sorted(container.getAllKeys()))}
+    for key in ("quality_type", "variant", "buildplate", "position"):
+        if meta.get(key) is not None:
+            entry[key] = str(meta[key])
+    if kind == "quality":
+        if meta.get("material") is not None:
+            entry["material"] = str(meta["material"])
+        entry["global_quality"] = str(meta.get("global_quality", False)).lower() in ("true", "1", "yes")
+        if meta.get("weight") is not None:
+            entry["weight"] = int(meta["weight"])
+    if meta.get("setting_version") is not None:
+        entry["setting_version"] = int(meta["setting_version"])
+    if kind == "material":
+        manager = app.getMaterialManager()
+        base = meta.get("base_file", container.getId())
+        entry.update({"base_file": base, "guid": meta.get("GUID"), "brand": meta.get("brand"),
+                      "material_type": meta.get("material"), "approximate_diameter": meta.get("approximate_diameter"),
+                      "root_material_id": manager.getRootMaterialIDWithoutDiameter(base),
+                      "fallback_root_ids": list(manager.getFallBackMaterialIdsByMaterial(container) or [])})
+    entry["digest"] = presets.container_digest(entry)
+    return entry
+
+
+def build_preset_catalog(app):
+    """Read-only snapshot of the installed registry for the active printer; Qt thread only.
+
+    Reads definitions, nozzle variants, materials, quality and quality_changes
+    through the public managers; it never changes the active project.
+    """
+    from steslicer.Machines.QualityManager import getMachineDefinitionIDForQualitySearch
+    stack = app.getGlobalContainerStack()
+    if stack is None:
+        raise ApplyError("Configure a printer before planning")
+    registry = app.getContainerRegistry()
+    definition = stack.definition
+    quality_definition = getMachineDefinitionIDForQualitySearch(definition)
+    materials = app.getMaterialManager()
+    extruders = {}
+    for position, extruder in sorted(stack.extruders.items()):
+        available = []
+        for root_id, node in sorted((materials.getAvailableMaterialsForMachineExtruder(stack, extruder) or {}).items()):
+            container = node.getContainer()
+            if container is not None:
+                available.append(catalog_entry(app, container, "material"))
+        extruders[str(position)] = {
+            "stack_id": extruder.getId(), "definition_id": extruder.definition.getId(),
+            "enabled": bool(extruder.isEnabled),
+            "variant": catalog_entry(app, extruder.variant, "variant"),
+            "definition_changes": catalog_entry(app, extruder.definitionChanges, "definition_changes"),
+            "nozzle_size": _json_value(extruder.getProperty("machine_nozzle_size", "value")),
+            "material_diameter": _json_value(extruder.getProperty("material_diameter", "value")),
+            "available_materials": available,
+            "current_material": catalog_entry(app, extruder.material, "material")}
+    qualities = []
+    for meta in registry.findContainersMetadata(type="quality"):
+        if meta.get("id") == "empty_quality" or meta.get("definition") not in (quality_definition, "fdmprinter"):
+            continue
+        found = registry.findInstanceContainers(id=meta["id"])
+        if len(found) == 1:
+            qualities.append(catalog_entry(app, found[0], "quality"))
+    quality_changes = []
+    for name, group in sorted(app.getQualityManager().getQualityChangesGroups(stack).items()):
+        node = group.node_for_global
+        global_entry = catalog_entry(app, node.getContainer() if node else None, "quality_changes")
+        quality_changes.append({
+            "name": name, "quality_type": group.quality_type, "origin": "user",
+            "definition": (global_entry or {}).get("definition"), "global": global_entry,
+            "extruders": dict((str(p), catalog_entry(app, n.getContainer(), "quality_changes"))
+                              for p, n in group.nodes_for_extruders.items() if n is not None)})
+    try:
+        buildplate = stack.getBuildplateName()
+    except AttributeError:
+        buildplate = None
+    return {"schema": presets.CATALOG_SCHEMA, "source": "ste_runtime", "ste_version": app.getVersion(),
+            "setting_version": int(app.SettingVersion),
+            "machine": {"definition_id": definition.getId(), "stack_id": stack.getId(),
+                        "quality_definition_id": quality_definition,
+                        "has_machine_quality": str(definition.getMetaDataEntry("has_machine_quality", False)).lower() == "true",
+                        "has_variants": str(definition.getMetaDataEntry("has_variants", False)).lower() == "true",
+                        "preferred_quality_type": definition.getMetaDataEntry("preferred_quality_type"),
+                        "buildplate_name": buildplate,
+                        "variant": catalog_entry(app, stack.variant, "variant"),
+                        "definition_changes": catalog_entry(app, stack.definitionChanges, "definition_changes")},
+            "extruders": extruders, "qualities": qualities, "quality_changes": quality_changes}
+
+
+def native_container(app, ref, index):
+    """Registry container for a recorded base reference; the content digest must be unchanged."""
+    from steslicer.Settings import steslicer_empty_instance_containers as empty
+    if ref is None:
+        return getattr(empty, EMPTY_IDS[index - 1] + "_container")
+    found = app.getContainerRegistry().findInstanceContainers(id=ref["id"])
+    if len(found) != 1:
+        raise ApplyError("stale plan: base container %s is missing or ambiguous" % ref["id"])
+    kind = presets.STACK_LAYERS[index - 1]
+    entry = catalog_entry(app, found[0], kind)
+    if entry is None or entry["digest"] != ref["digest"]:
+        raise ApplyError("stale plan: base container %s changed since planning" % ref["id"])
+    return found[0]
+
+
+def check_native_stacks(stack, record):
+    """Differences between the actual stacks (indices 1..5) and the recorded base P."""
+    differences = []
+    parts = [(None, stack)] + [(pos, stack.extruders.get(pos)) for pos in sorted(record["extruders"])]
+    for position, s in parts:
+        if s is None:
+            differences.append({"missing_extruder": position})
+            continue
+        expected = presets.stack_ids(record, position)
+        actual = [c.getId() for c in s.getContainers()[1:6]]
+        for index, (want, have) in enumerate(zip(expected, actual), 1):
+            want = want or EMPTY_IDS[index - 1]
+            if have != want:
+                differences.append({"stack": "global" if position is None else "extruder_" + position,
+                                    "layer": presets.STACK_LAYERS[index - 1], "expected": want, "actual": have})
+    return differences
 
 
 def sequential_triangles(vertices, faces):
@@ -82,6 +224,16 @@ def preflight(decision, mesh_path, machine_definition, demonstration=False, anal
         raise ApplyError("source STL SHA-256 differs")
     if (decision.get("chosen_material") or {}).get("id") != context.get("material_id"):
         raise ApplyError("material context mismatch")
+    record = decision.get("base_presets")
+    if record is not None:
+        if record.get("contract") != presets.CONTRACT:
+            raise ApplyError("unsupported preset contract: %s" % record.get("contract"))
+        if record["machine"]["definition_id"] != machine_definition:
+            raise ApplyError("stale plan: base presets belong to another machine")
+        if not presets.same_base(presets.base_identity(record), context.get("preset_base")):
+            raise ApplyError("preset base differs from the calibration context")
+    elif (decision.get("preset_selection") or {}).get("status") not in (None, "not_requested"):
+        raise ApplyError("needs_input: no compatible native preset base was selected")
     if decision.get("setting_patch", {}).get("errors"):
         raise ApplyError("planner patch contains errors")
     payload = decision.get("setting_patch", {}).get("payload", {})
@@ -118,6 +270,7 @@ def readback(app, decision):
     global_stack = app.getGlobalContainerStack()
     extruder = global_stack.extruders["0"]
     expected = dict(decision["effective_settings"])
+    record = decision.get("base_presets")
     value = (decision.get("functional_analysis") or {}).get("value") or {}
     if value.get("applied"):
         # The selected profile may include fields beyond the old readback list.
@@ -133,8 +286,12 @@ def readback(app, decision):
     context = decision.get("calibration_context") or {}
     if global_stack.definition.getId() != context.get("machine_id"):
         differences.append({"machine_context_changed": global_stack.definition.getId()})
-    material_file = (decision.get("chosen_material") or {}).get("slicer_file", "")
-    material_id = os.path.basename(material_file).replace(".xml.fdm_material", "").replace(".fdm_material", "")
+    if record is not None:
+        differences.extend(check_native_stacks(global_stack, record))
+        material_id = record["extruders"]["0"]["material"]["id"]
+    else:
+        material_file = (decision.get("chosen_material") or {}).get("slicer_file", "")
+        material_id = os.path.basename(material_file).replace(".xml.fdm_material", "").replace(".fdm_material", "")
     if extruder.material.getId() != material_id:
         differences.append({"material_context_changed": extruder.material.getId(), "expected": material_id})
     expected_backend = app.getBackendManager().getBackendByType(expected.get("printing_mode"))
@@ -183,14 +340,26 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
     matrix = scene_transform(transform["rotation"], transform["translation"])
     modifiers = [op for op in decision["scene_operations"] if op["op"] == "add_modifier_mesh"]
     modifier_meshes = [(op, modifier_local_vertices(op, matrix)) for op in modifiers]
-    material_file = (decision.get("chosen_material") or {}).get("slicer_file")
-    if not material_file:
-        raise ApplyError("installed material file required")
-    material_id = os.path.basename(material_file).replace(".xml.fdm_material", "").replace(".fdm_material", "")
-    materials = app.getContainerRegistry().findInstanceContainers(id=material_id)
-    if len(materials) != 1 or materials[0].getMetaDataEntry("type") != "material":
-        raise ApplyError("unique installed material container required: " + material_id)
-    material = materials[0]
+    record = decision.get("base_presets")
+    native = {}
+    if record is not None:
+        # Resolve and verify every container of P before staging anything.
+        for s in [stack] + list(stack.extruders.values()):
+            position = None if s is stack else s.getMetaDataEntry("position")
+            if position is not None and str(position) not in record["extruders"]:
+                raise ApplyError("stale plan: extruder %s is not part of the planned base" % position)
+            refs = presets.stack_refs(record, position)
+            native[s.getId()] = [native_container(app, ref, index) for index, ref in enumerate(refs, 1)]
+        material = None
+    else:
+        material_file = (decision.get("chosen_material") or {}).get("slicer_file")
+        if not material_file:
+            raise ApplyError("installed material file required")
+        material_id = os.path.basename(material_file).replace(".xml.fdm_material", "").replace(".fdm_material", "")
+        materials = app.getContainerRegistry().findInstanceContainers(id=material_id)
+        if len(materials) != 1 or materials[0].getMetaDataEntry("type") != "material":
+            raise ApplyError("unique installed material container required: " + material_id)
+        material = materials[0]
     plate = app.getMultiBuildPlateModel().activeBuildPlate
     if plate < 0:
         plate = 0
@@ -255,6 +424,13 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
                 # definition; fdmextruder alone does not define wall/infill keys.
                 user.setDefinition(stack.definition.getId())
                 app.getContainerRegistry().addContainer(user)
+                if record is not None:
+                    # Native base P: real quality_changes/quality/material/variant/
+                    # definition_changes containers; only Delta goes to the user container.
+                    containers[0] = user
+                    containers[1:6] = native[s.getId()]
+                    self.after.append(containers)
+                    continue
                 quality = InstanceContainer("ste_planner_quality_" + uuid.uuid4().hex)
                 quality.setMetaDataEntry("type", "quality")
                 quality.setMetaDataEntry("setting_version", app.SettingVersion)
@@ -281,7 +457,8 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
             # selected UI quality profile. Never pin derived wall thickness.
             main_index = self.stacks.index(stack.extruders["0"])
             self.profile_assignments = {}
-            for key in functional.PROCESS_KEYS:
+            # A native base keeps its inherited values; nothing beyond Delta is pinned.
+            for key in (functional.PROCESS_KEYS if record is None else ()):
                 expected = decision["effective_settings"][key]
                 target = main_index if stack.getProperty(key, "settable_per_extruder") else 0
                 self.after[target][0].setProperty(key, "value", expected)

@@ -111,6 +111,16 @@ def test_compile_patch_rejections():
     assert any("disabled" in w["warning"] for w in dis["warnings"])
 
 
+def test_int_settings_are_not_rounded_like_uranium():
+    """5D raft_surface_layers evaluates to 29.9: Uranium keeps it, CuraEngine later truncates str(value)."""
+    d = S.SettingDefinition("raft_surface_layers", {"type": "int"})
+    assert S.coerce(d, 29.900000000000002) == 29.900000000000002
+    assert S.coerce(d, "3.7") == 3.7                       # ast.literal_eval of a stored string
+    assert S.coerce(d, 3.0) == 3 and isinstance(S.coerce(d, 3.0), int)
+    assert S.coerce(d, "3") == 3 and isinstance(S.coerce(d, "3"), int)
+    assert S.coerce(d, "=expr") == "=expr"
+
+
 def test_stack_semantics_found_by_uranium_crosscheck():
     """Rules confirmed against Uranium (tools/uranium_crosscheck.py): 5940 values, 0 mismatches."""
     sch = _schema()

@@ -81,7 +81,8 @@ decision["status"], decision["setting_patch"]["payload"], decision["scene_operat
 | `process` | choose_layer_schedule, compute_flow_limit, compute_speed_schedule, allocate_tolerance, compensate_dimensions | стенки/кожа, подача, пределы скорости, движение, бюджет допуска, компенсация и знак offset |
 | `routes` | enumerate_routes, plan_5d | семантика 5D Spiral/Full из документации STE; диаметр основания = отверстию (Spiral) или сердечник внутри детали (Full) |
 | `process_plan` | choose_nozzle, support_plan, adhesion/cooling (из профиля), pack_batch | решения с обоснованием, политики P явно перечислены в `POLICY` |
-| `settings_schema` | resolve_settings | схема машины и резолвер, повторяющий стеки STE/Uranium; безопасный AST-вычислитель выражений |
+| `settings_schema` | resolve_settings | схема машины и резолвер, повторяющий стеки STE/Uranium (включая слои quality_changes/quality/material/variant/definition_changes); безопасный AST-вычислитель выражений |
+| `presets` | выбор native-базы | снимок каталога STE, группы quality как в QualityManager, детерминированный выбор базы, минимальный Δ и происхождение значений ([PRESETS.md](PRESETS.md)) |
 | `compiler` | compile_patch | тип, диапазоны, enabled, scope экструдера, проценты только на границе, whitelist режимов, запрет зависимых пар |
 | `gcode` | inspect_toolpath | слои, пустые слои, температуры, E-режим, ось A/C, линейная объёмная подача |
 | `optimize`, `surrogate` | optimize_candidates, domain_check, fit_response_model | Парето после отбора допустимых; RSM, GP и cross-fitted Double ML PLR, кластерная неопределённость, ограничение μ+κσ≤0, constrained EI |
@@ -99,9 +100,9 @@ decision["status"], decision["setting_patch"]["payload"], decision["scene_operat
 адаптивный слой не реализованы. Последний полный набор ядра: 186 pass, 1 skip;
 проверки оболочки после исправления источников: 24 pass.
 
-Схема принтера и профильные данные материала уже используются. Выбор полной
-native-базы printer/variant/material/quality и минимального override пока является
-заданием в [presets_creation.md](../presets_creation.md), без реализации.
+С каталогом установленного STE (`plan_case(..., preset_catalog=...)`) ядро выбирает
+совместимую native-базу printer/variant/material/quality и минимальный override поверх неё:
+[PRESETS.md](PRESETS.md). `presets.catalog_from_resources` даёт офлайн-предпросмотр для CLI.
 
 ## Double ML в планировщике
 

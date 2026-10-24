@@ -34,7 +34,10 @@ def calculate(request):
         raise ValueError("Source STL changed before planning")
     decision = plan_case(request["task_text"], path, resources_dir=request["resources_dir"],
                          machine_id=request["machine_id"], forced_mode=request.get("mode"),
-                         llm_items=request.get("llm_items"), source="AI Assistant", **request.get("planner_options", {}))
+                         llm_items=request.get("llm_items"), source="AI Assistant",
+                         preset_catalog=request.get("preset_catalog"),
+                         allowed_quality_changes=request.get("allowed_quality_changes"),
+                         **request.get("planner_options", {}))
     if digest(path) != request["geometry_sha256"]:
         raise ValueError("Source STL changed during planning")
     return {"request_id": request["request_id"], "decision": decision}

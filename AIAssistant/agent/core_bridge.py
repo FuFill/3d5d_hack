@@ -87,14 +87,26 @@ class CoreBridge:
         if not os.path.isdir(os.path.join(resources, "definitions")):
             from ste_planner.planner import default_resources_dir
             resources = default_resources_dir()
+        catalog = None
+        if self.settings().get("native_presets", True):
+            # Installed registry snapshot (no API keys, no project files); the
+            # worker selects the base only from these application-owned ids.
+            from ste_planner.runtime_adapter import build_preset_catalog
+            from ste_planner.presets import catalog_digest
+            try:
+                catalog = build_preset_catalog(self.app)
+            except Exception as exc:
+                raise ValueError("Cannot read the STE preset catalog (%s: %s); disable native_presets "
+                                 "only to fall back to the planner process profile" % (type(exc).__name__, exc))
         state = {"machine_id": stack.definition.getId(), "nodes": nodes,
                  "plate": self.app.getMultiBuildPlateModel().activeBuildPlate,
                  "containers": [[c.getId() for c in s.getContainers()]
                                 for s in [stack] + list(stack.extruders.values())],
                  "settings": [{k: s.getProperty(k, "value") for k in READBACK_KEYS}
-                              for s in [stack] + list(stack.extruders.values())]}
+                              for s in [stack] + list(stack.extruders.values())],
+                 "preset_catalog_sha256": catalog_digest(catalog) if catalog is not None else None}
         return {"signature": _hash(state), "scene_signature": _hash({"nodes": nodes, "plate": state["plate"]}),
-                "machine_id": state["machine_id"], "resources_dir": resources}
+                "machine_id": state["machine_id"], "resources_dir": resources, "preset_catalog": catalog}
 
     def plan(self, args, context=None):
         text, path = args.get("task_text"), args.get("mesh_path")
@@ -108,9 +120,12 @@ class CoreBridge:
         snapshot = run_on_main(self.app, self._snapshot)
         options, inputs = self._inputs()
         request_id = uuid.uuid4().hex
+        allowed = self.settings().get("allowed_quality_changes") or []
+        if not isinstance(allowed, list) or not all(isinstance(n, str) for n in allowed):
+            raise ValueError("allowed_quality_changes must be a list of custom profile names")
         request = dict(snapshot, request_id=request_id, task_text=text, mesh_path=path,
                        geometry_sha256=digest(path), mode=mode, llm_items=args.get("llm_items"),
-                       planner_options=options, inputs=inputs)
+                       planner_options=options, inputs=inputs, allowed_quality_changes=allowed)
         with self._lock:
             if self._process is not None:
                 raise ValueError("Planning is already running; cancel it first")
@@ -175,10 +190,21 @@ class CoreBridge:
         with self._lock:
             record = self._record(plan_id)
             decision = record["decision"]
+            base = decision.get("base_presets")
+            selection = decision.get("preset_selection") or {"status": "legacy_without_provenance",
+                                                             "native_preset": False}
             return dict({k: copy.deepcopy(decision.get(k)) for k in
                          ("status", "part_name", "chosen_material", "route", "effective_settings",
                           "missing_inputs", "explanation", "prototype_only")},
                         plan_id=plan_id, applied=record["applied"], physical_print_approval=False,
+                        # Display names and reasons only; container ids/stack indices stay internal.
+                        base_preset={"native_preset": bool(base), "status": selection.get("status"),
+                                     "profile": base.get("label") if base else None,
+                                     "reason": selection.get("reason"), "options": selection.get("options"),
+                                     "alternatives": [a["label"] for a in selection.get("alternatives") or []]},
+                        setting_changes=[{k: c.get(k) for k in ("key", "base_value", "effective_value", "unit",
+                                                                "reason", "justification")}
+                                         for c in (decision.get("setting_patch") or {}).get("changes") or []],
                         geometry_sha256=record["request"]["geometry_sha256"],
                         decision_sha256=_hash(decision),
                         assessments={k: {"status": decision.get(k, {}).get("status")}

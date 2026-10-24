@@ -33,6 +33,12 @@ def local_defaults():
     values = {}
     if local.get("worker_python"):
         values["worker_python"] = local["worker_python"]
+    # Native preset policy is application-owned: not editable from the page or by the model.
+    if isinstance(local.get("native_presets"), bool):
+        values["native_presets"] = local["native_presets"]
+    names = local.get("allowed_quality_changes")
+    if isinstance(names, list) and all(isinstance(name, str) for name in names):
+        values["allowed_quality_changes"] = list(names)
     env_file = local.get("env_file")
     if env_file and os.path.isfile(env_file):
         if core_path() not in sys.path:
@@ -70,8 +76,11 @@ class Settings:
         self._values = dict((key, preferences.getValue(PREFIX + key)) for key in DEFAULTS)
         local = local_defaults()
         for key, value in local.items():
-            if value and (not self._values.get(key) or self._values[key] == DEFAULTS[key]):
+            if key in DEFAULTS and value and (not self._values.get(key) or self._values[key] == DEFAULTS[key]):
                 self._values[key] = value
+        for key in ("native_presets", "allowed_quality_changes"):
+            if key in local:
+                self._values[key] = local[key]
         # Local environment is an optional fallback; never return it to the page.
         if not self._values.get("api_key"):
             self._values["api_key"] = os.environ.get("TIMEWEB_API_KEY") or os.environ.get("LLM_API_KEY") or ""

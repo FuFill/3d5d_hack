@@ -281,4 +281,5 @@ def main():
         json.dump(report, f, ensure_ascii=False, indent=1, sort_keys=True)
 
 
-main()
+if __name__ == "__main__":
+    main()

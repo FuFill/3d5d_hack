@@ -26,9 +26,11 @@ Writers G-code/3MF вызываются из фонового потока: их
 проверяются canonical readback, а неизменность геометрии — отдельным scene hash;
 отложенная замена эквивалентного служебного id контейнера не является изменением STL.
 
-Текущий runtime создаёт `Planner process profile`. Выбор и наследование полной
-native-базы пресетов — будущая доработка, только описанная в
-[presets_creation.md](../presets_creation.md).
+Решение с `base_presets` применяется реальными контейнерами quality_changes/quality/
+material/variant/definition_changes со сверкой их хешей; в user пишется только Δ, readback
+сверяет значения и id контейнеров стеков ([PRESETS.md](PRESETS.md)). Решения без
+`base_presets` применяются прежним `Planner process profile`. Режим native-пресетов в
+настоящем STE ещё не проверен.
 
 Для анализа семи исходных деталей добавлен `analysis_only`: в изолированном
 профиле доступны нативные Spiral/Full и экспорт их траекторий. GUI-применение
