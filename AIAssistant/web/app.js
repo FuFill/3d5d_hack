@@ -78,6 +78,8 @@
   var TOOLS = {
     list_model_sources: ["Исходные файлы моделей", "Model sources", "read"],
     plan_print: ["Расчёт ядром по ТЗ", "Core calculation", "plan"],
+    optimize_orientation: ["Проверка положения", "Orientation check", "plan"],
+    compare_materials: ["Сравнение материалов", "Material comparison", "plan"],
     get_plan: ["План и ограничения", "Plan and limitations", "read"],
     apply_plan: ["Применение плана", "Apply plan", "apply"],
     apply_plan_to_project: ["План в текущий проект", "Plan into the open project", "apply"],

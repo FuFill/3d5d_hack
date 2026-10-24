@@ -74,6 +74,12 @@ class PlanExecution:
                     and self.plan.get("status") not in ("infeasible", "needs_input")
                     and (self.plan.get("base_preset") or {}).get("status") != "needs_input")
 
+    def approve(self, plan):
+        """The user chose this applied plan in a choice card (compare_materials): that answer is the consent."""
+        self.plan = dict(plan or {}, applied=True)
+        self.executing = True
+        self._approved_context = self._context(self.plan)
+
     def offer_at_end(self):
         return self._produced and self._ready() and not self.executing
 

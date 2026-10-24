@@ -167,6 +167,7 @@ class AIAssistant(Extension):
             Logger.logException("w", "AI Assistant: chats will not be saved")
         self._service = ChatService(bus, agent, mcp, registry, settings, store=store)
         self._service.state_io = StateIO(self._app, registry)
+        registry.language = lambda: settings.get("language")
         registry.upload_sources = self._service.model_uploads
         registry.spec_sources = self._service.spec_uploads
         port = self._service.start()

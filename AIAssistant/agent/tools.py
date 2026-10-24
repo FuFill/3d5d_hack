@@ -49,6 +49,7 @@ class ToolRegistry:
         self.core = core
         self.upload_sources = lambda: []
         self.spec_sources = lambda: []
+        self.language = lambda: "ru"  # window language for texts the application writes itself
         self.questions = QuestionBox(bus) if bus is not None else None
         self._setting_keys = None
         self._catalog = None
@@ -150,6 +151,37 @@ class ToolRegistry:
                                      "validates fragment, value, unit and comparator against task_text. Never invent facts.",
                                      "items": {"type": "object"}}},
                       self._plan_print, on_main=False)
+            from .orientation import OrientationCheck
+            from .variants import MaterialComparison
+            self._add("optimize_orientation",
+                      "Check the pose of every part on the plate and turn it into a better one (3D). The core's best "
+                      "pose and its candidates are judged by stiffness (the core's FE model when planning inputs cover "
+                      "the part, else its load screen) and by print time and material from slicing both poses: a pose "
+                      ">5 % less stiff is never taken; the best pose is taken when it saves >= 5 % time or material; a "
+                      ">= 5 % stiffer pose when time and material get <= 5 % worse; strength takes the stiffest pose. "
+                      "A pose the user set is kept (keep_pose) and only the gain is reported. The application runs it "
+                      "before slicing; call it yourself only to check the pose on its own.",
+                      {"task_text": {"type": "string", "description": "The user's request or specification text."},
+                       "spec_attachment_id": {"type": "string"},
+                       "priority": {"type": "string", "enum": ["balanced", "strength"]},
+                       "keep_pose": {"type": "boolean", "description": "The user set or wants to keep the pose."}},
+                      OrientationCheck(self).run, on_main=False)
+            self._add("compare_materials",
+                      "When the material is not fixed by the specification or the user, or the user asks for another "
+                      "material without naming it: plan, apply, slice and undo the best feasible materials (each with "
+                      "its STE preset), show the user one choice card with print time and material use, then apply the "
+                      "chosen one. The choice is the consent to execute. Same source arguments as plan_print; exclude "
+                      "lists materials to leave out (e.g. the current one).",
+                      {"task_text": {"type": "string"}, "spec_attachment_id": {"type": "string"},
+                       "attachment_id": {"type": "string"}, "object_id": {"type": "integer"},
+                       "mode": {"type": "string", "enum": list(ALLOWED_MODES)},
+                       "orientation": {"type": "string", "enum": ["balanced", "strength"]},
+                       "exclude": {"type": "array", "items": {"type": "string"},
+                                   "description": "Material names or ids not to offer (e.g. the current material)."},
+                       "replace_current": {"type": "boolean", "description": "The user wants another material than "
+                                           "the one now in the printer: it is left out."},
+                       "count": {"type": "integer", "description": "Variants to compare, 2-4 (default 3)."}},
+                      MaterialComparison(self).run, on_main=False)
             self._add("get_plan", "Read the current core proposal, limitations and explanations.",
                       {"plan_id": plan_id}, lambda a, c: self.core.summary(a["plan_id"]), required=("plan_id",), on_main=False)
             self._add("apply_plan", "Apply exactly the core plan with its STE preset as one Undo operation. A plan by "

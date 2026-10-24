@@ -14,6 +14,7 @@ import time
 import uuid
 
 from .llm import Cancelled, LLMClient, LLMError
+from .orientation import summary_text as orientation_text, wants_own_pose
 from .intent import clear_intent
 from .execution import ExecutionConflict, ExecutionDeferred, PlanExecution
 
@@ -55,6 +56,12 @@ Presets come first
   apply. ask_user with its options in plain words. If the user says the nozzle is physically installed: set_nozzle,
   then plan_print again. If the user chooses another material: plan_print again with preferred_material from
   material_options. Custom user profiles are used only when allowed by the application settings.
+- Material not fixed: when neither the specification nor the user names the material (and the user did not ask to
+  keep the current one), call compare_materials with the same source as plan_print instead of asking about the
+  spool. It prepares the best feasible materials with their own presets (print time, material use) and the user
+  picks one in a card; the chosen plan is applied and the choice is the consent to execute: then verify_plan, slice,
+  export_gcode and save_project without asking again. If the user asks for another material without naming it, call
+  compare_materials with exclude = the current material. A free answer from the card comes back as text: follow it.
 
 Choose the workflow
 - Planning and execution are separate. First calculate and explain the proposal. The APPLICATION always asks
@@ -99,18 +106,24 @@ Orientation and strength
   one line if the core's own orientation would carry the load better.
 - In 3D, moving a part on the plate after apply_plan keeps the plan valid; rotating it needs a new plan_print
   (keep_current). In 5D the part axis follows the tooling axis and is not rotated by hand.
+- The application checks the pose of every part before slicing and saving (optimize_orientation): stiffness from the
+  core's FE model when planning inputs cover the part, otherwise from its load screen; print time and material from
+  slicing both poses. It turns a part by its rules and never changes a pose the user set. Do not rotate parts yourself
+  to optimise them; report its result (orientation_check in the slice result) in one line, including whether
+  stiffness came from FE or from the core's screen.
 - Report the orientation in words ("деталь положена на бок: нагрузка идёт вдоль слоёв").
 
 Ask when unsure
-- Call ask_user when the answer changes the result and tools cannot tell you: material not given and several
-  fit, 3D vs 5D unclear before any core calculation, priority strength vs speed vs quality, a preset that needs input, rotating an existing
+- Call ask_user when the answer changes the result and tools cannot tell you: 3D vs 5D unclear before any core
+  calculation, priority strength vs speed vs quality, a preset that needs input, rotating an existing
   part the user did not ask to rotate or strengthen. The execution card includes the unverified 5D warning.
 - A preset provides process defaults, not the physically available spool, service load/direction/fixture,
   operating temperature/environment or required critical tolerances. Read these from the specification and
   explicit user answers. When a missing condition is needed for the requested outcome, ask before deciding;
   never infer it from the part name or invent a number. A selected material profile alone does not prove
   that material is loaded. If the user already specified the material or asked to keep the current one,
-  use it without asking the same question again. Clarify alternative material availability before switching.
+  use it without asking the same question again. When the material is open, compare_materials replaces the question
+  about the spool: the user picks a material he has from the prepared variants.
 - Questions come at the START of the work, all at once, like a short interview: after the project is read and
   plan_print has chosen the preset, collect every condition that is still missing or ambiguous and ask them in ONE
   ask_user call with several questions (2-4 short options each, the recommended one first; the user can also
@@ -122,8 +135,8 @@ Ask when unsure
 - Never ask about what plan_print has already decided: its printing mode (3D/5D) and every entry of
   setting_changes (justification explicit = required by the core, requirement = from the specification,
   constraint, load class). These follow from the part, the specification and the core rules; only the user's
-  own new demand changes them. Ask only about the physical conditions the core cannot know (the spool in the
-  printer, load, temperature, environment, critical sizes) and about its needs_input items.
+  own new demand changes them. Ask only about the physical conditions the core cannot know (load, temperature,
+  environment, critical sizes; the spool only when the material is already chosen) and about its needs_input items.
   Never offer to delete or move the user's other models; offer applying only the preset and settings to the
   project, or that the user clears the scene himself.
 
@@ -191,6 +204,13 @@ NAME_PROMPT = """Name the print variant the assistant has just prepared, so the 
 variants: 1-3 words in {language}, for example "Быстрая печать", "Качество подольше", "Прочная PETG" (English: "Fast draft",
 "Fine quality"). Base it on what the user asked and on the changes. Reply with the name only, without quotes."""
 NAME_MAX_CHARS = 40
+# The user asks for a stronger/stiffer part: the orientation check takes the stiffest pose.
+STRENGTH_REQUEST = re.compile(r"прочн|жёстк|жестк|нагруж|stronger|strength|stiff", re.I)
+# Tools after which the pose is checked (the result must not be sliced or saved in a worse pose).
+POSE_CHECK_BEFORE = ("slice", "export_gcode", "save_project")
+# "Поменяй материал на другой": the current material is not offered again.
+CHANGE_MATERIAL = re.compile(r"(?:друг|ин)\w*\s+материал|(?:поменя|смени|замени|измени)\w*\s+(?:\w+\s+)?материал|"
+                             r"(?:another|different|other)\s+material|change\s+(?:the\s+)?material", re.I)
 
 FOREIGN_SCRIPT = re.compile(u"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
 GLUED_WORDS = re.compile(u"[а-яё][a-z]|[a-z][а-яё]", re.IGNORECASE)
@@ -223,6 +243,7 @@ class Agent:
         self._turn_text = None  # Original message, without appended attachment contents.
         self._final = None  # (event seq, text) of the last streamed answer
         self._note = None  # told to the model with the next message (e.g. another model chosen in the tree)
+        self._pose = {"checked": False, "worked": False, "user_pose": False, "plan": None}  # this turn's pose check
         self._execution = PlanExecution(registry, settings)
 
     def busy(self):
@@ -237,6 +258,7 @@ class Agent:
             self._kinds = [a["kind"] for a in attachments]
             self._turn_text = text or ""
             self._execution.begin_turn()
+            self._pose = {"checked": False, "worked": False, "user_pose": wants_own_pose(text), "plan": None}
             if self.on_turn_start is not None:
                 self.on_turn_start()
             self._bus.emit("user", text=text, attachments=[{"name": a["name"], "kind": a["kind"], "id": a.get("id")}
@@ -363,6 +385,12 @@ class Agent:
             else:
                 self._bus.emit("error", code="too_many_steps", text="")
                 status = "error"
+            if status == "done" and self._pose["worked"] and not self._pose["checked"]:
+                # Work without slicing (e.g. manual settings): the pose is still checked, and said in one line.
+                text = orientation_text(self._check_pose(), settings.get("language", "ru"))
+                if text:
+                    self._messages.append({"role": "assistant", "content": text})
+                    self._bus.emit("message", text=text, streaming=False)
             if status == "done" and self.after_work is not None:
                 # The finished result becomes a node of the chat's model tree.
                 try:
@@ -662,6 +690,11 @@ class Agent:
             settings = self._settings()
             self._clean_questions(LLMClient(settings.get("base_url"), settings.get("api_key"), settings.get("model")),
                                   settings, arguments)
+        if name == "compare_materials" and isinstance(arguments, dict) and CHANGE_MATERIAL.search(self._turn_text or ""):
+            arguments["replace_current"] = True
+        check = None
+        if name in POSE_CHECK_BEFORE and blocked is None and not self._pose["checked"]:
+            check = self._check_pose()
         seq = self._bus.emit("tool", call_id=call["id"], name=name, args=arguments if arguments is not None else raw,
                              status="running", source="agent")
         if blocked is not None:
@@ -680,13 +713,54 @@ class Agent:
             else:
                 result = response["result"]
                 outcome = {"ok": not result.get("isError"), "result": result.get("structuredContent")}
+        if check is not None and isinstance(outcome["result"], dict):
+            outcome["result"]["orientation_check"] = check
         self._bus.update(seq, status="ok" if outcome["ok"] else "error", result=outcome["result"])
         if outcome["ok"]:
             self._execution.observe(name, outcome["result"])
+            self._track(name, arguments, outcome["result"])
         content = json.dumps(outcome["result"], ensure_ascii=False)
         if len(content) > MAX_TOOL_RESULT_CHARS:
             content = content[:MAX_TOOL_RESULT_CHARS] + "... (truncated)"
         return {"role": "tool", "tool_call_id": call["id"], "content": content}
+
+    # ------------------------------------------------------------------ pose check and material choice
+
+    def _track(self, name, arguments, result):
+        from .execution import EXECUTION_TOOLS
+        if name in EXECUTION_TOOLS or name == "compare_materials":
+            self._pose["worked"] = True
+        if name == "plan_print" and isinstance(arguments, dict):
+            self._pose["plan"] = arguments
+            if arguments.get("orientation") == "keep_current":
+                self._pose["user_pose"] = True
+        elif name == "rotate_object":
+            self._pose["user_pose"] = True
+        elif name == "optimize_orientation":
+            self._pose["checked"] = True
+        elif name == "compare_materials" and isinstance(result, dict) and result.get("status") == "applied":
+            self._execution.approve(result.get("plan"))
+
+    def _check_pose(self):
+        """The application's pose check of this turn, shown as its own step (once per turn)."""
+        self._pose["checked"] = True
+        if not self._registry.has("optimize_orientation"):
+            return None
+        plan = self._pose["plan"] or {}
+        arguments = {"task_text": plan.get("task_text") or self._turn_text or "",
+                     "priority": "strength" if plan.get("orientation") == "strength" or
+                     STRENGTH_REQUEST.search(self._turn_text or "") else "balanced",
+                     "keep_pose": self._pose["user_pose"]}
+        if plan.get("spec_attachment_id"):
+            arguments["spec_attachment_id"] = plan["spec_attachment_id"]
+        seq = self._bus.emit("tool", call_id="pose_%s" % uuid.uuid4().hex[:8], name="optimize_orientation",
+                             args=arguments, status="running", source="app")
+        outcome = self._registry.call("optimize_orientation", arguments,
+                                      {"event_seq": seq, "cancelled": lambda: self._stop})
+        self._bus.update(seq, status="ok" if outcome["ok"] else "error", result=outcome["result"])
+        if self._stop:
+            raise Cancelled()
+        return outcome["result"]
 
     def _close_dangling_calls(self, reason="cancelled by the user"):
         """Every tool call in the history needs a reply, otherwise the next request is rejected."""
