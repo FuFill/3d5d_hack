@@ -107,7 +107,12 @@ class CoreBridge:
                  "settings": [{k: s.getProperty(k, "value") for k in READBACK_KEYS}
                               for s in [stack] + list(stack.extruders.values())],
                  "preset_catalog_sha256": catalog_digest(catalog) if catalog is not None else None}
+        # Pose without the horizontal position (scene x and z; Y is up): moving a part on the plate
+        # does not change its classic slicing, rotation/height/scale/mesh do.
+        poses = [dict(n, matrix=[[0.0 if (r, c) in ((0, 3), (2, 3)) else v for c, v in enumerate(row)]
+                                 for r, row in enumerate(n["matrix"])]) for n in nodes]
         return {"signature": _hash(state), "scene_signature": _hash({"nodes": nodes, "plate": state["plate"]}),
+                "pose_signature": _hash({"nodes": poses, "plate": state["plate"]}),
                 "machine_id": state["machine_id"], "resources_dir": resources, "preset_catalog": catalog}
 
     def plan(self, args, context=None):
@@ -122,6 +127,10 @@ class CoreBridge:
         target = args.get("target_object_id")
         if target is not None and (isinstance(target, bool) or not isinstance(target, int)):
             raise ValueError("target_object_id must be a scene object id")
+        orientation = args.get("orientation")
+        if not (orientation is None or orientation in ("balanced", "strength") or
+                (isinstance(orientation, dict) and set(orientation) == {"rotation"})):
+            raise ValueError("orientation must be balanced, strength or the current pose of the model")
         snapshot = run_on_main(self.app, self._snapshot)
         options, inputs = self._inputs()
         request_id = uuid.uuid4().hex
@@ -131,7 +140,7 @@ class CoreBridge:
         request = dict(snapshot, request_id=request_id, task_text=text, mesh_path=path,
                        geometry_sha256=digest(path), mode=mode, llm_items=args.get("llm_items"),
                        planner_options=options, inputs=inputs, allowed_quality_changes=allowed,
-                       target_object_id=target,
+                       target_object_id=target, orientation=orientation,
                        preferred_materials=[str(m) for m in (args.get("preferred_materials") or [])][:3] or None)
         with self._lock:
             if self._process is not None:
@@ -207,7 +216,7 @@ class CoreBridge:
             selection = decision.get("preset_selection") or {"status": "legacy_without_provenance",
                                                              "native_preset": False}
             return dict({k: copy.deepcopy(decision.get(k)) for k in
-                         ("status", "part_name", "chosen_material", "route", "effective_settings",
+                         ("status", "part_name", "chosen_material", "route", "orientation", "effective_settings",
                           "missing_inputs", "explanation", "prototype_only")},
                         plan_id=plan_id, applied=record["applied"], physical_print_approval=False,
                         # Display names and reasons only; container ids/stack indices stay internal.
@@ -258,7 +267,9 @@ class CoreBridge:
             record["operation"], record["applied"] = operation, True
             # STE may replace equivalent quality-container ids asynchronously.
             # Check geometry here and actual values through canonical readback.
-            record["applied_signature"] = self._snapshot()["scene_signature"]
+            applied = self._snapshot()
+            record["applied_signature"] = applied["scene_signature"]
+            record["applied_pose_signature"] = applied.get("pose_signature")
             return {"plan_id": args["plan_id"], "status": "applied", "readback": operation.readback,
                     "physical_print_approval": False, "undoable": True}
 
@@ -270,7 +281,15 @@ class CoreBridge:
             from ste_planner.runtime_adapter import readback
             result = readback(self.app, record["decision"])
             result["source_unchanged"] = digest(record["request"]["mesh_path"]) == record["request"]["geometry_sha256"]
-            result["scene_unchanged"] = self._snapshot()["scene_signature"] == record["applied_signature"]
+            current = self._snapshot()
+            if ((record["decision"].get("route") or {}).get("mode") == "classic" and
+                    record.get("applied_pose_signature") is not None):
+                # Classic: the part may be moved on the plate; rotation, height and mesh must stay planned.
+                result["scene_unchanged"] = current.get("pose_signature") == record["applied_pose_signature"]
+                result["moved_on_plate"] = current["scene_signature"] != record["applied_signature"]
+            else:
+                # 5D: the position defines the part axis on the tooling axis.
+                result["scene_unchanged"] = current["scene_signature"] == record["applied_signature"]
             if not result["source_unchanged"] or not result["scene_unchanged"]:
                 result["status"] = "fail"
             result["physical_print_approval"] = False

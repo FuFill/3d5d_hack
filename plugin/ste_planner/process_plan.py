@@ -25,7 +25,13 @@ POLICY = {
     "orientation_tie": 0.05,             # keep the original orientation within 5 % of the best score
     "min_base_area_mm2": 20.0,
     "min_base_area_share": 0.005,
+    # Weight of interlayer exposure (loads across layers) in J_R by load class; FDM parts
+    # are weakest and least stiff across layers, so load-bearing parts weigh it most.
+    "interlayer_weight": {"structural": 2.0, "elastic": 1.0, "general": 1.0, "decorative": 0.0},
+    "strength_priority_interlayer_weight": 6.0,   # user asked for stiffness/strength first
 }
+
+ORIENTATION_PRIORITIES = ("balanced", "strength")
 
 STRUCTURAL_TYPES = ("gear", "pump_impeller", "fan_impeller", "wheel_roller", "shaft_cam")
 
@@ -44,28 +50,66 @@ def _ids(reqset, *props):
     return [r.id for r in reqset.requirements if r.property in props]
 
 
-def choose_orientation(mesh, analysis, reqset, build_volume, support_angle=50.0, layer_height=0.2):
-    """Classic orientation: feasibility first, then J_R; original orientation kept on a near tie."""
+def _stable(e):
+    # a stable placement needs a real flat contact, not a line on a curved surface
+    return e["base_area"] >= min(POLICY["min_base_area_mm2"], POLICY["min_base_area_share"] * e["size"][0] * e["size"][1])
+
+
+def choose_orientation(mesh, analysis, reqset, build_volume, support_angle=50.0, layer_height=0.2,
+                       load_dirs=None, load_class_name="general", priority="balanced", fixed_rotation=None):
+    """Classic orientation: feasibility first, then J_R; original orientation kept on a near tie.
+
+    J_R adds interlayer exposure of the dominant load directions (geometry.load_directions)
+    weighted by load class; priority "strength" makes it dominant and drops the tie rule.
+    fixed_rotation (3x3, part -> printer) is a pose requested by the user: it is evaluated
+    and used as is (it must fit the build volume); the automatic best is reported beside it.
+    """
+    if priority not in ORIENTATION_PRIORITIES:
+        raise ValueError("orientation priority must be one of %s" % (ORIENTATION_PRIORITIES,))
+    dirs = load_dirs["directions"] if load_dirs is not None and len(load_dirs["directions"]) else None
     cands = geometry.orientation_candidates(mesh)
     if [0.0, 0.0, 1.0] not in [[round(c, 6) for c in x] for x in cands]:
         cands.insert(0, [0.0, 0.0, 1.0])
-    evals = [geometry.evaluate_orientation(mesh, c, support_angle, layer_height, build_volume) for c in cands]
-    # a stable placement needs a real flat contact, not a line on a curved surface
-    stable = [e for e in evals if e["base_area"] >= min(POLICY["min_base_area_mm2"],
-                                                        POLICY["min_base_area_share"] * e["size"][0] * e["size"][1])]
-    stable = stable or evals
+    evals = [geometry.evaluate_orientation(mesh, c, support_angle, layer_height, build_volume, load_dirs=dirs)
+             for c in cands]
+    stable = [e for e in evals if _stable(e)] or evals
     critical_weight = 2.0 if reqset.has("no_support_marks") else 1.0
-    scored = geometry.score_orientations(stable, weights={"support_volume_upper": 1.0 * critical_weight,
-                                                          "height": 0.3, "staircase_mean_mm": 0.5})
+    weights = {"support_volume_upper": 1.0 * critical_weight, "height": 0.3, "staircase_mean_mm": 0.5}
+    w_inter = (POLICY["strength_priority_interlayer_weight"] if priority == "strength"
+               else POLICY["interlayer_weight"].get(load_class_name, 1.0))
+    if dirs is not None and w_inter > 0:
+        weights["interlayer_exposure"] = w_inter
+    scored = geometry.score_orientations(stable, weights=weights)
+    if fixed_rotation is not None:
+        rot = [[float(x) for x in row] for row in fixed_rotation]
+        up = [rot[2][0], rot[2][1], rot[2][2]]          # part direction that ends up along printer Z
+        chosen = geometry.evaluate_orientation(mesh, up, support_angle, layer_height, build_volume,
+                                               rotation=rot, load_dirs=dirs)
+        if chosen["fits_build_volume"] is False:
+            raise ValueError("the requested orientation does not fit the build volume (size %s mm)" %
+                             ", ".join("%.1f" % s for s in chosen["size"]))
+        chosen["choice_note"] = "orientation requested by the user (current pose of the model)"
+        if not _stable(chosen):
+            chosen["choice_note"] += "; small bed contact, adhesion/brim must be checked"
+        chosen["auto_best"] = ({k: scored[0].get(k) for k in ("up", "interlayer_exposure", "support_volume_upper",
+                                                             "height")} if scored else None)
+        chosen["weights"] = weights
+        return chosen, scored
     if not scored:
         return None, evals
     best = scored[0]
     original = [e for e in scored if e["up"][2] > 0.9999]
-    if original and original[0]["score"] <= best["score"] * (1.0 + POLICY["orientation_tie"]) + 1e-9:
+    if (priority == "balanced" and original and
+            original[0]["score"] <= best["score"] * (1.0 + POLICY["orientation_tie"]) + 1e-9):
         best = original[0]
         best["choice_note"] = "original orientation kept (within %.0f%% of best J_R)" % (POLICY["orientation_tie"] * 100)
+    elif priority == "strength" and dirs is not None:
+        best["choice_note"] = "loads along the layers first (strength priority), then supports and height"
+    elif priority == "strength":
+        best["choice_note"] = "no dominant load direction in the geometry; minimum J_R (give the load direction)"
     else:
         best["choice_note"] = "minimum J_R among stable orientations"
+    best["weights"] = weights
     return best, scored
 
 

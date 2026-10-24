@@ -12,6 +12,8 @@ patch and to check the result afterwards.
 import hashlib
 import os
 
+import numpy
+
 from . import requirements as reqmod
 from . import geometry, materials, routes, process_plan, structure, compiler, verification, calibration, functional, robustness
 from . import presets
@@ -71,8 +73,13 @@ def _preset_plan(schema, catalog, machine_id, material, mode, decisions, load_cl
 def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE, catalog=None,
               preferred_materials=None, forced_mode=None, source=None, calibration_data=None, setting_changes=None,
               functional_spec=None, llm_items=None, noise_spec=None, robustness_limits=None,
-              preset_catalog=None, allowed_quality_changes=None):
+              preset_catalog=None, allowed_quality_changes=None, orientation=None):
     """Decision for one TZ and STL.
+
+    orientation: None/"balanced" (automatic: supports, height, staircase and loads along
+    the layers), "strength" (loads along the layers first) or {"rotation": 3x3} - a pose
+    requested by the user (part -> printer frame, e.g. the current scene pose), used as is
+    in classic mode after a build-volume check.
 
     preset_catalog: application-owned snapshot of the installed STE registry
     (presets.CATALOG_SCHEMA). With it the plan inherits a compatible native
@@ -81,6 +88,7 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     Without a catalog the previous planner process profile is produced and
     marked as such (preset_selection.status = "not_requested").
     """
+    orientation_request = orientation
     trace = []
     resources_dir = resources_dir or default_resources_dir()
     catalog = catalog or materials.load_catalog()
@@ -158,17 +166,32 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     scene_ops = [{"op": "load_mesh", "path": mesh_path, "units": "mm",
                   "coordinates": "printer (Z up); the adapter converts to the Uranium scene (Y up)"}]
     orientation = None
+    priority, fixed_rotation = _orientation_request(orientation_request)
+    load_dirs = geometry.load_directions(mesh, rot)
+    orientation_summary = {"request": "user_pose" if fixed_rotation is not None else priority,
+                           "load_directions": load_dirs["kind"],
+                           "model": "analytical screen: interlayer exposure of geometry-implied load directions"}
     if mode == "classic":
         bv = caps["build_volume"]["classic"]
-        orientation, scored = process_plan.choose_orientation(mesh, analysis, reqset, bv)
+        orientation, scored = process_plan.choose_orientation(
+            mesh, analysis, reqset, bv, load_dirs=load_dirs,
+            load_class_name=process_plan.load_class(reqset, ptype), priority=priority, fixed_rotation=fixed_rotation)
         rotation = orientation["rotation"] if orientation else [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         placed, shift = geometry.place_on_bed(mesh, rotation)
         scene_ops.append({"op": "set_transform", "rotation": rotation, "translation": shift.tolist(),
                           "note": orientation.get("choice_note") if orientation else None})
         trace.append({"step": "orientation", "chosen_up": orientation["up"] if orientation else None,
+                      "request": orientation_summary["request"], "load_directions": load_dirs["kind"],
+                      "weights": orientation.get("weights") if orientation else None,
                       "candidates": [{"up": e["up"], "score": e.get("score"), "support_volume": e["support_volume_upper"],
-                                      "height": e["height"]} for e in scored[:6]]})
+                                      "height": e["height"], "interlayer_exposure": e.get("interlayer_exposure")}
+                                     for e in scored[:6]]})
+        if orientation:
+            orientation_summary.update({k: orientation.get(k) for k in (
+                "up", "interlayer_exposure", "support_volume_upper", "height", "base_area", "choice_note", "auto_best")})
     else:
+        if fixed_rotation is not None:
+            orientation_summary["note"] = "5D: the part axis follows the tooling axis; the requested pose is not used"
         p5 = routes.plan_5d(mesh, chosen_route, caps).value
         scene_ops.append({"op": "set_transform", "rotation": p5["rotation"], "translation": p5["translation"],
                           "note": "part axis on the tooling axis (scene Z), starts at the tooling end face"})
@@ -350,6 +373,7 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
         "causal_analysis": causal.to_dict(),
         "functional_analysis": functional_result.to_dict(),
         "scene_operations": scene_ops,
+        "orientation": orientation_summary,
         "structural_checks": struct,
         "verification": ver,
         "trace": trace,
@@ -413,6 +437,25 @@ def _selection_summary(selection):
     out = dict((k, v) for k, v in selection.items() if k not in ("candidate", "evaluation"))
     out["native_preset"] = selection["status"] == "selected"
     return out
+
+
+def _orientation_request(request):
+    """(priority, fixed rotation or None) from the plan_case orientation argument."""
+    if request is None:
+        return "balanced", None
+    if isinstance(request, str):
+        if request not in process_plan.ORIENTATION_PRIORITIES:
+            raise ValueError("orientation must be one of %s or {'rotation': 3x3}" % (process_plan.ORIENTATION_PRIORITIES,))
+        return request, None
+    if isinstance(request, dict) and set(request) == {"rotation"}:
+        r = numpy.asarray(request["rotation"], dtype=float)
+        if (r.shape != (3, 3) or not numpy.isfinite(r).all() or
+                not numpy.allclose(r.T.dot(r), numpy.eye(3), atol=1e-6) or abs(numpy.linalg.det(r) - 1) > 1e-6):
+            raise ValueError("requested orientation must be a proper rotation (no scale or mirroring)")
+        # re-orthonormalise the float32 scene matrix so downstream checks see an exact rotation
+        u, _, vt = numpy.linalg.svd(r)
+        return "balanced", u.dot(vt).tolist()
+    raise ValueError("orientation must be 'balanced', 'strength' or {'rotation': 3x3}")
 
 
 def plan_case_files(docx_path, stl_path, **kw):

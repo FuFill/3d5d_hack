@@ -121,6 +121,18 @@ def explain_decision(decision):
                      (m.get("label"), decision.get("materials_considered", 0), decision.get("materials_rejected", 0)))
     if route:
         lines.append("Режим: %s. %s" % (route.get("mode"), route.get("note") or ""))
+    orient = decision.get("orientation") or {}
+    if orient.get("up") is not None:
+        exposure = orient.get("interlayer_exposure")
+        kind = {"rotational_plane": "в плоскости вращения", "slender": "вдоль длинной оси",
+                "plate": "в плоскости пластины"}.get(orient.get("load_directions"))
+        line = "Ориентация: вверх направление детали (%s)" % ", ".join("%.2f" % x for x in orient["up"])
+        if exposure is not None and kind:
+            line += "; нагрузка %s, доля поперёк слоёв %.0f%%" % (kind, 100 * exposure)
+        auto = orient.get("auto_best")
+        if auto and auto.get("interlayer_exposure") is not None and exposure is not None:
+            line += " (автоматический вариант ядра: %.0f%%)" % (100 * auto["interlayer_exposure"])
+        lines.append(line + ". Оценка по геометрии, без FEA; прочность подтверждается испытанием.")
     for item in decision.get("setting_patch", {}).get("items", []):
         why = item.get("note") or ", ".join(item.get("model_ids") or [])
         lines.append("  %s = %s (было %s): %s" % (item["key"], item["value"], item["old_effective_value"], why))

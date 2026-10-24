@@ -559,8 +559,61 @@ def overhang_mask(normals, centroids_z, z_min, support_angle_deg, bed_tolerance=
     return down & ~on_bed
 
 
+def load_directions(mesh, rotational=None, slender_ratio=2.0, samples=24):
+    """Dominant service stress directions in part coordinates (analytical screen, no FE).
+
+    - rotational part (axis a): torque, tooth/blade bending and hoop stresses act in
+      the plane normal to a -> unit directions sampled uniformly in that plane;
+    - slender part (longest principal extent >= slender_ratio x the next): bending and
+      axial stresses run along the long axis;
+    - plate-like part (middle extent >= slender_ratio x the smallest): in-plane stresses;
+    - otherwise no dominant direction is assumed (kind "none", empty array).
+    Geometry hints only: the real load case comes from the specification/FE when given.
+    """
+    if rotational and rotational.get("is_rotational_candidate") and rotational.get("axis") is not None:
+        a = numpy.asarray(rotational["axis"], dtype=numpy.float64)
+        a = a / numpy.linalg.norm(a)
+        u = numpy.cross(a, [1.0, 0.0, 0.0] if abs(a[0]) < 0.9 else [0.0, 1.0, 0.0])
+        u /= numpy.linalg.norm(u)
+        v = numpy.cross(a, u)
+        t = numpy.linspace(0.0, math.pi, samples, endpoint=False)
+        dirs = numpy.outer(numpy.cos(t), u) + numpy.outer(numpy.sin(t), v)
+        return {"kind": "rotational_plane", "axis": a.tolist(), "directions": dirs}
+    pts = mesh.vertices[numpy.unique(mesh.faces)]
+    _, _, inertia = mass_properties(mesh)
+    _, evecs = numpy.linalg.eigh(inertia)
+    centred = pts - pts.mean(axis=0)
+    extents = numpy.array([float(numpy.ptp(centred.dot(evecs[:, k]))) for k in range(3)])
+    order = numpy.argsort(-extents)
+    e = extents[order]
+    axes = [evecs[:, k] for k in order]
+    if e[0] >= slender_ratio * max(e[1], _EPS):
+        return {"kind": "slender", "axis": axes[0].tolist(), "extents": e.tolist(),
+                "directions": numpy.asarray([axes[0]])}
+    if e[1] >= slender_ratio * max(e[2], _EPS):
+        t = numpy.linspace(0.0, math.pi, samples, endpoint=False)
+        dirs = numpy.outer(numpy.cos(t), axes[0]) + numpy.outer(numpy.sin(t), axes[1])
+        return {"kind": "plate", "axis": axes[2].tolist(), "extents": e.tolist(), "directions": dirs}
+    return {"kind": "none", "axis": None, "extents": e.tolist(), "directions": numpy.zeros((0, 3))}
+
+
+def interlayer_exposure(directions, rotation):
+    """Mean traction on the layer plane per unit uniaxial stress along each direction d.
+
+    The layer normal in part coordinates is b = R^T e_z. For stress s along d the layer
+    plane carries normal s cos^2(theta) and shear s |sin cos|, magnitude s |cos theta|
+    = s |d . b|. 0: all loads run along the layers; 1: all loads pull the layers apart.
+    Parameter-free; it ranks orientations, it is not a strength value.
+    """
+    dirs = numpy.asarray(directions, dtype=numpy.float64)
+    if dirs.size == 0:
+        return None
+    b = numpy.asarray(rotation, dtype=numpy.float64).T.dot([0.0, 0.0, 1.0])
+    return float(numpy.abs(dirs.dot(b)).mean())
+
+
 def evaluate_orientation(mesh, up, support_angle_deg=50.0, layer_height=0.2, build_volume=None,
-                         critical_face_mask=None, rotation=None):
+                         critical_face_mask=None, rotation=None, load_dirs=None):
     """Metrics of one orientation; feasibility first, score only afterwards."""
     rot = rotation_to_z(up) if rotation is None else numpy.asarray(rotation, dtype=float)
     if rot.shape != (3, 3) or not numpy.isfinite(rot).all() or not numpy.allclose(rot.T.dot(rot), numpy.eye(3), atol=1e-8) or abs(numpy.linalg.det(rot) - 1) > 1e-8:
@@ -604,6 +657,7 @@ def evaluate_orientation(mesh, up, support_angle_deg=50.0, layer_height=0.2, bui
         "staircase_mean_mm": staircase,
         "fits_build_volume": fits,
         "critical_support_contact": critical_support_contact,
+        "interlayer_exposure": interlayer_exposure(load_dirs, rot) if load_dirs is not None else None,
         "support_angle_deg": support_angle_deg,
     }
 

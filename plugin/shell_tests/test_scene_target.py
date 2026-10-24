@@ -219,3 +219,57 @@ def test_target_id_is_application_owned():
     registry.upload_sources = lambda: [{"id": "u1", "path": path, "name": "part.stl"}]
     outcome = registry.call("plan_print", {"task_text": "TZ", "attachment_id": "u1", "target_object_id": 3})
     assert outcome["ok"] and "target_object_id" not in core.calls[0]
+
+
+def test_keep_current_orientation_reads_the_scene_pose_in_printer_axes():
+    from agent.tools import ToolError
+    stub = lambda *args: {}
+    registry = ToolRegistry(None, None, lambda: "", core=SimpleNamespace(plan=stub, apply=stub, verify=stub, summary=stub))
+    planned = geometry.rotation_to_z([1.0, 0.0, 0.0])          # part X up, as a user rotation would give
+    matrix = A.scene_transform(planned, [12.0, 3.0, -40.0])     # same matrix the adapter writes to STE
+    node = SimpleNamespace(getWorldTransformation=lambda: SimpleNamespace(getData=lambda: matrix))
+    assert np.allclose(registry._printer_rotation(node), planned, atol=1e-12)
+    scaled = matrix.copy()
+    scaled[:3, :3] *= 1.5
+    node = SimpleNamespace(getWorldTransformation=lambda: SimpleNamespace(getData=lambda: scaled))
+    with pytest.raises(ToolError):
+        registry._printer_rotation(node)
+
+
+def test_keep_current_needs_a_model_on_the_plate():
+    class Core:
+        calls = []
+
+        def plan(self, args, context):
+            self.calls.append(args)
+            return {}
+
+        def apply(self, args, context):
+            raise AssertionError("planning must not apply")
+
+        verify = summary = apply
+
+    core = Core()
+    registry = ToolRegistry(None, None, lambda: "", core=core)
+    path = organizer_stl()
+    registry.upload_sources = lambda: [{"id": "u1", "path": path, "name": "part.stl"}]
+    outcome = registry.call("plan_print", {"task_text": "TZ", "attachment_id": "u1", "orientation": "keep_current"})
+    assert not outcome["ok"] and "object_id" in outcome["result"]["error"] and not core.calls
+    outcome = registry.call("plan_print", {"task_text": "TZ", "attachment_id": "u1", "orientation": "strength"})
+    assert outcome["ok"] and core.calls[0]["orientation"] == "strength"
+
+
+def test_moving_a_classic_part_on_the_plate_keeps_the_plan_valid(monkeypatch):
+    monkeypatch.setattr(A, "create_operation", lambda app, decision, path, **kw: Operation())
+    monkeypatch.setattr(A, "readback", lambda app, decision: {"status": "pass"})
+    monkeypatch.setattr("agent.core_bridge.digest", lambda path: "0" * 64)
+    for mode, moved_ok in (("classic", True), ("cylindrical", False)):
+        bridge = recorded_bridge(None)
+        bridge._plans["p"]["decision"] = {"route": {"mode": mode}}
+        bridge._snapshot = lambda: {"signature": "same", "scene_signature": "scene", "pose_signature": "pose"}
+        bridge.apply({"plan_id": "p"})
+        bridge._snapshot = lambda: {"signature": "x", "scene_signature": "moved", "pose_signature": "pose"}
+        result = bridge.verify({"plan_id": "p"})
+        assert (result["status"] == "pass") is moved_ok        # 5D: the position is the tooling axis
+        bridge._snapshot = lambda: {"signature": "x", "scene_signature": "turned", "pose_signature": "turned"}
+        assert bridge.verify({"plan_id": "p"})["status"] == "fail"

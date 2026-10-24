@@ -134,6 +134,11 @@ class ToolRegistry:
                        "object_id": {"type": "integer", "description": "Scene object id from list_objects/list_model_sources."},
                        "mesh_path": {"type": "string", "description": "Existing absolute path returned by a tool; never just a filename."},
                        "mode": {"type": "string", "enum": list(ALLOWED_MODES)},
+                       "orientation": {"type": "string", "enum": ["balanced", "strength", "keep_current"],
+                                       "description": "balanced (default): the core weighs supports, height, surface "
+                                       "steps and loads along the layers. strength: the user wants a stiffer/stronger "
+                                       "part, loads along the layers first. keep_current (object_id only): use the "
+                                       "model's current rotation on the plate, e.g. after rotate_object."},
                        "preferred_material": {"type": "string", "description": "Core material id the user chose "
                                               "(from material_options of a previous plan_print); the core still "
                                               "rejects it if a mandatory requirement fails."},
@@ -327,6 +332,13 @@ class ToolRegistry:
         if key == "object_id":
             # Apply then reorients this loaded object instead of loading a second copy.
             request["target_object_id"] = int(args[key])
+        if request.get("orientation") == "keep_current":
+            if key != "object_id":
+                raise ToolError("keep_current needs the object_id of the model on the plate")
+            request["orientation"] = {"rotation": run_on_main(self._app, lambda: self._printer_rotation(
+                self._node(args[key])))}
+        elif request.get("orientation") not in (None, "balanced", "strength"):
+            raise ToolError("orientation must be balanced, strength or keep_current")
         if request.get("preferred_material"):
             request["preferred_materials"] = [str(request.pop("preferred_material"))]
         request.pop("preferred_material", None)
@@ -821,6 +833,20 @@ class ToolRegistry:
         if node is None or node not in self._scene_nodes():
             raise ToolError("Object %s not found; use list_objects" % object_id)
         return node
+
+    def _printer_rotation(self, node):
+        """Rotation of a top-level node from its loaded STL to printer axes (Z up).
+
+        The STL reader stores (x, z, -y) and at most a centring offset, so the scene
+        rotation R maps to P^T R P. Scale or mirroring is refused: the core plans the
+        original STL size.
+        """
+        import numpy as np
+        basis = np.array([[1., 0., 0.], [0., 0., 1.], [0., -1., 0.]])
+        matrix = np.asarray(node.getWorldTransformation().getData(), dtype=float)[:3, :3]
+        if not np.allclose(matrix.T.dot(matrix), np.eye(3), atol=1e-4) or np.linalg.det(matrix) <= 0:
+            raise ToolError("The model is scaled or mirrored; reset its scale to 100 % before keep_current")
+        return basis.T.dot(matrix).dot(basis).tolist()
 
     def _object_info(self, node):
         box = node.getBoundingBox()
