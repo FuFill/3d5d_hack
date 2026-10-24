@@ -27,12 +27,14 @@
   "planner_status": "needs_input",
   "route": {
     "mode": "classic",
-    "note": "no documented 5D benefit above threshold; classic is simpler",
-    "parameters": {}
+    "parameters": {},
+    "note": "no documented 5D benefit above threshold; classic is simpler"
   },
-  "decision_sha256": "03f72503f241ed0834113dff06a5f3dcbca2eb9270c12e09d95a3cf2db5c452b",
+  "decision_sha256": "793813d40ae98acba8ebb27b2c2d97badff74f25085060962aa29867270379e3",
   "base_preset": {
-    "reason": null,
+    "profile": "Draft (draft)",
+    "status": "selected",
+    "options": null,
     "alternatives": [
       "Fine (normal)",
       "Coarse (coarse)",
@@ -41,60 +43,60 @@
       "Extra Fine (high)",
       "Extra Fast (verydraft)"
     ],
-    "status": "selected",
-    "options": null,
     "native_preset": true,
-    "profile": "Draft (draft)"
+    "reason": null
   },
   "slice": {
-    "print_time_s": 86604,
     "material_cost": null,
-    "material_m": 56.68,
-    "printing_mode": {
-      "name": "3D",
-      "mode": "classic"
-    },
     "print_time": "1 day 0 hours 3 minutes",
+    "printing_mode": {
+      "mode": "classic",
+      "name": "3D"
+    },
+    "material_m": 56.68,
     "job_name": "STEH530V524_Пыльник шруса",
     "materials": [
-      "Enduse PETG",
-      "Sealant TPU A95"
+      "Sealant TPU A95",
+      "Enduse PETG"
     ],
+    "print_time_s": 86604,
     "material_g": 156.8
   },
   "status": "pass",
   "workflow": "existing object + native presets + specification attachment + user questions",
   "tests": {
-    "passed": 255,
+    "passed": 260,
     "skipped": 1,
-    "shell_passed": 49
+    "shell_passed": 54
   },
   "base_commit": "8b0b624",
   "question_scope": "HTTP card roundtrip tested with a software test answer; not a physical material measurement",
   "artifacts": {
     "result.gcode": {
-      "sha256": "48d365d6696df97c2ae6b3eff9143fd9176af03310e20e87f7a009ae05079d88",
+      "sha256": "1deaca873b2c2db4895be9b8e5ce25c8c9c74131b293700ee39650af7edb7266",
       "bytes": 38847606
     },
     "project.3mf": {
-      "sha256": "e87ba9b01121e981fe63a8a2ed4e011385014abdd3360005daad461a7248221c",
-      "bytes": 7350261
+      "sha256": "32fe3d1706295ae9da9ec9a27b92f595854c79899da3596f5c755a9433d00bec",
+      "bytes": 7350855
     },
     "readback.json": {
-      "sha256": "e6d9f86d8740e1b73d90125a5cf0d5d3c658df8cfed6928e971229861090661f",
+      "sha256": "7d2b5ad62a10d2aa9146ce194a5e1e0745ef19d222073b6bb2c82858e703c831",
       "bytes": 1502
     },
     "002_state.json": {
-      "sha256": "db14c04c2e4170d51f3ca7233f94c233aae40ed169964505c856ff2799bf5cae",
+      "sha256": "77588b54b1e9e2e6f5d6ff8eb13f23ad5a146d9aaa21f65262ed473edd29e4c5",
       "bytes": 3326
     },
     "004_state.json": {
-      "sha256": "e93d159192e037cb435b3c0876d611fec07c43c79fd9393361b1c44e6f43e5a5",
+      "sha256": "819a3f1c6e0fa3945f248ebffa2f2aa79063d292fba39d5108ff01061fc4442c",
       "bytes": 3233
     },
     "006_state.json": {
-      "sha256": "db14c04c2e4170d51f3ca7233f94c233aae40ed169964505c856ff2799bf5cae",
+      "sha256": "77588b54b1e9e2e6f5d6ff8eb13f23ad5a146d9aaa21f65262ed473edd29e4c5",
       "bytes": 3326
     }
-  }
+  },
+  "merged_upstream": "5ddf2d98aa88e9aac37ff5dffd374644f14b583e",
+  "ui_validation_scope": "Qt workflow and HTTP tested in actual headless STE; embedded panel visual/keyboard QA remains separate"
 }
