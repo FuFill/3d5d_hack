@@ -48,6 +48,7 @@ def main():
     parser.add_argument("--slicer", default=r"C:\Program Files\Stereotech STE Slicer 7.10")
     parser.add_argument("--job", default=str(ROOT / "experiments" / "ste_runtime" / "job.json"))
     parser.add_argument("--timeout", type=float, default=400., help="bounded lifetime of this isolated application and its engines")
+    parser.add_argument("--assistant", action="store_true", help="Include the merged AI Assistant shell for native integration checks")
     args = parser.parse_args()
     job = Path(args.job).resolve()
     job.parent.mkdir(parents=True, exist_ok=True)
@@ -66,9 +67,17 @@ def main():
     shutil.copytree(ROOT / "plugin" / "STEPlannerRuntime", target, dirs_exist_ok=True)
     shutil.copytree(ROOT / "plugin" / "ste_planner", target / "ste_planner", dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+    if args.assistant:
+        from build_ai_assistant import build
+        assistant = build(plugins / "AIAssistant")
+        # Application-owned local paths only. Credentials never enter the bundle.
+        (assistant / "local_config.json").write_text(json.dumps({"env_file": str(ROOT / ".env")}), encoding="utf-8")
     env = dict(os.environ)
     env.update(APPDATA=str(isolated / "appdata"), LOCALAPPDATA=str(isolated / "local"),
                STE_PLANNER_RUNTIME_JOB=str(job), STE_PLANNER_ISOLATED_ROOT=str(isolated))
+    if args.assistant:
+        import sys
+        env["STE_PLANNER_PYTHON"] = sys.executable
     (isolated / "local").mkdir(parents=True, exist_ok=True)
     api, owned = owned_process_job()
     process = subprocess.Popen([str(Path(args.slicer) / "STESlicerCLI.exe"), "--headless"],

@@ -2,6 +2,8 @@
 """AI Assistant extension: menu item, settings, local server and the docked chat window."""
 
 import os
+import json
+import sys
 import threading
 
 from UM.Application import Application
@@ -17,6 +19,31 @@ from .agent.mcp import MCPServer
 from .agent.server import ChatService
 from .agent.tools import SliceMonitor, ToolRegistry
 from .agent.window import DockedWindow
+from .agent.core_bridge import CoreBridge, default_python
+from .agent.core_worker import core_path
+
+
+def local_defaults():
+    """Local installer writes paths only. Secret values never enter a bundle."""
+    path = os.path.join(os.path.dirname(__file__), "local_config.json")
+    if not os.path.isfile(path):
+        return {}
+    with open(path, encoding="utf-8") as handle:
+        local = json.load(handle)
+    values = {}
+    if local.get("worker_python"):
+        values["worker_python"] = local["worker_python"]
+    env_file = local.get("env_file")
+    if env_file and os.path.isfile(env_file):
+        if core_path() not in sys.path:
+            sys.path.insert(0, core_path())
+        from ste_planner.qwen_client import load_env_file
+        env = load_env_file(env_file, dict(os.environ))
+        for target, keys in (("api_key", ("TIMEWEB_API_KEY", "LLM_API_KEY")),
+                             ("base_url", ("QWEN_BASE_URL", "LLM_BASE_URL")),
+                             ("model", ("QWEN_MODEL", "LLM_MODEL"))):
+            values[target] = next((env[k] for k in keys if env.get(k)), "")
+    return values
 
 PREFIX = "ai_assistant/"
 DEFAULTS = {
@@ -25,6 +52,8 @@ DEFAULTS = {
     "model": "dashscope/qwen3.8-flash",
     "language": "ru",
     "theme": "light",
+    "worker_python": default_python(),
+    "planning_inputs_file": "",
     "output_dir": os.path.join(os.path.expanduser("~"), "Documents", "STE AI Assistant"),
 }
 
@@ -39,6 +68,13 @@ class Settings:
         for key, default in DEFAULTS.items():
             preferences.addPreference(PREFIX + key, default)
         self._values = dict((key, preferences.getValue(PREFIX + key)) for key in DEFAULTS)
+        local = local_defaults()
+        for key, value in local.items():
+            if value and (not self._values.get(key) or self._values[key] == DEFAULTS[key]):
+                self._values[key] = value
+        # Local environment is an optional fallback; never return it to the page.
+        if not self._values.get("api_key"):
+            self._values["api_key"] = os.environ.get("TIMEWEB_API_KEY") or os.environ.get("LLM_API_KEY") or ""
 
     def get(self, key):
         with self._lock:
@@ -53,11 +89,13 @@ class Settings:
         key = values.get("api_key") or ""
         return {"base_url": values["base_url"], "model": values["model"], "language": values["language"],
                 "theme": values["theme"], "output_dir": values["output_dir"] or DEFAULTS["output_dir"],
+                "worker_python": values["worker_python"],
+                "planning_inputs_file": values["planning_inputs_file"],
                 "has_key": bool(key), "key_hint": ("…" + key[-4:]) if len(key) > 8 else ""}
 
     def update(self, data):
         changed = {}
-        for key in ("base_url", "model", "output_dir"):
+        for key in ("base_url", "model", "output_dir", "worker_python", "planning_inputs_file"):
             if isinstance(data.get(key), str):
                 changed[key] = data[key].strip()
         if isinstance(data.get("api_key"), str) and data["api_key"].strip():
@@ -104,7 +142,8 @@ class AIAssistant(Extension):
         bus = EventBus()
         monitor = SliceMonitor(self._app, bus)
         monitor.connect()
-        registry = ToolRegistry(self._app, monitor, lambda: settings.get("output_dir"))
+        core = CoreBridge(self._app, settings.values)
+        registry = ToolRegistry(self._app, monitor, lambda: settings.get("output_dir"), core=core)
         mcp = MCPServer(registry)
         agent = Agent(mcp, registry, bus, settings.values)
         self._service = ChatService(bus, agent, mcp, registry, settings)

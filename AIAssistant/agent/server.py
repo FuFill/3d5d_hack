@@ -231,7 +231,8 @@ class Handler(BaseHTTPRequestHandler):
                 service.agent.cancel()
                 return self._send(200, {"ok": True})
             if url.path == "/api/reset":
-                service.agent.reset()
+                if service.agent.reset() is False:
+                    return self._send(409, {"error": "busy"})
                 return self._send(200, {"ok": True})
             if url.path == "/api/settings":
                 service.settings.update(data)

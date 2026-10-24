@@ -35,10 +35,11 @@ class Tool:
 
 
 class ToolRegistry:
-    def __init__(self, app, slice_monitor, output_dir):
+    def __init__(self, app, slice_monitor, output_dir, core=None):
         self._app = app
         self._slices = slice_monitor
         self._output_dir = output_dir
+        self.core = core
         self._catalog = None
         self._nodes = {}
         self._node_ids = {}
@@ -87,6 +88,25 @@ class ToolRegistry:
     def _build(self):
         extruder = {"type": "integer", "description": "Extruder position (0 = first). Default: active extruder."}
         object_id = {"type": "integer", "description": "Object id from list_objects."}
+
+        if self.core is not None:
+            plan_id = {"type": "string", "description": "Application-owned id returned by plan_print."}
+            self._add("plan_print", "Translate the original specification and STL into a plan using the existing "
+                      "deterministic core (materials, orientation, settings, DML and uncertainty checks). "
+                      "Call BEFORE loading a model. Does not change the project. Do not paraphrase the specification.",
+                      {"task_text": {"type": "string"}, "mesh_path": {"type": "string"},
+                       "mode": {"type": "string", "enum": list(ALLOWED_MODES)},
+                       "llm_items": {"type": "array", "description": "Optional cited requirement proposals; the core "
+                                     "validates fragment, value, unit and comparator against task_text. Never invent facts.",
+                                     "items": {"type": "object"}}},
+                      self.core.plan, required=("task_text", "mesh_path"), on_main=False)
+            self._add("get_plan", "Read the current core proposal, limitations and explanations.",
+                      {"plan_id": plan_id}, lambda a, c: self.core.summary(a["plan_id"]), required=("plan_id",), on_main=False)
+            self._add("apply_plan", "Apply exactly the core plan as one Undo operation. Requires an empty project. "
+                      "Rejects stale source/project, infeasible and unqualified 5D plans. Never delete user objects to bypass it.",
+                      {"plan_id": plan_id}, self.core.apply, required=("plan_id",))
+            self._add("verify_plan", "Read back actual STE settings, source and scene; status must pass before slicing.",
+                      {"plan_id": plan_id}, self.core.verify, required=("plan_id",))
 
         self._add("get_state",
                   "Current printer, printing mode (3D/5D), quality profile, material per extruder, "
@@ -181,11 +201,11 @@ class ToolRegistry:
                   {}, self._get_slice_result)
         self._add("export_gcode",
                   "Write the sliced G-code to a file. Default: <output folder>/<job name>/result.gcode.",
-                  {"path": {"type": "string"}}, self._export_gcode)
+                  {"path": {"type": "string"}}, self._export_gcode, on_main=False)
         self._add("save_project",
                   "Save the STE Slicer project (3MF with models, printer, profile and settings). "
                   "Default: <output folder>/<job name>/project.3mf.",
-                  {"path": {"type": "string"}}, self._save_project)
+                  {"path": {"type": "string"}}, self._save_project, on_main=False)
 
     # ------------------------------------------------------------------ helpers
 
@@ -827,14 +847,16 @@ class ToolRegistry:
 
     def _export_gcode(self, args, ctx):
         from UM.Mesh.MeshWriter import MeshWriter
-        state, _progress = self._slices.status()
-        if state != 3:
-            raise ToolError("Slice first: there is no G-code yet")
-        writer = self._app.getMeshFileHandler().getWriter("GCodeWriter")
+        def prepare():
+            state, _progress = self._slices.status()
+            if state != 3:
+                raise ToolError("Slice first: there is no G-code yet")
+            return (self._app.getMeshFileHandler().getWriter("GCodeWriter"),
+                    self._target(args.get("path"), "result.gcode"),
+                    [self._app.getController().getScene().getRoot()])
+        writer, path, nodes = run_on_main(self._app, prepare)
         if writer is None:
             raise ToolError("GCodeWriter plugin is not available")
-        path = self._target(args.get("path"), "result.gcode")
-        nodes = [self._app.getController().getScene().getRoot()]
         with open(path, "w", encoding="utf-8", newline="") as stream:
             ok = writer.write(stream, nodes, MeshWriter.OutputMode.TextMode)
         if not ok:
@@ -843,11 +865,13 @@ class ToolRegistry:
 
     def _save_project(self, args, ctx):
         from UM.Workspace.WorkspaceWriter import WorkspaceWriter
-        writer = self._app.getWorkspaceFileHandler().getWriter("3MFWriter")
+        def prepare():
+            return (self._app.getWorkspaceFileHandler().getWriter("3MFWriter"),
+                    self._target(args.get("path"), "project.3mf"),
+                    self._app.getController().getScene().getRoot().getChildren())
+        writer, path, nodes = run_on_main(self._app, prepare)
         if writer is None:
             raise ToolError("3MFWriter plugin is not available")
-        path = self._target(args.get("path"), "project.3mf")
-        nodes = [self._app.getController().getScene().getRoot()]
         with open(path, "wb") as stream:
             ok = writer.write(stream, nodes, WorkspaceWriter.OutputMode.BinaryMode)
         if ok is False:

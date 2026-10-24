@@ -8,6 +8,8 @@
       placeholder: "Например: кронштейн под нагрузку, PETG, без поддержек", attach: "Прикрепить файл",
       send: "Отправить", stop: "Остановить", drop: "Отпустите файлы",
       baseUrl: "URL API", apiKey: "Ключ API", model: "Модель", outputDir: "Папка для G-code и проектов",
+      workerPython: "Python ядра (путь к python.exe)",
+      planningInputs: "JSON измерений, нагрузок и шума (необязательно)",
       language: "Язык", theme: "Тема", light: "Светлая", dark: "Тёмная", save: "Сохранить", test: "Проверить",
       saved: "Сохранено", testing: "Проверка…", testOk: "Связь с моделью есть", keyKept: "Ключ сохранён",
       thinking: "Думает", thought: "Ход мыслей", offline: "нет связи со слайсером",
@@ -22,6 +24,8 @@
       placeholder: "E.g. load-bearing bracket, PETG, no supports", attach: "Attach file",
       send: "Send", stop: "Stop", drop: "Drop files here",
       baseUrl: "API URL", apiKey: "API key", model: "Model", outputDir: "Folder for G-code and projects",
+      workerPython: "Core Python (path to python.exe)",
+      planningInputs: "Measurements, loads and noise JSON (optional)",
       language: "Language", theme: "Theme", light: "Light", dark: "Dark", save: "Save", test: "Test",
       saved: "Saved", testing: "Testing…", testOk: "Model is reachable", keyKept: "Key is stored",
       thinking: "Thinking", thought: "Reasoning", offline: "slicer is not reachable",
@@ -33,6 +37,10 @@
   };
 
   var TOOLS = {
+    plan_print: ["Расчёт ядром по ТЗ", "Core specification planning"],
+    get_plan: ["План и ограничения", "Plan and limitations"],
+    apply_plan: ["Применение плана", "Apply core plan"],
+    verify_plan: ["Проверка настроек STE", "STE readback"],
     get_state: ["Состояние слайсера", "Slicer state"],
     find_settings: ["Поиск настроек", "Find settings"],
     get_settings: ["Чтение настроек", "Read settings"],
@@ -482,6 +490,8 @@
   function openSheet() {
     form.base_url.value = settings.base_url || "";
     form.model.value = settings.model || "";
+    form.worker_python.value = settings.worker_python || "";
+    form.planning_inputs_file.value = settings.planning_inputs_file || "";
     form.output_dir.value = settings.output_dir || "";
     form.api_key.value = "";
     form.api_key.placeholder = settings.has_key ? t("keyKept") + " " + (settings.key_hint || "") : "";
@@ -493,6 +503,8 @@
 
   function collect() {
     return {base_url: form.base_url.value, model: form.model.value, output_dir: form.output_dir.value,
+            worker_python: form.worker_python.value,
+            planning_inputs_file: form.planning_inputs_file.value,
       api_key: form.api_key.value, language: segValue("language"), theme: segValue("theme")};
   }
 

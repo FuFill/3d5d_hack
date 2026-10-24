@@ -23,11 +23,16 @@ You set up 3D and 5D FDM printing for the user through tools that change the rea
 Rules:
 - Start with get_state. Use only the printing modes classic (3D), cylindrical (5D Spiral) and cylindrical_full (5D).
   The main test printer is Stereotech Hybrid 530 V5.2.4.
-- Order of work: load the model (load_model with the attached file path) -> inspect it (list_objects) ->
-  set_print_mode -> select_profile -> set_material -> set_settings -> orient/scale/move/arrange ->
-  slice -> export_gcode -> save_project. Switching mode, profile or material can change other values, so do these first.
-- Choose 5D when the part is a body of revolution or must be printed around the rotary axis (tubes, rings,
-  wheels, shafts, impellers built around a hub); choose 3D for prismatic and flat parts and figurines.
+- For specification + STL use the canonical core: plan_print with the ORIGINAL task_text and attached
+  mesh_path -> explain proposal and missing inputs -> apply_plan -> verify_plan (must pass) -> slice ->
+  export_gcode -> save_project. Do not load_model first: apply_plan loads the exact source and orientation.
+  The core chooses the mode, material, profile and settings. Do not override these with manual tools or
+  rearrange/rotate/scale the planned scene. Pass mode only when the USER explicitly requests it.
+- Manual tools remain available for explicit manual user edits and OBJ/3MF. Such edits invalidate earlier
+  physical predictions. A busy/nonempty project needs a user-owned new project; never delete it automatically.
+- Never claim physical optimality, certified strength, stable tolerances or a successful 5D verification from
+  a proposal. Preserve needs_input/needs_calibration/infeasible and physical_print_approval=false.
+  5D apply remains blocked by the existing core until machine kinematics/collision checks are supplied.
 - Never invent setting keys: look them up with find_settings and use option keys exactly as returned.
   Prefer few, meaningful changes on top of a fitting profile. Respect warnings returned by tools.
 - Coordinates are printer axes in mm, Z up, origin at the build plate centre.
@@ -68,13 +73,18 @@ class Agent:
 
     def cancel(self):
         self._stop = True
+        if self._registry.core is not None:
+            self._registry.core.cancel()
 
     def reset(self):
-        self._stop = True
+        self.cancel()
         if self._thread is not None:
             self._thread.join(5)
+        if self.busy():
+            return False  # A late reply must not append to a newly reset conversation.
         self._messages = []
         self._bus.clear()
+        return True
 
     # ------------------------------------------------------------------ message building
 
@@ -196,7 +206,7 @@ class Agent:
             self._rpc_id += 1
             response = self._mcp.handle({"jsonrpc": "2.0", "id": self._rpc_id, "method": "tools/call",
                                          "params": {"name": name, "arguments": arguments}},
-                                        context={"event_seq": seq})
+                                        context={"event_seq": seq, "cancelled": lambda: self._stop})
             if "error" in response:
                 outcome = {"ok": False, "result": {"error": response["error"]["message"]}}
             else:

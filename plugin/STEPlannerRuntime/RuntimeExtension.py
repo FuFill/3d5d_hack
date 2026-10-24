@@ -230,6 +230,17 @@ class RuntimeExtension(QObject, Extension):
                 "history_count": len(history.getOperations()), "can_undo": history.canUndo(), "can_redo": history.canRedo()}
         if name == "inspect":
             return self.diagnostics()
+        if name == "assistant_start":
+            if not self.isolated():
+                raise ValueError("assistant test transport requires an isolated profile")
+            extension = PluginRegistry.getInstance().getPluginObject("AIAssistant")
+            if extension._service is None:
+                extension._start()
+            path = command["connection_file"]
+            with open(path, "w", encoding="utf-8") as handle:
+                json.dump({"port": extension._service.port, "token": extension._service.token}, handle)
+            self.pending = {"kind": "assistant", "command": command, "started": time.monotonic()}
+            return None
         if name == "apply":
             with open(command["decision"], encoding="utf-8") as handle:
                 decision = json.load(handle)
@@ -298,6 +309,9 @@ class RuntimeExtension(QObject, Extension):
 
     def wait_pending(self):
         pending = self.pending
+        if pending["kind"] == "assistant" and os.path.isfile(pending["command"]["done_file"]):
+            self.pending = None
+            return {"status": "computed", "assistant_check_finished": True}
         if self.isolated() and pending["kind"] in ("slice", "project"):
             log = os.path.join(os.environ["STE_PLANNER_ISOLATED_ROOT"], "appdata", "steslicer", "7.10", "steslicer.log")
             if os.path.exists(log):

@@ -19,6 +19,16 @@ class Cancelled(Exception):
 
 
 def _ssl_context():
+    # The same verified Windows ROOT-store handling as the existing core client.
+    try:
+        from .core_worker import core_path
+        import sys
+        if core_path() not in sys.path:
+            sys.path.insert(0, core_path())
+        from ste_planner.qwen_client import tls_context
+        return tls_context()
+    except (ImportError, RuntimeError):
+        pass
     context = ssl.create_default_context()
     try:  # Frozen builds may lack a CA store; certifi is used when it ships with the slicer.
         import certifi

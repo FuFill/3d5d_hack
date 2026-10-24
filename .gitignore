@@ -6,6 +6,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .runtime/
+/AIAssistant/local_config.json
+/AIAssistant/core/
 /experiments/ste_runtime/**/job.json
 /experiments/ste_runtime/**/process*.json
 /experiments/ste_runtime/**/*.log

@@ -1,13 +1,18 @@
 # AI Assistant для STE Slicer
 
 Плагин добавляет в STE Slicer 7.x (форк Cura 3.6, `"api": 5`) окно чата с LLM. Пользователь пишет задачу и
-прикладывает модель STL/OBJ/3MF или фото JPG/PNG. Агент через MCP-инструменты выбирает режим 3D/5D, профиль,
-материал и настройки, загружает и ориентирует модель, режет её, сохраняет G-code и проект 3MF и объясняет решения.
+прикладывает модель STL/OBJ/3MF или фото JPG/PNG. Для ТЗ + STL агент вызывает существующее ядро
+`ste_planner.plan_case`, затем его Qt-адаптер. Выбор материала, режима, ориентации, настроек,
+DoubleML и оценка неопределённости сохраняют исходные алгоритмы. Ручные инструменты Lenaz,
+чат, темы, RU/EN, профили, работа с OBJ/3MF и MCP доступны как прежде.
 
 ## Установка
 
-1. Скопируйте папку `AIAssistant` в папку плагинов пользователя:
-   `%APPDATA%\steslicer\7.x\plugins\AIAssistant` (открыть папку конфигурации: **Справка → Показать папку конфигурации**).
+1. Из корня проекта запустите современным Python с установленными зависимостями:
+   `python plugin/tools/install_ai_assistant.py --python "C:\path\to\python.exe"`.
+   Скрипт собирает оболочку с точной копией `plugin/ste_planner`, проверяет SHA-256,
+   устанавливает в `%APPDATA%\steslicer\7.10\plugins\AIAssistant` и сохраняет резервную
+   копию предыдущего плагина в `.runtime`. Для другой версии передайте `--profile`.
 2. Перезапустите STE Slicer.
 3. Меню **Расширения → AI Assistant → Open chat**.
 
@@ -21,7 +26,15 @@
 
 - **URL API** и **Модель** — выданные организаторами (по умолчанию `https://api.timeweb.ai/v1`, `dashscope/qwen3.8-flash`);
 - **Ключ API** — вводится здесь и хранится в настройках приложения (`steslicer.cfg`, раздел `ai_assistant`), в код не попадает
-  и в окно чата обратно не передаётся;
+  и в окно чата обратно не передаётся. Установщик также подключает локальный корневой `.env`:
+  его путь хранится в непубликуемом `local_config.json`, ключ читается только в память.
+  Поддерживаются `TIMEWEB_API_KEY`, `LLM_API_KEY`, `QWEN_*`/`LLM_*` URL и модель;
+- **Python ядра** — абсолютный путь к современному Python, например `.venv-functional\Scripts\python.exe`.
+  Зависимости worker: `experiments/functional_requirements.lock.txt`; Python 3.5 слайсера не изменяется;
+- **JSON измерений, нагрузок и шума** — необязательный локальный файл с ключами
+  `calibration_data`, `functional_spec`, `noise_spec`, `robustness_limits` в существующих форматах ядра.
+  Эти данные задаёт приложение/инженер, агент не может подменить их через аргументы инструмента.
+  Без измерений сохраняются статусы `needs_input` / `needs_calibration`;
 - **Папка** для G-code и проектов: по умолчанию `Документы\STE AI Assistant\<имя задания>\result.gcode` и `project.3mf`;
 - язык интерфейса RU/EN и тема (светлая/тёмная).
 
@@ -36,8 +49,21 @@ Python-плагин: agent/agent.py — цикл диалога с LLM (Chat Com
    │ tools/call                         │ OpenAI-совместимый API
 agent/mcp.py — MCP-сервер (JSON-RPC 2.0)   LLM
    │
-agent/tools.py — API STE Slicer: настройки, профили, сцена, слайсинг (только из главного Qt-потока)
+agent/core_bridge.py → современный core_worker.py → исходный ste_planner
+   │ application-owned plan_id, SHA исходного STL, отмена/устаревание
+agent/tools.py → runtime_adapter.create_operation / readback в Qt
+   │ штатные движки STE и writers G-code/3MF
 ```
+
+Обычный маршрут: `plan_print → apply_plan → verify_plan → slice → export_gcode → save_project`.
+Модель сначала не загружается вручную: Qt-operation загружает исходный STL и применяет
+всю сцену/профиль одной операцией Undo. Требуется пустой новый проект; существующие
+детали автоматически не удаляются. При смене файла, проекта или входных измерений
+план пересчитывается. Отмена завершает worker и делает его plan_id недействительным.
+
+Для переносимого архива: `python plugin/tools/build_ai_assistant.py --output .runtime/release/AIAssistant`.
+В такую сборку не входят `.env`, `local_config.json`, виртуальное окружение и эксперименты.
+Настройте Python/ключ после копирования. `bundle_manifest.json` подтверждает точную копию ядра.
 
 В ленте чата сразу видно, что делает агент:
 
@@ -54,6 +80,7 @@ agent/tools.py — API STE Slicer: настройки, профили, сцен�
 
 | Группа | Инструменты |
 |---|---|
+| Исходное ядро | `plan_print`, `get_plan`, `apply_plan`, `verify_plan` |
 | Настройки и профили | `get_state`, `find_settings`, `get_settings`, `set_settings`, `set_print_mode`, `list_profiles`, `select_profile`, `create_profile`, `save_profile`, `list_materials`, `set_material` |
 | Модели | `load_model`, `list_objects` (в т. ч. габариты), `move_object`, `rotate_object`, `scale_object`, `arrange_all`, `delete_object` |
 | Слайсинг | `slice`, `get_slice_status`, `get_slice_result`, `export_gcode`, `save_project` |
@@ -63,5 +90,21 @@ agent/tools.py — API STE Slicer: настройки, профили, сцен�
 
 ## Требования
 
-Python 3.5-совместимый код, только стандартная библиотека и PyQt5 из дистрибутива STE Slicer. Логи плагина —
+Оболочка: Python 3.5, стандартная библиотека и PyQt5 из STE. Планирование и тяжёлая физика:
+отдельный современный Python. Writers запускаются из worker-потока и сами возвращают
+сериализацию в Qt — интерфейс STE не блокируется ожиданием собственного callback.
+Логи плагина —
 `stderr.log` и `steslicer.log` в папке конфигурации (строки `AI Assistant`).
+
+Проверки: `python -m pytest plugin/shell_tests -q` (все семь исходных STL/ТЗ, совпадение с ядром,
+отмена, устаревание, целостность сборки); `python plugin/tools/check_ai_assistant_runtime.py`
+(изолированный настоящий STE: HTTP/MCP, worker, apply/readback, нарезка пыльника, экспорт,
+единый Undo/Redo; при наличии локального ключа — пробный запрос Timeweb).
+
+Существующие ограничения не снимаются: 5D можно рассчитать как предложение, но обычное
+применение блокируется до проверки кинематики/коллизий. `infeasible` не применяется.
+Полный тираж фигурки из примера 4 сейчас не помещается с резервами адаптера; оболочка
+показывает отказ и не уменьшает количество автоматически. Физический оптимум, прочность
+и устойчивость не подтверждаются самим фактом успешной нарезки; `physical_print_approval=false`.
+Отдельные `toolpath_physics.analyze_slice` / `sliced_search` и их 5D протокол остаются
+доступны через существующий worker API/CLI, их автоматический FE-поиск не запускается чатом.

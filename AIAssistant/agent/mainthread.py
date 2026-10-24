@@ -19,8 +19,13 @@ def run_on_main(app, func, *args, **kwargs):
 
     done = threading.Event()
     box = {}
+    lock = threading.Lock()
 
     def call():
+        with lock:
+            if box.get("expired"):
+                return
+            box["started"] = True
         try:
             box["value"] = func(*args, **kwargs)
         except BaseException as e:  # Re-raised in the calling thread.
@@ -30,6 +35,8 @@ def run_on_main(app, func, *args, **kwargs):
 
     app.callLater(call)
     if not done.wait(timeout):
+        with lock:
+            box["expired"] = True
         raise MainThreadTimeout("Slicer main thread did not respond in %d s" % timeout)
     if "error" in box:
         raise box["error"]
