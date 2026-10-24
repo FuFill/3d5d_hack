@@ -7,15 +7,22 @@ build plate); the Uranium scene is Y-up and is converted here. Every change retu
 """
 
 import contextlib
+import difflib
 import math
 import os
 import threading
 import time
 
 from .mainthread import run_on_main
+from .questions import QuestionBox, QuestionCancelled
 
 ALLOWED_MODES = ("classic", "cylindrical", "cylindrical_full")
 MODE_NAMES = {"classic": "3D", "cylindrical": "5D Spiral", "cylindrical_full": "5D"}
+
+# Values reported by get_state so the model sees the current process without extra reads.
+STATE_KEYS = ("layer_height", "line_width", "wall_line_count", "top_layers", "bottom_layers", "infill_sparse_density",
+              "infill_pattern", "material_print_temperature", "material_bed_temperature", "speed_print",
+              "cool_fan_speed", "support_enable", "adhesion_type")
 
 # Backend states, see UM.Backend.Backend.BackendState.
 STATE_NAMES = {1: "not_started", 2: "processing", 3: "done", 4: "error", 5: "disabled"}
@@ -35,12 +42,15 @@ class Tool:
 
 
 class ToolRegistry:
-    def __init__(self, app, slice_monitor, output_dir, core=None):
+    def __init__(self, app, slice_monitor, output_dir, core=None, bus=None):
         self._app = app
         self._slices = slice_monitor
         self._output_dir = output_dir
         self.core = core
         self.upload_sources = lambda: []
+        self.spec_sources = lambda: []
+        self.questions = QuestionBox(bus) if bus is not None else None
+        self._setting_keys = None
         self._catalog = None
         self._nodes = {}
         self._node_ids = {}
@@ -90,7 +100,21 @@ class ToolRegistry:
         extruder = {"type": "integer", "description": "Extruder position (0 = first). Default: active extruder."}
         object_id = {"type": "integer", "description": "Object id from list_objects."}
 
+        if self.questions is not None:
+            self._add("ask_user",
+                      "Ask the user a question when the answer changes the result and cannot be found with tools "
+                      "(e.g. material not specified, 3D vs 5D unclear, change the open project or start a new one, "
+                      "rotate the existing object, strength vs speed). Give 2-4 short options, recommended first. "
+                      "The user may also type a custom answer. Waits for the answer.",
+                      {"question": {"type": "string", "description": "One short question in the user's language."},
+                       "options": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 4,
+                                   "description": "2-4 short answer options; put the recommended one first."},
+                       "allow_custom": {"type": "boolean", "description": "Allow a free-text answer (default true)."}},
+                      self._ask_user, required=("question", "options"), on_main=False)
+
         if self.core is not None:
+            from .project_apply import InPlaceApplier
+            self._in_place = InPlaceApplier(self, self.core)
             plan_id = {"type": "string", "description": "Application-owned id returned by plan_print."}
             self._add("list_model_sources", "List actual uploaded files and original files of scene objects. "
                       "Use attachment_id or object_id from here in plan_print. Never guess filesystem paths.",
@@ -100,36 +124,62 @@ class ToolRegistry:
                       "Does not change the project. Select exactly one source: attachment_id, object_id or an actual "
                       "absolute mesh_path. Object input reads the ORIGINAL STL, not its current scene transform. "
                       "Do not paraphrase the specification. If the model is already on the plate, use its object_id: "
-                      "apply then reorients that object in place (only it may be in the project); an attachment "
-                      "is loaded by apply into an empty project.",
-                      {"task_text": {"type": "string"},
+                      "apply_plan then reorients that object in place (only it may be in the project); an attachment "
+                      "is loaded by apply_plan into an empty project. For an attached DOCX/TXT specification pass "
+                      "its spec_attachment_id (the original text is used) and put only the user's extra wishes in "
+                      "task_text.",
+                      {"task_text": {"type": "string", "description": "Original specification text or the user's request."},
+                       "spec_attachment_id": {"type": "string", "description": "Id of an attached DOCX/TXT specification."},
                        "attachment_id": {"type": "string", "description": "Id from the message attachment or list_model_sources."},
                        "object_id": {"type": "integer", "description": "Scene object id from list_objects/list_model_sources."},
                        "mesh_path": {"type": "string", "description": "Existing absolute path returned by a tool; never just a filename."},
                        "mode": {"type": "string", "enum": list(ALLOWED_MODES)},
+                       "preferred_material": {"type": "string", "description": "Core material id the user chose "
+                                              "(from material_options of a previous plan_print); the core still "
+                                              "rejects it if a mandatory requirement fails."},
                        "llm_items": {"type": "array", "description": "Optional cited requirement proposals; the core "
                                      "validates fragment, value, unit and comparator against task_text. Never invent facts.",
                                      "items": {"type": "object"}}},
-                      self._plan_print, required=("task_text",), on_main=False)
+                      self._plan_print, on_main=False)
             self._add("get_plan", "Read the current core proposal, limitations and explanations.",
                       {"plan_id": plan_id}, lambda a, c: self.core.summary(a["plan_id"]), required=("plan_id",), on_main=False)
-            self._add("apply_plan", "Apply exactly the core plan as one Undo operation. A plan by object_id reorients "
-                      "that loaded object in place and needs no other models; a plan by attachment needs an empty project. "
-                      "Rejects stale source/project, infeasible and unqualified 5D plans. Never delete user objects to bypass it.",
-                      {"plan_id": plan_id}, self.core.apply, required=("plan_id",))
-            self._add("verify_plan", "Read back actual STE settings, source and scene; status must pass before slicing.",
+            self._add("apply_plan", "Apply exactly the core plan with its STE preset as one Undo operation. A plan by "
+                      "object_id reorients that loaded object in place and needs no other models; a plan by attachment "
+                      "loads it into an empty project. Rejects stale source/project and infeasible plans; a 5D plan "
+                      "needs confirm_unverified_5d. Never delete user objects to bypass it: if other models block it, "
+                      "ask the user and use apply_plan_to_project.",
+                      {"plan_id": plan_id, "confirm_unverified_5d": {"type": "boolean", "description":
+                       "Only after the user agreed in ask_user that 5D kinematics/collisions are not verified."}},
+                      self._apply_plan, required=("plan_id",))
+            self._add("apply_plan_to_project", "OPEN project with several models (or a model apply_plan refuses): put the "
+                      "plan's STE preset (profile, material, mode) into the current project and write only the plan's "
+                      "changes on top; objects are not moved or deleted. One Undo step, readback checked. These are "
+                      "global settings for every model: ask the user first. confirm_unverified_5d=true only after the "
+                      "user agreed that 5D kinematics/collisions are not verified.",
+                      {"plan_id": plan_id, "confirm_unverified_5d": {"type": "boolean"}},
+                      self._in_place.apply, required=("plan_id",))
+            self._add("revert_plan_changes", "Undo apply_plan_to_project: restore the previous preset, material, mode "
+                      "and settings.", {"plan_id": plan_id}, self._in_place.revert, required=("plan_id",))
+            self._add("verify_plan", "After apply_plan: read back actual STE settings, source and scene; status must "
+                      "pass before slicing.",
                       {"plan_id": plan_id}, self.core.verify, required=("plan_id",))
 
+        self._add("set_nozzle",
+                  "Set the nozzle diameter installed on an extruder (printer hardware, like Machine Settings). Only "
+                  "after the user confirmed in ask_user that this nozzle is physically installed; then plan again.",
+                  {"nozzle_mm": {"type": "number"}, "extruder": extruder}, self._set_nozzle, required=("nozzle_mm",))
         self._add("get_state",
                   "Current printer, printing mode (3D/5D), quality profile, material per extruder, "
                   "settings changed by the user and number of objects. Call this first.",
                   {}, self._get_state)
         self._add("find_settings",
-                  "Search slicer settings by key, English or localized label, or description. "
-                  "Returns keys, types, units, allowed options and current values.",
-                  {"query": {"type": "string", "description": "Words to search, e.g. 'infill', 'support', 'temperature'."},
-                   "limit": {"type": "integer", "description": "Maximum results, default 15."}},
-                  self._find_settings, required=("query",))
+                  "Search slicer settings by key, English or localized label, or description. Pass several topics "
+                  "at once in queries (one call instead of many). Returns keys, types, units, options and values.",
+                  {"queries": {"type": "array", "items": {"type": "string"},
+                               "description": "Topics, e.g. ['infill', 'wall', 'support', 'adhesion']."},
+                   "query": {"type": "string", "description": "A single topic (use queries for several)."},
+                   "limit": {"type": "integer", "description": "Maximum results per topic, default 8."}},
+                  self._find_settings)
         self._add("get_settings",
                   "Read current values of settings by key (global or per extruder).",
                   {"keys": {"type": "array", "items": {"type": "string"}}, "extruder": extruder},
@@ -245,6 +295,16 @@ class ToolRegistry:
                         "its object_id and apply reorients it in place; other models must not be in the project."}
 
     def _plan_print(self, args, ctx):
+        args = dict(args)
+        if args.get("spec_attachment_id") is not None:
+            spec = next((item for item in self.spec_sources() if item["id"] == args["spec_attachment_id"]), None)
+            if spec is None:
+                raise ToolError("Specification attachment not found; attach the DOCX/TXT again")
+            extra = str(args.get("task_text") or "").strip()
+            args["task_text"] = spec["text"] + ("\n\n" + extra if extra and extra not in spec["text"] else "")
+        args.pop("spec_attachment_id", None)
+        if not str(args.get("task_text") or "").strip():
+            raise ToolError("task_text or spec_attachment_id is required")
         selectors = [key for key in ("attachment_id", "object_id", "mesh_path") if args.get(key) is not None]
         if len(selectors) != 1:
             raise ToolError("Choose exactly one attachment_id, object_id or mesh_path from list_model_sources")
@@ -267,9 +327,72 @@ class ToolRegistry:
         if key == "object_id":
             # Apply then reorients this loaded object instead of loading a second copy.
             request["target_object_id"] = int(args[key])
+        if request.get("preferred_material"):
+            request["preferred_materials"] = [str(request.pop("preferred_material"))]
+        request.pop("preferred_material", None)
         result = self.core.plan(request, ctx)
         result["input_source"] = source
+
+        def label_changes():
+            for change in result.get("setting_changes") or []:
+                try:
+                    stack, _scope = self._stack_for(change["key"], 0)
+                    label = stack.getProperty(change["key"], "label")
+                    change["label"], change["label_local"] = label, self._translate(change["key"], label)
+                    change["unit"] = change.get("unit") or stack.getProperty(change["key"], "unit") or ""
+                except Exception:
+                    pass
+        if self._app is not None:
+            run_on_main(self._app, label_changes)
         return result
+
+    def _apply_plan(self, args, ctx):
+        """Core apply (new project) plus the highlighted description: preset base, material, mode, Delta."""
+        from .project_apply import ProjectSnapshot, describe_changes, preset_label
+        decision = self.core.decision_record(args.get("plan_id"))["decision"]
+        before = ProjectSnapshot(self, decision)
+        try:
+            result = self.core.apply(args, ctx)
+        except ValueError as e:
+            raise ToolError(str(e))
+        result["changes"] = describe_changes(self, decision, before)
+        result["base_preset"] = preset_label(decision) or "planner process profile (native presets off)"
+        return result
+
+    def _set_nozzle(self, args, ctx):
+        """Hardware context: the nozzle diameter the user physically installed (Machine Settings value)."""
+        try:
+            size = float(args.get("nozzle_mm"))
+        except (TypeError, ValueError):
+            raise ToolError("nozzle_mm must be a number")
+        if not 0.1 <= size <= 2.0:
+            raise ToolError("nozzle_mm must be between 0.1 and 2.0")
+        extruder = self._extruder(args.get("extruder", 0))
+        old = extruder.getProperty("machine_nozzle_size", "value")
+        changes = extruder.definitionChanges
+        if changes.getId().startswith("empty"):
+            from steslicer.Settings.SteSlicerStackBuilder import SteSlicerStackBuilder
+            changes = SteSlicerStackBuilder.createDefinitionChangesContainer(extruder, extruder.getId() + "_settings")
+        changes.setProperty("machine_nozzle_size", "value", size)
+        new = extruder.getProperty("machine_nozzle_size", "value")
+        return {"extruder": int(extruder.getMetaDataEntry("position", "0")), "nozzle_mm": new,
+                "note": "Plan again: presets and materials are selected for the installed nozzle.",
+                "changes": [self._change("machine_nozzle_size", extruder, old, new)] if old != new else []}
+
+    def _ask_user(self, args, ctx):
+        question = str(args.get("question") or "").strip()
+        options = [str(o).strip() for o in (args.get("options") or []) if str(o).strip()][:4]
+        if not question or len(options) < 2:
+            raise ToolError("question and 2-4 options are required")
+        cancelled = (ctx or {}).get("cancelled")
+        try:
+            answer, _seq = self.questions.ask(question, options, args.get("allow_custom", True) is not False, cancelled)
+        except QuestionCancelled:
+            raise ToolError("The user cancelled the question")
+        choice = answer.get("choice")
+        return {"answer": answer["text"],
+                "option": options[choice] if isinstance(choice, int) and 0 <= choice < len(options) else None,
+                "custom": not isinstance(choice, int)}
 
     def _global(self):
         stack = self._app.getGlobalContainerStack()
@@ -310,10 +433,17 @@ class ToolRegistry:
             return text
         return self._catalog.i18nc(key + " " + suffix, text)
 
+    def _all_keys(self):
+        if self._setting_keys is None:
+            self._setting_keys = [d.key for d in self._global().getBottom().findDefinitions() if d.type != "category"]
+        return self._setting_keys
+
     def _definition(self, key):
-        found = self._global().getBottom().findDefinitions(key=key)
+        found = self._global().getBottom().findDefinitions(key=key) if isinstance(key, str) and key else []
         if not found:
-            raise ToolError("Unknown setting '%s'. Use find_settings to look up keys." % key)
+            close = difflib.get_close_matches(str(key), self._all_keys(), n=3, cutoff=0.6)
+            hint = (" Did you mean: %s?" % ", ".join(close)) if close else " Use find_settings to look up keys."
+            raise ToolError("Unknown setting '%s'.%s" % (key, hint))
         return found[0]
 
     def _stack_for(self, key, extruder=None):
@@ -379,6 +509,7 @@ class ToolRegistry:
     # ------------------------------------------------------------------ settings and profiles
 
     def _get_state(self, args, ctx):
+        """Everything about the open project in one call: printer, preset, extruders, key settings, objects."""
         stack = self._global()
         machine_manager = self._app.getMachineManager()
         extruders = []
@@ -386,57 +517,89 @@ class ToolRegistry:
             extruder = stack.extruders[position]
             extruders.append({
                 "position": int(position),
+                "enabled": bool(extruder.isEnabled) if hasattr(extruder, "isEnabled") else True,
                 "material_id": extruder.material.getMetaDataEntry("base_file", extruder.material.getId()),
                 "material": extruder.material.getName(),
+                "material_type": extruder.material.getMetaDataEntry("material", ""),
                 "nozzle": extruder.variant.getName(),
-                "enabled": bool(extruder.isEnabled) if hasattr(extruder, "isEnabled") else True,
+                "nozzle_mm": _plain(extruder.getProperty("machine_nozzle_size", "value")),
             })
         user_changes = []
         for user_stack in [stack] + [stack.extruders[p] for p in sorted(stack.extruders)]:
             for key in sorted(user_stack.userChanges.getAllKeys()):
                 user_changes.append({"key": key, "scope": self._scope_name(user_stack),
                                      "value": _plain(user_stack.getProperty(key, "value"))})
+        key_settings = {}
+        for key in STATE_KEYS:
+            try:
+                target, _scope = self._stack_for(key, 0)
+                key_settings[key] = _plain(target.getProperty(key, "value"))
+            except Exception:
+                continue
         custom = machine_manager.activeQualityChangesGroup
+        state, _progress = self._slices.status() if self._slices is not None else (1, 0)
+        nodes = self._scene_nodes()
         return {
             "machine": stack.getName(),
             "machine_definition": stack.definition.getName(),
             "printing_mode": self._mode(),
             "allowed_modes": [{"mode": m, "name": MODE_NAMES[m]} for m in ALLOWED_MODES],
             "five_axis": bool(stack.getProperty("machine_five_axis", "value")),
-            "quality_type": machine_manager.activeQualityType,
-            "profile": machine_manager.activeQualityOrQualityChangesName,
-            "custom_profile": custom.name if custom else None,
+            "preset": {"profile": machine_manager.activeQualityOrQualityChangesName,
+                       "quality_type": machine_manager.activeQualityType,
+                       "custom_profile": custom.name if custom else None,
+                       "user_changes_on_top": len(user_changes)},
             "extruders": extruders,
+            "key_settings": key_settings,
             "user_changes": user_changes,
-            "objects": len(self._scene_nodes()),
+            "build_volume": {"x": _plain(stack.getProperty("machine_width", "value")),
+                             "y": _plain(stack.getProperty("machine_depth", "value")),
+                             "z": _plain(stack.getProperty("machine_height", "value"))},
+            "objects": [self._object_info(n) for n in nodes[:20]],
+            "object_count": len(nodes),
+            "slice_state": STATE_NAMES.get(state, str(state)),
             "output_folder": self._output_dir(),
         }
 
     def _find_settings(self, args, ctx):
-        query = str(args.get("query", "")).strip().lower()
-        if not query:
-            raise ToolError("query is required")
-        limit = max(1, min(int(args.get("limit") or 15), 50))
-        words = query.split()
-        global_stack = self._global()
-        scored = []
-        for definition in global_stack.getBottom().findDefinitions():
+        queries = args.get("queries") if isinstance(args.get("queries"), list) else []
+        if args.get("query"):
+            queries = queries + [args["query"]]
+        queries = [str(q).strip().lower() for q in queries if str(q).strip()][:12]
+        if not queries:
+            raise ToolError("queries (or query) is required")
+        limit = max(1, min(int(args.get("limit") or 8), 30))
+        definitions = []
+        for definition in self._global().getBottom().findDefinitions():
             if definition.type == "category":
                 continue
             label = definition.label or ""
-            local = self._translate(definition.key, label)
-            haystack = " ".join([definition.key, label, local or "", definition.description or ""]).lower()
-            if not all(w in haystack for w in words):
-                continue
-            title = " ".join([definition.key, label, local or ""]).lower()
-            score = sum(2 if w in title else 1 for w in words) + (3 if query in title else 0)
-            scored.append((-score, definition.key))
-        scored.sort()
-        results = []
-        for _, key in scored[:limit]:
-            stack, _scope = self._stack_for(key)
-            results.append(self._describe(key, stack))
-        return {"count": len(scored), "settings": results}
+            local = self._translate(definition.key, label) or ""
+            title = " ".join([definition.key.replace("_", " "), label, local]).lower()
+            definitions.append((definition.key, title, (definition.description or "").lower()))
+        results, seen = {}, set()
+        for query in queries:
+            words = query.replace("_", " ").split()
+            needed = max(1, int(math.ceil(len(words) * 0.6)))
+            scored = []
+            for key, title, description in definitions:
+                hits = [w for w in words if w in title or w in description]
+                if len(hits) < needed:
+                    continue
+                score = sum(2 if w in title else 1 for w in hits) + (4 if query in title else 0) \
+                    + (3 if key == query.replace(" ", "_") else 0)
+                scored.append((-score, len(key), key))
+            scored.sort()
+            found = []
+            for _, _length, key in scored[:limit]:
+                stack, _scope = self._stack_for(key)
+                info = self._describe(key, stack)
+                if key in seen:
+                    info = {"key": key, "label": info["label"], "see": "listed above"}
+                seen.add(key)
+                found.append(info)
+            results[query] = found
+        return {"results": results}
 
     def _get_settings(self, args, ctx):
         keys = args.get("keys") or []
@@ -561,6 +724,9 @@ class ToolRegistry:
         old = machine_manager.activeQualityOrQualityChangesName
         before = set(quality_manager.getQualityChangesGroups(stack))
         quality_manager.createQualityChanges(name)
+        # The manager refreshes its lookup table on a 300 ms timer; refresh now so the new profile is found.
+        if hasattr(quality_manager, "_updateMaps"):
+            quality_manager._updateMaps()
         groups = quality_manager.getQualityChangesGroups(stack)
         created = [n for n in groups if n not in before]
         if not created:

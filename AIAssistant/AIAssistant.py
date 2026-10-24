@@ -152,12 +152,13 @@ class AIAssistant(Extension):
         monitor = SliceMonitor(self._app, bus)
         monitor.connect()
         core = CoreBridge(self._app, settings.values)
-        registry = ToolRegistry(self._app, monitor, lambda: settings.get("output_dir"), core=core)
+        registry = ToolRegistry(self._app, monitor, lambda: settings.get("output_dir"), core=core, bus=bus)
         core.resolve_node = registry._node
         mcp = MCPServer(registry)
         agent = Agent(mcp, registry, bus, settings.values)
         self._service = ChatService(bus, agent, mcp, registry, settings)
         registry.upload_sources = self._service.model_uploads
+        registry.spec_sources = self._service.spec_uploads
         port = self._service.start()
         profile = os.path.join(Resources.getDataStoragePath(), "ai_assistant_browser")
         self._window = DockedWindow(self._app, profile)

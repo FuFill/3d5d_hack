@@ -95,45 +95,76 @@ svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width:
 .think.streaming summary::after { content: "…"; animation: blink 1s steps(2) infinite; }
 .think-body { margin: 4px 0 0 2px; padding-left: 10px; border-left: 1px solid var(--line); font-size: 12px; white-space: pre-wrap; }
 
-.tool { margin: 0 0 8px; }
-.tool-row { display: flex; align-items: center; gap: 8px; min-height: 22px; }
+.step { margin: 0 0 10px; }
+.step-row { display: flex; align-items: center; gap: 8px; min-height: 22px; }
 .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; border: 1.5px solid var(--fg); }
-.tool.running .dot { border-color: var(--muted); border-top-color: var(--fg); animation: spin .8s linear infinite; }
-.tool.ok .dot { background: var(--fg); }
-.tool.error .dot { border-style: dashed; }
-.tool-name { white-space: nowrap; }
-.tool-arg { flex: 1; min-width: 0; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.more { width: 24px; height: 20px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); letter-spacing: 1px; }
+.step.running .dot { border-color: var(--muted); border-top-color: var(--fg); animation: spin .8s linear infinite; }
+.step.ok .dot { background: var(--fg); }
+.step.error .dot { border-style: dashed; }
+.step-title { flex: 1; min-width: 0; font-weight: 500; }
+.step-meta { margin: 0 0 0 15px; color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.more { width: 24px; height: 20px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); letter-spacing: 1px; flex: none; }
 .more:hover, .more.on { background: var(--soft); color: var(--fg); }
-.tool-note { margin: 2px 0 0 15px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
-.tool.error .tool-note { color: var(--fg); }
-.tool-note.path { font: 11px/1.4 ui-monospace, Consolas, monospace; }
+.note { margin: 3px 0 0 15px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.note.error { color: var(--fg); }
+.note.path { font: 11px/1.4 ui-monospace, Consolas, monospace; }
 
-.changes { margin: 4px 0 2px 15px; padding-left: 9px; border-left: 2px solid var(--fg); }
+.changes { margin: 5px 0 2px 15px; padding-left: 9px; border-left: 2px solid var(--fg); }
 .change { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 6px; padding: 1px 0; }
 .change .label { color: var(--fg); }
-.change .scope { color: var(--muted); font-size: 11px; }
+.change .scope, .change .why { color: var(--muted); font-size: 11px; }
 .change .old { color: var(--muted); text-decoration: line-through; }
 .change .arrow { color: var(--muted); }
 .change .new { background: var(--chip-bg); color: var(--chip-fg); padding: 0 6px; border-radius: 4px; font-weight: 600; }
+.change.inherited .new { background: transparent; color: var(--fg); border: 1px solid var(--line); font-weight: 400; }
 .changes.fresh { animation: flash 1.6s ease-out; }
+
+.preset { margin: 6px 0 2px 15px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; }
+.preset-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.preset-tag { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.preset-name { font-weight: 600; }
+.preset-sub { color: var(--muted); font-size: 12px; }
+.preset-status { margin-top: 3px; font-size: 12px; }
+.preset .change .new { background: transparent; color: var(--fg); border: 1px dashed var(--fg); }
+.preset .changes { margin-left: 0; border-left-style: dashed; }
+.preset ul { margin: 4px 0 0; padding-left: 16px; color: var(--muted); font-size: 12px; }
 
 .bar-wrap { display: flex; align-items: center; gap: 8px; margin: 4px 0 2px 15px; color: var(--muted); font-size: 12px; }
 .track { flex: 1; height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
 .fill { height: 100%; background: var(--fg); transition: width .3s; }
 .summary { margin: 4px 0 2px 15px; font-weight: 600; }
 
-.details {
-  margin: 4px 0 4px 15px;
-  padding: 8px;
-  max-height: 260px;
+.details { margin: 6px 0 4px 15px; padding: 6px 8px; background: var(--soft); border-radius: 6px; font-size: 12px; }
+.details .think { margin: 0 0 6px; }
+.call { display: flex; gap: 6px; align-items: baseline; padding: 1px 0; cursor: pointer; }
+.call:hover .call-name { text-decoration: underline; }
+.call-mark { width: 12px; flex: none; color: var(--muted); }
+.call.error .call-mark { color: var(--fg); }
+.call-name { white-space: nowrap; }
+.call-arg { flex: 1; min-width: 0; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.call-error { margin: 0 0 2px 18px; color: var(--muted); overflow-wrap: anywhere; }
+.json {
+  margin: 4px 0 6px;
+  padding: 6px;
+  max-height: 240px;
   overflow: auto;
-  background: var(--soft);
-  border-radius: 6px;
+  background: var(--bg);
+  border-radius: 4px;
   font: 11px/1.45 ui-monospace, Consolas, monospace;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+.ask { margin: 0 0 12px; padding: 10px 12px; border: 1.5px solid var(--fg); border-radius: 10px; }
+.ask-q { font-weight: 600; }
+.ask-opts { display: grid; gap: 6px; margin-top: 8px; }
+.ask-opts button { text-align: left; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); }
+.ask-opts button:hover { border-color: var(--fg); }
+.ask-opts button:first-child { border-color: var(--fg); }
+.ask-hint { margin-top: 6px; color: var(--muted); font-size: 12px; }
+.ask.answered, .ask.cancelled { border-color: var(--line); }
+.ask-a { margin-top: 4px; }
+.ask-a::before { content: "→ "; color: var(--muted); }
 .err { margin: 0 0 12px; padding: 7px 10px; border: 1px solid var(--fg); border-radius: 8px; }
 .err button { margin-left: 6px; border: 0; background: none; text-decoration: underline; padding: 0; }
 .stopped { margin: 0 0 12px; color: var(--muted); font-size: 12px; }
@@ -164,6 +195,7 @@ textarea::placeholder { color: var(--muted); }
 .chip.loading { color: var(--muted); }
 .chip.bad { border-color: var(--fg); }
 .chip button { border: 0; background: none; color: var(--muted); padding: 0 3px; line-height: 1; }
+.chip em { font-style: normal; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* settings sheet */
 .sheet { position: fixed; inset: 0; background: var(--bg); overflow-y: auto; z-index: 5; }

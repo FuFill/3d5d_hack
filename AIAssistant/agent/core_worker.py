@@ -37,6 +37,7 @@ def calculate(request):
                          llm_items=request.get("llm_items"), source="AI Assistant",
                          preset_catalog=request.get("preset_catalog"),
                          allowed_quality_changes=request.get("allowed_quality_changes"),
+                         preferred_materials=request.get("preferred_materials"),
                          **request.get("planner_options", {}))
     if digest(path) != request["geometry_sha256"]:
         raise ValueError("Source STL changed during planning")

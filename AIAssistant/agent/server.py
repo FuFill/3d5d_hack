@@ -14,7 +14,9 @@ import threading
 import uuid
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, urlparse
+
+from .documents import extract_text
 
 WEB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "web")
 STATIC = {"/": ("index.html", "text/html; charset=utf-8"),
@@ -23,6 +25,7 @@ STATIC = {"/": ("index.html", "text/html; charset=utf-8"),
           "/style.css": ("style.css", "text/css; charset=utf-8")}
 IMAGE_EXT = (".png", ".jpg", ".jpeg")
 MODEL_EXT = (".stl", ".obj", ".3mf")
+SPEC_EXT = (".docx", ".txt", ".md")
 MAX_UPLOAD = 300 * 1024 * 1024
 
 
@@ -77,6 +80,10 @@ class ChatService:
         with self._lock:
             return [dict(item) for item in self.uploads.values() if item["kind"] == "model"]
 
+    def spec_uploads(self):
+        with self._lock:
+            return [dict(item) for item in self.uploads.values() if item["kind"] == "spec"]
+
     def add_upload(self, name, stream, length):
         base = os.path.basename(name.replace("\\", "/")) or "file"
         ext = os.path.splitext(base)[1].lower()
@@ -84,6 +91,8 @@ class ChatService:
             kind = "image"
         elif ext in MODEL_EXT:
             kind = "model"
+        elif ext in SPEC_EXT:
+            kind = "spec"
         else:
             raise ValueError("unsupported")
         upload_id = uuid.uuid4().hex[:12]
@@ -101,6 +110,12 @@ class ChatService:
         if remaining:
             raise ValueError("incomplete")
         item = {"id": upload_id, "name": base, "kind": kind, "path": path, "size": length}
+        if kind == "spec":
+            try:
+                item["text"] = extract_text(path)
+            except ValueError:
+                shutil.rmtree(folder, ignore_errors=True)
+                raise
         with self._lock:
             self.uploads[upload_id] = item
         return item
@@ -185,6 +200,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, f.read(), content_type,
                                   {"Content-Security-Policy": "default-src 'self'; img-src 'self' data: blob:; "
                                                               "style-src 'self'; connect-src 'self'"})
+        if url.path == "/favicon.ico":
+            return self._send(204, b"", "image/x-icon")
         if not self._token_ok():
             return self._send(401, {"error": "token"})
         service = self.service
@@ -213,15 +230,20 @@ class Handler(BaseHTTPRequestHandler):
                     return self._send(202, b"", "text/plain")
                 return self._send(200, reply.encode("utf-8"))
             if url.path == "/api/upload":
-                name = unquote((parse_qs(url.query).get("name") or ["file"])[0])
+                name = (parse_qs(url.query).get("name") or ["file"])[0]  # parse_qs already decodes
                 length = int(self.headers.get("Content-Length") or 0)
-                if length <= 0 or length > MAX_UPLOAD:
-                    return self._send(413, {"error": "size"})
+                if length <= 0:
+                    return self._send(413, {"error": "empty"})
+                if length > MAX_UPLOAD:
+                    return self._send(413, {"error": "too_large"})
                 try:
                     item = service.add_upload(name, self.rfile, length)
                 except ValueError as e:
                     return self._send(415, {"error": str(e)})
-                return self._send(200, {"id": item["id"], "name": item["name"], "kind": item["kind"]})
+                reply = {"id": item["id"], "name": item["name"], "kind": item["kind"]}
+                if item["kind"] == "spec":
+                    reply["chars"] = len(item["text"])
+                return self._send(200, reply)
             data = self._json()
             if url.path == "/api/message":
                 text = str(data.get("text") or "").strip()
@@ -230,6 +252,13 @@ class Handler(BaseHTTPRequestHandler):
                     return self._send(400, {"error": "empty"})
                 if not service.agent.submit(text, attachments):
                     return self._send(409, {"error": "busy"})
+                return self._send(200, {"ok": True})
+            if url.path == "/api/answer":
+                text = str(data.get("text") or "").strip()
+                choice = data.get("choice")
+                if not text or not service.registry.questions.answer(int(data.get("seq") or 0), text,
+                                                                     choice if isinstance(choice, int) else None):
+                    return self._send(409, {"error": "no_question"})
                 return self._send(200, {"ok": True})
             if url.path == "/api/cancel":
                 service.agent.cancel()

@@ -131,7 +131,8 @@ class CoreBridge:
         request = dict(snapshot, request_id=request_id, task_text=text, mesh_path=path,
                        geometry_sha256=digest(path), mode=mode, llm_items=args.get("llm_items"),
                        planner_options=options, inputs=inputs, allowed_quality_changes=allowed,
-                       target_object_id=target)
+                       target_object_id=target,
+                       preferred_materials=[str(m) for m in (args.get("preferred_materials") or [])][:3] or None)
         with self._lock:
             if self._process is not None:
                 raise ValueError("Planning is already running; cancel it first")
@@ -192,6 +193,12 @@ class CoreBridge:
             raise ValueError("Unknown, cancelled or superseded plan_id; plan again")
         return record
 
+    def decision_record(self, plan_id):
+        """Copies of the application-owned decision and request (used to improve an open project)."""
+        with self._lock:
+            record = self._record(plan_id)
+            return {"decision": copy.deepcopy(record["decision"]), "request": copy.deepcopy(record["request"])}
+
     def summary(self, plan_id):
         with self._lock:
             record = self._record(plan_id)
@@ -211,6 +218,9 @@ class CoreBridge:
                         setting_changes=[{k: c.get(k) for k in ("key", "base_value", "effective_value", "unit",
                                                                 "reason", "justification")}
                                          for c in (decision.get("setting_patch") or {}).get("changes") or []],
+                        # Feasible core materials (ids for plan_print preferred_material).
+                        material_options=[{"id": m.get("id"), "summary": m.get("summary")}
+                                          for m in ((decision.get("candidates") or {}).get("materials") or [])[:6]],
                         geometry_sha256=record["request"]["geometry_sha256"],
                         decision_sha256=_hash(decision),
                         # The loaded model is reoriented in place; otherwise apply loads the source.
@@ -239,8 +249,10 @@ class CoreBridge:
                     raise ValueError("Scene objects cannot be resolved in this shell; plan from an attachment")
                 target = self.resolve_node(record["request"]["target_object_id"])
             from ste_planner.runtime_adapter import create_operation
-            operation = create_operation(self.app, record["decision"], record["request"]["mesh_path"],
-                                         target_node=target)
+            options = {"target_node": target}
+            if args.get("confirm_unverified_5d") is True:
+                options["allow_unverified_5d"] = True  # the user accepted unverified 5D kinematics in ask_user
+            operation = create_operation(self.app, record["decision"], record["request"]["mesh_path"], **options)
             operation.redo()
             operation.push()
             record["operation"], record["applied"] = operation, True

@@ -266,10 +266,12 @@ def modifier_local_vertices(operation, parent_matrix):
     return local, mesh.faces
 
 
-def preflight(decision, mesh_path, machine_definition, demonstration=False, analysis_only=False):
+def preflight(decision, mesh_path, machine_definition, demonstration=False, analysis_only=False,
+              allow_unverified_5d=False):
+    """allow_unverified_5d: the user explicitly accepted that 5D kinematics/collisions are not verified."""
     context = decision.get("calibration_context") or {}
     mode = decision.get("route", {}).get("mode")
-    if mode != "classic" and not (analysis_only and mode in ("cylindrical", "cylindrical_full")):
+    if mode != "classic" and not ((analysis_only or allow_unverified_5d) and mode in ("cylindrical", "cylindrical_full")):
         raise ApplyError("needs_input: 5D requires machine kinematics, head/mandrel geometry and full trajectory collision checks")
     if context.get("machine_id") != machine_definition or context.get("printing_mode") != mode:
         raise ApplyError("machine/mode context mismatch")
@@ -356,7 +358,8 @@ def readback(app, decision):
             "material_id": extruder.material.getId(), "quality_id": extruder.quality.getId()}
 
 
-def create_operation(app, decision, mesh_path, demonstration=False, analysis_only=False, target_node=None):
+def create_operation(app, decision, mesh_path, demonstration=False, analysis_only=False, target_node=None,
+                     allow_unverified_5d=False):
     """Stage an operation without touching the existing scene or stack contents.
 
     target_node: the loaded scene object of the planned STL. It is reoriented in
@@ -387,7 +390,7 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
                 os.path.realpath(Resources.getConfigStoragePath())]) != os.path.realpath(isolated_root):
             raise ApplyError("software fixture may be applied only in the isolated validation profile")
     stack = app.getGlobalContainerStack()
-    preflight(decision, mesh_path, stack.definition.getId(), demonstration, analysis_only)
+    preflight(decision, mesh_path, stack.definition.getId(), demonstration, analysis_only, allow_unverified_5d)
     scene = app.getController().getScene()
     source = geometry.load_stl(mesh_path)
     if target_node is not None:
@@ -619,3 +622,123 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
             scene.sceneChanged.emit(scene.getRoot())
 
     return PlanOperation()
+
+
+# ---------------------------------------------------------------- native preset into an open project
+
+def settings_preflight(decision, machine_definition, allow_unverified_5d=False):
+    """Checks for applying P + Delta to the project that is already open (no source load).
+
+    Same base, contract and patch checks as preflight(); the scene is not part of the
+    plan here, so the source/transform checks do not apply. 5D stays blocked unless the
+    user explicitly accepted that kinematics/collisions are not verified.
+    """
+    record = decision.get("base_presets")
+    if record is None:
+        raise ApplyError("needs_input: the plan has no native preset base; plan again with native presets")
+    if record.get("contract") != presets.CONTRACT:
+        raise ApplyError("unsupported preset contract: %s" % record.get("contract"))
+    if record["machine"]["definition_id"] != machine_definition:
+        raise ApplyError("stale plan: base presets belong to another machine")
+    context = decision.get("calibration_context") or {}
+    if not presets.same_base(presets.base_identity(record), context.get("preset_base")):
+        raise ApplyError("preset base differs from the calibration context")
+    mode = (decision.get("route") or {}).get("mode")
+    if mode not in ("classic", "cylindrical", "cylindrical_full"):
+        raise ApplyError("unsupported printing mode %s" % mode)
+    if mode != "classic" and not allow_unverified_5d:
+        raise ApplyError("needs_input: 5D requires machine kinematics, head/mandrel geometry and full trajectory "
+                         "collision checks; apply only after the user accepts that they are not verified")
+    if decision.get("status") == "infeasible":
+        raise ApplyError("infeasible plan cannot be applied")
+    patch = decision.get("setting_patch") or {}
+    if patch.get("errors"):
+        raise ApplyError("planner patch contains errors")
+    payload = patch.get("payload", {})
+    assigned = dict(payload.get("global", {}))
+    assigned.update(payload.get("extruders", {}).get("0", {}))
+    for key, value in assigned.items():
+        if key in decision.get("effective_settings", {}) and not _equal(value, decision["effective_settings"][key]):
+            raise ApplyError("compiled patch disagrees with expected readback: " + key)
+    return record
+
+
+def create_settings_operation(app, decision, allow_unverified_5d=False):
+    """Stage P + Delta for the open project as one Undo operation; scene objects are kept.
+
+    Every container of P is found by id and its content digest is checked before anything
+    is staged. redo() switches all stacks, dispatches the backend and requires readback
+    to pass, otherwise it restores the previous containers. Caller pushes after redo().
+    """
+    from PyQt5.QtCore import QThread
+    from UM.Operations.Operation import Operation
+    from UM.Settings.InstanceContainer import InstanceContainer
+
+    if QThread.currentThread() != app.thread():
+        raise ApplyError("Qt thread required")
+    stack = app.getGlobalContainerStack()
+    record = settings_preflight(decision, stack.definition.getId(), allow_unverified_5d)
+    stacks = [stack] + list(stack.extruders.values())
+    native = {}
+    for s in stacks:
+        position = None if s is stack else s.getMetaDataEntry("position")
+        if position is not None and str(position) not in record["extruders"]:
+            raise ApplyError("stale plan: extruder %s is not part of the planned base" % position)
+        native[s.getId()] = [native_container(app, ref, index) for index, ref in
+                             enumerate(presets.stack_refs(record, position), 1)]
+    payload = decision["setting_patch"].get("payload", {})
+
+    class SettingsOperation(Operation):
+        def __init__(self):
+            Operation.__init__(self)
+            self.active = False
+            self.readback = None
+            self.stacks = stacks
+            self.before = [list(s.getContainers()) for s in stacks]
+            self.after = []
+            for s, containers in zip(stacks, self.before):
+                containers = list(containers)
+                user = InstanceContainer("ste_planner_user_" + uuid.uuid4().hex)
+                user.setMetaDataEntry("type", "user")
+                user.setMetaDataEntry("setting_version", app.SettingVersion)
+                user.setDefinition(stack.definition.getId())
+                app.getContainerRegistry().addContainer(user)
+                containers[0] = user
+                containers[1:6] = native[s.getId()]
+                position = None if s is stack else s.getMetaDataEntry("position")
+                values = payload.get("global", {}) if position is None else \
+                    payload.get("extruders", {}).get(str(position), {})
+                for key, value in values.items():
+                    user.setProperty(key, "value", value)
+                self.after.append(containers)
+
+        def _containers(self, snapshots):
+            for s, containers in zip(self.stacks, snapshots):
+                for index, container in enumerate(containers[:-1]):
+                    s.replaceContainer(index, container)
+            stack.propertyChanged.emit("printing_mode", "value")
+            handler = getattr(app.getBackendManager(), "_onSettingChanged", None)
+            if not callable(handler):
+                raise ApplyError("unsupported STE backend dispatcher")
+            handler("printing_mode", "value")
+
+        def redo(self):
+            if self.active:
+                return
+            try:
+                self._containers(self.after)
+                self.active = True
+                self.readback = readback(app, decision)
+                if self.readback["status"] != "pass":
+                    raise ApplyError("effective setting readback differs: " + str(self.readback["differences"]))
+                app.getController().getScene().sceneChanged.emit(app.getController().getScene().getRoot())
+            except Exception:
+                self.undo()
+                raise
+
+        def undo(self):
+            self._containers(self.before)
+            self.active = False
+            app.getController().getScene().sceneChanged.emit(app.getController().getScene().getRoot())
+
+    return SettingsOperation()

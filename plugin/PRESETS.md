@@ -100,6 +100,20 @@ material → variant → definition_changes → definition, для глобал�
 стеков с `base_presets`; асинхронная замена quality со стороны STE даёт отказ проверки.
 Требование пустого проекта сохраняется.
 
+### Открытый проект
+
+`create_settings_operation(app, decision, allow_unverified_5d=False)` ставит P и Δ в стеки проекта,
+который уже открыт, не загружая STL и не трогая объекты сцены. `settings_preflight` повторяет
+проверки `preflight` для базы (контракт, машина, `same_base` с `calibration_context`, ошибки patch,
+согласованность payload с `effective_settings`, `infeasible`), а проверки источника и transform
+к этому пути не относятся. Каждый контейнер P ищется по id со сверкой хеша (`native_container`),
+`readback` обязан пройти, иначе контейнеры возвращаются. Используется оболочкой в
+`apply_plan_to_project`; полный `apply_plan` (с ориентацией) по-прежнему предпочтителен, когда
+в проекте одна модель из исходного STL.
+
+`allow_unverified_5d` (и в `preflight`/`create_operation`) снимает блокировку 5D только по явному
+согласию пользователя; по умолчанию она сохраняется.
+
 ## DML
 
 Если план построен на базе P, эксперимент обязан указать тот же
