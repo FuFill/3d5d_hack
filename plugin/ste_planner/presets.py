@@ -42,7 +42,7 @@ CONSTRAINT_MODELS = ("choose_route", "plan_5d", "support_plan", "thermal_window"
                      "role_speed")
 # Generic policy seeds. They change the base only where the TZ load class needs
 # them; otherwise the verified preset value is inherited.
-POLICY_MODELS = ("wall_count", "skin_layers", "choose_layer_height")
+POLICY_MODELS = ("wall_count", "skin_layers", "choose_layer_height", "infill_penalty")
 CLASS_JUSTIFIED = {"structural": ("layer_height", "wall_line_count", "top_layers", "bottom_layers",
                                   "infill_sparse_density"),
                    "elastic": ("layer_height", "wall_line_count", "top_layers", "bottom_layers",
@@ -503,12 +503,15 @@ def _needs_input(reason, options, rejected):
 # ---------------------------------------------------------------- minimal override
 
 def justification(item, load_class):
-    """Why a compiled item may change the base: requirement / explicit / constraint / load class, else policy."""
+    """Why a compiled item may change the base: requirement / explicit / user priority / constraint /
+    load class, else policy."""
     if item.get("reason_requirement_ids"):
         return "requirement"
     if item["key"] in EXPLICIT_KEYS:
         return "explicit"
     models = item.get("model_ids") or []
+    if any(m.startswith("user_priority:") for m in models):
+        return "user_priority"  # speed/quality priority stated by the user
     if any(m in CONSTRAINT_MODELS for m in models):
         return "constraint"
     policy = models and all(m.startswith("policy:") or m in POLICY_MODELS for m in models)

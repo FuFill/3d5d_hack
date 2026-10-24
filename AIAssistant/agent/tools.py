@@ -142,6 +142,11 @@ class ToolRegistry:
                                        "steps and loads along the layers. strength: the user wants a stiffer/stronger "
                                        "part, loads along the layers first. keep_current (object_id only): use the "
                                        "model's current rotation on the plate, e.g. after rotate_object."},
+                       "print_priority": {"type": "string", "enum": ["quality", "balanced", "speed"],
+                                          "description": "What matters more for this print, ONLY as stated by the user "
+                                          "or the specification: quality (finer layer, slower), balanced, speed "
+                                          "(coarser layer, faster, lower infill cap). Omit when unknown: the result "
+                                          "then lists it in clarifications to ask the user."},
                        "preferred_material": {"type": "string", "description": "Core material id the user chose "
                                               "(from material_options of a previous plan_print); the core still "
                                               "rejects it if a mandatory requirement fails."},

@@ -29,9 +29,22 @@ POLICY = {
     # are weakest and least stiff across layers, so load-bearing parts weigh it most.
     "interlayer_weight": {"structural": 2.0, "elastic": 1.0, "general": 1.0, "decorative": 0.0},
     "strength_priority_interlayer_weight": 6.0,   # user asked for stiffness/strength first
+    # Layer seed h/d by print priority: the levels of the DOE seed {0.375, 0.5, 0.625}.
+    "priority_h_over_d": {"quality": 0.375, "balanced": 0.5, "speed": 0.625},
+    # Infill: J(phi) = shortfall below the load-class target + penalty above a soft cap.
+    # No calibrated infill -> strength relation exists, while time and material grow with
+    # phi, so infill above the cap is penalised (per unit fraction, by print priority).
+    "infill_candidates": [0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0],
+    "infill_soft_cap": {"quality": 0.7, "balanced": 0.5, "speed": 0.4},
+    "infill_penalty_weight": {"quality": 0.5, "balanced": 1.0, "speed": 2.0},
 }
 
 ORIENTATION_PRIORITIES = ("balanced", "strength")
+PRINT_PRIORITIES = ("quality", "balanced", "speed")
+# Strength screens that assume a solid section: lower infill would make them non-conservative.
+SOLID_SECTION_CHECKS = ("gear_tooth_bending", "shaft_torsion")
+# Tightness/pressure requirements keep the part solid.
+SOLID_REQUIREMENTS = ("sealing", "pressure")
 
 STRUCTURAL_TYPES = ("gear", "pump_impeller", "fan_impeller", "wheel_roller", "shaft_cam")
 
@@ -113,11 +126,48 @@ def choose_orientation(mesh, analysis, reqset, build_volume, support_angle=50.0,
     return best, scored
 
 
-def plan_process(reqset, material, route_mode, part_type, analysis, caps, orientation_eval=None, route=None):
-    """Return (decisions, notes) for the compiler."""
+def choose_infill(target, priority="balanced", hard_min=None):
+    """Infill fraction minimising J = shortfall below target + penalty above the soft cap.
+
+    shortfall = max(0, target - phi) / target; penalty = w * max(0, phi - cap) / (1 - cap).
+    hard_min (solid-section screens, tightness, material minimum) is never undercut, even
+    when it is penalised. Ties go to the candidate closest to the target.
+    """
+    cap, weight = POLICY["infill_soft_cap"][priority], POLICY["infill_penalty_weight"][priority]
+    # The cap itself is a candidate: with a steep penalty the optimum sits exactly there.
+    candidates = set(POLICY["infill_candidates"] + [target, cap] + ([hard_min] if hard_min is not None else []))
+    rows = []
+    for phi in sorted(candidates):
+        if hard_min is not None and phi < hard_min - 1e-9:
+            continue
+        shortfall = max(0.0, target - phi) / target if target > 0 else 0.0
+        penalty = weight * max(0.0, phi - cap) / (1.0 - cap)
+        rows.append({"infill": phi, "shortfall": round(shortfall, 6), "penalty": round(penalty, 6),
+                     "J": round(shortfall + penalty, 6)})
+    best = min(rows, key=lambda r: (r["J"], abs(r["infill"] - target)))
+    return {"chosen": best["infill"], "target": target, "soft_cap": cap, "penalty_weight": weight,
+            "priority": priority, "hard_min": hard_min, "penalty": best["penalty"], "candidates": rows}
+
+
+def plan_process(reqset, material, route_mode, part_type, analysis, caps, orientation_eval=None, route=None,
+                 print_priority=None, structural_checks=()):
+    """Return (decisions, notes) for the compiler.
+
+    print_priority: "quality", "balanced" or "speed" as stated by the user; None means not
+    stated (balanced policy, reported as a clarification). It moves the layer seed, the infill
+    soft cap and the print speed inside the material window. structural_checks: the chosen
+    material's strength screens; solid-section ones keep the infill solid.
+    """
     decisions, notes = [], []
+    if print_priority is not None and print_priority not in PRINT_PRIORITIES:
+        raise ValueError("print priority must be one of %s" % (PRINT_PRIORITIES,))
+    priority = print_priority or "balanced"
+    # A stated priority is a user requirement: those values change the base preset too.
+    user_models = ["user_priority:" + priority] if print_priority is not None else []
     lc = load_class(reqset, part_type)
     notes.append({"item": "load_class", "value": lc, "model": "P"})
+    notes.append({"item": "print_priority", "value": priority, "model": "P",
+                  "source": "user" if print_priority is not None else "default"})
     decisions.append(Decision("printing_mode", route_mode, model_ids=["choose_route"],
                               note="route selected by documented policy"))
     # nozzle
@@ -134,15 +184,21 @@ def plan_process(reqset, material, route_mode, part_type, analysis, caps, orient
     h_hi = 0.8 * nozzle
     allowed = [h for h in POLICY["layer_candidates_mm"] if h_lo - 1e-9 <= h <= h_hi + 1e-9]
     reason_ids = []
-    if lc == "decorative" or reqset.has("no_visible_layers"):
+    # Value without a stated priority, followed through the same tolerance budget below.
+    h_balanced = (allowed[0] if reqset.has("no_visible_layers") or lc == "decorative" else
+                  min(allowed, key=lambda x: (abs(x - POLICY["priority_h_over_d"]["balanced"] * nozzle), x)))
+    # A decorative part gets the finest layer unless the user put speed first; an explicit
+    # no_visible_layers requirement always wins.
+    if reqset.has("no_visible_layers") or (lc == "decorative" and priority != "speed"):
         h = allowed[0]
         reason_ids = _ids(reqset, "no_visible_layers")
         notes.append({"item": "layer_height", "value": h, "model": "P",
                       "note": "smallest allowed layer for visible surfaces"})
     else:
-        h = min(allowed, key=lambda x: abs(x - POLICY["functional_h_over_d"] * nozzle))
+        seed = POLICY["priority_h_over_d"][priority]
+        h = min(allowed, key=lambda x: (abs(x - seed * nozzle), x))
         notes.append({"item": "layer_height", "value": h, "model": "P",
-                      "note": "h/d = %.2f functional seed" % POLICY["functional_h_over_d"]})
+                      "note": "h/d = %.3f %s seed" % (seed, "functional" if priority == "balanced" else priority)})
     tol = [r for r in reqset.requirements if r.property == "dimensional_tolerance"]
     for r in tol:
         coincident = (r.region == "bore" and (route_mode == "cylindrical" or route_mode == "classic"))
@@ -156,16 +212,19 @@ def plan_process(reqset, material, route_mode, part_type, analysis, caps, orient
         reason_ids.append(r.id)
         if pick.ok:
             h = min(h, pick.value)
+            h_balanced = min(h_balanced, pick.value)
             notes.append({"item": "tolerance_layer_budget", "requirement_id": r.id, "model": "A",
                           "note": "h <= %.3f mm from eps_layer=%.3f" % (hmax.value, eps)})
         else:
-            h = allowed[0]
+            h = h_balanced = allowed[0]
             notes.append({"item": "tolerance_layer_budget", "requirement_id": r.id, "model": "A",
                           "status": "infeasible", "note": "required h %.3f mm is below the allowed %.2f mm: the "
                           "tolerance needs compensation or post-machining (no silent clamping)" %
                           (hmax.value, allowed[0])})
+    # The priority label goes only where the stated priority changed the value.
     decisions.append(Decision("layer_height", h, reason_requirement_ids=reason_ids,
-                              model_ids=["choose_layer_height", "policy:layer"]))
+                              model_ids=["choose_layer_height", "policy:layer"] +
+                              (user_models if abs(h - h_balanced) > 1e-9 else [])))
     # walls / skins / infill
     t_shell = POLICY["shell_thickness_mm"][lc]
     wc = process.wall_count(t_shell, nozzle, nozzle)
@@ -176,14 +235,37 @@ def plan_process(reqset, material, route_mode, part_type, analysis, caps, orient
     sk = process.skin_layers(t_skin, h)
     decisions.append(Decision("top_layers", sk.value["count"], model_ids=["skin_layers", "policy:skin"]))
     decisions.append(Decision("bottom_layers", sk.value["count"], model_ids=["skin_layers", "policy:skin"]))
-    phi = POLICY["infill_fraction"][lc]
+    target = POLICY["infill_fraction"][lc]
+    hard_min, hard_reasons, infill_models = None, [], ["policy:infill", "infill_penalty"]
+    solid_checks = sorted(set(c["check"] for c in structural_checks if c.get("check") in SOLID_SECTION_CHECKS))
+    solid_reqs = _ids(reqset, *SOLID_REQUIREMENTS)
+    if solid_checks or solid_reqs:
+        hard_min = 1.0
+        if solid_checks:
+            hard_reasons.append("strength screen assumes a solid section: " + ", ".join(solid_checks))
+            infill_models.append("solid_section_assumption")
+        if solid_reqs:
+            hard_reasons.append("tightness/pressure requirement " + ", ".join(solid_reqs))
     imin = material.process_window("infill_min")
-    if imin and imin[0] is not None and phi < imin[0] / 100.0:
-        phi = imin[0] / 100.0
-        notes.append({"item": "infill", "note": "raised to material minimum %g%%" % imin[0], "model": "S"})
+    if imin and imin[0] is not None and (hard_min is None or imin[0] / 100.0 > hard_min):
+        hard_min = imin[0] / 100.0
+        hard_reasons.append("material minimum %g%%" % imin[0])
+    infill = choose_infill(target, priority, hard_min)
+    infill["hard_reasons"] = hard_reasons
+    phi = infill["chosen"]
+    phi_balanced = choose_infill(target, "balanced", hard_min)["chosen"]
+    if phi < target - 1e-9:
+        why = "infill above %.0f%% penalised (time/material, no calibrated strength gain): %.0f%% instead of %.0f%%" % (
+            infill["soft_cap"] * 100, phi * 100, target * 100)
+    elif infill["penalty"] > 0:
+        why = "%.0f%% kept despite the infill penalty: %s" % (phi * 100, "; ".join(hard_reasons))
+    else:
+        why = "policy by load class %s" % lc
+    notes.append({"item": "infill", "value": phi, "model": "P", "note": why, "selection": infill})
     decisions.append(Decision("infill_fraction", phi, reason_requirement_ids=_ids(
-        reqset, "torque", "radial_load", "sealing", "toughness"), model_ids=["policy:infill"],
-        note="no calibrated relation load -> infill exists; policy by load class %s" % lc))
+        reqset, "torque", "radial_load", "sealing", "toughness"),
+        model_ids=infill_models + (user_models if abs(phi - phi_balanced) > 1e-9 else []),
+        note="no calibrated relation load -> infill exists; " + why))
     # temperatures inside the material window
     profile_t = _float(material.slicer.get("settings", {}).get("print temperature"))
     win = material.process_window("nozzle_temperature")
@@ -221,9 +303,14 @@ def plan_process(reqset, material, route_mode, part_type, analysis, caps, orient
             v = min(v, swin[1])
         if swin and swin[0] is not None:
             v = max(v, swin[0])
-        decisions.append(Decision("speed_print", float(v), model_ids=["role_speed", "material_datasheet"],
-                                  note="material profile/data-sheet speed; Q_limit uncalibrated "
-                                       "(needs_calibration)"))
+        note, v_balanced = "material profile/data-sheet speed", v
+        if priority == "speed" and swin and swin[1] is not None:
+            v, note = swin[1], "speed first: upper end of the data-sheet window"
+        elif priority == "quality" and swin and swin[0] is not None and swin[1] is not None:
+            v, note = min(v, (swin[0] + swin[1]) / 2.0), "quality first: profile speed, at most the window middle"
+        decisions.append(Decision("speed_print", float(v), model_ids=["role_speed", "material_datasheet"] +
+                                  (user_models if abs(v - v_balanced) > 1e-9 else []),
+                                  note=note + "; Q_limit uncalibrated (needs_calibration)"))
     # supports
     if route_mode == "classic":
         need = (orientation_eval is not None and

@@ -73,8 +73,11 @@ def _preset_plan(schema, catalog, machine_id, material, mode, decisions, load_cl
 def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE, catalog=None,
               preferred_materials=None, forced_mode=None, source=None, calibration_data=None, setting_changes=None,
               functional_spec=None, llm_items=None, noise_spec=None, robustness_limits=None,
-              preset_catalog=None, allowed_quality_changes=None, orientation=None):
+              preset_catalog=None, allowed_quality_changes=None, orientation=None, print_priority=None):
     """Decision for one TZ and STL.
+
+    print_priority: "quality", "balanced" or "speed" as stated by the user. None means not
+    stated: the balanced policy is used and decision["clarifications"] asks for it.
 
     orientation: None/"balanced" (automatic: supports, height, staircase and loads along
     the layers), "strength" (loads along the layers first) or {"rotation": 3x3} - a pose
@@ -233,7 +236,8 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
 
     # process decisions and patch
     decisions, notes = process_plan.plan_process(reqset, material, mode, ptype, analysis, caps, orientation,
-                                                 chosen_route) if material else ([], [])
+                                                 chosen_route, print_priority=print_priority,
+                                                 structural_checks=struct) if material else ([], [])
     load_class = next((n["value"] for n in notes if n.get("item") == "load_class"), "general")
     selection, base_resolver = None, None
     if preset_catalog is not None:
@@ -390,9 +394,23 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
         decision["setting_patch"]["changes"] = presets.change_records(patch)
         decision["setting_patch"]["inherited_items"] = patch.get("inherited") or []
         decision["setting_provenance"] = presets.provenance(base_resolver, patch, keys)
+    infill_note = next((n for n in notes if n.get("item") == "infill"), None)
+    decision["print_priority"] = {"value": print_priority or "balanced",
+                                  "source": "user" if print_priority is not None else "default",
+                                  "effects": "layer height seed, infill soft cap and print speed in the material window"}
+    decision["infill_selection"] = dict(infill_note["selection"], note=infill_note["note"]) if infill_note else None
+    # Questions the specification cannot answer; the assistant asks them, then plans again.
+    decision["clarifications"] = [] if print_priority is not None else [{
+        "id": "print_priority", "argument": "print_priority",
+        "question": "Что важнее при печати этой детали: качество или скорость?",
+        "options": [{"value": "quality", "label": "Качество поверхности и точность (тоньше слой, ниже скорость)"},
+                    {"value": "balanced", "label": "Баланс качества и скорости"},
+                    {"value": "speed", "label": "Скорость печати (толще слой, выше скорость, меньше заполнение)"}],
+        "default": "balanced", "used_until_answered": "balanced"}]
     decision["explanation"] = verification.explain_decision(decision)
     if selection is not None:
         decision["explanation"] = presets.explain(selection, patch) + decision["explanation"]
+    decision["explanation"] = _priority_lines(decision) + decision["explanation"]
     # A separate final assessment: uncertain manufacturing inputs never become
     # invented material properties or silently replace the accepted process.
     functional_value = (functional_result.value or {})
@@ -427,6 +445,26 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     else:
         decision["robustness_analysis"] = robustness.assess_process_stability(effective, {}, noise_spec, robustness_limits).to_dict()
     return decision
+
+
+PRIORITY_NAMES = {"quality": "качество", "balanced": "баланс качества и скорости", "speed": "скорость"}
+
+
+def _priority_lines(decision):
+    """Russian lines on the print priority and the infill penalty, from the decision only."""
+    p = decision["print_priority"]
+    lines = ["Приоритет печати: %s (%s)." % (PRIORITY_NAMES[p["value"]], "указан пользователем" if p["source"] == "user"
+                                              else "не указан, принят баланс до ответа пользователя")]
+    s = decision.get("infill_selection")
+    if s:
+        if s["chosen"] < s["target"] - 1e-9:
+            lines.append("Заполнение %.0f%% вместо %.0f%%: выше %.0f%% штрафуется ростом времени и расхода "
+                         "материала без подтверждённого выигрыша в прочности." %
+                         (s["chosen"] * 100, s["target"] * 100, s["soft_cap"] * 100))
+        elif s["penalty"] > 0:
+            lines.append("Заполнение %.0f%% оставлено несмотря на штраф: %s." %
+                         (s["chosen"] * 100, "; ".join(s.get("hard_reasons") or [])))
+    return lines
 
 
 def _selection_summary(selection):

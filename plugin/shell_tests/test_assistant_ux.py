@@ -218,6 +218,42 @@ def test_plan_print_uses_the_original_spec_text_and_user_material():
         value._plan_print({"spec_attachment_id": "nope", "attachment_id": "m1"}, {})
 
 
+def test_speed_or_quality_reaches_the_core_and_unknown_priority_becomes_a_question():
+    class Core:
+        apply = verify = None
+
+        def plan(self, args, ctx):
+            self.args = args
+            return {"plan_id": "p", "setting_changes": []}
+    core = Core()
+    value, _ = registry(core=core)
+    value._app = None
+    stl = example_cases()[0][2]
+    value.upload_sources = lambda: [{"id": "m1", "path": stl, "name": "g.stl"}]
+    value._plan_print({"task_text": "кронштейн", "attachment_id": "m1", "print_priority": "speed"}, {})
+    assert core.args["print_priority"] == "speed"
+    from agent.core_bridge import CoreBridge
+    bridge = CoreBridge(None, lambda: {})
+    with pytest.raises(ValueError, match="print_priority"):
+        bridge.plan({"task_text": "x", "mesh_path": stl, "print_priority": "fastest"})
+    question = {"id": "print_priority", "argument": "print_priority", "question": "Что важнее?",
+                "options": [{"value": "quality", "label": "Качество"}, {"value": "speed", "label": "Скорость"}]}
+    bridge._plans["p"] = {"generation": 0, "applied": False, "request": {"geometry_sha256": "0" * 64},
+                          "decision": {"status": "candidate", "clarifications": [question],
+                                       "print_priority": {"value": "balanced", "source": "default"},
+                                       "infill_selection": {"chosen": 0.5, "target": 1.0, "soft_cap": 0.5,
+                                                            "penalty": 0.0, "hard_reasons": [], "note": "n",
+                                                            "candidates": [{"infill": 1.0}]}}}
+    summary = bridge.summary("p")
+    assert summary["clarifications"] == [question]
+    assert summary["print_priority"]["source"] == "default"
+    assert summary["infill"] == {"chosen": 0.5, "target": 1.0, "soft_cap": 0.5, "penalty": 0.0,
+                                 "hard_reasons": [], "note": "n"}       # no candidate table for the chat
+    prompt = agent_module.SYSTEM_PROMPT
+    assert "SEPARATELY from strength" in prompt and "clarifications with id print_priority" in prompt
+    assert "penalises infill above a soft cap" in prompt
+
+
 # ---------------------------------------------------------------- questions
 
 def wait_pending(box):

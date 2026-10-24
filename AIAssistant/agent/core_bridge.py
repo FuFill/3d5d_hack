@@ -131,6 +131,9 @@ class CoreBridge:
         if not (orientation is None or orientation in ("balanced", "strength") or
                 (isinstance(orientation, dict) and set(orientation) == {"rotation"})):
             raise ValueError("orientation must be balanced, strength or the current pose of the model")
+        print_priority = args.get("print_priority")
+        if print_priority not in (None, "quality", "balanced", "speed"):
+            raise ValueError("print_priority must be quality, balanced or speed")
         snapshot = run_on_main(self.app, self._snapshot)
         options, inputs = self._inputs()
         request_id = uuid.uuid4().hex
@@ -140,7 +143,7 @@ class CoreBridge:
         request = dict(snapshot, request_id=request_id, task_text=text, mesh_path=path,
                        geometry_sha256=digest(path), mode=mode, llm_items=args.get("llm_items"),
                        planner_options=options, inputs=inputs, allowed_quality_changes=allowed,
-                       target_object_id=target, orientation=orientation,
+                       target_object_id=target, orientation=orientation, print_priority=print_priority,
                        preferred_materials=[str(m) for m in (args.get("preferred_materials") or [])][:3] or None)
         with self._lock:
             if self._process is not None:
@@ -227,6 +230,12 @@ class CoreBridge:
                         setting_changes=[{k: c.get(k) for k in ("key", "base_value", "effective_value", "unit",
                                                                 "reason", "justification")}
                                          for c in (decision.get("setting_patch") or {}).get("changes") or []],
+                        print_priority=copy.deepcopy(decision.get("print_priority")),
+                        infill=({k: (decision.get("infill_selection") or {}).get(k)
+                                 for k in ("chosen", "target", "soft_cap", "penalty", "hard_reasons", "note")}
+                                if decision.get("infill_selection") else None),
+                        # Questions to ask the user before applying (then plan_print with the answer).
+                        clarifications=copy.deepcopy(decision.get("clarifications") or []),
                         # Feasible core materials (ids for plan_print preferred_material).
                         material_options=[{"id": m.get("id"), "summary": m.get("summary")}
                                           for m in ((decision.get("candidates") or {}).get("materials") or [])[:6]],

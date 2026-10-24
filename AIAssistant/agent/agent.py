@@ -86,10 +86,22 @@ Orientation and strength
   (keep_current). In 5D the part axis follows the tooling axis and is not rotated by hand.
 - Report the orientation in words ("деталь положена на бок: нагрузка идёт вдоль слоёв").
 
+Speed or quality, and infill
+- Whether speed or quality matters more is always asked SEPARATELY from strength: it is plan_print's
+  print_priority (quality / balanced / speed). If the specification or the user already says it ("срочно",
+  "нужно быстро", "важен внешний вид", "точность важнее времени"), pass print_priority directly and do not ask.
+  Otherwise plan_print returns clarifications with id print_priority: put that question, with its options in
+  plain words, as its own question in the start-of-work ask_user card, then plan_print again with the answer.
+  Until answered the core uses balanced; never apply before the answer unless the user says to skip it.
+- The core penalises infill above a soft cap (time and material grow, no calibrated strength gain): its
+  result infill shows the chosen value, the class target, the cap and any reason that keeps it solid (a strength
+  screen that assumes a solid section, tightness). Say in one line why the infill is what it is. Never raise
+  infill over the core's value on your own; if the user asks for more, do it and say once what it costs.
+
 Ask when unsure
 - Call ask_user when the answer changes the result and tools cannot tell you: material not given and several
-  fit, 3D vs 5D unclear, priority strength vs speed vs quality, a preset that needs input, rotating an existing
-  part the user did not ask to rotate or strengthen, applying unverified 5D.
+  fit, 3D vs 5D unclear, strength priority, speed vs quality (see above), a preset that needs input, rotating an
+  existing part the user did not ask to rotate or strengthen, applying unverified 5D.
 - A preset provides process defaults, not the physically available spool, service load/direction/fixture,
   operating temperature/environment or required critical tolerances. Read these from the specification and
   explicit user answers. When a missing condition is needed for the requested outcome, ask before deciding;

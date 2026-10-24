@@ -39,6 +39,7 @@ def calculate(request):
                          allowed_quality_changes=request.get("allowed_quality_changes"),
                          preferred_materials=request.get("preferred_materials"),
                          orientation=request.get("orientation"),
+                         print_priority=request.get("print_priority"),
                          **request.get("planner_options", {}))
     if digest(path) != request["geometry_sha256"]:
         raise ValueError("Source STL changed during planning")
