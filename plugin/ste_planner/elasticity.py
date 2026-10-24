@@ -88,6 +88,45 @@ def strain_transform(q):
     return transform
 
 
+def stress_tensor(stress):
+    """Engineering Voigt xx,yy,zz,xy,yz,xz -> symmetric Cauchy stress, MPa."""
+    s = np.asarray(stress, float)
+    if s.shape != (6,) or not np.isfinite(s).all():
+        raise ValueError("six finite stress components required")
+    return np.array([[s[0], s[3], s[5]], [s[3], s[1], s[4]], [s[5], s[4], s[2]]])
+
+
+def stress_invariants(tensor):
+    """Signed pressure (compression positive), von Mises, ascending principals.
+
+    These diagnostics are not an isotropic failure criterion for a printed part.
+    """
+    s = np.asarray(tensor, float)
+    if s.shape != (3, 3) or not np.isfinite(s).all() or not np.allclose(s, s.T, atol=1e-10):
+        raise ValueError("finite symmetric stress tensor required")
+    pressure = -float(np.trace(s)) / 3.
+    deviator = s + pressure * np.eye(3)
+    return pressure, float(np.sqrt(1.5 * np.sum(deviator ** 2))), np.linalg.eigvalsh(s)
+
+
+def _boundary_geometry(nodes, elements, faces):
+    """Outward normals independent of tetrahedral connectivity handedness."""
+    normals, centers, areas = [], [], []
+    for owner, face in faces:
+        a, b, c = nodes[face[:3]]
+        normal = np.cross(b - a, c - a)
+        length = np.linalg.norm(normal)
+        if length <= 1e-12:
+            raise ValueError("degenerate boundary face")
+        center = (a + b + c) / 3.
+        if normal.dot(nodes[elements[owner, :4]].mean(axis=0) - center) > 0:
+            normal = -normal
+        normals.append(normal / length)
+        centers.append(center)
+        areas.append(length / 2.)
+    return np.asarray(normals), np.asarray(centers), np.asarray(areas)
+
+
 def failure_index(stress, strengths):
     if any(isinstance(v, bool) for v in strengths.values()):
         raise ValueError("boolean values are not strengths")
@@ -195,8 +234,10 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
           material_frames=None, element_stiffness=None):
     """Return fields in the original part coordinates for the exact supplied properties.
 
-    Loads are total forces distributed as uniform tractions over selected boundary
-    faces. Supports here are SERVICE fixtures; removable print supports are absent.
+    Loads are total forces/couples, or uniform normal pressure_MPa (positive in
+    compression) over selected boundary faces. Pressure and resultant loads are
+    exclusive. Supports here are SERVICE fixtures; print supports are absent.
+    No contact, melt pressure, finite strain or interfacial failure is solved.
     """
     try:
         from scipy.sparse import coo_matrix
@@ -235,6 +276,7 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
         if not isinstance(fixed, list) or not fixed:
             raise ValueError("service fixtures required")
         faces = boundary_faces(elements)
+        face_normals, face_centers, face_areas = _boundary_geometry(nodes, elements, faces)
         constrained = set()
         for fixture in fixed:
             ids = np.where(select_points(nodes, fixture["on"]))[0]
@@ -300,24 +342,34 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
             if not isinstance(case_id, str) or not case_id or case_id in case_ids:
                 raise ValueError("distinct load-case ids required")
             case_ids.add(case_id)
+            pressure_load = "pressure_MPa" in case
+            pressure = case.get("pressure_MPa")
+            if pressure_load:
+                if (isinstance(pressure, bool) or not isinstance(pressure, (int, float)) or
+                        not np.isfinite(pressure) or pressure == 0 or
+                        "force_N" in case or "moment_Nmm" in case):
+                    raise ValueError("finite nonzero pressure_MPa required, exclusive of force_N/moment_Nmm")
             force = np.asarray(case.get("force_N", [0., 0., 0.]), dtype=float)
             moment = np.asarray(case.get("moment_Nmm", [0., 0., 0.]), dtype=float)
             if (force.shape != (3,) or moment.shape != (3,) or not np.isfinite(np.r_[force, moment]).all()
-                    or not (np.linalg.norm(force) > 0 or np.linalg.norm(moment) > 0)):
+                    or not (pressure_load or np.linalg.norm(force) > 0 or np.linalg.norm(moment) > 0)):
                 raise ValueError("finite nonzero force and/or moment required; moment unit N mm")
             selected = select_points(nodes, case["on"])
             weights = np.zeros(len(nodes))
-            for _, face in faces:
+            nodal_force = np.zeros((len(nodes), 3))
+            for face_index, (_, face) in enumerate(faces):
                 if not selected[face[:3]].all():
                     continue
-                a, b, c = nodes[face[:3]]
-                area = np.linalg.norm(np.cross(b - a, c - a)) / 2.0
+                area = face_areas[face_index]
                 # Consistent constant traction: T6 corner integrals zero, mids A/3.
                 active = face if len(face) == 3 else face[3:]
                 weights[active] += area / 3.0
+                if pressure_load:
+                    nodal_force[active] += -pressure * face_normals[face_index] * area / 3.
             if weights.sum() <= 0:
                 raise ValueError("load selector must cover boundary faces, not isolated nodes")
-            nodal_force = weights[:, None] * force[None, :] / weights.sum()
+            if not pressure_load:
+                nodal_force = weights[:, None] * force[None, :] / weights.sum()
             center = (weights[:, None] * nodes).sum(axis=0) / weights.sum()
             reference = np.asarray(case.get("reference_point_mm", center), float)
             if reference.shape != (3,) or not np.isfinite(reference).all():
@@ -333,7 +385,11 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
                 if not np.allclose(np.cross(nodes - reference, nodal_force).sum(axis=0), moment, atol=1e-7):
                     raise ValueError("moment distribution failed resultant check")
             f = nodal_force.reshape(-1)
-            if np.linalg.norm(f[fixed_ids]) > 1e-12:
+            # A prescribed pressure can meet a roller/fixture at an edge, or
+            # cover a whole closed surface. Its constrained-DOF forces belong
+            # in the reaction Ku-f; dropping them would corrupt force balance.
+            # Keep the legacy ambiguity guard for resultant-force patches.
+            if not pressure_load and np.linalg.norm(f[fixed_ids]) > 1e-12:
                 raise ValueError("load overlaps constrained degrees of freedom")
             displacement = np.zeros(3 * len(nodes))
             with warnings.catch_warnings():
@@ -346,6 +402,7 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
             if relative_residual > 1e-6:
                 raise ValueError("elastic equilibrium residual exceeds tolerance")
             density, fis, stress_max, tension_directions, tension_values = [], [], [], [], []
+            tensors, pressures, pressure_ranges, von_mises, von_mises_max, principals, vertex_tensors = [], [], [], [], [], [], []
             for element_index, (transform, bs, peak_bs, ids) in enumerate(zip(transforms, b_matrices, peak_b_matrices, dof_ids)):
                 local_c = local_cs[element_index]
                 strains = [transform.dot(b.dot(displacement[ids])) for b in bs]
@@ -357,9 +414,20 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
                 fis.append(max(failure_index(s, strengths) for s in peak_stresses) if strengths is not None else None)
                 stress_max.append(float(max(np.abs(s).max() for s in peak_stresses)))
                 s = np.mean(stresses, axis=0)
-                local_tensor = np.array([[s[0], s[3], s[5]], [s[3], s[1], s[4]], [s[5], s[4], s[2]]])
+                local_tensor = stress_tensor(s)
                 q = qs[element_index]
-                principal, directions = np.linalg.eigh(q.dot(local_tensor).dot(q.T))
+                global_tensor = q.dot(local_tensor).dot(q.T)
+                peaks = np.asarray([q.dot(stress_tensor(p)).dot(q.T) for p in peak_stresses])
+                vertex_tensors.append(peaks)
+                p, vm, eigenvalues = stress_invariants(global_tensor)
+                peak_fields = [stress_invariants(t) for t in peaks]
+                tensors.append(global_tensor.tolist())
+                pressures.append(p)
+                pressure_ranges.append([min(t[0] for t in peak_fields), max(t[0] for t in peak_fields)])
+                von_mises.append(vm)
+                von_mises_max.append(max(t[1] for t in peak_fields))
+                principals.append(eigenvalues.tolist())
+                principal, directions = np.linalg.eigh(global_tensor)
                 tension_directions.append(directions[:, -1].tolist())
                 tension_values.append(float(max(principal[-1], 0)))
             contributions = np.asarray(density) * volumes
@@ -380,7 +448,25 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
                                   "max_displacement_mm": float(np.linalg.norm(nodal_u[np.unique(elements[mask])], axis=1).max()),
                                   "failure_index_max": max_fi, "safety_factor_min": 1.0 / max_fi if max_fi else None})
             max_fi = max(fis) if strengths is not None else None
+            tractions, boundary_pressure, boundary_shear = [], [], []
+            for face_index, (owner, face) in enumerate(faces):
+                # Straight T10 stress is affine: the three face-corner stresses
+                # average to the exact face-centroid stress. T4 is constant.
+                peaks = vertex_tensors[owner]
+                corners = [list(elements[owner, :4]).index(i) for i in face[:3]]
+                tensor = peaks[0] if len(peaks) == 1 else peaks[corners].mean(axis=0)
+                normal = face_normals[face_index]
+                traction = tensor.dot(normal)
+                normal_stress = float(normal.dot(traction))
+                tractions.append(traction.tolist())
+                boundary_pressure.append(-normal_stress)
+                boundary_shear.append(float(np.linalg.norm(traction - normal_stress * normal)))
             outcomes.append({"id": case_id, "compliance_Nmm": compliance,
+                             "load_type": "uniform_pressure" if pressure_load else "force_and_moment",
+                             "prescribed_pressure_MPa": float(pressure) if pressure_load else None,
+                             "loaded_area_mm2": float(weights.sum()),
+                             "applied_force_N": nodal_force.sum(axis=0).tolist(),
+                             "applied_moment_Nmm": np.cross(nodes - reference, nodal_force).sum(axis=0).tolist(),
                              "effective_stiffness_N_per_mm": float(np.linalg.norm(force) / weighted_delta) if force_only else None,
                              "rotational_stiffness_Nmm_per_rad": float(moment.dot(moment) / compliance) if torque_only else None,
                              "work_conjugate_rotation_rad": float(compliance / np.linalg.norm(moment)) if torque_only else None,
@@ -394,6 +480,12 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
                              "failure_assessment": "maximum_stress_model" if strengths is not None else "needs_calibration",
                              "blocks": summaries,
                              "maps": {"nodal_displacement_mm": nodal_u.tolist(), "element_compliance_density_MPa": density,
+                                      "element_stress_tensor_MPa": tensors, "element_pressure_MPa": pressures,
+                                      "element_pressure_range_MPa": pressure_ranges,
+                                      "element_von_mises_MPa": von_mises, "element_von_mises_max_MPa": von_mises_max,
+                                      "element_principal_stress_MPa": principals,
+                                      "boundary_traction_MPa": tractions, "boundary_pressure_MPa": boundary_pressure,
+                                      "boundary_shear_traction_MPa": boundary_shear,
                                       "element_failure_index": fis, "element_stress_max_MPa": stress_max,
                                       "principal_tension_direction": tension_directions,
                                       "principal_tension_MPa": tension_values}})
@@ -401,6 +493,15 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
                          "element_centers_mm": centers.tolist(), "element_volumes_mm3": volumes,
                          "element_blocks": labels.tolist(), "boundary_faces": [face for _, face in faces],
                          "boundary_element_ids": [element_index for element_index, _ in faces],
+                         "boundary_normals": face_normals.tolist(), "boundary_centers_mm": face_centers.tolist(),
+                         "boundary_areas_mm2": face_areas.tolist(),
+                         "field_semantics": {"stress_frame": "original_part_coordinates",
+                             "element_fields": "centroid; no nodal smoothing",
+                             "element_extrema": "vertices; exact extrema of affine T10 pressure and convex von Mises",
+                             "boundary_fields": "face centroid; raw FE traction, not equilibrated contact pressure",
+                             "pressure_sign": "compression_positive; p=-trace(sigma)/3; boundary_p=-n.sigma.n",
+                             "von_mises_use": "diagnostic only; not a printed-material failure criterion",
+                             "contact_pressure_solved": False, "melt_pressure_solved": False},
                          "volume_mm3": float(sum(volumes)), "element_order": 2 if elements.shape[1] == 10 else 1},
                         None, "elasticity", MODEL_ANALYTIC, evidence=EVIDENCE_SIMULATION,
                         note="linear elasticity, fixed process constitutive model; no fatigue/thermal qualification")

@@ -400,6 +400,10 @@ def optimize(mesh, spec, context, initial_rotation, mode, route, caps, base_patc
             maps = {"nodes_mm": mechanics.pop("nodes_mm"), "elements": mechanics.pop("elements"),
                     "boundary_faces": mechanics.pop("boundary_faces"),
                     "boundary_element_ids": mechanics.pop("boundary_element_ids"),
+                    "boundary_normals": mechanics.pop("boundary_normals"),
+                    "boundary_centers_mm": mechanics.pop("boundary_centers_mm"),
+                    "boundary_areas_mm2": mechanics.pop("boundary_areas_mm2"),
+                    "field_semantics": mechanics.pop("field_semantics"),
                     "element_centers_mm": mechanics.pop("element_centers_mm"),
                     "element_blocks": mechanics.pop("element_blocks"), "cases": []}
             mechanics.pop("element_volumes_mm3")
