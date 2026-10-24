@@ -81,7 +81,9 @@ def _value_text(value, info, language):
 
 
 def _poses(snapshot):
-    return [(o.get("name"), o.get("source"), [[round(float(v), 3) for v in row] for row in o.get("matrix") or []])
+    return [(o.get("name"), o.get("source"),
+             [[round(float(v), 3) for v in row] for row in o.get("world_matrix", o.get("matrix")) or []],
+             o.get("z_offset"))
             for o in snapshot.get("objects") or []]
 
 
@@ -96,7 +98,8 @@ def same_state(a, b):
     key = lambda s: sorted(((str(x.get("position")), x.get("containers"), sorted((x.get("user") or {}).items(),
                                                                               key=lambda i: i[0]))
                             for x in s.get("stacks") or []), key=lambda i: i[0])
-    return key(a) == key(b) and a.get("mode") == b.get("mode") and _poses(a) == _poses(b)
+    return (key(a) == key(b) and a.get("mode") == b.get("mode") and _poses(a) == _poses(b)
+            and a.get("physics") == b.get("physics"))
 
 
 def diff(old, new):
@@ -297,6 +300,36 @@ class StateIO:
         stack = self._registry._global()
         return stack, [stack] + [stack.extruders[p] for p in sorted(stack.extruders)]
 
+    def _physics_preferences(self):
+        preferences = self._app.getPreferences()
+        values = dict((key, preferences.getValue("physics/" + key))
+                      for key in ("automatic_drop_down", "automatic_push_free"))
+        return values
+
+    @staticmethod
+    def _object_id(node):
+        # A source path/name is not unique when a model has several copies.
+        if not getattr(node, "_ai_assistant_tree_id", None):
+            node._ai_assistant_tree_id = uuid.uuid4().hex
+        return node._ai_assistant_tree_id
+
+    @staticmethod
+    def _z_offset(node):
+        return node.callDecoration("getZOffset")
+
+    @staticmethod
+    def _set_z_offset(node, value):
+        from steslicer.Scene.ZOffsetDecorator import ZOffsetDecorator
+        decorator = node.getDecorator(ZOffsetDecorator)
+        if value is None:
+            if decorator is not None:
+                node.removeDecorator(ZOffsetDecorator)
+        else:
+            if decorator is None:
+                decorator = ZOffsetDecorator()
+                node.addDecorator(decorator)
+            decorator.setZOffset(float(value))
+
     def _capture(self):
         registry = self._registry
         stack, stacks = self._stacks()
@@ -322,14 +355,22 @@ class StateIO:
         objects = []
         for node in registry._scene_nodes():
             source = registry._node_source(node)
-            objects.append({"name": node.getName(), "source": source.get("source_path"),
-                            "matrix": node.getLocalTransformation().getData().tolist()})
+            objects.append({"id": self._object_id(node), "name": node.getName(),
+                            "source": source.get("source_path"),
+                            "matrix": node.getLocalTransformation().getData().tolist(),
+                            "world_matrix": node.getWorldTransformation().getData().tolist(),
+                            "z_offset": self._z_offset(node)})
+        mode = stack.getProperty("printing_mode", "value")
+        physics = self._physics_preferences()
+        if mode in ("cylindrical", "cylindrical_full"):
+            # A 5D part is centred on the rotary axis; y=0 is not a floor.
+            physics["automatic_drop_down"] = False
         return {"machine": stack.getId(), "machine_definition": stack.definition.getId(),
-                "stacks": saved, "mode": stack.getProperty("printing_mode", "value"),
+                "stacks": saved, "mode": mode,
                 "preset": manager.activeQualityOrQualityChangesName,
                 "materials": dict((s.getMetaDataEntry("position"), s.material.getName()) for s in stacks[1:]),
                 "nozzles": dict((s.getMetaDataEntry("position"), s.variant.getName()) for s in stacks[1:]),
-                "effective": effective, "objects": objects}
+                "effective": effective, "objects": objects, "physics": physics}
 
     def _restore(self, snapshot):
         """Containers, values and poses of a node as one Undo step; returns how many parts were not found."""
@@ -342,6 +383,35 @@ class StateIO:
         from UM.Settings.InstanceContainer import InstanceContainer
 
         containers = app.getContainerRegistry()
+        free = list(registry._scene_nodes())
+        moves, missing = [], 0
+        for item in snapshot.get("objects") or []:
+            node = next((n for n in free if item.get("id") and
+                         getattr(n, "_ai_assistant_tree_id", None) == item["id"]), None)
+            if node is None:
+                # Old snapshots/reopened scenes have no live IDs. Never guess between copies.
+                candidates = [n for n in free if n.getName() == item.get("name") and
+                              registry._node_source(n).get("source_path") == item.get("source")]
+                if len(candidates) > 1:
+                    raise ToolError("Cannot identify a saved part uniquely; several parts have the same source and name")
+                node = candidates[0] if candidates else None
+            if node is None:
+                missing += 1
+                continue
+            free.remove(node)
+            before = (node.getLocalTransformation(), self._z_offset(node))
+            after = Matrix(item.get("world_matrix", item["matrix"]))
+            if "world_matrix" in item and node.getParent() is not None:
+                after = node.getParent().getWorldTransformation().getInverse().multiply(after, copy=True)
+            # Legacy snapshots did not store ZOffset. Clear any offset from a different node.
+            moves.append((node, before, (after, item.get("z_offset"))))
+
+        before_physics = self._physics_preferences()
+        after_physics = dict(before_physics, **(snapshot.get("physics") or {}))
+        if snapshot.get("mode") in ("cylindrical", "cylindrical_full"):
+            after_physics["automatic_drop_down"] = False
+        elif "physics" not in snapshot and snapshot.get("mode") == "classic":
+            after_physics["automatic_drop_down"] = True
         by_position = dict((str(x.get("position")), x) for x in snapshot.get("stacks") or [])
         plans = []
         for s in stacks:
@@ -362,39 +432,48 @@ class StateIO:
             containers.addContainer(user)
             for key, value in (saved.get("user") or {}).items():
                 user.setProperty(key, "value", _loaded(value))
+            if s is stack and snapshot.get("mode") is not None:
+                user.setProperty("printing_mode", "value", snapshot["mode"])
             after[0] = user
             plans.append((s, before, after))
 
-        free = list(registry._scene_nodes())
-        moves, missing = [], 0
-        for item in snapshot.get("objects") or []:
-            def same(node, by_source):
-                return node.getName() == item.get("name") and (
-                    not by_source or registry._node_source(node).get("source_path") == item.get("source"))
-            node = next((n for n in free if same(n, True)), None) or next((n for n in free if same(n, False)), None)
-            if node is None:
-                missing += 1
-                continue
-            free.remove(node)
-            moves.append((node, node.getLocalTransformation(), Matrix(item["matrix"])))
-
+        state_io = self
         class RestoreModel(Operation):
             def __init__(self):
                 Operation.__init__(self)
                 self.active = False
 
             def _apply(self, index):
-                for s, before, after in plans:
-                    for position, container in enumerate((before, after)[index][:-1]):
-                        s.replaceContainer(position, container)
-                for node, before, after in moves:
-                    node.setTransformation((before, after)[index])
-                stack.propertyChanged.emit("printing_mode", "value")
-                handler = getattr(app.getBackendManager(), "_onSettingChanged", None)
-                if callable(handler):
-                    handler("printing_mode", "value")
-                scene = app.getController().getScene()
-                scene.sceneChanged.emit(scene.getRoot())
+                physics = getattr(app, "_physics", None)
+                enabled = physics._enabled if physics is not None else None
+                timer = getattr(physics, "_change_timer", None)
+                if physics is not None:
+                    physics._enabled = False
+                if timer is not None:
+                    timer.stop()
+                try:
+                    for s, before, after in plans:
+                        for position, container in enumerate((before, after)[index][:-1]):
+                            s.replaceContainer(position, container)
+                    # Complete the mode switch before applying coordinates/physics of that mode.
+                    stack.propertyChanged.emit("printing_mode", "value")
+                    handler = getattr(app.getBackendManager(), "_onSettingChanged", None)
+                    if callable(handler):
+                        handler("printing_mode", "value")
+                    for key, value in (before_physics, after_physics)[index].items():
+                        app.getPreferences().setValue("physics/" + key, value)
+                    for node, before, after in moves:
+                        matrix, z_offset = (before, after)[index]
+                        state_io._set_z_offset(node, z_offset)
+                        node.setTransformation(matrix)
+                    scene = app.getController().getScene()
+                    scene.sceneChanged.emit(scene.getRoot())
+                finally:
+                    # Discard ticks scheduled for the intermediate scene, including an old pending drop.
+                    if timer is not None:
+                        timer.stop()
+                    if physics is not None:
+                        physics._enabled = enabled
 
             def redo(self):
                 if not self.active:
@@ -410,5 +489,7 @@ class StateIO:
                     self._apply(0)
                     self.active = False
 
-        app.getOperationStack().push(RestoreModel())
+        operation = RestoreModel()
+        operation.redo()  # Failed restoration must not enter the undo stack.
+        app.getOperationStack().push(operation)
         return {"missing_objects": missing, "moved": len(moves)}

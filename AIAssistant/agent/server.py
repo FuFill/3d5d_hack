@@ -75,6 +75,7 @@ class ChatService:
         self.upload_dir = tempfile.mkdtemp(prefix="ste_ai_assistant_")
         self.uploads = {}
         self._lock = threading.Lock()
+        self._node_select_lock = threading.Lock()
         self.server = None
 
     # ------------------------------------------------------------------ saved chats
@@ -252,6 +253,8 @@ class ChatService:
             self.bus.emit("message", text="Нарезаю, чтобы сохранить модель" if language == "ru" else
                           "Slicing to save the model", streaming=False, note=True, auto=True)
         stats = self.state_io.stats(should_stop)
+        # Native slicing may settle placement/offsets. Save the finished scene, not the pre-slice pose.
+        snapshot = self.state_io.capture()
         rows = diff(base, snapshot)
         keys = [r["key"] for r in rows if r["kind"] == "setting"]
         labels = self.state_io.labels(keys) if keys and hasattr(self.state_io, "labels") else {}
@@ -264,6 +267,14 @@ class ChatService:
 
     def select_node(self, node_id):
         """Click on a node: the slicer is switched to it; the model hears about it with the next message."""
+        if not self._node_select_lock.acquire(False):
+            return None
+        try:
+            return self._select_node(node_id)
+        finally:
+            self._node_select_lock.release()
+
+    def _select_node(self, node_id):
         if self.agent.busy():
             return None
         node = self.tree.node(node_id)

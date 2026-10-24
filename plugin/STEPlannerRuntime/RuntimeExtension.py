@@ -220,6 +220,13 @@ class RuntimeExtension(QObject, Extension):
 
     def execute(self, command):
         name = command["command"]
+        if name == "tree_pose_check":
+            if not self.isolated():
+                raise ValueError("model tree validation requires an isolated profile")
+            from tree_pose_check import TreePoseCheck
+            self.pending = {"kind": "tree_pose", "command": command,
+                            "started": time.monotonic(), "check": TreePoseCheck(self.app)}
+            return None
         if name == "state":
             from ste_planner.planner import READBACK_KEYS
             stack = self.app.getGlobalContainerStack()
@@ -339,6 +346,11 @@ class RuntimeExtension(QObject, Extension):
 
     def wait_pending(self):
         pending = self.pending
+        if pending["kind"] == "tree_pose":
+            result = pending["check"].advance()
+            if result is not None:
+                self.pending = None
+            return result
         if pending["kind"] == "assistant" and os.path.isfile(pending["command"]["done_file"]):
             self.pending = None
             return {"status": "computed", "assistant_check_finished": True}

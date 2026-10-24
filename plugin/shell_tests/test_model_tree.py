@@ -151,6 +151,58 @@ def test_saved_tree_round_trip():
     assert copy_.view()["nodes"] == tree.view()["nodes"] and same_state(copy_.current()["snapshot"], state(preset="Fast"))
 
 
+def test_placement_includes_floor_offset_and_automatic_positioning():
+    original = state()
+    changed = copy.deepcopy(original)
+    changed["objects"][0]["z_offset"] = -7
+    assert not same_state(original, changed)
+    assert changes(original, changed)[0]["key"] == "objects"
+    changed = copy.deepcopy(original)
+    changed["physics"] = {"automatic_drop_down": False}
+    assert not same_state(original, changed)
+
+
+def test_world_pose_is_compared_independently_of_the_current_parent():
+    original = state()
+    original["objects"][0]["world_matrix"] = copy.deepcopy(original["objects"][0]["matrix"])
+    changed = copy.deepcopy(original)
+    changed["objects"][0]["matrix"][0][3] = 20
+    assert same_state(original, changed)  # a different parent frame, same physical pose
+    changed["objects"][0]["world_matrix"][0][3] = 5
+    assert not same_state(original, changed)
+
+
+def test_overlapping_selections_cannot_reorder_scene_and_selected_node():
+    s = service()
+    node = work(s, "Быстрая", preset="Fast")
+    original = s.state_io.restore
+    nested = []
+
+    def restore(snapshot):
+        nested.append(s.select_node(s.tree.nodes[0]["id"]))
+        return original(snapshot)
+
+    s.state_io.restore = restore
+    assert s.select_node(node["id"])["node"] == node["id"]
+    assert nested == [None] and s.tree.selected == node["id"]
+    s.state_io.restore = original
+    assert s.select_node(s.tree.nodes[0]["id"]) is not None
+
+
+def test_finished_node_captures_placement_after_native_slicing_settles():
+    s = service()
+    s.before_work()
+    s.state_io.state = state(preset="Fast")
+
+    def stats(should_stop=None):
+        s.state_io.state["objects"][0]["matrix"][1][3] = 12
+        return {"print_time_s": 60}
+
+    s.state_io.stats = stats
+    node = s.after_work(lambda rows: "Быстрая")
+    assert node["snapshot"]["objects"][0]["matrix"][1][3] == 12
+
+
 def test_the_agent_saves_a_model_after_finished_work(monkeypatch):
     from test_assistant_ux import FakeClient, registry
     from agent.mcp import MCPServer

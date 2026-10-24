@@ -1183,9 +1183,12 @@
     if (nativeCard) api("/api/hover", {method: "POST", json: {id: null}}).catch(function () {});
   }
 
+  var selectingNode = false, queuedNode = null;
   function selectNode(n) {
     hideCard();
-    if (n.selected) return;
+    if (selectingNode) { queuedNode = n; return; }
+    if (tree.selected === n.id) return;
+    selectingNode = true;
     api("/api/tree/select", {method: "POST", json: {id: n.id}}).then(function (data) {
       tree = data;
       drawTree();
@@ -1193,6 +1196,11 @@
       $("link").textContent = missing ? t("missingParts") + missing : "";
     }).catch(function (e) {
       $("link").textContent = e.status === 409 ? t("busy") : (e.code || t("failed"));
+    }).then(function () {
+      selectingNode = false;
+      var next = queuedNode;
+      queuedNode = null;
+      if (next) selectNode(next);
     });
   }
 
