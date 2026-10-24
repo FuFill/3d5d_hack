@@ -157,7 +157,13 @@ class AIAssistant(Extension):
         core.resolve_node = registry._node
         mcp = MCPServer(registry)
         agent = Agent(mcp, registry, bus, settings.values)
-        self._service = ChatService(bus, agent, mcp, registry, settings)
+        store = None
+        try:
+            from .agent.chats import ChatStore
+            store = ChatStore(os.path.join(Resources.getDataStoragePath(), "ai_assistant_chats"))
+        except OSError:
+            Logger.logException("w", "AI Assistant: chats will not be saved")
+        self._service = ChatService(bus, agent, mcp, registry, settings, store=store)
         registry.upload_sources = self._service.model_uploads
         registry.spec_sources = self._service.spec_uploads
         port = self._service.start()
@@ -183,6 +189,8 @@ class AIAssistant(Extension):
 
     def _shutdown(self):
         try:
+            if self._service is not None:
+                self._service.save_chat()
             if self._window is not None:
                 self._window.close()
             if self._service is not None:

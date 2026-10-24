@@ -101,16 +101,19 @@ class ToolRegistry:
         object_id = {"type": "integer", "description": "Object id from list_objects."}
 
         if self.questions is not None:
+            question = {"type": "object", "properties": {
+                "question": {"type": "string", "description": "One short question in the user's language."},
+                "options": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 4,
+                            "description": "2-4 short answer options; the recommended one first."},
+                "allow_custom": {"type": "boolean", "description": "Allow a free-text answer (default true)."}},
+                "required": ["question", "options"]}
             self._add("ask_user",
-                      "Ask the user a question when the answer changes the result and cannot be found with tools "
-                      "(e.g. material not specified, 3D vs 5D unclear, change the open project or start a new one, "
-                      "rotate the existing object, strength vs speed). Give 2-4 short options, recommended first. "
-                      "The user may also type a custom answer. Waits for the answer.",
-                      {"question": {"type": "string", "description": "One short question in the user's language."},
-                       "options": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 4,
-                                   "description": "2-4 short answer options; put the recommended one first."},
-                       "allow_custom": {"type": "boolean", "description": "Allow a free-text answer (default true)."}},
-                      self._ask_user, required=("question", "options"), on_main=False)
+                      "Ask the user everything you need in ONE call: 1-6 questions shown as one card the user walks "
+                      "through, then confirms all answers at once. Use it when answers change the result and tools "
+                      "cannot tell you (material availability, load and fixture, environment, 3D vs 5D, priority, "
+                      "rotating an existing part, unverified 5D). Waits for the answers.",
+                      {"questions": {"type": "array", "items": question, "minItems": 1, "maxItems": 6}},
+                      self._ask_user, required=("questions",), on_main=False)
 
         if self.core is not None:
             from .project_apply import InPlaceApplier
@@ -392,19 +395,30 @@ class ToolRegistry:
                 "changes": [self._change("machine_nozzle_size", extruder, old, new)] if old != new else []}
 
     def _ask_user(self, args, ctx):
-        question = str(args.get("question") or "").strip()
-        options = [str(o).strip() for o in (args.get("options") or []) if str(o).strip()][:4]
-        if not question or len(options) < 2:
-            raise ToolError("question and 2-4 options are required")
-        cancelled = (ctx or {}).get("cancelled")
+        items = args.get("questions")
+        if not isinstance(items, list):
+            items = [args]  # a single question in the old flat form
+        questions = []
+        for item in items[:6]:
+            if not isinstance(item, dict):
+                continue
+            text = str(item.get("question") or "").strip()
+            options = [str(o).strip() for o in (item.get("options") or []) if str(o).strip()][:4]
+            if text and len(options) >= 2:
+                questions.append({"text": text, "options": options, "allow_custom": item.get("allow_custom") is not False})
+        if not questions:
+            raise ToolError("questions: 1-6 items, each with a question and 2-4 options")
         try:
-            answer, _seq = self.questions.ask(question, options, args.get("allow_custom", True) is not False, cancelled)
+            answers, _seq = self.questions.ask(questions, (ctx or {}).get("cancelled"))
         except QuestionCancelled:
-            raise ToolError("The user cancelled the question")
-        choice = answer.get("choice")
-        return {"answer": answer["text"],
-                "option": options[choice] if isinstance(choice, int) and 0 <= choice < len(options) else None,
-                "custom": not isinstance(choice, int)}
+            raise ToolError("The user cancelled the questions")
+        result = []
+        for question, answer in zip(questions, answers):
+            choice = answer.get("choice")
+            picked = isinstance(choice, int) and 0 <= choice < len(question["options"])
+            result.append({"question": question["text"], "answer": answer["text"],
+                           "option": question["options"][choice] if picked else None, "custom": not picked})
+        return {"answers": result}
 
     def _global(self):
         stack = self._app.getGlobalContainerStack()

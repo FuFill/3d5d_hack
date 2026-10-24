@@ -123,6 +123,21 @@ class LLMClient:
             })
         return {"content": "".join(content), "reasoning": "".join(reasoning), "tool_calls": tool_calls}
 
+    def text(self, messages, max_tokens=None, temperature=0):
+        """One short non-streamed completion without tools (classification, proofreading)."""
+        body = {"model": self.model, "messages": messages, "temperature": temperature, "enable_thinking": False}
+        if max_tokens:
+            body["max_tokens"] = max_tokens
+        response = self._request(body)
+        try:
+            data = json.loads(response.read().decode("utf-8"))
+        finally:
+            response.close()
+        if data.get("error"):
+            raise LLMError(json.dumps(data["error"], ensure_ascii=False)[:500])
+        choices = data.get("choices") or [{}]
+        return ((choices[0].get("message") or {}).get("content") or "").strip()
+
     def ping(self):
         body = {"model": self.model, "messages": [{"role": "user", "content": "ping"}], "max_tokens": 1}
         response = self._request(body)

@@ -58,6 +58,22 @@ class EventBus:
         with self._cond:
             return [e for e in self._events if e["type"] != "patch"], self._seq
 
+    def load(self, events):
+        """Replace the feed with a saved chat: a reset, then its events with fresh sequence numbers."""
+        with self._cond:
+            self._seq += 1
+            self._events = [{"type": "reset", "seq": self._seq, "ts": time.time()}]
+            mapping = {}
+            for event in events:
+                if event.get("type") in ("patch", "reset"):
+                    continue
+                self._seq += 1
+                copy = dict(event)
+                mapping[event.get("seq")] = self._seq
+                copy["seq"] = self._seq
+                self._events.append(copy)
+            self._cond.notify_all()
+
     def clear(self):
         with self._cond:
             self._events = []

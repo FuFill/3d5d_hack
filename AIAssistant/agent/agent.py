@@ -8,6 +8,7 @@ Everything the model does is published to the chat window as it happens: reasoni
 import base64
 import json
 import os
+import re
 import threading
 import time
 
@@ -95,12 +96,15 @@ Ask when unsure
   never infer it from the part name or invent a number. A selected material profile alone does not prove
   that material is loaded. If the user already specified the material or asked to keep the current one,
   use it without asking the same question again. Clarify alternative material availability before switching.
-- Short question, 2-4 short options with the recommended one first. Combine what you need into ONE question
-  when possible; do not leave a required condition unresolved just to meet a question count. Never ask what
-  the specification, the attachments or the slicer state
-  already answer, and never ask to confirm choices the core made from the specification (material, preset,
-  settings): explain them instead. Never offer to delete or move the user's other models; offer applying only
-  the preset and settings to the project, or that the user clears the scene himself.
+- Questions come at the START of the work, all at once, like a short interview: after the project is read and
+  plan_print has chosen the preset, collect every condition that is still missing or ambiguous and ask them in ONE
+  ask_user call with several questions (2-4 short options each, the recommended one first; the user can also
+  type an own answer). Then use the answers: plan_print again with task_text = the original text + a line
+  "Ответы пользователя: ..." when they change the task, then apply. Ask again later only if a new problem appears.
+- Never ask what the specification, the attachments or the slicer state already answer, and never ask to
+  confirm choices the core made from the specification (material, preset, settings): explain them instead.
+  Never offer to delete or move the user's other models; offer applying only the preset and settings to the
+  project, or that the user clears the scene himself.
 
 Settings
 - Known keys, use them directly: layer_height, line_width, wall_line_count, top_layers, bottom_layers,
@@ -128,7 +132,36 @@ Talking to the user
 - Reply in {language}; do not mix languages."""
 
 
+ROUTER_PROMPT = """You route messages in a chat inside a 3D-printing slicer. Decide what the user's LAST message needs.
+answer: the user only asks for information or an explanation (what is set now, why, what something means, how long,
+a comparison) and does not ask to change anything.
+act: the user asks to do, change, set up, prepare, slice, export, rotate, apply, fix or continue something, gives
+data for the task, or agrees to the assistant's proposal ("да", "давай", "делай").
+Reply with one word: answer or act."""
+
+ANSWER_PROMPT = """You are the AI assistant inside STE Slicer (Stereotech). Answer the user's question now in {language},
+briefly and concretely, using the conversation and the current slicer state below. You cannot change anything in this
+reply: never say that you are changing or will now change something. If an action would help, offer it in one short
+sentence at the end. Name settings in words, not by keys.
+Current slicer state, read by the application just now:
+{state}"""
+
+PROOFREAD_PROMPT = """You check a chat reply written in {language} for SEVERE errors only:
+- words or characters from another language or script (for example Chinese characters, or an English word inside a
+  Russian sentence); technical names stay as they are: PETG, PLA, TPU, STL, 3MF, G-code, 3D/5D, file paths, preset,
+  material and profile names, anything in backticks;
+- wrong gender, number or case agreement that makes a phrase hard to read;
+- garbled or glued words.
+Style, punctuation and wording choices are NOT errors. If there is no severe error reply exactly: OK
+Otherwise reply with the full corrected text only, keeping markdown, line breaks, numbers, units, paths and meaning."""
+
+FOREIGN_SCRIPT = re.compile(u"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
+GLUED_WORDS = re.compile(u"[а-яё][a-z]|[a-z][а-яё]", re.IGNORECASE)
+
+
 class Agent:
+    on_turn_done = None  # set by the chat service: saves the chat after every turn
+
     def __init__(self, mcp, registry, bus, settings):
         self._mcp = mcp
         self._registry = registry
@@ -141,6 +174,8 @@ class Agent:
         self._running = False
         self._rpc_id = 0
         self._turn = 0
+        self._kinds = []
+        self._final = None  # (event seq, text) of the last streamed answer
 
     def busy(self):
         return self._running
@@ -151,6 +186,7 @@ class Agent:
                 return False
             self._stop = False
             self._running = True
+            self._kinds = [a["kind"] for a in attachments]
             self._bus.emit("user", text=text, attachments=[{"name": a["name"], "kind": a["kind"]} for a in attachments])
             self._messages.append({"role": "user", "content": self._user_content(text, attachments)})
             self._thread = threading.Thread(target=self._run, name="AIAssistantAgent", daemon=True)
@@ -163,6 +199,13 @@ class Agent:
             self._registry.core.cancel()
         if self._registry.questions is not None:
             self._registry.questions.cancel_all()
+
+    def messages(self):
+        return list(self._messages)
+
+    def load(self, messages):
+        """History of a saved chat; the chat feed itself is restored by the service."""
+        self._messages = list(messages)
 
     def reset(self):
         self.cancel()
@@ -213,7 +256,12 @@ class Agent:
         client = LLMClient(settings.get("base_url"), settings.get("api_key"), settings.get("model"))
         tools = self._registry.openai_tools()
         status = "done"
+        self._final = None
         try:
+            if self._route(client) == "answer":
+                self._answer(client, settings)
+                self._proofread(client, settings)
+                raise _Finished()
             self._read_context(settings)
             for _ in range(MAX_ROUNDS):
                 reply = self._complete(client, tools, settings)
@@ -222,6 +270,7 @@ class Agent:
                     message["tool_calls"] = reply["tool_calls"]
                 self._messages.append(message)
                 if not reply["tool_calls"]:
+                    self._proofread(client, settings)
                     break
                 for call in reply["tool_calls"]:
                     if self._stop:
@@ -230,6 +279,8 @@ class Agent:
             else:
                 self._bus.emit("error", code="too_many_steps", text="")
                 status = "error"
+        except _Finished:
+            pass
         except Cancelled:
             status = "cancelled"
             self._close_dangling_calls()
@@ -244,6 +295,79 @@ class Agent:
             self._close_dangling_calls()
         self._running = False
         self._bus.emit("done", status=status)
+        if self.on_turn_done is not None:
+            try:
+                self.on_turn_done()
+            except Exception:
+                pass
+
+    # ------------------------------------------------------------------ answer or act
+
+    def _route(self, client):
+        """answer: a question about the project, answered without tools; act: work on the project."""
+        if any(kind in ("model", "spec") for kind in self._kinds):
+            return "act"
+        history = _text_history(self._messages)[-6:]
+        try:
+            word = client.text([{"role": "system", "content": ROUTER_PROMPT}] + history, max_tokens=5)
+        except LLMError:
+            return "act"
+        return "answer" if word.lower().startswith("answer") else "act"
+
+    def _answer(self, client, settings):
+        state = {}
+        for name in ("get_state", "list_profiles"):
+            if self._registry.has(name):
+                state[name] = self._registry.call(name, {}, None)["result"]
+        language = "Russian" if settings.get("language", "ru") == "ru" else "English"
+        system = ANSWER_PROMPT.replace("{language}", language).replace(
+            "{state}", json.dumps(state, ensure_ascii=False)[:8000])
+        reply = self._complete(client, None, settings,
+                               messages=[{"role": "system", "content": system}] + _text_history(self._messages))
+        self._messages.append({"role": "assistant", "content": reply["content"] or ""})
+
+    # ------------------------------------------------------------------ proofreading
+
+    def _fix_text(self, client, settings, text):
+        """Corrected text when the reply has a severe language error, else None."""
+        language = "Russian" if settings.get("language", "ru") == "ru" else "English"
+        try:
+            fixed = client.text([{"role": "system", "content": PROOFREAD_PROMPT.replace("{language}", language)},
+                                 {"role": "user", "content": text}], max_tokens=min(4000, len(text) * 2 + 64))
+        except LLMError:
+            return None
+        fixed = (fixed or "").strip()
+        if not fixed or fixed.upper().rstrip(".!") == "OK" or not _safe_fix(text, fixed):
+            return None
+        return fixed
+
+    def _proofread(self, client, settings):
+        """The answer is shown as it streams; a severe error is then replaced in place."""
+        if not self._final or not self._final[1].strip():
+            return
+        seq, text = self._final
+        fixed = self._fix_text(client, settings, text)
+        if fixed is None:
+            return
+        self._bus.update(seq, text=fixed, corrected=True)
+        for message in reversed(self._messages):
+            if message.get("role") == "assistant" and (message.get("content") or "").strip() == text:
+                message["content"] = fixed
+                break
+
+    def _clean_questions(self, client, settings, arguments):
+        """Question texts are checked before the card is shown, but only when they look broken."""
+        items = arguments.get("questions") if isinstance(arguments.get("questions"), list) else []
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            for key in ("question",):
+                if isinstance(item.get(key), str) and _suspicious(item[key]):
+                    item[key] = self._fix_text(client, settings, item[key]) or FOREIGN_SCRIPT.sub("", item[key])
+            options = item.get("options")
+            if isinstance(options, list):
+                item["options"] = [(self._fix_text(client, settings, o) or FOREIGN_SCRIPT.sub("", o))
+                                   if isinstance(o, str) and _suspicious(o) else o for o in options]
 
     def _read_context(self, settings):
         """First step of every turn, done by the application: the open project, presets and attachments.
@@ -281,7 +405,7 @@ class Agent:
             messages.append(message)
         return messages
 
-    def _complete(self, client, tools, settings):
+    def _complete(self, client, tools, settings, messages=None):
         """Stream one completion. Answer text is held back until it is clearly longer than a step caption,
         so a short sentence that comes with tool calls becomes the caption of the step (a "note")."""
         streams = {"thinking": None, "message": None}
@@ -315,7 +439,7 @@ class Agent:
             state["content"] += len(delta)
             flush()
 
-        messages = self._request_messages(settings)
+        messages = messages or self._request_messages(settings)
         reply = None
         try:
             for attempt in range(len(RETRY_DELAYS) + 1):
@@ -345,6 +469,8 @@ class Agent:
                 self._bus.update(streams["message"], streaming=False, note=calls)
             elif text.strip():
                 streams["message"] = self._bus.emit("message", text=text.strip(), streaming=False, note=calls)
+            if reply is not None and not calls and streams["message"] is not None:
+                self._final = (streams["message"], reply["content"].strip())
         if not reply["content"] and not reply["tool_calls"]:
             raise LLMError("empty response")
         return reply
@@ -356,6 +482,10 @@ class Agent:
             arguments = json.loads(raw) if raw.strip() else {}
         except ValueError:
             arguments = None
+        if name == "ask_user" and isinstance(arguments, dict):
+            settings = self._settings()
+            self._clean_questions(LLMClient(settings.get("base_url"), settings.get("api_key"), settings.get("model")),
+                                  settings, arguments)
         seq = self._bus.emit("tool", call_id=call["id"], name=name, args=arguments if arguments is not None else raw,
                              status="running", source="agent")
         if arguments is None or not isinstance(arguments, dict):
@@ -391,6 +521,37 @@ class Agent:
                 continue
             self._messages.append({"role": "tool", "tool_call_id": call["id"],
                                    "content": json.dumps({"error": "cancelled by the user"})})
+
+
+class _Finished(Exception):
+    """The turn ended without the tool loop (answer mode)."""
+
+
+def _text_history(messages):
+    """User and assistant text only: tool calls and results are dropped for tool-less requests."""
+    out = []
+    for message in messages:
+        if message.get("role") not in ("user", "assistant") or not message.get("content"):
+            continue
+        content = message["content"]
+        if isinstance(content, list):
+            content = " ".join(p.get("text", "") for p in content if p.get("type") == "text")
+        out.append({"role": message["role"], "content": content[:4000]})
+    return out
+
+
+def _suspicious(text):
+    return bool(FOREIGN_SCRIPT.search(text) or GLUED_WORDS.search(text))
+
+
+def _safe_fix(original, fixed):
+    """A correction may fix words, not change facts: same numbers, similar length, no foreign script."""
+    if FOREIGN_SCRIPT.search(fixed):
+        return False
+    if not 0.7 <= len(fixed) / float(max(1, len(original))) <= 1.4:
+        return False
+    numbers = lambda t: sorted(re.findall(r"\d+(?:[.,]\d+)?", t))
+    return numbers(original) == numbers(fixed)
 
 
 def _transient(error):

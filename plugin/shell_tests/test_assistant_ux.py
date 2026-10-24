@@ -220,24 +220,47 @@ def test_plan_print_uses_the_original_spec_text_and_user_material():
 
 # ---------------------------------------------------------------- questions
 
-def test_question_waits_for_the_answer_and_reports_the_option():
+def wait_pending(box):
+    for _ in range(200):
+        if box.pending():
+            return box.pending()[0]
+        time.sleep(0.01)
+    raise AssertionError("no pending question")
+
+
+def test_questions_come_as_one_card_and_return_all_answers():
+    bus = EventBus()
+    value, _ = registry(bus=bus)
+    results = {}
+    worker = threading.Thread(target=lambda: results.update(value._ask_user({"questions": [
+        {"question": "Какой материал есть в наличии?", "options": ["PETG", "PLA"]},
+        {"question": "Какая нагрузка?", "options": ["до 50 Н", "ударная", "не знаю"]}]},
+        {"cancelled": lambda: False})))
+    worker.start()
+    seq = wait_pending(value.questions)
+    card = [e for e in bus.snapshot()[0] if e["type"] == "question"][0]
+    assert [q["text"] for q in card["questions"]] == ["Какой материал есть в наличии?", "Какая нагрузка?"]
+    assert not value.questions.answer(seq, [{"text": "PETG", "choice": 0}])          # every question needs an answer
+    assert not value.questions.answer(seq + 100, [{"text": "x"}, {"text": "y"}])
+    assert value.questions.answer(seq, [{"text": "PETG", "choice": 0}, {"text": "около 20 Н, статика", "choice": None}])
+    worker.join(2)
+    assert results["answers"] == [
+        {"question": "Какой материал есть в наличии?", "answer": "PETG", "option": "PETG", "custom": False},
+        {"question": "Какая нагрузка?", "answer": "около 20 Н, статика", "option": None, "custom": True}]
+    card = [e for e in bus.snapshot()[0] if e["type"] == "question"][0]
+    assert card["status"] == "answered" and card["answers"][1]["text"] == "около 20 Н, статика"
+
+
+def test_single_flat_question_still_works():
     bus = EventBus()
     value, _ = registry(bus=bus)
     results = {}
     worker = threading.Thread(target=lambda: results.update(value._ask_user(
-        {"question": "Какой материал?", "options": ["PETG", "PLA"]}, {"cancelled": lambda: False})))
+        {"question": "Повернуть деталь?", "options": ["Да", "Нет"]}, {})))
     worker.start()
-    for _ in range(100):
-        if value.questions.pending():
-            break
-        time.sleep(0.01)
-    seq = value.questions.pending()[0]
-    assert not value.questions.answer(seq + 100, "x")
-    assert value.questions.answer(seq, "PETG", 0)
+    value.questions.answer(wait_pending(value.questions), [{"text": "Да", "choice": 0}])
     worker.join(2)
-    assert results == {"answer": "PETG", "option": "PETG", "custom": False}
-    event = [e for e in bus.snapshot()[0] if e["type"] == "question"][0]
-    assert event["status"] == "answered" and event["answer"] == "PETG"
+    assert results["answers"][0]["option"] == "Да"
 
 
 def test_question_cancel_unblocks_the_tool():
@@ -248,7 +271,7 @@ def test_question_cancel_unblocks_the_tool():
 
     def ask():
         try:
-            box.ask("?", ["a", "b"], True, lambda: stop["value"])
+            box.ask([{"text": "?", "options": ["a", "b"], "allow_custom": True}], lambda: stop["value"])
         except QuestionCancelled:
             errors.append("cancelled")
     worker = threading.Thread(target=ask)
@@ -263,7 +286,7 @@ def test_question_cancel_unblocks_the_tool():
 def test_question_needs_two_options():
     value, _ = registry(bus=EventBus())
     with pytest.raises(ToolError):
-        value._ask_user({"question": "?", "options": ["only"]}, {})
+        value._ask_user({"questions": [{"question": "?", "options": ["only"]}]}, {})
 
 
 # ---------------------------------------------------------------- settings lookup
@@ -401,8 +424,13 @@ def test_rotation_text():
 # ---------------------------------------------------------------- agent loop
 
 class FakeClient:
-    def __init__(self, replies):
-        self.replies, self.requests = list(replies), []
+    def __init__(self, replies, route="act", proofread="OK"):
+        self.replies, self.requests, self.texts = list(replies), [], []
+        self.route, self.proofread = route, proofread
+
+    def text(self, messages, max_tokens=None, temperature=0):
+        self.texts.append(messages)
+        return self.route if "route messages" in messages[0]["content"] else self.proofread
 
     def chat(self, messages, tools, on_reasoning, on_content, should_stop):
         self.requests.append(messages)
@@ -414,14 +442,14 @@ class FakeClient:
         return {"content": "".join(reply.get("stream", [])), "reasoning": "", "tool_calls": reply.get("calls", [])}
 
 
-def run_agent(monkeypatch, replies, registry_value=None):
+def run_agent(monkeypatch, replies, registry_value=None, route="act", proofread="OK"):
     bus = EventBus()
     value = registry_value or registry(bus=bus)[0]
     value._get_state = lambda a, c: {"preset": {"profile": "Normal"}}
     for tool in value._tools:
         if tool.name == "get_state":
             tool.func, tool.on_main = value._get_state, False
-    client = FakeClient(replies)
+    client = FakeClient(replies, route, proofread)
     monkeypatch.setattr(agent_module, "LLMClient", lambda *a, **k: client)
     monkeypatch.setattr(agent_module, "RETRY_DELAYS", (0, 0))
     agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
@@ -472,3 +500,79 @@ def test_earlier_turns_drop_images_and_long_tool_output(monkeypatch):
     assert len(messages[2]["content"]) < 3100
     assert messages[3]["content"][1]["type"] == "image_url"
     assert agent._messages[0]["content"][1]["type"] == "image_url"  # history itself is unchanged
+
+
+# ---------------------------------------------------------------- answer or act, proofreading, saved chats
+
+def test_a_question_is_answered_without_tools(monkeypatch):
+    agent, bus, client = run_agent(monkeypatch, [{"stream": ["Сейчас стоит пресет Normal."]}], route="answer")
+    events = bus.snapshot()[0]
+    assert not [e for e in events if e["type"] == "tool"]                    # no tool calls, no context step
+    request = client.requests[0]
+    assert "Normal" in request[0]["content"] and all(m["role"] != "tool" for m in request)
+    assert [e["text"] for e in events if e["type"] == "message"] == ["Сейчас стоит пресет Normal."]
+
+
+def test_attachments_always_mean_work(monkeypatch):
+    bus = EventBus()
+    value = registry(bus=bus)[0]
+    agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
+    agent._kinds = ["spec"]
+    client = FakeClient([], route="answer")
+    assert agent._route(client) == "act" and not client.texts
+
+
+def test_severe_errors_are_corrected_in_place(monkeypatch):
+    broken = "Деталь напечатанная в 3D, время 2 ч 03 мин, могу试着 проверить."
+    fixed = "Деталь напечатана в 3D, время 2 ч 03 мин, могу попробовать проверить."
+    agent, bus, client = run_agent(monkeypatch, [{"stream": [broken]}], route="answer", proofread=fixed)
+    final = [e for e in bus.snapshot()[0] if e["type"] == "message"][-1]
+    assert final["text"] == fixed and final.get("corrected")
+    assert agent.messages()[-1]["content"] == fixed
+
+
+def test_a_correction_may_not_change_facts(monkeypatch):
+    text = "Время печати 2 ч 03 мин, расход 21,4 г."
+    for bad in ("Время печати 3 ч 03 мин, расход 21,4 г.", "Ок", "时间 2 ч 03 мин, расход 21,4 г."):
+        agent, bus, client = run_agent(monkeypatch, [{"stream": [text]}], route="answer", proofread=bad)
+        assert [e for e in bus.snapshot()[0] if e["type"] == "message"][-1]["text"] == text
+
+
+def test_question_texts_are_checked_only_when_they_look_broken(monkeypatch):
+    bus = EventBus()
+    value = registry(bus=bus)[0]
+    agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
+    client = FakeClient([], proofread="Какой материал рекомендуете?")
+    args = {"questions": [{"question": "Какой материал рекомендуюcore?", "options": ["PETG", "PLA 试"]},
+                          {"question": "Нормальный вопрос?", "options": ["Да", "Нет"]}]}
+    agent._clean_questions(client, {"language": "ru"}, args)
+    assert args["questions"][0]["question"] == "Какой материал рекомендуете?"
+    assert args["questions"][0]["options"][1] == "PLA "           # unfixable foreign script is dropped
+    assert args["questions"][1]["question"] == "Нормальный вопрос?" and len(client.texts) == 2
+
+
+def test_chats_are_saved_listed_and_continued(tmp_path, monkeypatch):
+    from agent.chats import ChatStore
+    bus = EventBus()
+    value = registry(bus=bus)[0]
+    client = FakeClient([{"stream": ["Пресет Normal."]}, {"stream": ["Слой 0.2 мм."]}], route="answer")
+    monkeypatch.setattr(agent_module, "LLMClient", lambda *a, **k: client)
+    agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
+    service = ChatService(bus, agent, MCPServer(value), value, None, store=ChatStore(str(tmp_path)))
+    first = service.chat_id
+    agent.submit("Какой пресет?", [])
+    agent._thread.join(5)
+    assert [c["title"] for c in service.chats()] == ["Какой пресет?"]          # saved after the turn
+    assert service.new_chat() and service.chat_id != first
+    assert bus.snapshot()[0][0]["type"] == "reset" and agent.messages() == []
+    agent.submit("Какой слой?", [])
+    agent._thread.join(5)
+    titles = [c["title"] for c in service.chats()]
+    assert sorted(titles) == ["Какой пресет?", "Какой слой?"]
+    assert service.open_chat(first)
+    assert service.chat_id == first
+    events = bus.snapshot()[0]
+    assert events[0]["type"] == "reset" and [e["text"] for e in events if e["type"] == "user"] == ["Какой пресет?"]
+    assert [m["role"] for m in agent.messages()] == ["user", "assistant"]
+    assert service.delete_chat(first) and first not in [c["id"] for c in service.chats()]
+    service.stop()

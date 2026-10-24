@@ -41,9 +41,15 @@ class ChatServer(ThreadingMixIn, HTTPServer):
 class ChatService:
     """State shared by request handlers; created by the extension on the main thread."""
 
-    def __init__(self, bus, agent, mcp, registry, settings):
+    def __init__(self, bus, agent, mcp, registry, settings, store=None):
         self.bus = bus
         self.agent = agent
+        self.store = store  # ChatStore or None (no saved chats)
+        self.chat_id = None
+        if store is not None and agent is not None:
+            from .chats import new_id
+            self.chat_id = new_id()
+            agent.on_turn_done = self.save_chat
         self.mcp = mcp
         self.registry = registry
         self.settings = settings  # object with public(), update(dict), test()
@@ -52,6 +58,54 @@ class ChatService:
         self.uploads = {}
         self._lock = threading.Lock()
         self.server = None
+
+    # ------------------------------------------------------------------ saved chats
+
+    def save_chat(self):
+        if self.store is None:
+            return False
+        events, _seq = self.bus.snapshot()
+        return self.store.save(self.chat_id, events, self.agent.messages())
+
+    def chats(self):
+        if self.store is None:
+            return []
+        items = self.store.list()
+        for item in items:
+            item["current"] = item["id"] == self.chat_id
+        return items
+
+    def new_chat(self):
+        """Keep the current chat in the list and start an empty one."""
+        if self.agent.busy():
+            return False
+        self.save_chat()
+        if not self.agent.reset():
+            return False
+        if self.store is not None:
+            from .chats import new_id
+            self.chat_id = new_id()
+        return True
+
+    def open_chat(self, chat_id):
+        if self.store is None or self.agent.busy():
+            return False
+        data = self.store.load(chat_id)
+        self.save_chat()
+        if not self.agent.reset():
+            return False
+        self.chat_id = data["id"]
+        self.agent.load(data.get("messages") or [])
+        self.bus.load(data.get("events") or [])
+        return True
+
+    def delete_chat(self, chat_id):
+        if self.store is None:
+            return False
+        if chat_id == self.chat_id:
+            return self.new_chat() and (self.store.delete(chat_id) or True)
+        self.store.delete(chat_id)
+        return True
 
     def start(self, port=0):
         self.server = ChatServer(self, port)
@@ -208,7 +262,10 @@ class Handler(BaseHTTPRequestHandler):
         if url.path == "/api/state":
             events, seq = service.bus.snapshot()
             return self._send(200, {"events": events, "seq": seq, "busy": service.agent.busy(),
-                                    "settings": service.settings.public(), "mcp_url": service.mcp_url()})
+                                    "settings": service.settings.public(), "mcp_url": service.mcp_url(),
+                                    "chat_id": service.chat_id, "history": service.store is not None})
+        if url.path == "/api/chats":
+            return self._send(200, {"chats": service.chats(), "current": service.chat_id})
         if url.path == "/api/events":
             query = parse_qs(url.query)
             since = int((query.get("since") or ["0"])[0])
@@ -254,19 +311,28 @@ class Handler(BaseHTTPRequestHandler):
                     return self._send(409, {"error": "busy"})
                 return self._send(200, {"ok": True})
             if url.path == "/api/answer":
-                text = str(data.get("text") or "").strip()
-                choice = data.get("choice")
-                if not text or not service.registry.questions.answer(int(data.get("seq") or 0), text,
-                                                                     choice if isinstance(choice, int) else None):
+                if not service.registry.questions.answer(int(data.get("seq") or 0), data.get("answers")):
                     return self._send(409, {"error": "no_question"})
                 return self._send(200, {"ok": True})
             if url.path == "/api/cancel":
                 service.agent.cancel()
                 return self._send(200, {"ok": True})
             if url.path == "/api/reset":
-                if service.agent.reset() is False:
+                if not service.new_chat():
                     return self._send(409, {"error": "busy"})
-                return self._send(200, {"ok": True})
+                return self._send(200, {"ok": True, "chat_id": service.chat_id})
+            if url.path == "/api/chats/open":
+                try:
+                    opened = service.open_chat(str(data.get("id") or ""))
+                except (OSError, ValueError):
+                    return self._send(404, {"error": "chat"})
+                if not opened:
+                    return self._send(409, {"error": "busy"})
+                return self._send(200, {"ok": True, "chat_id": service.chat_id})
+            if url.path == "/api/chats/delete":
+                if not service.delete_chat(str(data.get("id") or "")):
+                    return self._send(409, {"error": "busy"})
+                return self._send(200, {"ok": True, "chat_id": service.chat_id})
             if url.path == "/api/settings":
                 service.settings.update(data)
                 return self._send(200, {"settings": service.settings.public()})
