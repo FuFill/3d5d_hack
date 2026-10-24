@@ -1,0 +1,59 @@
+{
+  "status": "pass",
+  "model": "dashscope/qwen3.8-flash",
+  "scope": "live API + software-only project snapshot; no native scene changes",
+  "routes": [
+    {
+      "text": "Печать слишком долгая",
+      "expected": "answer",
+      "actual": "answer"
+    },
+    {
+      "text": "Мне интересен смысл этого значения",
+      "expected": "answer",
+      "actual": "answer"
+    },
+    {
+      "text": "да (after an offer)",
+      "expected": "act",
+      "actual": "act"
+    }
+  ],
+  "question": "почему так долго",
+  "answer": "Печать занимает 2 часа из-за тонкого слоя 0,1 мм и относительно низкой скорости 40 мм/с: при таком профиле Finer требуется больше проходов по слоям, а 4 стенки дополнительно увеличивают путь экструзии и время на каждый слой.\n\nМожно ускорить печать, увеличив высоту слоя и скорость при условии, что это не ухудшит качество.",
+  "question_cards": 0,
+  "read_only_snapshot_calls": [
+    "get_state",
+    "list_profiles",
+    "get_slice_result"
+  ],
+  "requests": [
+    {
+      "stream": false,
+      "has_tools": false,
+      "tool_choice": null
+    },
+    {
+      "stream": false,
+      "has_tools": false,
+      "tool_choice": null
+    },
+    {
+      "stream": false,
+      "has_tools": false,
+      "tool_choice": null
+    },
+    {
+      "stream": true,
+      "has_tools": false,
+      "tool_choice": "none"
+    },
+    {
+      "stream": false,
+      "has_tools": false,
+      "tool_choice": null
+    }
+  ],
+  "private_documents_sent": false,
+  "native_slicer_mutated": false
+}

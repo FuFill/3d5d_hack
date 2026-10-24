@@ -428,6 +428,7 @@ def test_rotation_text():
 class FakeClient:
     def __init__(self, replies, route="act", proofread="OK"):
         self.replies, self.requests, self.texts = list(replies), [], []
+        self.toolsets = []
         self.route, self.proofread = route, proofread
 
     def text(self, messages, max_tokens=None, temperature=0, timeout=None):
@@ -436,6 +437,7 @@ class FakeClient:
 
     def chat(self, messages, tools, on_reasoning, on_content, should_stop):
         self.requests.append(messages)
+        self.toolsets.append(tools)
         reply = self.replies.pop(0)
         if isinstance(reply, Exception):
             raise reply
@@ -444,7 +446,7 @@ class FakeClient:
         return {"content": "".join(reply.get("stream", [])), "reasoning": "", "tool_calls": reply.get("calls", [])}
 
 
-def run_agent(monkeypatch, replies, registry_value=None, route="act", proofread="OK"):
+def run_agent(monkeypatch, replies, registry_value=None, route="act", proofread="OK", text="сделай прочнее"):
     bus = EventBus()
     value = registry_value or registry(bus=bus)[0]
     value._get_state = lambda a, c: {"preset": {"profile": "Normal"}}
@@ -455,7 +457,7 @@ def run_agent(monkeypatch, replies, registry_value=None, route="act", proofread=
     monkeypatch.setattr(agent_module, "LLMClient", lambda *a, **k: client)
     monkeypatch.setattr(agent_module, "RETRY_DELAYS", (0, 0))
     agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
-    agent.submit("сделай прочнее", [])
+    agent.submit(text, [])
     agent._thread.join(5)
     return agent, bus, client
 
@@ -507,15 +509,16 @@ def test_earlier_turns_drop_images_and_long_tool_output(monkeypatch):
 # ---------------------------------------------------------------- answer or act, proofreading, saved chats
 
 def test_a_question_is_answered_without_tools(monkeypatch):
-    agent, bus, client = run_agent(monkeypatch, [{"stream": ["Сейчас стоит пресет Normal."]}], route="answer")
+    agent, bus, client = run_agent(monkeypatch, [{"stream": ["Сейчас стоит пресет Normal."]}], route="answer", text="Какой пресет?")
     events = bus.snapshot()[0]
     assert not [e for e in events if e["type"] == "tool"]                    # no tool calls, no context step
     request = client.requests[0]
     assert "Normal" in request[0]["content"] and all(m["role"] != "tool" for m in request)
+    assert client.toolsets == [None]
     assert [e["text"] for e in events if e["type"] == "message"] == ["Сейчас стоит пресет Normal."]
 
 
-def test_attachments_always_mean_work(monkeypatch):
+def test_attachments_without_text_mean_work(monkeypatch):
     bus = EventBus()
     value = registry(bus=bus)[0]
     agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
@@ -527,7 +530,7 @@ def test_attachments_always_mean_work(monkeypatch):
 def test_severe_errors_are_corrected_in_place(monkeypatch):
     broken = "Деталь напечатанная в 3D, время 2 ч 03 мин, могу试着 проверить."
     fixed = "Деталь напечатана в 3D, время 2 ч 03 мин, могу попробовать проверить."
-    agent, bus, client = run_agent(monkeypatch, [{"stream": [broken]}], route="answer", proofread=fixed)
+    agent, bus, client = run_agent(monkeypatch, [{"stream": [broken]}], route="answer", proofread=fixed, text="Почему долго?")
     final = [e for e in bus.snapshot()[0] if e["type"] == "message"][-1]
     assert final["text"] == fixed and final.get("corrected")
     assert agent.messages()[-1]["content"] == fixed
@@ -536,7 +539,7 @@ def test_severe_errors_are_corrected_in_place(monkeypatch):
 def test_a_correction_may_not_change_facts(monkeypatch):
     text = "Время печати 2 ч 03 мин, расход 21,4 г."
     for bad in ("Время печати 3 ч 03 мин, расход 21,4 г.", "Ок", "时间 2 ч 03 мин, расход 21,4 г."):
-        agent, bus, client = run_agent(monkeypatch, [{"stream": [text]}], route="answer", proofread=bad)
+        agent, bus, client = run_agent(monkeypatch, [{"stream": [text]}], route="answer", proofread=bad, text="Почему долго?")
         assert [e for e in bus.snapshot()[0] if e["type"] == "message"][-1]["text"] == text
 
 
@@ -623,7 +626,7 @@ def test_network_failures_of_short_calls_are_llm_errors(monkeypatch):
         client.text([{"role": "user", "content": "hi"}], timeout=1)
 
 
-def test_a_slow_router_falls_back_to_work(monkeypatch):
+def test_a_slow_router_falls_back_to_answer(monkeypatch):
     bus = EventBus()
     value = registry(bus=bus)[0]
 
@@ -633,8 +636,8 @@ def test_a_slow_router_falls_back_to_work(monkeypatch):
             raise LLMError("timed out")
 
     agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
-    agent._messages = [{"role": "user", "content": "Какой пресет?"}]
-    assert agent._route(Slow()) == "act"
+    agent._messages = [{"role": "user", "content": "Этот вариант влияет на время"}]
+    assert agent._route(Slow()) == "answer"
 
 
 def test_attachments_of_a_chat_stay_after_restart_and_only_in_that_chat(tmp_path, monkeypatch):

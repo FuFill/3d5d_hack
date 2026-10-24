@@ -13,6 +13,7 @@ import threading
 import time
 
 from .llm import Cancelled, LLMClient, LLMError
+from .intent import clear_intent
 
 MAX_ROUNDS = 40
 MAX_TOOL_RESULT_CHARS = 12000
@@ -131,6 +132,8 @@ Execution
   needs_input/needs_calibration/infeasible visible; physical_print_approval stays false.
 
 Talking to the user
+- Questions asking why/how/what do not authorize changes or a clarification card. Answer them first.
+  Only an explicit request for work authorizes tools; if the message asks both, explain before acting.
 - Before each batch of tool calls write ONE short sentence (at most 15 words) saying what you are doing now,
   e.g. "Подбираю пресет и настройки на прочность". No reasoning, no tool or key names in that sentence.
 - Final answer: short plain text with a few bullets: STE preset and why, material, mode, the changes over the
@@ -145,12 +148,21 @@ answer: the user only asks for information or an explanation (what is set now, w
 a comparison) and does not ask to change anything.
 act: the user asks to do, change, set up, prepare, slice, export, rotate, apply, fix or continue something, gives
 data for the task, or agrees to the assistant's proposal ("да", "давай", "делай").
+The input is JSON: classify current_user_message; previous_messages are context only, not renewed instructions.
+Attachments alone do not authorize work when the user asks a question about them.
+"Почему так долго", "Можно ли ускорить?", "Как уменьшить время?", "Explain how to rotate" are answer.
+"Ускорь печать", "Почему долго? Уменьши заполнение", "Can you rotate the part?" are act.
+If there is no clear request or agreement to work, choose answer. Never turn an explanation into a task.
 Reply with one word: answer or act."""
 
 ANSWER_PROMPT = """You are the AI assistant inside STE Slicer (Stereotech). Answer the user's question now in {language},
 briefly and concretely, using the conversation and the current slicer state below. You cannot change anything in this
-reply: never say that you are changing or will now change something. If an action would help, offer it in one short
-sentence at the end. Name settings in words, not by keys.
+reply: never say that you are changing or will now change something. Answer the actual question FIRST; never replace
+the explanation with a question, an interview or a request to choose an option. If information is missing, say what
+is known and what cannot be determined. Do not ask the user to decide on changes. You may describe a possible
+improvement in one short declarative sentence at the end; do not begin work or ask for confirmation.
+Explain likely causes with their limits; do not invent timings or claim measured strength from slicer settings.
+Name settings in words, not by keys.
 Current slicer state, read by the application just now:
 {state}"""
 
@@ -183,6 +195,7 @@ class Agent:
         self._rpc_id = 0
         self._turn = 0
         self._kinds = []
+        self._turn_text = None  # Original message, without appended attachment contents.
         self._final = None  # (event seq, text) of the last streamed answer
 
     def busy(self):
@@ -195,6 +208,7 @@ class Agent:
             self._stop = False
             self._running = True
             self._kinds = [a["kind"] for a in attachments]
+            self._turn_text = text or ""
             self._bus.emit("user", text=text, attachments=[{"name": a["name"], "kind": a["kind"], "id": a.get("id")}
                                                            for a in attachments])
             self._messages.append({"role": "user", "content": self._user_content(text, attachments)})
@@ -267,7 +281,6 @@ class Agent:
     def _run(self):
         settings = self._settings()
         client = LLMClient(settings.get("base_url"), settings.get("api_key"), settings.get("model"))
-        tools = self._registry.openai_tools()
         status = "done"
         self._final = None
         try:
@@ -275,6 +288,7 @@ class Agent:
                 self._answer(client, settings)
                 self._proofread(client, settings)
                 raise _Finished()
+            tools = self._registry.openai_tools()
             self._read_context(settings)
             for _ in range(MAX_ROUNDS):
                 reply = self._complete(client, tools, settings)
@@ -318,24 +332,42 @@ class Agent:
 
     def _route(self, client):
         """answer: a question about the project, answered without tools; act: work on the project."""
-        if any(kind in ("model", "spec") for kind in self._kinds):
+        text = self._turn_text
+        if text is None:
+            text = next((m["content"] for m in reversed(_text_history(self._messages)) if m["role"] == "user"), "")
+        intent = clear_intent(text)
+        if intent is not None:
+            return intent
+        if not text.strip() and any(kind in ("model", "spec") for kind in self._kinds):
             return "act"
-        history = _text_history(self._messages)[-6:]
+        # Attached specifications and old task requests are context, not current authorization.
+        history = _text_history(self._messages[:-1])[-4:]
+        payload = {"previous_messages": history, "current_user_message": text, "attachment_kinds": self._kinds}
         try:
-            word = client.text([{"role": "system", "content": ROUTER_PROMPT}] + history, max_tokens=5,
+            word = client.text([{"role": "system", "content": ROUTER_PROMPT},
+                                {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}], max_tokens=8,
                                timeout=ROUTER_TIMEOUT)
         except LLMError:
-            return "act"
-        return "answer" if word.lower().startswith("answer") else "act"
+            return "answer"
+        # A timeout, empty, malformed or truncated classifier reply never grants tools.
+        return "act" if (word or "").strip().lower().rstrip(".!") == "act" else "answer"
 
     def _answer(self, client, settings):
         state = {}
         for name in ("get_state", "list_profiles"):
             if self._registry.has(name):
                 state[name] = self._registry.call(name, {}, None)["result"]
+        # Explaining print time needs the existing estimate, not a new slice.
+        if state.get("get_state", {}).get("slice_state") == "done" and self._registry.has("get_slice_result"):
+            try:
+                state["get_slice_result"] = self._registry.call("get_slice_result", {}, None)["result"]
+            except Exception:
+                state["get_slice_result"] = {"unavailable": "The finished slice changed while reading its estimate."}
         language = "Russian" if settings.get("language", "ru") == "ru" else "English"
+        profiles = state.pop("list_profiles", {})
+        snapshot = json.dumps(state, ensure_ascii=False)[:10000] + "\nNative profiles:\n" + json.dumps(profiles, ensure_ascii=False)[:2000]
         system = ANSWER_PROMPT.replace("{language}", language).replace(
-            "{state}", json.dumps(state, ensure_ascii=False)[:8000])
+            "{state}", snapshot)
         reply = self._complete(client, None, settings,
                                messages=[{"role": "system", "content": system}] + _text_history(self._messages))
         self._messages.append({"role": "assistant", "content": reply["content"] or ""})

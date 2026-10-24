@@ -1,0 +1,26 @@
+{
+  "scope": "chat routing and unchanged availability of explicit action tools; no physical prediction",
+  "base_commit": "2acd3d8",
+  "test_suite": "plugin/shell_tests",
+  "counts": {
+    "passed": 113,
+    "skipped": 0,
+    "failed": 0
+  },
+  "new_routing_cases": 45,
+  "junit_sha256": "6f19457af89da3577d82a820efbd141700cd57632644f4cb7b647841819412ec",
+  "python35_syntax_files": 18,
+  "live_report_sha256": "0797a141d30121250ae7b9ac28f1df13520b11e2052974260a8b633fc7d10725",
+  "source_sha256": {
+    "AIAssistant/agent/agent.py": "b64e87e1d197a4601a6e18ed8aef53e82888fe7946becdb4674b45408259e274",
+    "AIAssistant/agent/intent.py": "a3026ec4d194b2a90cf6269ebc5b483ca499ce69cf69b5efc165e6c2b4e2b693",
+    "AIAssistant/agent/llm.py": "1f63ba683030b89e2562eb61f4cf41bdb73c61c6c4c8c5b205cefb1da1f08a72",
+    "plugin/shell_tests/test_question_routing.py": "c478dd8019a0cabf6e1ff862a1a617443fd1526434a441acca9870c535b062a5",
+    "plugin/shell_tests/test_assistant_ux.py": "481345bd11848d15d11870c32932589e30c58954d31a696a792acd6cb84cb432"
+  },
+  "embedded_runtime": {
+    "python": "3.5.7",
+    "status": "pass",
+    "routing_cases": 6
+  }
+}

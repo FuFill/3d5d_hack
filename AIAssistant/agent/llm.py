@@ -73,6 +73,8 @@ class LLMClient:
         if tools:
             body["tools"] = tools
             body["tool_choice"] = "auto"
+        else:
+            body["tool_choice"] = "none"
         response = self._request(body)
         content, reasoning, calls = [], [], {}
         try:

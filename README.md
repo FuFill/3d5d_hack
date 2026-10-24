@@ -104,6 +104,8 @@ python plugin/tools/check_ai_assistant_runtime.py --existing-project
 ```
 
 Сводка и ограничения доказательности: [отчёт оболочки](experiments/shell_integration/REPORT.md).
+Последняя отдельная проверка изменений диалога — **113 тестов оболочки**, включая
+вопросы без карточек и живой Timeweb: [маршрутизация вопросов](experiments/question_routing/README.md).
 Распределение напряжений и давления, проверки на точных решениях и ограничения
 прогноза реальной 5D-печати: [проверка физики](experiments/pressure_validation/README.md).
 Ключи, пользовательские профили, временные сессии и окружения в Git не публикуются.
