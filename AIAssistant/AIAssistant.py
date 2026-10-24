@@ -18,7 +18,7 @@ from .agent.mainthread import run_on_main
 from .agent.mcp import MCPServer
 from .agent.server import ChatService
 from .agent.tools import SliceMonitor, ToolRegistry
-from .agent.window import DockedWindow
+from .agent.window import EmbeddedChat
 from .agent.core_bridge import CoreBridge, default_python
 from .agent.core_worker import core_path
 
@@ -144,6 +144,7 @@ class AIAssistant(Extension):
         self._window = None
         self.setMenuName("AI Assistant")
         self.addMenuItem("Open chat", self.showChat)
+        self.addMenuItem("Hide chat", self.hideChat)
         self._app.applicationShuttingDown.connect(self._shutdown)
 
     def _start(self):
@@ -161,7 +162,7 @@ class AIAssistant(Extension):
         registry.spec_sources = self._service.spec_uploads
         port = self._service.start()
         profile = os.path.join(Resources.getDataStoragePath(), "ai_assistant_browser")
-        self._window = DockedWindow(self._app, profile)
+        self._window = EmbeddedChat(self._app, profile)
         Logger.log("i", "AI Assistant: chat on http://127.0.0.1:%d/, MCP endpoint %s (token in the chat settings)",
                    port, self._service.mcp_url())
 
@@ -172,6 +173,13 @@ class AIAssistant(Extension):
             self._window.open(self._service.url())
         except Exception:
             Logger.logException("e", "AI Assistant: could not open the chat")
+
+    def hideChat(self):
+        try:
+            if self._window is not None:
+                self._window.hide()
+        except Exception:
+            Logger.logException("e", "AI Assistant: could not hide the chat")
 
     def _shutdown(self):
         try:
