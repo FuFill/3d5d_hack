@@ -23,6 +23,7 @@ WEB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 STATIC = {"/": ("index.html", "text/html; charset=utf-8"),
           "/index.html": ("index.html", "text/html; charset=utf-8"),
           "/app.js": ("app.js", "application/javascript; charset=utf-8"),
+          "/presets.js": ("presets.js", "application/javascript; charset=utf-8"),
           "/style.css": ("style.css", "text/css; charset=utf-8")}
 IMAGE_EXT = (".png", ".jpg", ".jpeg")
 MODEL_EXT = (".stl", ".obj", ".3mf")

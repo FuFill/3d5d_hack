@@ -546,8 +546,15 @@
 
   // Core plan: which STE preset is the base and what changes on top of it (a proposal until applied).
   function renderPreset(r) {
-    var box = el("div", "preset");
     var base = r.base_preset || {};
+    if (base.status === "needs_input" || r.status === "infeasible") {
+      var labels = [base.profile, r.chosen_material && (r.chosen_material.label || r.chosen_material.id),
+        r.route && MODES[r.route.mode]].filter(Boolean);
+      return STEPresets.rejected(document, {label: labels.join(" · "), reason: base.reason ||
+        (r.status === "infeasible" ? "plan does not satisfy mandatory requirements" : ""),
+        options: base.options}, lang);
+    }
+    var box = el("div", "preset");
     var head = el("div", "preset-head");
     head.appendChild(el("span", "preset-tag", t("preset")));
     if (base.profile) {
@@ -563,10 +570,10 @@
     box.appendChild(head);
     if (r.status) box.appendChild(el("div", "preset-status", t("st_" + r.status) !== "st_" + r.status ? t("st_" + r.status) : r.status));
     if (!base.profile && base.reason) {
-      box.appendChild(el("div", "note", base.reason));
+      box.appendChild(el("div", "note", STEPresets.reason(base.reason, lang)));
       if (base.options && base.options.length) {
         var ul = el("ul");
-        base.options.forEach(function (o) { ul.appendChild(el("li", "", o)); });
+        base.options.forEach(function (o) { ul.appendChild(el("li", "", STEPresets.option(o, lang))); });
         box.appendChild(ul);
       }
     }
@@ -587,6 +594,12 @@
       box.appendChild(list);
     } else if (base.profile) {
       box.appendChild(el("div", "note", t("noChanges")));
+    }
+    if (base.rejected && base.rejected.length) {
+      var rejected = el("details", "preset-rejections");
+      rejected.appendChild(el("summary", "", (lang === "ru" ? "Отброшенные пресеты" : "Rejected presets") + " (" + base.rejected.length + ")"));
+      base.rejected.forEach(function (item) { rejected.appendChild(STEPresets.rejected(document, item, lang)); });
+      box.appendChild(rejected);
     }
     return box;
   }

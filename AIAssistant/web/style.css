@@ -128,6 +128,15 @@ svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width:
 .preset .change .new { background: transparent; color: var(--fg); border: 1px dashed var(--fg); }
 .preset .changes { margin-left: 0; border-left-style: dashed; }
 .preset ul { margin: 4px 0 0; padding-left: 16px; color: var(--muted); font-size: 12px; }
+.preset-rejected { margin: 4px 0 4px 15px; border: 1px solid var(--line); border-radius: 6px; background: var(--soft); font-size: 12px; }
+.preset-rejected-summary { padding: 5px 8px; cursor: pointer; overflow-wrap: anywhere; }
+.preset-rejected-label { font-weight: 500; margin-right: 6px; }
+.preset-rejected-reason { color: var(--muted); }
+.preset-rejected-options { padding: 0 8px 6px; color: var(--muted); }
+.preset-rejected-options > div + div { margin-top: 3px; }
+.preset-rejections { margin-top: 6px; font-size: 12px; color: var(--muted); }
+.preset-rejections > summary { cursor: pointer; }
+.preset-rejections .preset-rejected { margin-left: 0; }
 
 .bar-wrap { display: flex; align-items: center; gap: 8px; margin: 4px 0 2px 15px; color: var(--muted); font-size: 12px; }
 .track { flex: 1; height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
@@ -253,7 +262,7 @@ form input:focus { border-bottom-color: var(--fg); }
 .tree-head { padding: 8px 14px 0; color: var(--muted); font-size: 12px; }
 .tree-body { flex: 1; overflow: auto; }
 .tree-canvas { position: relative; margin: 0 auto; }
-.tree-canvas svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; stroke: var(--line); stroke-width: 1.5; }
+.tree-canvas svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; stroke: var(--fg); stroke-width: 1.5; }
 .tnode { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; padding: 0; border: 1.5px solid var(--fg);
   border-radius: 50%; background: var(--bg); font-size: 11px; font-weight: 600; line-height: 1; letter-spacing: .02em; }
 .tnode:hover { background: var(--soft); }
