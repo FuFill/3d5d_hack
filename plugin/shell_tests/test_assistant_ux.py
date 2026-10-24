@@ -543,17 +543,28 @@ def test_a_correction_may_not_change_facts(monkeypatch):
         assert [e for e in bus.snapshot()[0] if e["type"] == "message"][-1]["text"] == text
 
 
-def test_question_texts_are_checked_only_when_they_look_broken(monkeypatch):
+def test_a_question_card_is_proofread_in_one_call(monkeypatch):
     bus = EventBus()
     value = registry(bus=bus)[0]
     agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
-    client = FakeClient([], proofread="Какой материал рекомендуете?")
+    fixed = "1) Какой материал рекомендуете?\n2) PETG\n3) PLA\n4) Нужна последующая доработка?\n5) Да\n6) Нет"
+    client = FakeClient([], proofread=fixed)
     args = {"questions": [{"question": "Какой материал рекомендуюcore?", "options": ["PETG", "PLA 试"]},
-                          {"question": "Нормальный вопрос?", "options": ["Да", "Нет"]}]}
+                          {"question": "Нужен последующий доработкой?", "options": ["Да", "Нет"]}]}
     agent._clean_questions(client, {"language": "ru"}, args)
-    assert args["questions"][0]["question"] == "Какой материал рекомендуете?"
-    assert args["questions"][0]["options"][1] == "PLA "           # unfixable foreign script is dropped
-    assert args["questions"][1]["question"] == "Нормальный вопрос?" and len(client.texts) == 2
+    assert len(client.texts) == 1                                    # one call for the whole card
+    assert args["questions"][0] == {"question": "Какой материал рекомендуете?", "options": ["PETG", "PLA"]}
+    assert args["questions"][1]["question"] == "Нужна последующая доработка?"
+
+
+def test_a_broken_card_correction_is_not_used_but_foreign_script_goes(monkeypatch):
+    bus = EventBus()
+    value = registry(bus=bus)[0]
+    agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
+    client = FakeClient([], proofread="1) Какой материал?\n2) PETG")     # a line is missing
+    args = {"questions": [{"question": "Какой материал?", "options": ["PETG 20 %", "PLA 试"]}]}
+    agent._clean_questions(client, {"language": "ru"}, args)
+    assert args["questions"][0]["options"] == ["PETG 20 %", "PLA"]
 
 
 def test_chats_are_saved_listed_and_continued(tmp_path, monkeypatch):
@@ -671,3 +682,27 @@ def test_attachments_of_a_chat_stay_after_restart_and_only_in_that_chat(tmp_path
     assert service.delete_chat(chat)
     assert not (tmp_path / "chats" / (chat + ".files")).exists()
     service.stop()
+
+
+def test_english_words_in_russian_texts_are_suspicious_but_names_are_not():
+    suspicious = agent_module._suspicious
+    assert suspicious("Допустима slight подгонка") and suspicious("Нагрузка идёт along слоёв")
+    assert not suspicious("Enduse PETG (рекомендуется: прочнее PLA)") and not suspicious("Кайма brim 8 mm")
+    assert not suspicious("Плотность infill_sparse_density 20 %") and not suspicious(r"Файл C:\Users\team\gear.stl")
+    assert not suspicious("Допустима slight подгонка", "en")
+
+
+def test_the_text_before_a_confirmation_card_is_proofread(monkeypatch):
+    bus = EventBus()
+    value = registry(bus=bus)[0]
+    client = FakeClient([{"stream": ["Нагрузка идёт along слоёв."]}, {"stream": ["Готово."]}],
+                        route="act", proofread="Нагрузка идёт вдоль слоёв.")
+    monkeypatch.setattr(agent_module, "LLMClient", lambda *a, **k: client)
+    agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
+    offers = [True]
+    monkeypatch.setattr(agent._execution, "offer_at_end", lambda: offers.pop(0) if offers else False)
+    monkeypatch.setattr(agent._execution, "confirm", lambda name, should_stop: None)
+    agent.submit("Сделай шестерню прочной", [])
+    agent._thread.join(5)
+    texts = [e["text"] for e in bus.snapshot()[0] if e["type"] == "message" and not e.get("note")]
+    assert texts[0] == "Нагрузка идёт вдоль слоёв."

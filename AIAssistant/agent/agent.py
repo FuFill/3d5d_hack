@@ -190,6 +190,11 @@ NAME_MAX_CHARS = 40
 
 FOREIGN_SCRIPT = re.compile(u"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
 GLUED_WORDS = re.compile(u"[а-яё][a-z]|[a-z][а-яё]", re.IGNORECASE)
+# A lowercase English word inside Russian text ("допустима slight подгонка"); names and units are kept.
+LATIN_WORD = re.compile(r"(?<![\w./\\-])[a-z]{3,}(?![\w./\\-])")
+CYRILLIC = re.compile(u"[а-яё]", re.IGNORECASE)
+TECH_WORDS = frozenset("""pla petg abs asa tpu pa pc pp pva hips nylon carbon stl obj gcode mm cm sec min max brim skirt
+raft none classic cylindrical full ste cura fdm usb wifi api mcp docx txt json""".split())
 
 
 class Agent:
@@ -333,13 +338,14 @@ class Agent:
                     message["tool_calls"] = reply["tool_calls"]
                 self._messages.append(message)
                 if not reply["tool_calls"]:
+                    # Checked before a confirmation card too: that text stays in the chat.
+                    self._proofread(client, settings)
                     if self._execution.offer_at_end():
                         self._execution.confirm("apply_plan", lambda: self._stop)
                         self._messages.append({"role": "user", "content":
                             "Application: the user explicitly chose to move from planning to execution in the confirmation card. "
                             "Continue with the approved plan."})
                         continue
-                    self._proofread(client, settings)
                     break
                 for call in reply["tool_calls"]:
                     if self._stop:
@@ -481,18 +487,44 @@ class Agent:
                 break
 
     def _clean_questions(self, client, settings, arguments):
-        """Question texts are checked before the card is shown, but only when they look broken."""
-        items = arguments.get("questions") if isinstance(arguments.get("questions"), list) else []
+        """All texts of a question card are proofread in one call before the card is shown.
+
+        The texts go as numbered lines; when the reply keeps the numbering, each line is taken if it
+        keeps its facts (same numbers, similar length). Foreign script is removed in any case.
+        """
+        items = [i for i in (arguments.get("questions") if isinstance(arguments.get("questions"), list) else [])
+                 if isinstance(i, dict)]
+        slots = []
         for item in items:
-            if not isinstance(item, dict):
-                continue
-            for key in ("question",):
-                if isinstance(item.get(key), str) and _suspicious(item[key]):
-                    item[key] = self._fix_text(client, settings, item[key]) or FOREIGN_SCRIPT.sub("", item[key])
-            options = item.get("options")
-            if isinstance(options, list):
-                item["options"] = [(self._fix_text(client, settings, o) or FOREIGN_SCRIPT.sub("", o))
-                                   if isinstance(o, str) and _suspicious(o) else o for o in options]
+            if isinstance(item.get("question"), str):
+                slots.append((item, "question", None))
+            for index, option in enumerate(item.get("options") if isinstance(item.get("options"), list) else []):
+                if isinstance(option, str):
+                    slots.append((item, "options", index))
+        if not slots:
+            return
+
+        def get(slot):
+            item, key, index = slot
+            return item[key] if index is None else item[key][index]
+
+        def put(slot, text):
+            item, key, index = slot
+            if index is None:
+                item[key] = text
+            else:
+                item[key][index] = text
+
+        texts = [" ".join(get(slot).split()) for slot in slots]
+        block = "\n".join("%d) %s" % (n + 1, text) for n, text in enumerate(texts))
+        fixed = self._fix_text(client, settings, block)
+        if fixed is not None:
+            lines = [l for l in fixed.splitlines() if l.strip()]
+            parsed = [re.sub(r"^\s*%d\)\s*" % (n + 1), "", l, count=1) for n, l in enumerate(lines)]
+            if len(parsed) == len(texts) and all(re.match(r"^\s*%d\)" % (n + 1), l) for n, l in enumerate(lines)):
+                texts = [new if _safe_line(old, new) else old for old, new in zip(texts, parsed)]
+        for slot, text in zip(slots, texts):
+            put(slot, FOREIGN_SCRIPT.sub("", text).strip() or get(slot))
 
     def _read_context(self, settings):
         """First step of every turn, done by the application: the open project, presets and attachments.
@@ -679,8 +711,11 @@ def _text_history(messages):
     return out
 
 
-def _suspicious(text):
-    return bool(FOREIGN_SCRIPT.search(text) or GLUED_WORDS.search(text))
+def _suspicious(text, language="ru"):
+    if FOREIGN_SCRIPT.search(text) or GLUED_WORDS.search(text):
+        return True
+    return language == "ru" and bool(CYRILLIC.search(text)) and \
+        any(word not in TECH_WORDS for word in LATIN_WORD.findall(text))
 
 
 def _safe_fix(original, fixed):
@@ -691,6 +726,14 @@ def _safe_fix(original, fixed):
         return False
     numbers = lambda t: sorted(re.findall(r"\d+(?:[.,]\d+)?", t))
     return numbers(original) == numbers(fixed)
+
+
+def _safe_line(original, fixed):
+    """_safe_fix for one line of a card; a short option may shrink a lot (e.g. stray characters removed)."""
+    if len(original) < 12:
+        numbers = lambda t: sorted(re.findall(r"\d+(?:[.,]\d+)?", t))
+        return bool(fixed.strip()) and not FOREIGN_SCRIPT.search(fixed) and numbers(original) == numbers(fixed)
+    return _safe_fix(original, fixed)
 
 
 def _transient(error):

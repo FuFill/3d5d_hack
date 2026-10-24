@@ -1201,6 +1201,9 @@
 
   $("models").addEventListener("click", function () { showTree($("tree").hidden); });
   $("treeDim").addEventListener("click", function () { showTree(false); });
+  // The pointer can leave the window straight from a node: the slicer's card must not stay behind.
+  window.addEventListener("blur", hideCard);
+  document.documentElement.addEventListener("mouseleave", hideCard);
   document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !$("tree").hidden) showTree(false); });
 
   $("history").addEventListener("click", function () { showTree(false); showChats(); });

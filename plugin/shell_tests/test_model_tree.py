@@ -183,3 +183,30 @@ def test_the_agent_saves_a_model_after_finished_work(monkeypatch):
     told = [m["content"] for m in agent.messages() if m["role"] == "user"][-1]
     assert told.startswith("А теперь подольше") and "switched the slicer" in told
     s.stop()
+
+
+def test_a_model_of_another_printer_is_not_restored():
+    import pytest
+    from agent.tools import ToolError
+    from agent.versions import StateIO
+
+    class Stack:
+        extruders = {}
+
+        def getId(self):
+            return "Hybrid 530 #2"
+
+    class Registry:
+        def _global(self):
+            return Stack()
+
+    io = StateIO(None, Registry())
+    with pytest.raises(ToolError, match="another printer"):
+        io._restore(dict(state(), machine="Hybrid 530 #1"))
+
+
+def test_the_card_text_follows_the_window_language():
+    tree = ModelTree()
+    tree.add(state(), "Start", kind="start")
+    assert tree.view("en")["nodes"][0]["empty"] == "The project before the first change"
+    assert tree.view("ru")["nodes"][0]["empty"] == "Исходное состояние проекта"

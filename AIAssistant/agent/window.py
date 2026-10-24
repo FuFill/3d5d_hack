@@ -235,6 +235,10 @@ class HoverCard:
         except Exception:
             self._card = None
 
+    def hide(self):
+        if self._card is not None:
+            self._app.callLater(self._update, None, 0)
+
     def show(self, view, y):
         """From any thread; False when the slicer window cannot show the card (the page shows its own)."""
         if self._card is None:
@@ -253,9 +257,7 @@ class HoverCard:
             rows.append("%s&nbsp;&nbsp;%s<b>%s</b>" % (
                 _html(row.get("label")), ('<span style="color:#80868b"><s>%s</s></span> → ' % old) if old else "→ ",
                 _html(row.get("new"))))
-        empty = ""
-        if not rows:
-            empty = "Исходное состояние проекта" if view.get("kind") == "start" else "Без изменений настроек"
+        empty = "" if rows else view.get("empty") or ""
         card.setProperty("title", view.get("name") or "")
         card.setProperty("stats", view.get("stats") or "")
         card.setProperty("rows", rows)

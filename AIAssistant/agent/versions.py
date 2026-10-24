@@ -26,6 +26,8 @@ NAMES = {"printing_mode": ("Режим печати", "Printing mode"), "preset"
          "material": ("Материал", "Material"), "nozzle": ("Сопло", "Nozzle"),
          "objects": ("Положение деталей", "Part placement"), "count": ("Деталей на столе", "Parts on the plate")}
 START_NAME = ("Исходная", "Start")
+START_NOTE = ("Исходное состояние проекта", "The project before the first change")
+SAME_NOTE = ("Без изменений настроек", "No setting changes")
 
 
 def abbreviation(name):
@@ -164,7 +166,8 @@ class ModelTree:
                 parts.append(("%s г" if language == "ru" else "%s g") % _number(stats["material_g"]))
             if infill is not None:
                 parts.append(("заполнение %s %%" if language == "ru" else "infill %s %%") % _number(infill))
-            out.append({"id": node["id"], "parent": node.get("parent"), "kind": node.get("kind", "model"),
+            empty = (START_NOTE if node.get("kind") == "start" else SAME_NOTE)[0 if language == "ru" else 1]
+            out.append({"id": node["id"], "parent": node.get("parent"), "kind": node.get("kind", "model"), "empty": empty,
                         "name": node.get("name") or "", "short": node.get("short") or abbreviation(node.get("name")),
                         "created": node.get("created", 0), "stats": " · ".join(p for p in parts if p),
                         "changes": changes(parent.get("snapshot") if parent else None, node.get("snapshot") or {},
@@ -206,12 +209,17 @@ class StateIO:
     def restore(self, snapshot):
         return run_on_main(self._app, lambda: self._restore(snapshot))
 
+    def _sliceable(self):
+        return bool(run_on_main(self._app, self._registry._scene_nodes))
+
     def needs_slice(self):
         slices = self._registry._slices
-        return slices is None or slices.status()[0] != 3
+        return (slices is None or slices.status()[0] != 3) and self._sliceable()
 
     def stats(self, should_stop=None):
         """Print time and material of the current slice, slicing first when the estimate is not current."""
+        if not self._sliceable():
+            return {}
         if self.needs_slice():
             result = self._registry.call("slice", {}, {"cancelled": should_stop} if should_stop else None)
         else:
@@ -252,7 +260,8 @@ class StateIO:
             source = registry._node_source(node)
             objects.append({"name": node.getName(), "source": source.get("source_path"),
                             "matrix": node.getLocalTransformation().getData().tolist()})
-        return {"stacks": saved, "mode": stack.getProperty("printing_mode", "value"),
+        return {"machine": stack.getId(), "machine_definition": stack.definition.getId(),
+                "stacks": saved, "mode": stack.getProperty("printing_mode", "value"),
                 "preset": manager.activeQualityOrQualityChangesName,
                 "materials": dict((s.getMetaDataEntry("position"), s.material.getName()) for s in stacks[1:]),
                 "nozzles": dict((s.getMetaDataEntry("position"), s.variant.getName()) for s in stacks[1:]),
@@ -260,12 +269,14 @@ class StateIO:
 
     def _restore(self, snapshot):
         """Containers, values and poses of a node as one Undo step; returns how many parts were not found."""
+        app, registry = self._app, self._registry
+        stack, stacks = self._stacks()
+        if snapshot.get("machine") and snapshot["machine"] != stack.getId():
+            raise ToolError("This model was made for another printer; select that printer in STE first")
         from UM.Math.Matrix import Matrix
         from UM.Operations.Operation import Operation
         from UM.Settings.InstanceContainer import InstanceContainer
 
-        app, registry = self._app, self._registry
-        stack, stacks = self._stacks()
         containers = app.getContainerRegistry()
         by_position = dict((str(x.get("position")), x) for x in snapshot.get("stacks") or [])
         plans = []
@@ -323,7 +334,11 @@ class StateIO:
 
             def redo(self):
                 if not self.active:
-                    self._apply(1)
+                    try:
+                        self._apply(1)
+                    except Exception:
+                        self._apply(0)  # never leave the project half switched
+                        raise
                     self.active = True
 
             def undo(self):

@@ -143,6 +143,7 @@ class AIAssistant(Extension):
         self._app = Application.getInstance()
         self._service = None
         self._window = None
+        self._card = None
         self.setMenuName("AI Assistant")
         self.addMenuItem("Open chat", self.showChat)
         self.addMenuItem("Hide chat", self.hideChat)
@@ -172,7 +173,8 @@ class AIAssistant(Extension):
         profile = os.path.join(Resources.getDataStoragePath(), "ai_assistant_browser")
         self._window = EmbeddedChat(self._app, profile)
         try:
-            self._service.on_hover = HoverCard(self._app, self._window).show
+            self._card = HoverCard(self._app, self._window)
+            self._service.on_hover = self._card.show
         except Exception:
             Logger.logException("w", "AI Assistant: model cards are shown inside the chat")
         Logger.log("i", "AI Assistant: chat on http://127.0.0.1:%d/, MCP endpoint %s (token in the chat settings)",
@@ -188,6 +190,8 @@ class AIAssistant(Extension):
 
     def hideChat(self):
         try:
+            if self._card is not None:
+                self._card.hide()
             if self._window is not None:
                 self._window.hide()
         except Exception:
