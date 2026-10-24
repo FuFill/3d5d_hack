@@ -1,0 +1,91 @@
+# Copyright (c) 2026. Released under the terms of the LGPLv3 or higher.
+"""Saved chats: the chat feed (events) and the model history (messages) as one JSON file per chat.
+
+Images are not stored (only a note that one was shown); everything else is kept so an
+old chat can be reopened and continued after restarting the slicer.
+"""
+
+import json
+import os
+import re
+import threading
+import time
+import uuid
+
+TITLE_CHARS = 48
+
+
+def new_id():
+    return time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:6]
+
+
+def title_of(events):
+    for event in events:
+        if event.get("type") == "user":
+            text = " ".join(str(event.get("text") or "").split())
+            if not text and event.get("attachments"):
+                text = event["attachments"][0].get("name", "")
+            if text:
+                return text if len(text) <= TITLE_CHARS else text[:TITLE_CHARS - 1].rstrip() + "…"
+    return ""
+
+
+def _without_images(messages):
+    out = []
+    for message in messages:
+        if isinstance(message.get("content"), list):
+            message = dict(message, content=[p if p.get("type") != "image_url" else
+                                             {"type": "text", "text": "[image shown earlier]"}
+                                             for p in message["content"]])
+        out.append(message)
+    return out
+
+
+class ChatStore:
+    def __init__(self, folder):
+        self.folder = folder
+        self._lock = threading.Lock()
+        if not os.path.isdir(folder):
+            os.makedirs(folder)
+
+    def _path(self, chat_id):
+        if not re.match(r"^[0-9A-Za-z_-]{1,64}$", str(chat_id)):
+            raise ValueError("chat id")
+        return os.path.join(self.folder, chat_id + ".json")
+
+    def save(self, chat_id, events, messages):
+        title = title_of(events)
+        if not title:
+            return False  # an empty chat is not worth keeping
+        data = {"id": chat_id, "title": title, "updated": time.time(),
+                "events": [e for e in events if e.get("type") != "reset"], "messages": _without_images(messages)}
+        path = self._path(chat_id)
+        with self._lock:
+            with open(path + ".tmp", "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False)
+            os.replace(path + ".tmp", path)
+        return True
+
+    def load(self, chat_id):
+        with self._lock, open(self._path(chat_id), encoding="utf-8") as f:
+            return json.load(f)
+
+    def delete(self, chat_id):
+        with self._lock:
+            path = self._path(chat_id)
+            if os.path.isfile(path):
+                os.remove(path)
+
+    def list(self, limit=100):
+        items = []
+        with self._lock:
+            names = [n for n in os.listdir(self.folder) if n.endswith(".json")]
+        for name in names:
+            try:
+                with open(os.path.join(self.folder, name), encoding="utf-8") as f:
+                    data = json.load(f)
+                items.append({"id": data["id"], "title": data.get("title") or "", "updated": data.get("updated", 0)})
+            except (OSError, ValueError, KeyError):
+                continue
+        items.sort(key=lambda i: -i["updated"])
+        return items[:limit]

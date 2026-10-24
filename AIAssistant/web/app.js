@@ -18,7 +18,11 @@
       llmError: "Ошибка модели: ", internalError: "Ошибка: ", tooManySteps: "Слишком много шагов, задача остановлена.",
       stopped: "Остановлено", busy: "Ассистент ещё работает",
       done: "Готово", failed: "Ошибка", retried: "исправлено повтором",
-      askHint: "Выберите вариант или напишите свой ответ ниже", askCancelled: "Вопрос отменён",
+      askHint: "Выберите вариант или напишите свой ответ ниже", askCancelled: "Вопросы отменены",
+      custom: "Свой вариант…", keys: "↑↓ выбор · Enter ответ · ← → вопросы", review: "Проверьте ответы",
+      submit: "Отправить", edit: "Изменить", answerQuestions: "Ответьте на вопросы выше или напишите свой вариант",
+      history: "Чаты", noChats: "Сохранённых чатов пока нет", today: "сегодня", yesterday: "вчера",
+      deleteChat: "Удалить чат", untitled: "Без названия",
       upEmpty: "файл пустой", upLarge: "больше 300 МБ", upUnreadable: "не удалось прочитать файл",
       upNetwork: "нет связи со слайсером", upUnsupported: "формат не поддерживается: STL, OBJ, 3MF, JPG, PNG, DOCX, TXT",
       upBroken: "не удалось прочитать текст ТЗ", spec: "ТЗ",
@@ -46,7 +50,11 @@
       llmError: "Model error: ", internalError: "Error: ", tooManySteps: "Too many steps, the task was stopped.",
       stopped: "Stopped", busy: "The assistant is still working",
       done: "Done", failed: "Failed", retried: "fixed by a retry",
-      askHint: "Pick an option or type your own answer below", askCancelled: "Question cancelled",
+      askHint: "Pick an option or type your own answer below", askCancelled: "Questions cancelled",
+      custom: "Your own answer…", keys: "↑↓ choose · Enter answer · ← → questions", review: "Check your answers",
+      submit: "Send", edit: "Edit", answerQuestions: "Answer the questions above or type your own answer",
+      history: "Chats", noChats: "No saved chats yet", today: "today", yesterday: "yesterday",
+      deleteChat: "Delete chat", untitled: "Untitled",
       upEmpty: "the file is empty", upLarge: "larger than 300 MB", upUnreadable: "could not read the file",
       upNetwork: "slicer is not reachable", upUnsupported: "unsupported format: STL, OBJ, 3MF, JPG, PNG, DOCX, TXT",
       upBroken: "could not read the specification text", spec: "Spec",
@@ -426,7 +434,9 @@
   }
 
   function stepTitle(item, status) {
-    if (item.caption && item.caption.text) return item.caption.text.trim().replace(/[:.]+$/, "");
+    if (item.caption && item.caption.text) {
+      return item.caption.text.replace(/\*\*|__|`/g, "").trim().replace(/[:.]+$/, "");
+    }
     var cats = [];
     item.tools.forEach(function (e) {
       var cat = (TOOLS[e.name] || [])[2] || "read";
@@ -614,27 +624,181 @@
     return row;
   }
 
+  // ---------------------------------------------------------------- question card (wizard)
+
+  // One card for all questions of an ask_user call: one question at a time, ↑↓ to pick, Enter to answer,
+  // ← → between questions, an own answer in the grey field; several questions end with a review step.
+  var wizards = {};  // question event seq -> {index, answers, highlight, draw, node}
+
+  function questionsOf(e) {
+    if (e.questions) return e.questions;
+    return [{text: e.text || "", options: e.options || [], allow_custom: e.allow_custom !== false}];  // older chats
+  }
+
   function renderQuestion(e) {
+    var items = questionsOf(e);
     var node = el("div", "ask " + (e.status || "pending"));
-    node.appendChild(el("div", "ask-q", e.text || ""));
-    if (e.status === "answered") {
-      node.appendChild(el("div", "ask-a", e.answer || ""));
+    if (e.status === "answered" || e.status === "cancelled") {
+      var answers = e.answers || (e.answer ? [{text: e.answer}] : []);
+      items.forEach(function (q, i) {
+        var row = el("div", "ask-done");
+        row.appendChild(el("div", "ask-q", q.text));
+        if (answers[i]) row.appendChild(el("div", "ask-a", answers[i].text));
+        node.appendChild(row);
+      });
+      if (e.status === "cancelled") node.appendChild(el("div", "ask-hint", t("askCancelled")));
+      delete wizards[e.seq];
       return node;
     }
-    if (e.status === "cancelled") {
-      node.appendChild(el("div", "ask-hint", t("askCancelled")));
-      return node;
-    }
-    var opts = el("div", "ask-opts");
-    (e.options || []).forEach(function (option, index) {
-      var b = el("button", "", option);
-      b.addEventListener("click", function () { answer(e, option, index); });
-      opts.appendChild(b);
-    });
-    node.appendChild(opts);
-    if (e.allow_custom !== false) node.appendChild(el("div", "ask-hint", t("askHint")));
+    var fresh = !wizards[e.seq];
+    var w = wizards[e.seq] || (wizards[e.seq] = {index: 0, answers: items.map(function () { return null; }), highlight: 0,
+                                                 drafts: {}});
+    w.node = node;
+    w.event = e;
+    node.tabIndex = 0;
+    w.draw = function (focusCustom) {
+      node.textContent = "";
+      var review = items.length > 1 && w.index >= items.length;
+      var head = el("div", "ask-head");
+      head.appendChild(el("span", "ask-count", review ? t("review") : (w.index + 1) + " / " + items.length));
+      if (items.length > 1) {
+        var nav = el("span", "ask-nav");
+        var prev = el("button", "", "‹"), next = el("button", "", "›");
+        prev.disabled = w.index === 0;
+        next.disabled = review || !w.answers[w.index];
+        prev.addEventListener("click", function () { move(w, -1); });
+        next.addEventListener("click", function () { move(w, 1); });
+        nav.appendChild(prev); nav.appendChild(next);
+        head.appendChild(nav);
+      }
+      node.appendChild(head);
+      if (review) {
+        var list = el("div", "ask-review");
+        items.forEach(function (q, i) {
+          var row = el("button", "ask-row");
+          row.appendChild(el("span", "ask-row-q", (i + 1) + ". " + q.text));
+          row.appendChild(el("span", "ask-row-a", w.answers[i] ? w.answers[i].text : "—"));
+          row.addEventListener("click", function () { w.index = i; w.highlight = 0; w.draw(); node.focus(); });
+          list.appendChild(row);
+        });
+        node.appendChild(list);
+        var actions = el("div", "ask-actions");
+        var send = el("button", "primary", t("submit")), edit = el("button", "", t("edit"));
+        send.addEventListener("click", function () { submitAnswers(w); });
+        edit.addEventListener("click", function () { w.index = 0; w.highlight = 0; w.draw(); node.focus(); });
+        actions.appendChild(send); actions.appendChild(edit);
+        node.appendChild(actions);
+        return;
+      }
+      var q = items[w.index];
+      node.appendChild(el("div", "ask-q", q.text));
+      var opts = el("div", "ask-opts");
+      var chosen = w.answers[w.index];
+      q.options.forEach(function (option, i) {
+        var b = el("button", "opt" + (i === w.highlight ? " hl" : "") + (chosen && chosen.choice === i ? " sel" : ""), option);
+        b.addEventListener("click", function () { choose(w, {text: option, choice: i}); });
+        b.addEventListener("mouseenter", function () { w.highlight = i; mark(w); });
+        opts.appendChild(b);
+      });
+      node.appendChild(opts);
+      if (q.allow_custom !== false) {
+        var custom = el("input", "ask-custom" + (w.highlight === q.options.length ? " hl" : ""));
+        custom.placeholder = t("custom");
+        custom.value = w.drafts[w.index] !== undefined ? w.drafts[w.index] :
+          (chosen && chosen.choice === null ? chosen.text : "");
+        custom.addEventListener("input", function () { w.drafts[w.index] = custom.value; });
+        custom.addEventListener("keydown", function (ev) {
+          if (ev.key === "Enter" && !ev.isComposing && custom.value.trim()) {
+            ev.preventDefault(); ev.stopPropagation();
+            choose(w, {text: custom.value.trim(), choice: null});
+          } else if (ev.key === "ArrowUp") {
+            ev.preventDefault(); w.highlight = q.options.length - 1; mark(w); node.focus();
+          } else if (ev.key === "Escape") {
+            node.focus();
+          }
+          ev.stopPropagation();
+        });
+        custom.addEventListener("focus", function () { w.highlight = q.options.length; mark(w); });
+        node.appendChild(custom);
+        if (focusCustom) setTimeout(function () { custom.focus(); }, 0);
+      }
+      node.appendChild(el("div", "ask-keys", t("keys")));
+    };
+    w.draw();
+    if (fresh) setTimeout(function () { if (document.activeElement !== input || !input.value.trim()) node.focus(); }, 0);
     return node;
   }
+
+  function mark(w) {
+    var buttons = w.node.querySelectorAll(".ask-opts .opt");
+    Array.prototype.forEach.call(buttons, function (b, i) { b.classList.toggle("hl", i === w.highlight); });
+    var custom = w.node.querySelector(".ask-custom");
+    if (custom) custom.classList.toggle("hl", w.highlight === buttons.length);
+  }
+
+  function move(w, step) {
+    var items = questionsOf(w.event);
+    var last = items.length > 1 ? items.length : items.length - 1;
+    var target = w.index + step;
+    if (target < 0 || target > last) return;
+    if (step > 0 && !w.answers[w.index]) return;  // forward only past answered questions
+    w.index = target;
+    w.highlight = 0;
+    w.draw();
+    w.node.focus();
+  }
+
+  function choose(w, answer) {
+    var items = questionsOf(w.event);
+    w.answers[w.index] = answer;
+    if (items.length === 1) { submitAnswers(w); return; }
+    var next = w.answers.indexOf(null);
+    w.index = next >= 0 && next > w.index ? next : (next >= 0 ? next : items.length);
+    w.highlight = 0;
+    w.draw();
+    w.node.focus();
+  }
+
+  function submitAnswers(w) {
+    if (w.answers.some(function (a) { return !a; })) {
+      w.index = w.answers.indexOf(null); w.draw(); return;
+    }
+    api("/api/answer", {method: "POST", json: {seq: w.event.seq, answers: w.answers}}).catch(function () {});
+  }
+
+  function keyEnter(w) {
+    var items = questionsOf(w.event);
+    if (items.length > 1 && w.index >= items.length) { submitAnswers(w); return; }
+    var q = items[w.index];
+    if (w.highlight < q.options.length) choose(w, {text: q.options[w.highlight], choice: w.highlight});
+  }
+
+  function activeWizard() {
+    return question ? wizards[question.seq] : null;
+  }
+
+  document.addEventListener("keydown", function (ev) {
+    var w = activeWizard();
+    if (!w || !w.node || $("sheet").hidden === false || $("chats").hidden === false) return;
+    var focus = document.activeElement;
+    // Keys go to the card unless the user is typing: an empty main field does not count as typing.
+    if ((focus === input && input.value.trim()) || (focus && focus.classList && focus.classList.contains("ask-custom"))) return;
+    if (focus === input && ev.key === "Enter") return;  // handled by send(): picks the highlighted option
+    var items = questionsOf(w.event);
+    var review = items.length > 1 && w.index >= items.length;
+    var q = items[w.index];
+    if (ev.key === "ArrowLeft") { ev.preventDefault(); move(w, -1); }
+    else if (ev.key === "ArrowRight") { ev.preventDefault(); move(w, 1); }
+    else if (ev.key === "Enter") { ev.preventDefault(); keyEnter(w); }
+    else if (!review && ev.key === "ArrowDown") {
+      ev.preventDefault();
+      var max = q.options.length - (q.allow_custom === false ? 1 : 0);
+      w.highlight = Math.min(max, w.highlight + 1);
+      if (w.highlight === q.options.length) { var c = w.node.querySelector(".ask-custom"); if (c) c.focus(); }
+      mark(w);
+    } else if (!review && ev.key === "ArrowUp") { ev.preventDefault(); w.highlight = Math.max(0, w.highlight - 1); mark(w); }
+
+  });
 
   function renderError(e) {
     var node = el("div", "err");
@@ -686,7 +850,7 @@
     var sendButton = $("send");
     sendButton.classList.toggle("busy", busy && !answering);
     sendButton.title = busy && !answering ? t("stop") : t("send");
-    input.placeholder = answering ? t("answerPlaceholder") : t("placeholder");
+    input.placeholder = answering ? t("answerQuestions") : t("placeholder");
   }
 
   // ---------------------------------------------------------------- polling
@@ -708,6 +872,7 @@
     api("/api/state").then(function (data) {
       applySettings(data.settings);
       $("mcpUrl").textContent = data.mcp_url || "";
+      $("history").hidden = data.history === false;
       $("mcpToken").textContent = "Authorization: Bearer " + token;
       apply(data.events || []);
       seq = data.seq;
@@ -769,15 +934,15 @@
     renderChips();
   }
 
-  function answer(e, text, choice) {
-    api("/api/answer", {method: "POST", json: {seq: e.seq, text: text, choice: choice}}).catch(function () {});
-  }
-
   function send() {
     var text = input.value.trim();
+    var w = activeWizard();
     if (question) {
-      if (text) { answer(question, text, null); input.value = ""; autosize(); }
-      return;  // an empty Enter while a question waits must not cancel the task
+      // Text typed in the main field answers the current question of the card; an empty Enter picks the
+      // highlighted option. It never cancels the task.
+      if (w && text) { input.value = ""; autosize(); choose(w, {text: text, choice: null}); }
+      else if (w) { keyEnter(w); }
+      return;
     }
     if (busy) { api("/api/cancel", {method: "POST", json: {}}); return; }
     if (pending.some(function (p) { return p.state === "loading"; })) return;
@@ -803,7 +968,50 @@
   $("send").addEventListener("click", send);
   $("attach").addEventListener("click", function () { $("file").click(); });
   $("file").addEventListener("change", function () { upload(this.files); this.value = ""; });
-  $("newChat").addEventListener("click", function () { api("/api/reset", {method: "POST", json: {}}); });
+  $("newChat").addEventListener("click", function () {
+    api("/api/reset", {method: "POST", json: {}}).catch(function (e) { if (e.status === 409) $("link").textContent = t("busy"); });
+  });
+
+  // ---------------------------------------------------------------- saved chats
+
+  function when(ts) {
+    var d = new Date(ts * 1000), now = new Date();
+    var time = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+    var day = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    if (d.getTime() >= day) return t("today") + " " + time;
+    if (d.getTime() >= day - 86400000) return t("yesterday") + " " + time;
+    return ("0" + d.getDate()).slice(-2) + "." + ("0" + (d.getMonth() + 1)).slice(-2) + "." + String(d.getFullYear()).slice(2);
+  }
+
+  function showChats() {
+    var list = $("chatList");
+    list.textContent = "";
+    $("chats").hidden = false;
+    api("/api/chats").then(function (data) {
+      list.textContent = "";
+      if (!data.chats.length) { list.appendChild(el("p", "muted chat-empty", t("noChats"))); return; }
+      data.chats.forEach(function (c) {
+        var row = el("div", "chat-row" + (c.current ? " on" : ""));
+        var open = el("button", "chat-open");
+        open.appendChild(el("span", "chat-title", c.title || t("untitled")));
+        open.appendChild(el("span", "chat-date", when(c.updated)));
+        open.addEventListener("click", function () {
+          if (c.current) { $("chats").hidden = true; return; }
+          api("/api/chats/open", {method: "POST", json: {id: c.id}}).then(function () { $("chats").hidden = true; })
+            .catch(function (e) { if (e.status === 409) $("link").textContent = t("busy"); });
+        });
+        var del = el("button", "icon chat-del", "×");
+        del.title = t("deleteChat");
+        del.addEventListener("click", function () {
+          api("/api/chats/delete", {method: "POST", json: {id: c.id}}).then(showChats).catch(function () {});
+        });
+        row.appendChild(open); row.appendChild(del);
+        list.appendChild(row);
+      });
+    }).catch(function () { list.appendChild(el("p", "muted chat-empty", t("offline"))); });
+  }
+  $("history").addEventListener("click", showChats);
+  $("chatsClose").addEventListener("click", function () { $("chats").hidden = true; });
 
   var dragDepth = 0;
   window.addEventListener("dragenter", function (ev) { ev.preventDefault(); dragDepth++; $("drop").hidden = false; });

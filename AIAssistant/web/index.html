@@ -10,6 +10,9 @@
 <header class="bar">
   <span class="title" data-i18n="title"></span>
   <span class="link" id="link"></span>
+  <button class="icon" id="history" data-i18n-title="history">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/></svg>
+  </button>
   <button class="icon" id="newChat" data-i18n-title="newChat">
     <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
   </button>
@@ -39,6 +42,16 @@
   </div>
   <input type="file" id="file" multiple accept=".stl,.obj,.3mf,.png,.jpg,.jpeg,.docx,.txt,.md" hidden>
 </footer>
+
+<section class="sheet" id="chats" hidden>
+  <div class="sheet-head">
+    <span data-i18n="history"></span>
+    <button class="icon" id="chatsClose" data-i18n-title="close">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="chat-list" id="chatList"></div>
+</section>
 
 <section class="sheet" id="sheet" hidden>
   <div class="sheet-head">

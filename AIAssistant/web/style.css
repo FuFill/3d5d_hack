@@ -59,7 +59,7 @@ svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width:
 }
 .icon:hover { background: var(--soft); }
 .icon:disabled { opacity: .35; cursor: default; background: transparent; }
-.bar circle { fill: currentColor; stroke: none; }
+#menu circle { fill: currentColor; stroke: none; }
 
 /* feed */
 #feed {
@@ -155,15 +155,37 @@ svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width:
   overflow-wrap: anywhere;
 }
 
-.ask { margin: 0 0 12px; padding: 10px 12px; border: 1.5px solid var(--fg); border-radius: 10px; }
+.ask { margin: 0 0 12px; padding: 10px 12px; border: 1.5px solid var(--fg); border-radius: 10px; outline: none; }
+.ask:focus-visible { box-shadow: 0 0 0 3px var(--soft); }
+.ask-head { display: flex; align-items: center; justify-content: space-between; min-height: 22px; margin-bottom: 4px; }
+.ask-count { color: var(--muted); font-size: 12px; }
+.ask-nav { display: inline-flex; gap: 2px; }
+.ask-nav button { width: 24px; height: 22px; border: 0; border-radius: 5px; background: none; color: var(--fg); font-size: 16px; line-height: 1; }
+.ask-nav button:hover:not(:disabled) { background: var(--soft); }
+.ask-nav button:disabled { color: var(--line); cursor: default; }
 .ask-q { font-weight: 600; }
 .ask-opts { display: grid; gap: 6px; margin-top: 8px; }
-.ask-opts button { text-align: left; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); }
-.ask-opts button:hover { border-color: var(--fg); }
-.ask-opts button:first-child { border-color: var(--fg); }
+.ask-opts .opt { text-align: left; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); }
+.ask-opts .opt.hl { border-color: var(--fg); }
+.ask-opts .opt.sel { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.ask-custom { width: 100%; margin-top: 6px; padding: 7px 10px; border: 1px solid transparent; border-radius: 7px; outline: 0;
+  background: var(--soft); color: var(--fg); }
+.ask-custom::placeholder { color: var(--muted); }
+.ask-custom.hl, .ask-custom:focus { border-color: var(--fg); }
+.ask-keys { margin-top: 6px; color: var(--muted); font-size: 11px; }
+.ask-review { display: grid; gap: 2px; margin-top: 4px; }
+.ask-row { display: grid; gap: 1px; padding: 6px 8px; border: 0; border-radius: 6px; background: none;
+  color: inherit; font: inherit; text-align: left; }
+.ask-row:hover { background: var(--soft); }
+.ask-row-q { color: var(--muted); font-size: 12px; }
+.ask-row-a { font-weight: 600; overflow-wrap: anywhere; }
+.ask-actions { display: flex; gap: 8px; margin-top: 10px; }
+.ask-actions button { padding: 6px 14px; border: 1px solid var(--fg); border-radius: 7px; background: none; }
+.ask-actions .primary { background: var(--fg); color: var(--bg); }
 .ask-hint { margin-top: 6px; color: var(--muted); font-size: 12px; }
 .ask.answered, .ask.cancelled { border-color: var(--line); }
-.ask-a { margin-top: 4px; }
+.ask-done + .ask-done { margin-top: 8px; }
+.ask-a { margin-top: 2px; }
 .ask-a::before { content: "→ "; color: var(--muted); }
 .err { margin: 0 0 12px; padding: 7px 10px; border: 1px solid var(--fg); border-radius: 8px; }
 .err button { margin-left: 6px; border: 0; background: none; text-decoration: underline; padding: 0; }
@@ -220,3 +242,16 @@ form input:focus { border-bottom-color: var(--fg); }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes flash { from { background: var(--soft); } to { background: transparent; } }
+
+/* saved chats */
+.chat-list { padding: 6px; }
+.chat-row { display: flex; align-items: center; border-radius: 7px; }
+.chat-row:hover, .chat-row.on { background: var(--soft); }
+.chat-open { flex: 1; min-width: 0; display: flex; justify-content: space-between; gap: 10px; padding: 8px 10px; border: 0;
+  background: none; text-align: left; }
+.chat-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-row.on .chat-title { font-weight: 600; }
+.chat-date { flex: none; color: var(--muted); font-size: 12px; }
+.chat-del { width: 26px; height: 26px; color: var(--muted); visibility: hidden; }
+.chat-row:hover .chat-del { visibility: visible; }
+.chat-empty { padding: 10px; }
