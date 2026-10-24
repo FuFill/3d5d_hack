@@ -1,0 +1,100 @@
+{
+  "scope": "real installed STE 7.10.12, original organizer STL/DOCX, same node, no physical qualification",
+  "checks": {
+    "http_authentication": "pass",
+    "api_key_not_exposed": "pass",
+    "question_card_http_roundtrip": "pass",
+    "native_timeweb_qwen_connection": "pass",
+    "original_docx_upload": "pass",
+    "project_position_and_rotation_edits": "pass",
+    "chat_upload_id_to_original_stl": "pass",
+    "original_source_binding": "pass",
+    "settled_readback": "pass",
+    "native_preset_base_readback": "pass",
+    "same_scene_object_one_undo_operation": "pass",
+    "native_engine_slice": "pass",
+    "native_gcode_and_3mf": "pass",
+    "scene_object_id_to_original_stl": "pass",
+    "rejects_foreign_plan": "pass",
+    "single_operation_undo_redo": "pass",
+    "no_local_key_in_exports": "pass",
+    "python35_syntax": "pass",
+    "installed_shell_and_core_match_sources": "pass"
+  },
+  "physical_print_approval": false,
+  "organizer_case": "3. Пыльник Шруса - 3D",
+  "geometry_sha256": "70663df1130d2d969063537c506b9ca767e36f3949bfe5c7d5dc0217d58ca467",
+  "planner_status": "needs_input",
+  "route": {
+    "mode": "classic",
+    "note": "no documented 5D benefit above threshold; classic is simpler",
+    "parameters": {}
+  },
+  "decision_sha256": "03f72503f241ed0834113dff06a5f3dcbca2eb9270c12e09d95a3cf2db5c452b",
+  "base_preset": {
+    "reason": null,
+    "alternatives": [
+      "Fine (normal)",
+      "Coarse (coarse)",
+      "Extra Coarse (extra coarse)",
+      "Normal (fast)",
+      "Extra Fine (high)",
+      "Extra Fast (verydraft)"
+    ],
+    "status": "selected",
+    "options": null,
+    "native_preset": true,
+    "profile": "Draft (draft)"
+  },
+  "slice": {
+    "print_time_s": 86604,
+    "material_cost": null,
+    "material_m": 56.68,
+    "printing_mode": {
+      "name": "3D",
+      "mode": "classic"
+    },
+    "print_time": "1 day 0 hours 3 minutes",
+    "job_name": "STEH530V524_Пыльник шруса",
+    "materials": [
+      "Enduse PETG",
+      "Sealant TPU A95"
+    ],
+    "material_g": 156.8
+  },
+  "status": "pass",
+  "workflow": "existing object + native presets + specification attachment + user questions",
+  "tests": {
+    "passed": 255,
+    "skipped": 1,
+    "shell_passed": 49
+  },
+  "base_commit": "8b0b624",
+  "question_scope": "HTTP card roundtrip tested with a software test answer; not a physical material measurement",
+  "artifacts": {
+    "result.gcode": {
+      "sha256": "48d365d6696df97c2ae6b3eff9143fd9176af03310e20e87f7a009ae05079d88",
+      "bytes": 38847606
+    },
+    "project.3mf": {
+      "sha256": "e87ba9b01121e981fe63a8a2ed4e011385014abdd3360005daad461a7248221c",
+      "bytes": 7350261
+    },
+    "readback.json": {
+      "sha256": "e6d9f86d8740e1b73d90125a5cf0d5d3c658df8cfed6928e971229861090661f",
+      "bytes": 1502
+    },
+    "002_state.json": {
+      "sha256": "db14c04c2e4170d51f3ca7233f94c233aae40ed169964505c856ff2799bf5cae",
+      "bytes": 3326
+    },
+    "004_state.json": {
+      "sha256": "e93d159192e037cb435b3c0876d611fec07c43c79fd9393361b1c44e6f43e5a5",
+      "bytes": 3233
+    },
+    "006_state.json": {
+      "sha256": "db14c04c2e4170d51f3ca7233f94c233aae40ed169964505c856ff2799bf5cae",
+      "bytes": 3326
+    }
+  }
+}

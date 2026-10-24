@@ -65,6 +65,21 @@ def test_loaded_mesh_is_recognised_as_the_planned_stl():
     assert not A.source_mesh_matches(vertices, bad, source)
 
 
+def test_native_centering_is_not_a_geometry_edit():
+    path = organizer_stl()
+    source = geometry.load_stl(path)
+    raw = stl_reader_vertices(path)
+    centre = (raw.min(axis=0) + raw.max(axis=0)) / 2
+    centred = raw - centre
+    offset = A.source_mesh_offset(centred, None, source)
+    assert offset is not None and np.allclose(offset, -centre, atol=1e-4)
+    edited = centred.copy()
+    edited[5] += 0.05
+    assert not A.source_mesh_matches(edited, None, source)
+    assert not A.source_mesh_matches(centred * 1.01, None, source)
+    assert not A.source_mesh_matches(raw + [2, 3, 4], None, source)
+
+
 class Container:
     def __init__(self, keys=()):
         self._keys = set(keys)

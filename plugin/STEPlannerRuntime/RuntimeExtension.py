@@ -117,7 +117,8 @@ class RuntimeExtension(QObject, Extension):
                  "matrix": n.getWorldTransformation().getData().tolist(),
                  "vertices": n.getMeshData().getVertexCount(),
                  "world_bounds": mesh_bounds(n),
-                 "mesh_sha256": hashlib.sha256(n.getMeshData().getVertices().tobytes() + n.getMeshData().getIndices().tobytes()).hexdigest(),
+                 "mesh_sha256": hashlib.sha256(n.getMeshData().getVertices().tobytes() +
+                                     (n.getMeshData().getIndices().tobytes() if n.getMeshData().getIndices() is not None else b"")).hexdigest(),
                  "modifier": {k: n.callDecoration("getStack").getProperty(k, "value")
                               for k in ("support_mesh", "support_mesh_drop_down", "anti_overhang_mesh")}}
                 for n in self.app.getController().getScene().getRoot().getAllChildren()
@@ -236,6 +237,35 @@ class RuntimeExtension(QObject, Extension):
             extension = PluginRegistry.getInstance().getPluginObject("AIAssistant")
             if extension._service is None:
                 extension._start()
+            if command.get("snapshot_dir"):
+                # Test-only diagnostics in the isolated profile. No API credentials.
+                core = extension._service.registry.core
+                original_snapshot = core._snapshot
+                sequence = [0]
+                def recorded_snapshot():
+                    value = original_snapshot()
+                    sequence[0] += 1
+                    stack = self.app.getGlobalContainerStack()
+                    from ste_planner.planner import READBACK_KEYS
+                    data = {"snapshot": value,
+                            "history_count": len(self.app.getOperationStack().getOperations()),
+                            "scene_object_ids": [id(node) for node in self.app.getController().getScene()
+                                                 .getRoot().getAllChildren() if node.callDecoration("isSliceable")],
+                            "mesh_samples": [{"name": node.getName(), "path": node.getMeshData().getFileName(),
+                                "first_vertices": node.getMeshData().getVertices()[:6].tolist(),
+                                "indices": node.getMeshData().getIndices()[:2].tolist()
+                                           if node.getMeshData().getIndices() is not None else None}
+                                for node in self.app.getController().getScene().getRoot().getAllChildren()
+                                if node.callDecoration("isSliceable") and node.getMeshData() is not None],
+                            "containers": [[c.getId() for c in s.getContainers()]
+                                           for s in [stack] + list(stack.extruders.values())],
+                            "settings": [{k: s.getProperty(k, "value") for k in READBACK_KEYS}
+                                         for s in [stack] + list(stack.extruders.values())]}
+                    with open(os.path.join(command["snapshot_dir"], "snapshot_%03d.json" % sequence[0]),
+                              "w", encoding="utf-8") as handle:
+                        json.dump(data, handle, ensure_ascii=False, indent=2)
+                    return value
+                core._snapshot = recorded_snapshot
             path = command["connection_file"]
             with open(path, "w", encoding="utf-8") as handle:
                 json.dump({"port": extension._service.port, "token": extension._service.token}, handle)

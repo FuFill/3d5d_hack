@@ -169,6 +169,34 @@ def test_upload_accepts_specs_and_names_the_rejection_reason(tmp_path):
     service.stop()
 
 
+def test_spec_attachments_preserve_the_users_separate_instructions():
+    agent = agent_module.Agent(None, None, None, None)
+    content = agent._user_content("Оставь положение и используй PETG", [
+        {"kind": "spec", "name": "first.docx", "id": "s1", "text": "Первое ТЗ"},
+        {"kind": "spec", "name": "second.txt", "id": "s2", "text": "Второе ТЗ"}])
+    assert content.startswith("Оставь положение и используй PETG")
+    assert "Первое ТЗ" in content and "Второе ТЗ" in content
+    assert "spec_attachment_id: s1" in content and "spec_attachment_id: s2" in content
+
+
+def test_undefined_native_entries_do_not_invalidate_the_preset_snapshot():
+    class NativeContainer:
+        def __init__(self):
+            self.values = {"layer_height": 0.2, "support_enable": False, "transient": None}
+        def getId(self): return "test-native-quality"
+        def getName(self): return "Normal"
+        def getMetaData(self): return {"type": "quality", "definition": "tiny"}
+        def getAllKeys(self): return list(self.values)
+        def getProperty(self, key, prop): return self.values.get(key)
+    container = NativeContainer()
+    before = A.catalog_entry(None, container, "quality")
+    assert before["values"] == {"layer_height": 0.2, "support_enable": False}
+    del container.values["transient"]  # STE's lazy cleanup, no actual setting changed.
+    assert A.catalog_entry(None, container, "quality")["digest"] == before["digest"]
+    container.values["layer_height"] = 0.21
+    assert A.catalog_entry(None, container, "quality")["digest"] != before["digest"]
+
+
 def test_plan_print_uses_the_original_spec_text_and_user_material():
     class Core:
         apply = verify = None

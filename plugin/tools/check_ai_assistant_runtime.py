@@ -4,12 +4,14 @@ Uses original organizer case 3, an isolated profile, and no LLM/network request.
 Session credentials and raw projects stay in ignored .runtime.
 """
 import hashlib
+import argparse
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
 import time
+import threading
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 from urllib.parse import quote
@@ -20,11 +22,14 @@ sys.path.insert(0, str(ROOT / "plugin"))
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--existing-project", action="store_true", help="Load/move a real model, then apply to that same object")
+    args = parser.parse_args()
     folder = ROOT / ".runtime" / ("assistant_check_" + uuid.uuid4().hex[:10])
     folder.mkdir(parents=True)
     connection, done = folder / "connection.json", folder / "done"
     job = {"commands": [{"command": "assistant_start", "connection_file": str(connection),
-                          "done_file": str(done), "timeout_seconds": 300},
+                          "done_file": str(done), "snapshot_dir": str(folder), "timeout_seconds": 300},
                          {"command": "state"}, {"command": "undo"}, {"command": "state"},
                          {"command": "redo"}, {"command": "state"}, {"command": "quit"}]}
     (folder / "job.json").write_text(json.dumps(job), encoding="utf-8")
@@ -73,6 +78,24 @@ def main():
         state = http("/api/state")
         assert "api_key" not in state["settings"]
         report["checks"]["api_key_not_exposed"] = "pass"
+        # Actual HTTP question/answer card roundtrip; this is a software test answer.
+        answers = {}
+        def ask():
+            answers.update(call("ask_user", {"question": "Какой материал доступен для этого задания?",
+                                            "options": ["Материал текущего проекта", "Указать другой"]}))
+        question_thread = threading.Thread(target=ask, daemon=True)
+        question_thread.start()
+        for _ in range(100):
+            pending = [event for event in http("/api/state")["events"]
+                       if event["type"] == "question" and event.get("status") == "pending"]
+            if pending:
+                break
+            time.sleep(0.05)
+        assert pending, "Question card was not published"
+        http("/api/answer", {"seq": pending[-1]["seq"], "text": "Материал текущего проекта", "choice": 0})
+        question_thread.join(5)
+        assert answers.get("answer") == "Материал текущего проекта"
+        report["checks"]["question_card_http_roundtrip"] = "pass"
         if state["settings"].get("has_key"):
             test = http("/api/test", {})
             assert test["ok"], "Native Timeweb connection test failed: %s" % test.get("error")
@@ -89,7 +112,27 @@ def main():
         sources = call("list_model_sources", {})
         assert any(item["attachment_id"] == upload["id"] and item["can_plan_original_stl"]
                    for item in sources["attachments"])
-        plan = call("plan_print", {"task_text": text, "attachment_id": upload["id"]})
+        spec_request = Request(base + "/api/upload?name=" + quote(docx.name), data=docx.read_bytes(),
+                               headers={"X-Token": session["token"], "Content-Type": "application/octet-stream"})
+        with urlopen(spec_request, timeout=30) as response:
+            spec = json.load(response)
+        assert spec["kind"] == "spec" and spec["chars"] == len(text)
+        report["checks"]["original_docx_upload"] = "pass"
+        plan_args = {"spec_attachment_id": spec["id"]}
+        before_object = None
+        if args.existing_project:
+            source = next(item for item in sources["attachments"] if item["attachment_id"] == upload["id"])
+            call("load_model", {"path": source["source_path"]})
+            obj = call("list_objects", {})["objects"][0]
+            call("move_object", {"id": obj["id"], "x": 20.0, "y": 15.0, "z": 0.0})
+            call("rotate_object", {"id": obj["id"], "axis": "z", "angle": 17.0})
+            time.sleep(2)
+            before_object = call("list_objects", {})["objects"][0]
+            plan_args["object_id"] = before_object["id"]
+            report["checks"]["project_position_and_rotation_edits"] = "pass"
+        else:
+            plan_args["attachment_id"] = upload["id"]
+        plan = call("plan_print", plan_args)
         report["checks"]["chat_upload_id_to_original_stl"] = "pass"
         report.update(organizer_case=case.name, geometry_sha256=hashlib.sha256(stl.read_bytes()).hexdigest(),
                       planner_status=plan["status"], route=plan["route"], decision_sha256=plan["decision_sha256"])
@@ -102,6 +145,16 @@ def main():
         (folder / "readback.json").write_text(json.dumps(readback, ensure_ascii=False, indent=2), encoding="utf-8")
         assert readback["status"] == "pass", readback
         report["checks"]["settled_readback"] = "pass"
+        assert plan["base_preset"]["native_preset"]
+        report["base_preset"] = plan["base_preset"]
+        report["checks"]["native_preset_base_readback"] = "pass"
+        if before_object is not None:
+            objects = call("list_objects", {})["objects"]
+            assert len(objects) == 1 and objects[0]["id"] == before_object["id"]
+            snapshots = [json.loads(path.read_text(encoding="utf-8")) for path in sorted(folder.glob("snapshot_*.json"))]
+            assert snapshots[3]["history_count"] == snapshots[2]["history_count"] + 1
+            assert snapshots[3]["scene_object_ids"] == snapshots[2]["scene_object_ids"]
+            report["checks"]["same_scene_object_one_undo_operation"] = "pass"
         sliced = call("slice", {})
         report["slice"] = sliced
         assert sliced["print_time_s"] > 0 and sliced["material_g"] > 0
@@ -124,10 +177,13 @@ def main():
         done.touch()
         assert process.wait(timeout=40) == 0
         states = [json.loads((folder / ("%03d_state.json" % index)).read_text(encoding="utf-8")) for index in (2, 4, 6)]
-        assert states[0]["nodes"] and not states[1]["nodes"] and states[2]["nodes"]
+        assert states[0]["nodes"] and states[2]["nodes"]
         assert states[0]["actual"] == states[2]["actual"]
         assert states[0]["nodes"] == states[2]["nodes"]
-        assert states[0]["history_count"] == 1
+        if before_object is None:
+            assert not states[1]["nodes"] and states[0]["history_count"] == 1
+        else:
+            assert states[1]["nodes"] and states[1]["nodes"] != states[0]["nodes"]
         report["checks"]["single_operation_undo_redo"] = "pass"
         report["status"] = "pass"
     except Exception as exc:

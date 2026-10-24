@@ -22,10 +22,11 @@ class QuestionBox:
     def ask(self, question, options, allow_custom=True, should_stop=None):
         with self._cond:
             self._cancelled = False
-        seq = self._bus.emit("question", text=question, options=options, allow_custom=allow_custom,
-                             status="pending", answer=None)
-        answer = None
-        with self._cond:
+            # Publish and register under the same lock: an immediate UI answer
+            # must not arrive before the question is registered.
+            seq = self._bus.emit("question", text=question, options=options, allow_custom=allow_custom,
+                                 status="pending", answer=None)
+            answer = None
             self._pending[seq] = None
             try:
                 while self._pending[seq] is None:

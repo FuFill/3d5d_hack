@@ -38,10 +38,17 @@ def catalog_entry(app, container, kind):
     if container is None or container.getId() in EMPTY_IDS or container.getId().startswith("empty_"):
         return None
     meta = container.getMetaData()
+    # STE lazily removes undefined material instances (e.g. crystallinity=None).
+    # They are not overrides; retaining their transient keys changes the catalog
+    # digest although the project and all effective settings are unchanged.
+    values = {}
+    for key in sorted(container.getAllKeys()):
+        value = container.getProperty(key, "value")
+        if value is not None:
+            values[key] = _json_value(value)
     entry = {"id": container.getId(), "type": meta.get("type", kind), "name": container.getName(),
              "definition": meta.get("definition"),
-             "values": dict((key, _json_value(container.getProperty(key, "value")))
-                            for key in sorted(container.getAllKeys()))}
+             "values": values}
     for key in ("quality_type", "variant", "buildplate", "position"):
         if meta.get(key) is not None:
             entry[key] = str(meta[key])
@@ -59,7 +66,7 @@ def catalog_entry(app, container, kind):
         entry.update({"base_file": base, "guid": meta.get("GUID"), "brand": meta.get("brand"),
                       "material_type": meta.get("material"), "approximate_diameter": meta.get("approximate_diameter"),
                       "root_material_id": manager.getRootMaterialIDWithoutDiameter(base),
-                      "fallback_root_ids": list(manager.getFallBackMaterialIdsByMaterial(container) or [])})
+                      "fallback_root_ids": sorted(manager.getFallBackMaterialIdsByMaterial(container) or [])})
     entry["digest"] = presets.container_digest(entry)
     return entry
 
@@ -124,7 +131,8 @@ def build_preset_catalog(app):
                         "buildplate_name": buildplate,
                         "variant": catalog_entry(app, stack.variant, "variant"),
                         "definition_changes": catalog_entry(app, stack.definitionChanges, "definition_changes")},
-            "extruders": extruders, "qualities": qualities, "quality_changes": quality_changes}
+            "extruders": extruders, "qualities": sorted(qualities, key=lambda entry: entry["id"]),
+            "quality_changes": quality_changes}
 
 
 def native_container(app, ref, index):
@@ -171,29 +179,40 @@ def sequential_triangles(vertices, faces):
     return v[f].reshape(-1, 3), np.arange(f.size, dtype=np.int32).reshape(-1, 3)
 
 
-def source_mesh_matches(vertices, indices, source):
-    """Whether a loaded node's local mesh is the planned source STL.
+def source_mesh_offset(vertices, indices, source):
+    """Known reader translation, or None if the local mesh differs from the STL.
 
     Uranium's STLReader stores every facet, in file order, as three vertices in
-    scene axes (x, z, -y), without centring; position, rotation and auto-scale
-    live only in the node transformation. A repaired, decimated, reordered or
-    other mesh does not match, and apply refuses rather than guessing.
+    scene axes (x, z, -y). MeshFileHandler normally subtracts its bounding-box
+    centre from local vertices. Accept only raw or exactly that centred mesh;
+    rotation/scale/deformation/reordering are not inferred from point matching.
     """
     v = np.asarray(vertices, dtype=float)
     if indices is None:
         if v.ndim != 2 or v.shape[1] != 3 or len(v) % 3:
-            return False
+            return None
         triangles = v.reshape(-1, 3, 3)
     else:
         f = np.asarray(indices, dtype=int)
         if f.ndim != 2 or f.shape[1] != 3 or (f.size and (f.min() < 0 or f.max() >= len(v))):
-            return False
+            return None
         triangles = v[f]
     expected = source.triangles.dot(PRINTER_TO_SCENE.T)
-    if triangles.shape != expected.shape:
-        return False
-    tolerance = 1e-4 * max(1.0, float(np.abs(expected).max()) if expected.size else 1.0)
-    return bool(np.allclose(triangles, expected, rtol=0.0, atol=tolerance))
+    if triangles.shape != expected.shape or not expected.size or not np.isfinite(triangles).all():
+        return None
+    tolerance = max(1e-5, 4 * np.finfo(np.float32).eps * max(1.0, float(np.abs(expected).max())))
+    if np.allclose(triangles, expected, rtol=0.0, atol=tolerance):
+        return np.zeros(3)
+    points = expected.reshape(-1, 3)
+    offset = -(points.min(axis=0) + points.max(axis=0)) / 2.0
+    if np.allclose(triangles, expected + offset, rtol=0.0, atol=tolerance):
+        return offset
+    return None
+
+
+def source_mesh_matches(vertices, indices, source):
+    """Whether local vertices are the raw or native-centred original STL."""
+    return source_mesh_offset(vertices, indices, source) is not None
 
 
 def check_target_node(target, scene_root, mesh_path, source):
@@ -207,21 +226,24 @@ def check_target_node(target, scene_root, mesh_path, source):
         raise ApplyError("the planned object is no longer a top-level model in the scene; plan again")
     own = [n for n in target.getAllChildren() if n.getMeshData() is not None]
     if own:
-        raise ApplyError("the object has its own modifier/support meshes; remove them or plan a new project")
+        raise ApplyError("the object has modifier/support meshes outside this orientation plan; "
+                         "use apply_plan_to_project to keep the scene and apply only preset/settings")
     others = [n for n in sliceable if n is not target]
     if others:
-        raise ApplyError("the project contains other models (%d); the plan writes global settings for every "
-                         "model, so keep only the planned object or open a new project" % len(others))
+        raise ApplyError("the project contains other models (%d); this orientation plan does not cover them. "
+                         "Use apply_plan_to_project for project-wide preset/settings after clarifying scope" % len(others))
     stack = target.callDecoration("getStack")
     if stack is not None and stack.getTop() is not None and stack.getTop().getAllKeys():
-        raise ApplyError("the object has per-object settings that the plan did not consider; "
-                         "reset them or plan a new project")
+        raise ApplyError("the object has per-object settings outside this orientation plan; "
+                         "use project settings-only application and preserve those overrides")
     mesh = target.getMeshData()
     if mesh is None or os.path.normcase(os.path.abspath(mesh.getFileName() or "")) != \
             os.path.normcase(os.path.abspath(mesh_path)):
         raise ApplyError("the object was not loaded from the planned STL")
-    if not source_mesh_matches(mesh.getVertices(), mesh.getIndices(), source):
+    offset = source_mesh_offset(mesh.getVertices(), mesh.getIndices(), source)
+    if offset is None:
         raise ApplyError("the object's mesh differs from the planned STL (edited, repaired or reloaded)")
+    return offset
 
 
 def file_sha256(path):
@@ -393,9 +415,10 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
     preflight(decision, mesh_path, stack.definition.getId(), demonstration, analysis_only, allow_unverified_5d)
     scene = app.getController().getScene()
     source = geometry.load_stl(mesh_path)
+    target_offset = np.zeros(3)
     if target_node is not None:
         # The model already on the plate becomes the planned part in place.
-        check_target_node(target_node, scene.getRoot(), mesh_path, source)
+        target_offset = check_target_node(target_node, scene.getRoot(), mesh_path, source)
     elif any(n.callDecoration("isSliceable") for n in scene.getRoot().getAllChildren()):
         # Global settings affect all plates: never retune models the plan did not consider.
         raise ApplyError("the project already contains models; plan with the object_id of the loaded model "
@@ -468,6 +491,10 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
             node = target_node
             old_mesh = node.getMeshData()
             new_mesh = None
+            if decision["route"]["mode"] == "classic":
+                # Loaded local vertex = source vertex + native centring offset.
+                # R*v + t becomes R*local + (t - R*offset), preserving geometry.
+                local_matrix[:3, 3] -= local_matrix[:3, :3].dot(target_offset)
             if decision["route"]["mode"] != "classic":
                 # Same geometry, indexed like node_from_mesh for 7.10 CLIParser.
                 vertices, faces = sequential_triangles(source.vertices.dot(PRINTER_TO_SCENE.T), source.faces)
@@ -482,6 +509,8 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
             node.setTransformation(Matrix(local_matrix))
             nodes.append(node)
         for op, (vertices, faces) in modifier_meshes:
+            if node is target_node and decision["route"]["mode"] == "classic":
+                vertices = vertices + target_offset
             child = node_from_mesh(vertices, faces, op["role"] + (" #" + str(i + 1) if count > 1 else ""))
             if node is target_node:
                 target_children.append(child)

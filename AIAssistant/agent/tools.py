@@ -827,9 +827,14 @@ class ToolRegistry:
         scale = node.getScale()
         info = dict(self._node_source(node), id=self._node_id(node), name=node.getName())
         if box is not None:
-            info["position"] = {"x": _r(box.center.x), "y": _r(-box.center.z), "z": _r(box.bottom)}
+            info["position"] = {"x": _r(box.center.x, 3), "y": _r(-box.center.z, 3), "z": _r(box.bottom, 3)}
             info["size"] = {"x": _r(box.width), "y": _r(box.depth), "z": _r(box.height)}
         info["scale_percent"] = {"x": _r(abs(scale.x) * 100), "y": _r(abs(scale.z) * 100), "z": _r(abs(scale.y) * 100)}
+        if hasattr(node, "getWorldTransformation"):
+            import numpy as np
+            basis = np.array([[1., 0., 0., 0.], [0., 0., 1., 0.],
+                              [0., -1., 0., 0.], [0., 0., 0., 1.]])
+            info["world_transform_printer"] = basis.T.dot(node.getWorldTransformation().getData()).dot(basis).tolist()
         outside = getattr(node, "isOutsideBuildArea", None)
         if outside is not None:
             info["fits_build_volume"] = not outside()

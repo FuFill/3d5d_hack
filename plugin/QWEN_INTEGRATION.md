@@ -16,14 +16,18 @@ Qwen извлекает требования с цитатами, выбирае
 
 UI получает модель через `list_model_sources` и один из `attachment_id`,
 `object_id`, абсолютного `mesh_path`; по объекту читается оригинальный STL.
-Применение требует пустого проекта. `calibration_data`, `functional_spec`,
+По object_id план применяется к уже загруженному объекту; новый STL без target
+загружается в пустую сцену. ТЗ DOCX/TXT/MD передаётся по spec_attachment_id,
+недостающие обязательные условия уточняются через ask_user.
+`calibration_data`, `functional_spec`,
 `noise_spec`, `robustness_limits` берутся из application-owned JSON, выбранного
 в настройках; LLM не поставляет измерения. Полная инструкция:
 [AIAssistant/README.md](../AIAssistant/README.md).
 
-Выбор полной native-базы пресетов — будущая задача, описанная только промптом
-в [presets_creation.md](../presets_creation.md). Доступные ручные `select_profile`
-и `set_material` сами по себе не означают, что этот этап встроен в планировщик.
+Выбор native-базы реализован в ядре и Qt-адаптере: [PRESETS.md](PRESETS.md).
+Исходный промпт сохранён в [presets_creation.md](../presets_creation.md).
+LLM получает фактический контекст проекта; наличие профиля пластика не является
+сведением о физически загруженной катушке или эксплуатационных нагрузках.
 
 ## Публичный интерфейс
 

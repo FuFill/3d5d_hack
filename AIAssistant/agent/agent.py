@@ -74,8 +74,15 @@ Ask when unsure
 - Call ask_user when the answer changes the result and tools cannot tell you: material not given and several
   fit, 3D vs 5D unclear, priority strength vs speed vs quality, a preset that needs input, rotating an existing
   part, applying unverified 5D.
+- A preset provides process defaults, not the physically available spool, service load/direction/fixture,
+  operating temperature/environment or required critical tolerances. Read these from the specification and
+  explicit user answers. When a missing condition is needed for the requested outcome, ask before deciding;
+  never infer it from the part name or invent a number. A selected material profile alone does not prove
+  that material is loaded. If the user already specified the material or asked to keep the current one,
+  use it without asking the same question again. Clarify alternative material availability before switching.
 - Short question, 2-4 short options with the recommended one first. Combine what you need into ONE question
-  when possible; at most 2 per task. Never ask what the specification, the attachments or the slicer state
+  when possible; do not leave a required condition unresolved just to meet a question count. Never ask what
+  the specification, the attachments or the slicer state
   already answer, and never ask to confirm choices the core made from the specification (material, preset,
   settings): explain them instead. Never offer to delete or move the user's other models; offer applying only
   the preset and settings to the project, or that the user clears the scene himself.
@@ -164,11 +171,11 @@ class Agent:
                     parts.append({"type": "image_url", "image_url": {"url": url}})
                     notes.append("Image: %s" % attachment["name"])
             elif attachment["kind"] == "spec":
-                text = attachment.get("text") or ""
+                spec_text = attachment.get("text") or ""
                 notes.append("Specification file: %s (spec_attachment_id: %s, %d characters; plan_print uses its full "
-                             "original text). Text:\n%s%s" % (attachment["name"], attachment["id"], len(text),
-                                                              text[:SPEC_PREVIEW_CHARS],
-                                                              "\n…" if len(text) > SPEC_PREVIEW_CHARS else ""))
+                             "original text). Text:\n%s%s" % (attachment["name"], attachment["id"], len(spec_text),
+                                                              spec_text[:SPEC_PREVIEW_CHARS],
+                                                              "\n…" if len(spec_text) > SPEC_PREVIEW_CHARS else ""))
             else:
                 notes.append("3D model file: %s (attachment_id: %s; actual path: %s)" %
                              (attachment["name"], attachment["id"], attachment["path"]))
