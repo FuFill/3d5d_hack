@@ -223,6 +223,10 @@ class CoreBridge:
                         base_preset={"native_preset": bool(base), "status": selection.get("status"),
                                      "profile": base.get("label") if base else None,
                                      "reason": selection.get("reason"), "options": selection.get("options"),
+                                     "rejected": [{"label": a.get("candidate") or a.get("quality_changes") or
+                                                            a.get("quality_type") or a.get("id"),
+                                                   "reason": a.get("reason")}
+                                                  for a in selection.get("rejected") or []],
                                      "alternatives": [a["label"] for a in selection.get("alternatives") or []]},
                         setting_changes=[{k: c.get(k) for k in ("key", "base_value", "effective_value", "unit",
                                                                 "reason", "justification")}
@@ -238,7 +242,8 @@ class CoreBridge:
                                       {"in_place": False, "requires_empty_project": True}),
                         assessments={k: {"status": decision.get(k, {}).get("status")}
                                      for k in ("causal_analysis", "functional_analysis", "robustness_analysis")},
-                        next_step="apply_plan, verify_plan, slice; keep unresolved qualification requirements visible")
+                        next_step="Explain the proposal, wait for the application's execution confirmation, then "
+                                  "apply_plan, verify_plan, slice; keep unresolved qualification requirements visible")
 
     def apply(self, args, context=None):
         # ToolRegistry invokes this on Qt; holding the lock fences cancellation.
@@ -260,7 +265,7 @@ class CoreBridge:
             from ste_planner.runtime_adapter import create_operation
             options = {"target_node": target}
             if args.get("confirm_unverified_5d") is True:
-                options["allow_unverified_5d"] = True  # the user accepted unverified 5D kinematics in ask_user
+                options["allow_unverified_5d"] = True  # the user accepted the unverified 5D warning in chat
             operation = create_operation(self.app, record["decision"], record["request"]["mesh_path"], **options)
             operation.redo()
             operation.push()

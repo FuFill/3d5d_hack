@@ -111,7 +111,8 @@ class ToolRegistry:
                       "Ask the user everything you need in ONE call: 1-6 questions shown as one card the user walks "
                       "through, then confirms all answers at once. Use it when answers change the result and tools "
                       "cannot tell you (material availability, load and fixture, environment, 3D vs 5D, priority, "
-                      "rotating an existing part, unverified 5D). Waits for the answers.",
+                      "rotating an existing part). Waits for the answers. The application separately confirms the "
+                      "transition from a ready core plan to execution, including 5D warnings; do not duplicate that card.",
                       {"questions": {"type": "array", "items": question, "minItems": 1, "maxItems": 6}},
                       self._ask_user, required=("questions",), on_main=False)
 
@@ -155,15 +156,15 @@ class ToolRegistry:
                       "object_id reorients that loaded object in place and needs no other models; a plan by attachment "
                       "loads it into an empty project. Rejects stale source/project and infeasible plans; a 5D plan "
                       "needs confirm_unverified_5d. Never delete user objects to bypass it: if other models block it, "
-                      "ask the user and use apply_plan_to_project.",
+                      "use apply_plan_to_project. The application asks for execution consent before applying.",
                       {"plan_id": plan_id, "confirm_unverified_5d": {"type": "boolean", "description":
-                       "Only after the user agreed in ask_user that 5D kinematics/collisions are not verified."}},
+                       "Only after the user explicitly accepted the unverified 5D kinematics/collisions warning."}},
                       self._apply_plan, required=("plan_id",))
             self._add("apply_plan_to_project", "OPEN project with several models (or a model apply_plan refuses): put the "
                       "plan's STE preset (profile, material, mode) into the current project and write only the plan's "
                       "changes on top; objects are not moved or deleted. One Undo step, readback checked. These are "
-                      "global settings for every model: ask the user first. confirm_unverified_5d=true only after the "
-                      "user agreed that 5D kinematics/collisions are not verified.",
+                      "global settings for every model: the application confirms this scope before execution. "
+                      "confirm_unverified_5d=true only after the user accepted the unverified 5D kinematics/collisions warning.",
                       {"plan_id": plan_id, "confirm_unverified_5d": {"type": "boolean"}},
                       self._in_place.apply, required=("plan_id",))
             self._add("revert_plan_changes", "Undo apply_plan_to_project: restore the previous preset, material, mode "

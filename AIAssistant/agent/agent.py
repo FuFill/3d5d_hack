@@ -14,6 +14,7 @@ import time
 
 from .llm import Cancelled, LLMClient, LLMError
 from .intent import clear_intent
+from .execution import ExecutionDeferred, PlanExecution
 
 MAX_ROUNDS = 40
 MAX_TOOL_RESULT_CHARS = 12000
@@ -55,20 +56,26 @@ Presets come first
   material_options. Custom user profiles are used only when allowed by the application settings.
 
 Choose the workflow
+- Planning and execution are separate. First calculate and explain the proposal. The APPLICATION always asks
+  the user whether to move to execution before any changes after a core plan. Do not ask this question yourself
+  and never claim to have applied anything before a successful tool result. The application also includes the
+  5D warning and a warning about global project settings in that confirmation when relevant. If the user stays
+  in planning, the turn ends without the remaining actions; revise the plan only on a new request.
 A. Empty scene and an attached STL (with or without a specification): list_model_sources -> plan_print with the
    STL attachment_id and, for an attached DOCX/TXT, its spec_attachment_id (otherwise the user's original text as
    task_text) -> tell in 1-3 sentences: preset, material, mode, what changes over the preset, missing inputs ->
    apply_plan -> verify_plan (must pass) -> slice -> export_gcode -> save_project. Do not load the model first.
-   For a 5D plan (cylindrical/cylindrical_full) ask_user first whether to apply it although 5D kinematics and
-   collisions are not verified by the core; only if yes call apply_plan with confirm_unverified_5d=true.
+   For a 5D plan (cylindrical/cylindrical_full), the application includes the unverified kinematics/collisions
+   warning in its execution confirmation and sets confirm_unverified_5d only after the actual answer.
 B. Objects already in the scene (an open project) and the user wants to improve or change it: work on THIS
    project; never ask for a new or empty project and never delete, move or retune objects on your own.
    - One model whose original STL is known (list_model_sources: can_plan_original_stl): plan_print with its
      object_id -> apply_plan. It reorients that same object in place to the planned orientation and position and
-     puts the preset and the changes in one Undo step (5D: ask_user and confirm_unverified_5d as in A).
+     puts the preset and the changes in one Undo step (5D: application confirmation as in A).
    - If apply_plan refuses because of other models, own modifiers/per-object settings or a changed mesh, or the
-     user does not want the part moved: ask_user whether to apply only the preset and settings to the whole
-     project; if yes apply_plan_to_project (objects stay where they are; revert_plan_changes undoes it).
+     user does not want the part moved: explain applying only the preset and settings to the whole project,
+     then apply_plan_to_project; the application asks about this scope before execution (objects stay where
+     they are; revert_plan_changes undoes it).
      If outside_build_volume lists objects afterwards, tell the user and offer arrange_all.
    - No original STL (OBJ/3MF/edited mesh) or small explicit edits such as "infill 30%": manual tools, preset
      first (list_profiles, select_profile, set_material), then as few set_settings as needed.
@@ -93,7 +100,7 @@ Orientation and strength
 Ask when unsure
 - Call ask_user when the answer changes the result and tools cannot tell you: material not given and several
   fit, 3D vs 5D unclear before any core calculation, priority strength vs speed vs quality, a preset that needs input, rotating an existing
-  part the user did not ask to rotate or strengthen, applying unverified 5D.
+  part the user did not ask to rotate or strengthen. The execution card includes the unverified 5D warning.
 - A preset provides process defaults, not the physically available spool, service load/direction/fixture,
   operating temperature/environment or required critical tolerances. Read these from the specification and
   explicit user answers. When a missing condition is needed for the requested outcome, ask before deciding;
@@ -107,6 +114,7 @@ Ask when unsure
   "Ответы пользователя: ..." when they change the task, then apply. Ask again later only if a new problem appears.
 - Never ask what the specification, the attachments or the slicer state already answer, and never ask to
   confirm choices the core made from the specification (material, preset, settings): explain them instead.
+  The separate application-owned question about moving from planning to execution is always required.
 - Never ask about what plan_print has already decided: its printing mode (3D/5D) and every entry of
   setting_changes (justification explicit = required by the core, requirement = from the specification,
   constraint, load class). These follow from the part, the specification and the core rules; only the user's
@@ -197,6 +205,7 @@ class Agent:
         self._kinds = []
         self._turn_text = None  # Original message, without appended attachment contents.
         self._final = None  # (event seq, text) of the last streamed answer
+        self._execution = PlanExecution(registry, settings)
 
     def busy(self):
         return self._running
@@ -209,6 +218,7 @@ class Agent:
             self._running = True
             self._kinds = [a["kind"] for a in attachments]
             self._turn_text = text or ""
+            self._execution.begin_turn()
             self._bus.emit("user", text=text, attachments=[{"name": a["name"], "kind": a["kind"], "id": a.get("id")}
                                                            for a in attachments])
             self._messages.append({"role": "user", "content": self._user_content(text, attachments)})
@@ -232,6 +242,7 @@ class Agent:
         A chat saved while the slicer closed mid-turn may end with tool calls that have no result;
         they are closed so the next request is accepted."""
         self._messages = list(messages)
+        self._execution = PlanExecution(self._registry, self._settings)
         self._close_dangling_calls()
 
     def reset(self):
@@ -241,6 +252,7 @@ class Agent:
         if self.busy():
             return False  # A late reply must not append to a newly reset conversation.
         self._messages = []
+        self._execution = PlanExecution(self._registry, self._settings)
         self._bus.clear()
         return True
 
@@ -297,6 +309,12 @@ class Agent:
                     message["tool_calls"] = reply["tool_calls"]
                 self._messages.append(message)
                 if not reply["tool_calls"]:
+                    if self._execution.offer_at_end():
+                        self._execution.confirm("apply_plan", lambda: self._stop)
+                        self._messages.append({"role": "user", "content":
+                            "Application: the user explicitly chose to move from planning to execution in the confirmation card. "
+                            "Continue with the approved plan."})
+                        continue
                     self._proofread(client, settings)
                     break
                 for call in reply["tool_calls"]:
@@ -308,6 +326,13 @@ class Agent:
                 status = "error"
         except _Finished:
             pass
+        except ExecutionDeferred:
+            self._close_dangling_calls("Not executed: the user chose to stay in planning")
+            text = ("Остаёмся в планировании. Дальнейшие действия по плану не запускаю."
+                    if settings.get("language", "ru") == "ru" else
+                    "Staying in planning. Further execution of the plan has been stopped.")
+            self._messages.append({"role": "assistant", "content": text})
+            self._bus.emit("message", text=text, streaming=False)
         except Cancelled:
             status = "cancelled"
             self._close_dangling_calls()
@@ -533,6 +558,10 @@ class Agent:
             settings = self._settings()
             self._clean_questions(LLMClient(settings.get("base_url"), settings.get("api_key"), settings.get("model")),
                                   settings, arguments)
+        if isinstance(arguments, dict) and self._registry.has(name):
+            self._execution.before(name, arguments, lambda: self._stop)
+            if self._stop:
+                raise Cancelled()
         seq = self._bus.emit("tool", call_id=call["id"], name=name, args=arguments if arguments is not None else raw,
                              status="running", source="agent")
         if arguments is None or not isinstance(arguments, dict):
@@ -550,12 +579,14 @@ class Agent:
                 result = response["result"]
                 outcome = {"ok": not result.get("isError"), "result": result.get("structuredContent")}
         self._bus.update(seq, status="ok" if outcome["ok"] else "error", result=outcome["result"])
+        if outcome["ok"]:
+            self._execution.observe(name, outcome["result"])
         content = json.dumps(outcome["result"], ensure_ascii=False)
         if len(content) > MAX_TOOL_RESULT_CHARS:
             content = content[:MAX_TOOL_RESULT_CHARS] + "... (truncated)"
         return {"role": "tool", "tool_call_id": call["id"], "content": content}
 
-    def _close_dangling_calls(self):
+    def _close_dangling_calls(self, reason="cancelled by the user"):
         """Every tool call in the history needs a reply, otherwise the next request is rejected."""
         for index in range(len(self._messages) - 1, -1, -1):
             if self._messages[index].get("tool_calls"):
@@ -567,7 +598,7 @@ class Agent:
             if call["id"] in answered:
                 continue
             self._messages.append({"role": "tool", "tool_call_id": call["id"],
-                                   "content": json.dumps({"error": "cancelled by the user"})})
+                                   "content": json.dumps({"error": reason})})
 
 
 class _Finished(Exception):
