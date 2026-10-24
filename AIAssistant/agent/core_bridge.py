@@ -3,6 +3,7 @@
 Only application-owned decisions can be applied. A cancelled/stale worker cannot
 replace a newer plan, and a changed scene, printer or source invalidates apply.
 """
+import contextlib
 import copy
 import hashlib
 import json
@@ -201,6 +202,20 @@ class CoreBridge:
         if record is None or record["generation"] != self._generation:
             raise ValueError("Unknown, cancelled or superseded plan_id; plan again")
         return record
+
+    @contextlib.contextmanager
+    def side_plans(self):
+        """Plans made inside (pose checks, material variants) leave the current plan as it was.
+
+        Only one plan is current: every new plan supersedes the previous one. The application's own
+        trial plans must not supersede the plan the model is working on (verify, revert, apply)."""
+        with self._lock:
+            saved = (dict(self._plans), self._generation)
+        try:
+            yield
+        finally:
+            with self._lock:
+                self._plans, self._generation = saved
 
     def decision_record(self, plan_id):
         """Copies of the application-owned decision and request (used to improve an open project)."""

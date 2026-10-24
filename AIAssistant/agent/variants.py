@@ -1,17 +1,18 @@
 # Copyright (c) 2026. Released under the terms of the LGPLv3 or higher.
-"""Material comparison: when the material is not fixed, several are printed out and the user picks one.
+"""Material comparison: when the material is not fixed, several are prepared and the user picks one.
 
 The core ranks the feasible materials of the part (material_options of plan_print; a
 mandatory requirement that fails excludes a material). The best COUNT of them, without the
-ones the user wants to replace, are each planned with their own STE preset and settings,
-applied, sliced (print time, material) and undone. A choice card shows them; the chosen one
-is planned again and applied for real (a plan applies once), and the answer is the user's
-consent to execute it. A free answer goes back to the model unchanged.
+ones the user wants to replace, are each planned with their own STE preset and settings and
+estimated before slicing (estimate.py: print time and material, marked "≈"). Nothing in the
+open project changes while they are compared. A choice card shows them; the chosen plan is
+applied, and the answer is the user's consent to execute it. A free answer goes back to the
+model unchanged.
 """
 
 import re
 
-from .mainthread import run_on_main
+from . import estimate as E
 from .tools import ToolError
 from .versions import duration_text
 
@@ -38,6 +39,14 @@ class MaterialComparison:
         if r.questions is None:
             raise ToolError("The chat is needed to choose a material")
         source = dict((k, args[k]) for k in SOURCE_KEYS if args.get(k) not in (None, ""))
+        if "object_id" in source:  # the part on the plate wins over a second source
+            source.pop("attachment_id", None)
+        with r.core.side_plans():  # trial plans; the chosen material is planned for real below
+            base, variants, skipped = self._variants(source, args, ctx)
+        return self._choose(source, base, variants, skipped, ctx)
+
+    def _variants(self, source, args, ctx):
+        r = self._r
         exclude = [str(x) for x in args.get("exclude") or [] if _words(x)]
         if args.get("replace_current"):  # "another material": the one in the printer is not offered
             state = r.call("get_state", {}, ctx)
@@ -45,13 +54,16 @@ class MaterialComparison:
                 exclude += [x for x in (extruder.get("material_id"), extruder.get("material")) if _words(x)]
         count = max(2, min(4, int(args.get("count") or COUNT)))
         base = self._plan(source, None, ctx)
+        base_stats = self._estimate(base["plan_id"])  # now: a later plan supersedes this one
         options = [o for o in base.get("material_options") or [] if o.get("id") and not _excluded(o, exclude)]
         if not options:
             raise ToolError("No other feasible material for this task" if exclude else
                             "The core found no feasible material for this task")
         variants, skipped = [], []
         base_material = (base.get("chosen_material") or {}).get("id")
-        for option in options[:count]:
+        for option in options:  # the next ones in the core's ranking fill in for a material that does not fit
+            if len(variants) >= count:
+                break
             if (ctx or {}).get("cancelled", lambda: False)():
                 raise ToolError("Cancelled")
             plan = base if option["id"] == base_material else self._plan(source, option["id"], ctx, quiet=True)
@@ -59,23 +71,27 @@ class MaterialComparison:
                     (plan.get("base_preset") or {}).get("status") == "needs_input":
                 skipped.append({"material": option["id"], "reason": (plan or {}).get("status") or "plan failed"})
                 continue
-            stats = self._measure(plan["plan_id"], ctx)
-            if stats.get("error"):
-                skipped.append({"material": option["id"], "reason": stats["error"]})
-                continue
+            stats = base_stats if plan is base else self._estimate(plan["plan_id"])
             variants.append({"material_id": option["id"], "material": self._material(plan) or option["id"],
                              "preset": (plan.get("base_preset") or {}).get("profile") or "",
                              "mode": (plan.get("route") or {}).get("mode"),
-                             "print_time_s": stats.get("print_time_s"), "material_g": stats.get("material_g")})
+                             "plan_id": plan["plan_id"], "print_time_s": stats.get("print_time_s"),
+                             "material_g": stats.get("material_g"), "estimate": True})
         if not variants:
             raise ToolError("No material could be prepared: %s" % skipped)
+        return base, variants, skipped
+
+    def _choose(self, source, base, variants, skipped, ctx):
+        r = self._r
         ru = r.language() == "ru"
         labels = [self._label(v, i == 0, ru) for i, v in enumerate(variants)]
         if len(variants) == 1:
             choice, answer = 0, labels[0]
         else:
-            text = ("Какой материал печатаем? Посчитал %d варианта: у каждого свой пресет, время и расход." if ru else
-                    "Which material do we print? %d variants are prepared, each with its preset, time and use.") % len(variants)
+            text = ("Какой материал печатаем? Подготовил %d варианта, у каждого свой пресет; время и расход — "
+                    "оценка до нарезки." if ru else
+                    "Which material do we print? %d variants are prepared, each with its preset; time and use are "
+                    "estimates before slicing.") % len(variants)
             try:
                 answers, _seq = r.questions.ask([{"text": text, "options": labels, "allow_custom": True}],
                                                 (ctx or {}).get("cancelled"))
@@ -87,6 +103,7 @@ class MaterialComparison:
                     "next_step": "The user typed an own answer instead of a variant: follow it (e.g. plan_print with "
                                  "preferred_material) and ask nothing already answered."}
         chosen = variants[choice]
+        # The current plan for the rest of the task (verify, revert): the chosen material, planned for real.
         final = self._plan(source, chosen["material_id"], ctx)
         applied = r.call("apply_plan", {"plan_id": final["plan_id"],
                                        "confirm_unverified_5d": chosen["mode"] != "classic"}, ctx)
@@ -121,36 +138,33 @@ class MaterialComparison:
         error = str((outcome.get("result") or {}).get("error") or "")
         return "other models" in error or "already contains models" in error or "apply_plan_to_project" in error
 
-    def _measure(self, plan_id, ctx):
-        """Apply the plan, slice, undo: print time and material of this variant."""
-        r = self._r
-        stack = r._app.getOperationStack()
-        applied = r.call("apply_plan", {"plan_id": plan_id, "confirm_unverified_5d": True}, ctx)
-        project = False
-        if not applied.get("ok") and self._other_models(applied):
-            applied = r.call("apply_plan_to_project", {"plan_id": plan_id}, ctx)
-            project = True
-        if not applied.get("ok"):
-            return {"error": applied["result"].get("error")}
+    def _estimate(self, plan_id):
+        """Print time and material of a plan before slicing; {} when the core's record has no placement."""
         try:
-            sliced = r.call("slice", {}, ctx)
-            stats = sliced["result"] if sliced.get("ok") else {"error": sliced["result"].get("error")}
-        finally:
-            if project:
-                r.call("revert_plan_changes", {"plan_id": plan_id}, ctx)
-            else:
-                run_on_main(r._app, stack.undo)
-        return stats
+            record = self._r.core.decision_record(plan_id)
+            decision = record["decision"]
+            material = (decision.get("chosen_material") or {}).get("id")
+            return E.estimate(record["request"]["mesh_path"], decision.get("effective_settings") or {},
+                              decision.get("orientation") or {}, material)
+        except Exception:
+            return {}
 
     @staticmethod
     def _label(variant, recommended, ru):
         parts = [variant["material"]]
         if variant.get("preset"):
             parts[0] += " · " + variant["preset"]
-        numbers = [duration_text(variant.get("print_time_s"), "ru" if ru else "en")]
+        approx = "≈" if variant.get("estimate") else ""
+        numbers = [approx + duration_text(variant.get("print_time_s"), "ru" if ru else "en")
+                   if variant.get("print_time_s") else ""]
         if variant.get("material_g"):
-            numbers.append(("%s г" if ru else "%s g") % ("%.0f" % float(variant["material_g"])))
-        label = parts[0] + " — " + " · ".join(n for n in numbers if n)
+            numbers.append(approx + ("%s г" if ru else "%s g") % ("%.0f" % float(variant["material_g"])))
+        numbers = [n for n in numbers if n] or ["время не посчитано" if ru else "time not estimated"]
+        label = parts[0] + " — " + " · ".join(numbers)
+        if variant.get("mode") not in (None, "classic"):
+            # Choosing it accepts the 5D warning the application would otherwise ask about.
+            label += (" · 5D: кинематика и столкновения не проверены" if ru else
+                      " · 5D: kinematics and collisions unverified")
         if recommended:
             label += " (рекомендуется)" if ru else " (recommended)"
         return label

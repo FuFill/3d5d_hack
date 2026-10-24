@@ -58,8 +58,8 @@ Presets come first
   material_options. Custom user profiles are used only when allowed by the application settings.
 - Material not fixed: when neither the specification nor the user names the material (and the user did not ask to
   keep the current one), call compare_materials with the same source as plan_print instead of asking about the
-  spool. It prepares the best feasible materials with their own presets (print time, material use) and the user
-  picks one in a card; the chosen plan is applied and the choice is the consent to execute: then verify_plan, slice,
+  spool. It plans the best feasible materials with their own presets and estimates print time and material
+  before slicing (the open project does not change); the user picks one in a card; the chosen plan is applied and the choice is the consent to execute: then verify_plan, slice,
   export_gcode and save_project without asking again. If the user asks for another material without naming it, call
   compare_materials with exclude = the current material. A free answer from the card comes back as text: follow it.
 
@@ -107,8 +107,8 @@ Orientation and strength
 - In 3D, moving a part on the plate after apply_plan keeps the plan valid; rotating it needs a new plan_print
   (keep_current). In 5D the part axis follows the tooling axis and is not rotated by hand.
 - The application checks the pose of every part before slicing and saving (optimize_orientation): stiffness from the
-  core's FE model when planning inputs cover the part, otherwise from its load screen; print time and material from
-  slicing both poses. It turns a part by its rules and never changes a pose the user set. Do not rotate parts yourself
+  core's FE model when planning inputs cover the part, otherwise from its load screen; print time and material
+  estimated before slicing (the project is untouched while poses are compared). It turns a part by its rules and never changes a pose the user set. Do not rotate parts yourself
   to optimise them; report its result (orientation_check in the slice result) in one line, including whether
   stiffness came from FE or from the core's screen.
 - Report the orientation in words ("деталь положена на бок: нагрузка идёт вдоль слоёв").
@@ -757,10 +757,15 @@ class Agent:
                              args=arguments, status="running", source="app")
         outcome = self._registry.call("optimize_orientation", arguments,
                                       {"event_seq": seq, "cancelled": lambda: self._stop})
-        self._bus.update(seq, status="ok" if outcome["ok"] else "error", result=outcome["result"])
+        result = outcome["result"]
+        if not outcome["ok"]:
+            # An application step, not the user's request: a failure only means the pose stays as it is.
+            _log("optimize_orientation", RuntimeError((result or {}).get("error")))
+            result = {"status": "skipped", "reason": (result or {}).get("error")}
+        self._bus.update(seq, status="ok", result=result)
         if self._stop:
             raise Cancelled()
-        return outcome["result"]
+        return result
 
     def _close_dangling_calls(self, reason="cancelled by the user"):
         """Every tool call in the history needs a reply, otherwise the next request is rejected."""

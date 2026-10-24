@@ -24,6 +24,10 @@ STATE_KEYS = ("layer_height", "line_width", "wall_line_count", "top_layers", "bo
               "infill_pattern", "material_print_temperature", "material_bed_temperature", "speed_print",
               "cool_fan_speed", "support_enable", "adhesion_type")
 
+# A slice cancelled by STE's own late setting update is started again (see _slice).
+SLICE_ATTEMPTS = 3
+SETTLE_SECONDS = 0.5
+
 # Backend states, see UM.Backend.Backend.BackendState.
 STATE_NAMES = {1: "not_started", 2: "processing", 3: "done", 4: "error", 5: "disabled"}
 
@@ -156,7 +160,8 @@ class ToolRegistry:
             self._add("optimize_orientation",
                       "Check the pose of every part on the plate and turn it into a better one (3D). The core's best "
                       "pose and its candidates are judged by stiffness (the core's FE model when planning inputs cover "
-                      "the part, else its load screen) and by print time and material from slicing both poses: a pose "
+                      "the part, else its load screen) and by print time and material estimated before slicing (the "
+                      "project is not touched while poses are compared): a pose "
                       ">5 % less stiff is never taken; the best pose is taken when it saves >= 5 % time or material; a "
                       ">= 5 % stiffer pose when time and material get <= 5 % worse; strength takes the stiffest pose. "
                       "A pose the user set is kept (keep_pose) and only the gain is reported. The application runs it "
@@ -168,9 +173,9 @@ class ToolRegistry:
                       OrientationCheck(self).run, on_main=False)
             self._add("compare_materials",
                       "When the material is not fixed by the specification or the user, or the user asks for another "
-                      "material without naming it: plan, apply, slice and undo the best feasible materials (each with "
-                      "its STE preset), show the user one choice card with print time and material use, then apply the "
-                      "chosen one. The choice is the consent to execute. Same source arguments as plan_print; exclude "
+                      "material without naming it: plan the best feasible materials (each with its STE preset), estimate "
+                      "print time and material before slicing (the project is not touched), show the user one choice "
+                      "card, then apply the chosen one. The choice is the consent to execute. Same source arguments as plan_print; exclude "
                       "lists materials to leave out (e.g. the current one).",
                       {"task_text": {"type": "string"}, "spec_attachment_id": {"type": "string"},
                        "attachment_id": {"type": "string"}, "object_id": {"type": "integer"},
@@ -1094,10 +1099,17 @@ class ToolRegistry:
             self._app.getBackend().forceSlice()
             return generation
 
-        generation = run_on_main(self._app, start)
+        should_stop = (ctx or {}).get("cancelled")
         self._slices.watch((ctx or {}).get("event_seq"))
         try:
-            state = self._slices.wait_finished(generation, timeout=1800, should_stop=(ctx or {}).get("cancelled"))
+            for attempt in range(SLICE_ATTEMPTS):
+                # Right after a preset/material/pose change STE still checks the settings and may swap
+                # containers; that cancels a slice started too early (it ends as "not started").
+                self._wait_settled(should_stop)
+                generation = run_on_main(self._app, start)
+                state = self._slices.wait_finished(generation, timeout=1800, should_stop=should_stop)
+                if state != 1 or (should_stop is not None and should_stop()):
+                    break
         finally:
             self._slices.watch(None)
         if state != 3:
@@ -1110,6 +1122,19 @@ class ToolRegistry:
             time.sleep(0.2)
         result["printing_mode"] = run_on_main(self._app, self._mode)
         return result
+
+    def _wait_settled(self, should_stop=None, timeout=15.0):
+        """Wait until STE has finished checking the settings after a change, then a short calm moment."""
+        def busy():
+            checker = getattr(self._app, "getMachineErrorChecker", None)
+            checker = checker() if callable(checker) else None
+            return bool(checker is not None and checker.needToWaitForResult)
+        deadline = time.time() + timeout
+        while time.time() < deadline and run_on_main(self._app, busy):
+            if should_stop is not None and should_stop():
+                return
+            time.sleep(0.2)
+        time.sleep(SETTLE_SECONDS)
 
     def _get_slice_status(self, args, ctx):
         state, progress = self._slices.status()

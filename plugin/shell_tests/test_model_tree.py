@@ -328,3 +328,13 @@ def test_a_chat_saved_before_branches_opens_as_one_branch(tmp_path):
     assert [e["text"] for e in s.bus.snapshot()[0] if e["type"] == "user"] == ["Старый чат"]
     assert s.head == "legacy" and [t["id"] for t in s.turns] == ["legacy"]
     s.stop()
+
+
+def test_side_plans_leave_the_current_plan_valid():
+    from agent.core_bridge import CoreBridge
+    bridge = CoreBridge(None, lambda: {})
+    bridge._plans, bridge._generation = {"p1": {"generation": 1, "decision": {}, "request": {}}}, 1
+    with bridge.side_plans():
+        bridge._generation += 1
+        bridge._plans = {"p2": {"generation": 2, "decision": {}, "request": {}}}
+    assert bridge.decision_record("p1") == {"decision": {}, "request": {}}

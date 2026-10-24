@@ -7,10 +7,13 @@ from the core's FE model when planning inputs (loads, fixtures, constants) cover
 (compliance, lower is stiffer); otherwise from the core's analytical screen (share of the
 load across the layers). Nothing is invented: without loads stiffness is not judged.
 
+Print time and material of each pose come from the pre-slice estimate (estimate.py): the
+open project is not touched while poses are compared, only the chosen pose is applied.
+
 Rules (GAIN = 5 %):
 - a pose more than GAIN less stiff than the current one is never taken;
 - the core's best pose is taken when it saves at least GAIN of print time or material and
-  costs at most GAIN of the other (both poses are sliced);
+  costs at most GAIN of the other;
 - a pose at least GAIN stiffer is taken when time and material get at most GAIN worse;
 - when the user asked for strength the stiffest pose is taken;
 - a pose the user set is kept; then only the possible gain is reported.
@@ -22,8 +25,8 @@ import math
 import re
 import sys
 
+from . import estimate as E
 from .mainthread import run_on_main
-from .tools import ToolError
 
 GAIN = 0.05
 SAME_UP_DEG = 2.0
@@ -123,6 +126,9 @@ class OrientationCheck:
             return {"status": "skipped", "reason": "no parts on the plate"}
         keep = bool(args.get("keep_pose"))
         priority = "strength" if args.get("priority") == "strength" else "balanced"
+        state = r.call("get_state", {}, ctx).get("result") or {}
+        settings = dict(state.get("key_settings") or {})
+        material = ((state.get("extruders") or [{}])[0] or {}).get("material")
         results, turned = [], 0
         for object_id, name, source in parts:
             if (ctx or {}).get("cancelled", lambda: False)():
@@ -134,7 +140,7 @@ class OrientationCheck:
                 continue
             try:
                 current = run_on_main(app, lambda: r._printer_rotation(r._node(object_id)))
-            except ToolError as e:
+            except Exception as e:  # scaled/mirrored or an unexpected scene object: the part keeps its pose
                 item.update(status="skipped", reason=str(e))
                 continue
             decision = self._plan(object_id, args, ctx)
@@ -147,11 +153,11 @@ class OrientationCheck:
             if not proposals:
                 item.update(status="optimal")
                 continue
-            before = self._stats(ctx)
+            path = source["source_path"]
+            before = E.estimate(path, settings, E.pose(path, current, settings), material)
             chosen = None
             for proposal in proposals:
-                run_on_main(app, lambda: self._turn(object_id, proposal["rotation"]))
-                after = self._stats(ctx)
+                after = E.estimate(path, settings, E.pose(path, proposal["rotation"], settings), material)
                 proposal.update(time_gain=_gain(before, after, "print_time_s"),
                                 material_gain=_gain(before, after, "material_g"))
                 gain = proposal.get("stiffness_gain")
@@ -164,22 +170,23 @@ class OrientationCheck:
                 if accept:
                     chosen = proposal
                     break
-                run_on_main(app, app.getOperationStack().undo)
             if chosen is None:
                 item.update(status="kept_small_gain", tried=[_public(p) for p in proposals])
                 continue
             item.update(_public(chosen), time_before_s=before.get("print_time_s"),
                         material_before_g=before.get("material_g"))
             if keep:
-                run_on_main(app, app.getOperationStack().undo)
                 item["status"] = "kept_user_pose"
             else:
+                run_on_main(app, lambda: self._turn(object_id, chosen["rotation"]))
                 item["status"] = "rotated_for_strength" if chosen["why"] == "strength" else "rotated"
                 turned += 1
         if turned and len(parts) > 1 and run_on_main(app, self._crowded):
             arranged = r.call("arrange_all", {}, ctx)
             results.append({"arranged": bool(arranged.get("ok"))})
         return {"status": "done", "parts": results,
+                "estimate": "time and material are pre-slice estimates (about +-20 %); the slicer's numbers come "
+                            "after slicing",
                 "rule": "a pose >5 % less stiff is never taken; the core's best pose is taken when it saves >= 5 % time "
                         "or material (other <= 5 % worse); a pose >= 5 % stiffer when time and material get <= 5 % "
                         "worse; strength requests take the stiffest pose; a pose set by the user is kept"}
@@ -190,10 +197,11 @@ class OrientationCheck:
                    "task_text": args.get("task_text") or "Print preparation of this part."}
         if args.get("spec_attachment_id"):
             request["spec_attachment_id"] = args["spec_attachment_id"]
-        outcome = self._r.call("plan_print", request, ctx)
-        if not outcome.get("ok") or not outcome["result"].get("plan_id"):
-            return None
-        return self._r.core.decision_record(outcome["result"]["plan_id"])["decision"]
+        with self._r.core.side_plans():  # the model's current plan stays valid
+            outcome = self._r.call("plan_print", request, ctx)
+            if not outcome.get("ok") or not outcome["result"].get("plan_id"):
+                return None
+            return self._r.core.decision_record(outcome["result"]["plan_id"])["decision"]
 
     def _proposals(self, decision, options, basis, priority, current):
         """Poses worth slicing, in order: the strength pose, or the core's best then a stiffer one."""
@@ -229,12 +237,6 @@ class OrientationCheck:
             best = max(stiffer, key=lambda o: o["stiffness_gain"])
             out.append(dict(best, rotation=rotation_of(best), why="stiffer"))
         return out
-
-    def _stats(self, ctx):
-        slices = self._r._slices
-        name = "get_slice_result" if slices is not None and slices.status()[0] == 3 else "slice"
-        outcome = self._r.call(name, {}, ctx)
-        return outcome["result"] if outcome.get("ok") else {}
 
     def _turn(self, object_id, rotation):
         """Put the part into `rotation` (printer frame) on its place on the plate, as one Undo step."""
