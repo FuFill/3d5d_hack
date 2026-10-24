@@ -1,8 +1,10 @@
-"""The chat must get a real answer before moving from a core proposal to execution.
+"""One real answer authorizes the current task through its execution workflow.
 
 This guard belongs to the application, not the model prompt. Direct manual commands
 without a core plan still use their ordinary tools and hardware checks.
 """
+import json
+
 from .llm import Cancelled
 from .questions import QuestionCancelled
 
@@ -18,28 +20,54 @@ class ExecutionDeferred(Exception):
     """The user kept the proposal in planning; discard the remaining calls in this batch."""
 
 
+class ExecutionConflict(Exception):
+    """A tool tried to reopen consent or change the approved task's physical context."""
+
+
 class PlanExecution:
     def __init__(self, registry, settings):
         self._registry, self._settings = registry, settings
         self.plan = None
-        self._approved = set()
         self.begin_turn()
 
     def begin_turn(self):
         self._produced = False
+        self.executing = False
+        self._approved_context = None
 
     def observe(self, name, result):
         if name in ("plan_print", "get_plan") and isinstance(result, dict) and result.get("plan_id"):
-            if self._key(result) != self._key(self.plan):
-                self._approved.clear()
             self.plan = result
             self._produced = self._produced or name == "plan_print"
         elif name in ("apply_plan", "apply_plan_to_project") and self.plan:
             self.plan = dict(self.plan, applied=True)
 
     @staticmethod
-    def _key(plan):
-        return (plan.get("plan_id"), plan.get("decision_sha256")) if plan else None
+    def _context(plan):
+        material = plan.get("chosen_material") or {}
+        return {"mode": (plan.get("route") or {}).get("mode"),
+                "material": material.get("id") or material.get("label"),
+                "geometry_sha256": plan.get("geometry_sha256")}
+
+    def tools(self, tools):
+        """After consent the model executes; it cannot reopen a question card."""
+        if not self.executing:
+            return tools
+        return [tool for tool in tools if tool.get("function", {}).get("name") != "ask_user"]
+
+    def continuation(self):
+        if not self.executing:
+            return ""
+        return ("\nAPPLICATION EXECUTION STATE (authoritative):\n" + json.dumps({
+            "phase": "executing", "user_approved_current_task": True,
+            "current_plan_id": self.plan.get("plan_id"), "plan_applied": bool(self.plan.get("applied")),
+            "approved_context": self._approved_context}, ensure_ascii=False) +
+            "\nFinish this task without further confirmations: apply the plan if needed, verify, slice, "
+            "export G-code and save the project, respecting the original user request. "
+            "Use get_plan with current_plan_id to READ the current plan. Do not call plan_print just to read it; "
+            "recalculate only to fix an actual error or refine this same task. Recalculation does not revoke consent. "
+            "Do not ask whether to continue, apply, slice or save. Do not change the approved material, mode or model. "
+            "If a real missing physical fact prevents execution, report the blocker instead of inventing an answer.")
 
     def _ready(self, include_applied=False):
         return bool(self.plan and (include_applied or not self.plan.get("applied"))
@@ -47,17 +75,26 @@ class PlanExecution:
                     and (self.plan.get("base_preset") or {}).get("status") != "needs_input")
 
     def offer_at_end(self):
-        return self._produced and self._ready() and (self._key(self.plan), "plan") not in self._approved
+        return self._produced and self._ready() and not self.executing
 
     def before(self, name, arguments, should_stop):
+        if self.executing and name == "ask_user":
+            raise ExecutionConflict("Execution is already authorized for this task. Do not ask for confirmation again. "
+                                    "Continue applying, verifying, slicing and saving within the approved task. "
+                                    "No new user answer was collected; report an actual blocker if a required physical fact is missing.")
         if name in ("apply_plan", "apply_plan_to_project"):
-            # A reopened chat or a different plan id cannot reuse an earlier card's answer.
+            # Read the current application-owned proposal; a new calculation ID is not a new task.
             outcome = self._registry.call("get_plan", {"plan_id": arguments.get("plan_id")}, None)
             if not outcome.get("ok"):
                 return  # The real apply tool reports its existing invalid/stale-plan error.
             self.observe("get_plan", outcome["result"])
         elif name not in EXECUTION_TOOLS or not self._produced:
             return
+        if self.executing and self.plan and self._context(self.plan) != self._approved_context:
+            raise ExecutionConflict("The current proposal changes the approved material, mode or source model. "
+                                    "Keep the original task context: %s. Recalculate within it and continue; "
+                                    "do not ask for another execution confirmation." %
+                                    json.dumps(self._approved_context, ensure_ascii=False))
         self.confirm(name, should_stop)
         if self._ready(include_applied=name == "apply_plan_to_project") and (self.plan.get("route") or {}).get("mode") in ("cylindrical", "cylindrical_full"):
             if name in ("apply_plan", "apply_plan_to_project"):
@@ -65,12 +102,11 @@ class PlanExecution:
                 arguments["confirm_unverified_5d"] = True
 
     def confirm(self, name, should_stop):
+        if self.executing:
+            return
         if not self._ready(include_applied=name == "apply_plan_to_project"):
             return
         scope = "project" if name == "apply_plan_to_project" else "plan"
-        key = (self._key(self.plan), scope)
-        if key in self._approved:
-            return
         questions = self._registry.questions
         if questions is None:
             raise ExecutionDeferred()
@@ -84,6 +120,10 @@ class PlanExecution:
         text = ("План готов" if ru else "The plan is ready") + (": " + summary if summary else "") + ". "
         text += ("Перейти к выполнению: применить план и продолжить подготовку печати?" if ru else
                  "Move to execution: apply the plan and continue print preparation?")
+        text += (" После согласия выполню слайсинг и сохраню файлы без повторных подтверждений. "
+                 "Настройки печати общие для всех моделей проекта." if ru else
+                 " After approval I will slice and save the files without further confirmations. "
+                 "Print settings are shared by all models in the project.")
         if scope == "project":
             text += (" Настройки изменятся для всех моделей проекта; их положение сохранится." if ru else
                      " Settings will change for every model in the project; their positions will stay unchanged.")
@@ -105,4 +145,5 @@ class PlanExecution:
                                                    "начинай", "выполняй", "yes", "go ahead", "apply", "proceed")
         if not ((choice == 0 and text == options[0]) or (choice is None and explicit)):
             raise ExecutionDeferred()
-        self._approved.add(key)
+        self.executing = True
+        self._approved_context = self._context(self.plan)

@@ -242,8 +242,10 @@ class CoreBridge:
                                       {"in_place": False, "requires_empty_project": True}),
                         assessments={k: {"status": decision.get(k, {}).get("status")}
                                      for k in ("causal_analysis", "functional_analysis", "robustness_analysis")},
-                        next_step="Explain the proposal, wait for the application's execution confirmation, then "
-                                  "apply_plan, verify_plan, slice; keep unresolved qualification requirements visible")
+                        next_step="Use the current task's existing execution consent, or ask once if it has not been "
+                                  "granted, then apply_plan, verify_plan, slice, export_gcode and save_project. "
+                                  "Reading/recalculating this task does not require renewed consent; "
+                                  "keep unresolved qualification requirements visible")
 
     def apply(self, args, context=None):
         # ToolRegistry invokes this on Qt; holding the lock fences cancellation.
