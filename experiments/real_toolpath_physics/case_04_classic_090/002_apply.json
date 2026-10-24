@@ -1,0 +1,105 @@
+{
+  "decision_sha256": "f0c7385e56619dcfd5557c3f6c918a945483ce2454c84b9857e4544352da36ec",
+  "status": "analysis_scene",
+  "readback": {
+    "quality_id": "ste_planner_quality_9fddd2a57ba04217ab73912bf6d51bfc",
+    "material_id": "fiberpart_tpu_c5",
+    "status": "pass",
+    "machine_definition": "hte530v5.2.4",
+    "actual": {
+      "support_enable": true,
+      "support_top_distance": 0.1,
+      "retraction_enable": true,
+      "support_angle": 50,
+      "support_xy_distance": 0.7,
+      "support_line_width": 0.4,
+      "support_type": "everywhere",
+      "material_print_temperature": 230.0,
+      "support_bottom_distance": 0.1,
+      "bottom_layers": 10,
+      "top_layers": 10,
+      "speed_print": 40.0,
+      "machine_heated_bed": true,
+      "layer_height_0": 0.3,
+      "printing_mode": "classic",
+      "support_bottom_enable": false,
+      "machine_width": 351,
+      "wall_thickness": 0.8,
+      "machine_depth": 300.3,
+      "retraction_amount": 1.5,
+      "cylindrical_mode_base_diameter": 6,
+      "machine_height": 300,
+      "cylindrical_mode_overlap": 0,
+      "infill_pattern": "grid",
+      "infill_sparse_density": 25.0,
+      "machine_center_is_zero": false,
+      "adhesion_type": "brim",
+      "retraction_speed": 18,
+      "wall_line_count": 3,
+      "non_printing_base_diameter": 6,
+      "line_width": 0.4,
+      "layer_height": 0.1,
+      "support_interface_enable": false,
+      "support_roof_enable": false,
+      "machine_nozzle_size": 0.4,
+      "material_flow": 100,
+      "cool_fan_speed": 20.0,
+      "material_bed_temperature": 95.0,
+      "cool_fan_enabled": true
+    },
+    "differences": []
+  },
+  "physical_print_approval": false,
+  "qt_thread": true,
+  "nodes": [
+    {
+      "modifier": {
+        "anti_overhang_mesh": false,
+        "support_mesh_drop_down": true,
+        "support_mesh": false
+      },
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          30.384347915649414
+        ],
+        [
+          0.0,
+          6.123234262925839e-17,
+          -1.0,
+          48.904747009277344
+        ],
+        [
+          0.0,
+          1.0,
+          6.123234262925839e-17,
+          -34.92554473876953
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "name": "Декоративная фигурка.stl",
+      "parent": "Root",
+      "mesh_sha256": "1670af408f95131874c2f4aa1bc7ac6e7c46846005ad52efd93754c2b69dc2e4",
+      "world_bounds": [
+        [
+          -51.64624786376953,
+          0.0,
+          -74.98963928222656
+        ],
+        [
+          51.64624786376953,
+          128.75143432617188,
+          74.98963928222656
+        ]
+      ],
+      "vertices": 282344
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "native_boolean_diagnostics": [
+    {
+      "output": "Could not initialize localization.\r\nERROR: The given mesh is not closed! Unable to convert to CGAL_Nef_Polyhedron.\r\nGeometries in cache: 2\r\nGeometry cache size in bytes: 193184\r\nCGAL Polyhedrons in cache: 1\r\nCGAL cache size in bytes: 0\r\nTotal rendering time: 0:00:00.105\r\nCurrent top level object is empty.\r\n",
+      "returncode": 1
+    }
+  ],
+  "status": "error",
+  "native_geometry_errors": [
+    "2026-10-24 10:38:21,595 - ERROR - [Thread-2] CLIParserBackend.StartSliceJob._buildObjectFiles [837]: Exception while differece model! Command '['openscad.exe', 'C:\\\\Users\\\\Ilya\\\\AppData\\\\Local\\\\Temp\\\\tmp9cokrfrb', '-o', 'C:\\\\Users\\\\Ilya\\\\AppData\\\\Local\\\\Temp\\\\tmpja__phep.stl']' returned non-zero exit status 1"
+  ],
+  "message": "native Boolean preprocessing failed; backend fallback geometry is not a verified slice",
+  "backend_state": 2,
+  "error": "ValueError",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\Ilya\\Working projects\\3d5d_hack\\.runtime\\ste\\run_f41f90c535\\appdata\\steslicer\\7.10\\plugins\\STEPlannerRuntime\\RuntimeExtension.py\", line 408, in poll_once\n    result = self.wait_pending()\n  File \"C:\\Users\\Ilya\\Working projects\\3d5d_hack\\.runtime\\ste\\run_f41f90c535\\appdata\\steslicer\\7.10\\plugins\\STEPlannerRuntime\\RuntimeExtension.py\", line 312, in wait_pending\n    raise ValueError(\"native Boolean preprocessing failed; backend fallback geometry is not a verified slice\")\nValueError: native Boolean preprocessing failed; backend fallback geometry is not a verified slice\n"
+}

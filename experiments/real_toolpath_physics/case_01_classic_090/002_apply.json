@@ -1,0 +1,105 @@
+{
+  "status": "analysis_scene",
+  "nodes": [
+    {
+      "matrix": [
+        [
+          0.9999958276748657,
+          -0.002041913103312254,
+          0.002041908912360668,
+          0.004841204732656479
+        ],
+        [
+          -0.002041908912360668,
+          -0.9999979138374329,
+          -4.169408839516109e-06,
+          16.549819946289062
+        ],
+        [
+          0.002041913103312254,
+          -6.049015912598437e-16,
+          -0.9999979138374329,
+          -5.037917137145996
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_bounds": [
+        [
+          -16.554628372192383,
+          0.0,
+          -5.071710109710693
+        ],
+        [
+          16.55462646484375,
+          33.099639892578125,
+          5.071710586547852
+        ]
+      ],
+      "parent": "Root",
+      "modifier": {
+        "support_mesh": false,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false
+      },
+      "name": "Шестерня.stl",
+      "vertices": 12458,
+      "mesh_sha256": "3d6a416cff3f4331ed263a4b742920c7e3e56477a8b689d8363787319698dbed"
+    }
+  ],
+  "qt_thread": true,
+  "readback": {
+    "status": "pass",
+    "quality_id": "ste_planner_quality_74aafee1518944abaffc55c2f2316701",
+    "differences": [],
+    "actual": {
+      "support_type": "everywhere",
+      "speed_print": 40.0,
+      "support_roof_enable": false,
+      "cool_fan_speed": 20.0,
+      "machine_center_is_zero": false,
+      "support_line_width": 0.4,
+      "line_width": 0.4,
+      "material_print_temperature": 230.0,
+      "support_top_distance": 0.1,
+      "cylindrical_mode_base_diameter": 6,
+      "wall_thickness": 0.8,
+      "support_bottom_enable": false,
+      "non_printing_base_diameter": 6,
+      "infill_sparse_density": 100.0,
+      "retraction_amount": 1.5,
+      "retraction_enable": true,
+      "bottom_layers": 6,
+      "retraction_speed": 18,
+      "wall_line_count": 4,
+      "machine_depth": 300.3,
+      "cylindrical_mode_overlap": 0,
+      "cool_fan_enabled": true,
+      "machine_width": 351,
+      "support_bottom_distance": 0.1,
+      "support_enable": true,
+      "layer_height_0": 0.3,
+      "machine_height": 300,
+      "support_angle": 50,
+      "adhesion_type": "brim",
+      "machine_nozzle_size": 0.4,
+      "top_layers": 6,
+      "material_flow": 100,
+      "support_interface_enable": false,
+      "printing_mode": "classic",
+      "support_xy_distance": 0.7,
+      "machine_heated_bed": true,
+      "layer_height": 0.2,
+      "infill_pattern": "lines",
+      "material_bed_temperature": 95.0
+    },
+    "material_id": "fiberpart_tpu_c5",
+    "machine_definition": "hte530v5.2.4"
+  },
+  "decision_sha256": "0e1b90d8296be47ae4e64e10936c74deeb7ffd558979bcd0c306986c5f22e191",
+  "physical_print_approval": false
+}

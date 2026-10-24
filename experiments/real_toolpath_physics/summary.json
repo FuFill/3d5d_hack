@@ -1,0 +1,1847 @@
+{
+  "data_scope": "seven original organizer STL/TZ; development geometry, not blind physical holdout",
+  "native_candidate_contexts": 20,
+  "completed_native_slices": 20,
+  "native_errors": 0,
+  "refused_routes": 3,
+  "physics_optimum_established": false,
+  "physical_print_approval": false,
+  "provenance_check": "pass",
+  "provenance_errors": [],
+  "records": [
+    {
+      "id": "case_01_classic_000",
+      "organizer_case": "1. Шестерня - 3D",
+      "mode": "classic",
+      "phase_deg": 0,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 334.17997806021503
+        },
+        "normal_structure_tensor": [
+          [
+            4.169409041571409e-06,
+            0.0020419088269557125,
+            -1.3601873519146232e-18
+          ],
+          [
+            0.0020419088269557125,
+            0.9999958305909585,
+            -6.661324260814714e-16
+          ],
+          [
+            -1.3601873519146232e-18,
+            -6.661324260814714e-16,
+            4.437342591868192e-31
+          ]
+        ],
+        "normalized_gcode_sha256": "c881a78a263c83cd5153b5853ddecb8d80bcbc91aad149c4c4d164fdca0c479a",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 48794.41666717113,
+        "part_volume_mm3": 3862.195863660402,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 62120,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5029573779282241,
+            -0.001026997391546354,
+            -0.0050273383622976816
+          ],
+          [
+            -0.001026997391546354,
+            2.097043782492305e-06,
+            1.0265409379032361e-05
+          ],
+          [
+            -0.005027338362297678,
+            1.0265409379032376e-05,
+            0.497040525027993
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "check": "declared_layer_count",
+          "note": "native header declares 51; 50 extruding layer records; mismatch requires review",
+          "status": "unknown"
+        },
+        {
+          "check": "volumetric_flow",
+          "note": "max linear 3.67 mm3/s; no calibrated Q_limit",
+          "status": "unknown"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_01_classic_090",
+      "organizer_case": "1. Шестерня - 3D",
+      "mode": "classic",
+      "phase_deg": 90,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 269.427192269899,
+          "SUPPORT": 550.4337482274572
+        },
+        "normal_structure_tensor": [
+          [
+            4.169391657599678e-06,
+            -8.513553124094032e-09,
+            0.0020419045701746998
+          ],
+          [
+            -8.513553124094032e-09,
+            1.738397175152865e-11,
+            -4.169400349047757e-06
+          ],
+          [
+            0.0020419045701746998,
+            -4.169400349047757e-06,
+            0.9999958305909415
+          ]
+        ],
+        "normalized_gcode_sha256": "bf1177aad706d36403468d5f9194b574120f689f528b1819f98c0454349f0e78",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 47940.62125794029,
+        "part_volume_mm3": 3788.722896800543,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 18223,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.6591086160595949,
+            -0.00041584634489332385,
+            -0.0013458442405786235
+          ],
+          [
+            -0.00041584634489332385,
+            0.34088863583396734,
+            2.270429215682734e-06
+          ],
+          [
+            -0.0013458442405786235,
+            2.270429215682734e-06,
+            2.748106429889094e-06
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "check": "declared_layer_count",
+          "status": "unknown",
+          "note": "native header declares 166; 165 extruding layer records; mismatch requires review"
+        },
+        {
+          "check": "volumetric_flow",
+          "status": "unknown",
+          "note": "max linear 5.00 mm3/s; no calibrated Q_limit"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_02_classic_000",
+      "organizer_case": "2. Колесо конвейерной линии - 5D",
+      "mode": "classic",
+      "phase_deg": 0,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 753.0227031626077,
+          "SUPPORT": 1173.837518874639
+        },
+        "normal_structure_tensor": [
+          [
+            4.789409609061948e-19,
+            6.920556053570228e-10,
+            2.5443896047360307e-18
+          ],
+          [
+            6.920556053570228e-10,
+            1.0,
+            3.676568161633876e-09
+          ],
+          [
+            2.5443896047360307e-18,
+            3.676568161633876e-09,
+            1.351715344714256e-17
+          ]
+        ],
+        "normalized_gcode_sha256": "4bb0a7595860a0ddcf23e48e10b39c7a9ca75355f1280d343fb714bade51bec1",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 584244.7813909071,
+        "part_volume_mm3": 46768.96969425973,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 151089,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5000009188272161,
+            -3.419954446535634e-10,
+            -0.0010969451345929865
+          ],
+          [
+            -3.419954446535634e-10,
+            6.992453114313607e-18,
+            -1.837521555960267e-09
+          ],
+          [
+            -0.0010969451345929865,
+            -1.837521555960267e-09,
+            0.4999990811727734
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "status": "unknown",
+          "check": "volumetric_flow",
+          "note": "max linear 2.48 mm3/s; no calibrated Q_limit"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_02_classic_090",
+      "organizer_case": "2. Колесо конвейерной линии - 5D",
+      "mode": "classic",
+      "phase_deg": 90,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 400.9484862734014,
+          "SUPPORT": 1960.4302601158815
+        },
+        "normal_structure_tensor": [
+          [
+            4.789409638878115e-19,
+            2.5443896543227302e-18,
+            -6.920556075112258e-10
+          ],
+          [
+            2.5443896543227302e-18,
+            1.3517153889853284e-17,
+            -3.6765682218410474e-09
+          ],
+          [
+            -6.920556075112258e-10,
+            -3.6765682218410474e-09,
+            1.0
+          ]
+        ],
+        "normalized_gcode_sha256": "bb0998208d402361984adae9f16af1db181dae95abb7e0d1df49a2bda5653d54",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 584130.3573698204,
+        "part_volume_mm3": 46724.05131981592,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 56862,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5275866143235768,
+            0.00047990987527050304,
+            3.6688369577409247e-10
+          ],
+          [
+            0.00047990987527050304,
+            0.4724133856764169,
+            1.7371921654509093e-09
+          ],
+          [
+            3.6688369577409247e-10,
+            1.7371921654509093e-09,
+            6.64080942853136e-18
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "check": "declared_layer_count",
+          "status": "unknown",
+          "note": "native header declares 295; 294 extruding layer records; mismatch requires review"
+        },
+        {
+          "check": "volumetric_flow",
+          "status": "unknown",
+          "note": "max linear 4.32 mm3/s; no calibrated Q_limit"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_02_cylindrical_000",
+      "organizer_case": "2. Колесо конвейерной линии - 5D",
+      "mode": "cylindrical",
+      "phase_deg": 0,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_input",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {},
+        "normal_structure_tensor": [
+          [
+            0.5609987123291712,
+            5.368548532642017e-09,
+            -0.04385679208247921
+          ],
+          [
+            5.368548532642017e-09,
+            2.2080535709048835e-10,
+            -3.332443993989581e-08
+          ],
+          [
+            -0.04385679208247921,
+            -3.332443993989581e-08,
+            0.4390012874500505
+          ]
+        ],
+        "normalized_gcode_sha256": "da362dd07a953d69c175b9229e6f7c39f738c82ea00363a22ced6bedb0fe215f",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 392526.2967648053,
+        "part_volume_mm3": 47199.85544923381,
+        "physical_print_approval": false,
+        "pose_source": "analysis_assumption",
+        "road_count": 730045,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.1262822473294962,
+            0.015079179439410046,
+            0.010036277908178903
+          ],
+          [
+            0.015079179439410046,
+            0.7303871219517936,
+            0.008017997016298049
+          ],
+          [
+            0.010036277908178903,
+            0.008017997016298049,
+            0.1433306307187571
+          ]
+        ]
+      },
+      "kinematics_assumed": true,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "note": "max linear 2.41 mm3/s; no calibrated Q_limit",
+          "check": "volumetric_flow",
+          "status": "unknown"
+        }
+      ],
+      "native_physics_context": {
+        "source": "native_effective_stack",
+        "filament_diameter_mm": 1.75,
+        "mode_specific_settings": {
+          "cylindrical_mode_base_diameter": 15.99,
+          "support_offset_cylindrical": 0.2,
+          "reinforcement_enabled_cylindrical": false,
+          "cool_chamber_fan_speed_min_cylindrical": 0.0,
+          "cool_fan_speed_min_cylindrical": 20.0,
+          "speed_roofing_cylindrical": 15.0,
+          "speed_topbottom_cylindrical": 15.0,
+          "support_z_distance_cylindrical": 0.1,
+          "support_enable_cylindrical": false,
+          "cylindrical_fiber_infill_extruder_nr": -1,
+          "speed_print_layer_0_cylindrical": 15.0,
+          "cool_chamber_fan_speed_max_cylindrical": 0.0,
+          "reinforcement_wall_count_cylindrical": [
+            0
+          ],
+          "speed_travel_layer_0_cylindrical": 30.0,
+          "cool_fan_enabled_cylindrical": true,
+          "cylindrical_raft_base_height": 15,
+          "support_bottom_distance_cylindrical": 0.1,
+          "speed_travel_cylindrical": 60,
+          "cylindrical_raft_type": "none",
+          "cylindrical_round_segments": 128,
+          "reinforcement_intermediate_layers_cylindrical": [
+            0
+          ],
+          "speed_support_infill_cylindrical": 30.0,
+          "support_xy_distance_cylindrical": 0.2,
+          "cylindrical_layer_height_0": 0.3,
+          "reinforcement_bottom_skin_layers_cylindrical": [
+            0
+          ],
+          "speed_wall_x_cylindrical": 30.0,
+          "reinforcement_top_skin_layers_cylindrical": [
+            0
+          ],
+          "cylindrical_raft_diameter": 18.990000000000002,
+          "speed_wall_0_cylindrical": 15.0,
+          "fiber_infill_angles_cylindrical": [
+            45
+          ],
+          "cylindrical_raft_gap": 0.4,
+          "support_top_distance_cylindrical": 0.1,
+          "reinforcement_start_layer_cylindrical": [
+            1
+          ],
+          "cylindrical_mode_overlap": 0,
+          "cool_fan_speed_max_cylindrical": 20.0,
+          "cylindrical_layer_height": 0.2,
+          "cylindrical_raft_thickness": 0.3,
+          "fiber_density_cylindrical": 50,
+          "speed_infill_cylindrical": 30.0,
+          "fiber_line_distance_cylindrical": [
+            0.8
+          ],
+          "cylindrical_infill_extruder_nr": "-1",
+          "fiber_infill_pattern_cylindrical": [
+            2
+          ],
+          "reinforcement_layer_count_cylindrical": [
+            1
+          ],
+          "cylindrical_raft_extruder_nr": "0",
+          "fiber_infill_round_connect_cylindrical": [
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "case_02_cylindrical_090",
+      "organizer_case": "2. Колесо конвейерной линии - 5D",
+      "mode": "cylindrical",
+      "phase_deg": 90,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_input",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {},
+        "normal_structure_tensor": [
+          [
+            0.5614808869247071,
+            -1.9244915652831385e-08,
+            0.019953307210874613
+          ],
+          [
+            -1.9244915652831385e-08,
+            2.0630723959338866e-10,
+            1.5500307907422338e-08
+          ],
+          [
+            0.019953307210874613,
+            1.5500307907422338e-08,
+            0.4385191128690264
+          ]
+        ],
+        "normalized_gcode_sha256": "faaed1159267ff7bb95d5f50db3d733dcb3070f508b433beb0e3401d39b50ee6",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 392524.71085750166,
+        "part_volume_mm3": 47199.51339409804,
+        "physical_print_approval": false,
+        "pose_source": "analysis_assumption",
+        "road_count": 730055,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.12463288146819401,
+            -0.001501690728668086,
+            -6.394057982772071e-05
+          ],
+          [
+            -0.001501690728668086,
+            0.730393463940063,
+            -0.014493986292747915
+          ],
+          [
+            -6.394057982772071e-05,
+            -0.014493986292747915,
+            0.1449736545917536
+          ]
+        ]
+      },
+      "kinematics_assumed": true,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "check": "volumetric_flow",
+          "note": "max linear 2.41 mm3/s; no calibrated Q_limit",
+          "status": "unknown"
+        }
+      ],
+      "native_physics_context": {
+        "mode_specific_settings": {
+          "cool_fan_speed_min_cylindrical": 20.0,
+          "speed_support_infill_cylindrical": 30.0,
+          "cylindrical_raft_extruder_nr": "0",
+          "cylindrical_round_segments": 128,
+          "reinforcement_layer_count_cylindrical": [
+            1
+          ],
+          "cool_chamber_fan_speed_max_cylindrical": 0.0,
+          "speed_wall_0_cylindrical": 15.0,
+          "support_enable_cylindrical": false,
+          "support_z_distance_cylindrical": 0.1,
+          "speed_roofing_cylindrical": 15.0,
+          "reinforcement_bottom_skin_layers_cylindrical": [
+            0
+          ],
+          "reinforcement_intermediate_layers_cylindrical": [
+            0
+          ],
+          "reinforcement_wall_count_cylindrical": [
+            0
+          ],
+          "speed_infill_cylindrical": 30.0,
+          "cylindrical_infill_extruder_nr": "-1",
+          "reinforcement_top_skin_layers_cylindrical": [
+            0
+          ],
+          "speed_print_layer_0_cylindrical": 15.0,
+          "cylindrical_mode_base_diameter": 15.99,
+          "reinforcement_enabled_cylindrical": false,
+          "fiber_infill_round_connect_cylindrical": [
+            1
+          ],
+          "support_top_distance_cylindrical": 0.1,
+          "cylindrical_raft_gap": 0.4,
+          "fiber_infill_pattern_cylindrical": [
+            2
+          ],
+          "cylindrical_mode_overlap": 0,
+          "support_xy_distance_cylindrical": 0.2,
+          "fiber_infill_angles_cylindrical": [
+            45
+          ],
+          "cylindrical_fiber_infill_extruder_nr": -1,
+          "reinforcement_start_layer_cylindrical": [
+            1
+          ],
+          "support_offset_cylindrical": 0.2,
+          "support_bottom_distance_cylindrical": 0.1,
+          "cool_fan_enabled_cylindrical": true,
+          "cylindrical_layer_height_0": 0.3,
+          "speed_topbottom_cylindrical": 15.0,
+          "cylindrical_raft_type": "none",
+          "speed_wall_x_cylindrical": 30.0,
+          "cylindrical_raft_thickness": 0.3,
+          "cool_fan_speed_max_cylindrical": 20.0,
+          "fiber_density_cylindrical": 50,
+          "cylindrical_raft_diameter": 18.990000000000002,
+          "fiber_line_distance_cylindrical": [
+            0.8
+          ],
+          "speed_travel_layer_0_cylindrical": 30.0,
+          "cool_chamber_fan_speed_min_cylindrical": 0.0,
+          "speed_travel_cylindrical": 60,
+          "cylindrical_layer_height": 0.2,
+          "cylindrical_raft_base_height": 15
+        },
+        "source": "native_effective_stack",
+        "filament_diameter_mm": 1.75
+      }
+    },
+    {
+      "id": "case_02_cylindrical_full",
+      "organizer_case": "2. Колесо конвейерной линии - 5D",
+      "status": "route_refused_before_slicing",
+      "reason": "requested route cylindrical_full is infeasible: ['axis: rotational symmetry (inertia + sector radii)', 'cylindrical working surface (tread/journal): cylindrical layers follow it', 'TZ reports delamination; cylindrical layers remove radial layer interfaces', 'part has a bore: Spiral is the matching 5D route']"
+    },
+    {
+      "id": "case_03_classic_000",
+      "organizer_case": "3. Пыльник Шруса - 3D",
+      "mode": "classic",
+      "phase_deg": 0,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 753.9304805952033,
+          "SUPPORT": 63680.481785825126
+        },
+        "normal_structure_tensor": [
+          [
+            0.9999999971125895,
+            5.3726426378482834e-05,
+            9.371943364731369e-07
+          ],
+          [
+            5.3726426378482834e-05,
+            2.886528899736967e-09,
+            5.0352102666241126e-11
+          ],
+          [
+            9.371943364731369e-07,
+            5.0352102666241126e-11,
+            8.783332268534442e-13
+          ]
+        ],
+        "normalized_gcode_sha256": "3da61f60e695c01fc5f18164681448334fd8bad1c9a1427d808bb90fe42e6dff",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 910450.1770768666,
+        "part_volume_mm3": 71890.57879298097,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 833975,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            1.4440645291517288e-09,
+            -2.687002159300595e-05,
+            -4.6339170054150355e-07
+          ],
+          [
+            -2.687002159300595e-05,
+            0.5001283731532377,
+            -9.464908504411997e-05
+          ],
+          [
+            -4.6339170054150355e-07,
+            -9.464908504411997e-05,
+            0.4998716254027708
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "status": "unknown",
+          "check": "volumetric_flow",
+          "note": "max linear 4.07 mm3/s; no calibrated Q_limit"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_03_classic_090",
+      "organizer_case": "3. Пыльник Шруса - 3D",
+      "mode": "classic",
+      "phase_deg": 90,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 1450.8152757965372,
+          "SUPPORT": 53368.09967661467
+        },
+        "normal_structure_tensor": [
+          [
+            2.886523480926163e-09,
+            -5.372637587128051e-05,
+            2.8865261903302057e-09
+          ],
+          [
+            -5.372637587128051e-05,
+            0.9999999942269479,
+            -5.372642630096203e-05
+          ],
+          [
+            2.8865261903302057e-09,
+            -5.372642630096203e-05,
+            2.886528899736787e-09
+          ]
+        ],
+        "normalized_gcode_sha256": "c05061c4749562f75413299248ec38cf7ebbd2adf043eda5d1b24b857b93ab05",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 950797.9514805058,
+        "part_volume_mm3": 71468.03207810936,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 1312239,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.3592550376594664,
+            1.9311086621673486e-05,
+            0.000178968226775163
+          ],
+          [
+            1.9311086621673483e-05,
+            2.8875601542844307e-09,
+            3.443455235477631e-05
+          ],
+          [
+            0.00017896822677516277,
+            3.443455235477631e-05,
+            0.6407449594529734
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "status": "unknown",
+          "note": "native header declares 515; 514 extruding layer records; mismatch requires review",
+          "check": "declared_layer_count"
+        },
+        {
+          "status": "unknown",
+          "note": "max linear 4.80 mm3/s; no calibrated Q_limit",
+          "check": "volumetric_flow"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_04_classic_000",
+      "organizer_case": "4. Фигурка",
+      "mode": "classic",
+      "phase_deg": 0,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 1539.7795808390324,
+          "SUPPORT": 11236.361448367752
+        },
+        "normal_structure_tensor": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "normalized_gcode_sha256": "d2adea5f2c53258ecdcdf94a3e86f1868a9685161b8ad0d5289365b3d77c8c7e",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 5536487.449709848,
+        "part_volume_mm3": 221747.0936713854,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 3309746,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5025649336325693,
+            -0.001749214496356783,
+            0.0
+          ],
+          [
+            -0.0017492144963567817,
+            0.4974350663674298,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "note": "max linear 4.56 mm3/s; no calibrated Q_limit",
+          "status": "unknown",
+          "check": "volumetric_flow"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_04_classic_090",
+      "organizer_case": "4. Фигурка",
+      "mode": "classic",
+      "phase_deg": 90,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 1517.552298869963,
+          "SUPPORT": 43586.77910323445
+        },
+        "normal_structure_tensor": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            6.123233995736766e-17
+          ],
+          [
+            0.0,
+            6.123233995736766e-17,
+            3.749399456654648e-33
+          ]
+        ],
+        "normalized_gcode_sha256": "700fe9e731c2065d463fda3bbf199ef6539189d9387f5a5b8c31b073b09d4c68",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 5575719.455050391,
+        "part_volume_mm3": 223020.36299339015,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 3003487,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.48357679738565346,
+            1.3182629688612442e-19,
+            -0.0021528868074926883
+          ],
+          [
+            1.3182629688612426e-19,
+            1.936276875286082e-33,
+            -3.1621801104354206e-17
+          ],
+          [
+            -0.0021528868074926883,
+            -3.1621801104354206e-17,
+            0.5164232026143463
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "note": "native header declares 1286; 1285 extruding layer records; mismatch requires review",
+          "status": "unknown",
+          "check": "declared_layer_count"
+        },
+        {
+          "note": "max linear 3.19 mm3/s; no calibrated Q_limit",
+          "status": "unknown",
+          "check": "volumetric_flow"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_05_classic_000",
+      "organizer_case": "5. Рабочее колесо насоса Wilo - 5D",
+      "mode": "classic",
+      "phase_deg": 0,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 1546.40738315235,
+          "SUPPORT": 34578.720140625934
+        },
+        "normal_structure_tensor": [
+          [
+            2.2283879626591556e-17,
+            -4.720580433228548e-09,
+            3.3636925730296522e-15
+          ],
+          [
+            -4.720580433228548e-09,
+            0.999999999999492,
+            -7.125591059418534e-07
+          ],
+          [
+            3.3636925730296522e-15,
+            -7.125591059418534e-07,
+            5.077404794609109e-13
+          ]
+        ],
+        "normalized_gcode_sha256": "55b9203be5cf4530556339d7f3498fde3c76550d6cb626bde33e070acf1db1f1",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 865660.9657983462,
+        "part_volume_mm3": 152969.7845466206,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 609162,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5003375116276224,
+            1.09745872097605e-09,
+            -0.0017744840194179742
+          ],
+          [
+            1.0974587209760489e-09,
+            2.536980832541381e-13,
+            3.5603067940389577e-07
+          ],
+          [
+            -0.0017744840194179807,
+            3.5603067940389577e-07,
+            0.4996624883721231
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "check": "declared_layer_count",
+          "status": "unknown",
+          "note": "native header declares 170; 169 extruding layer records; mismatch requires review"
+        },
+        {
+          "check": "volumetric_flow",
+          "status": "unknown",
+          "note": "max linear 14.22 mm3/s; no calibrated Q_limit"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_05_classic_090",
+      "organizer_case": "5. Рабочее колесо насоса Wilo - 5D",
+      "mode": "classic",
+      "phase_deg": 90,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_slice_verification",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 998.9991908903305,
+          "SUPPORT": 57461.928562486995
+        },
+        "normal_structure_tensor": [
+          [
+            2.2283911383776918e-17,
+            -3.3636949695712288e-15,
+            -4.720583796922326e-09
+          ],
+          [
+            -3.3636949695712288e-15,
+            5.077404793736482e-13,
+            7.125591058806212e-07
+          ],
+          [
+            -4.720583796922326e-09,
+            7.125591058806212e-07,
+            0.9999999999994933
+          ]
+        ],
+        "normalized_gcode_sha256": "3ab741c49c6af46c0066dbf4e11ffa38a84f0b10433780aba4282a35521ab7ed",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 868264.7228853679,
+        "part_volume_mm3": 152971.83002238013,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 510846,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.6117471216113007,
+            -0.0012255872419849622,
+            3.761106899394271e-09
+          ],
+          [
+            -0.0012255872419849603,
+            0.388252878388502,
+            -2.7665890935885356e-07
+          ],
+          [
+            3.76110689939427e-09,
+            -2.7665890935885356e-07,
+            1.9715357970087534e-13
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [
+        {
+          "check": "model_height_coverage",
+          "note": "top extrusion Z=134.4 vs model top=134.64566040039062, tolerance=0.161",
+          "status": "fail"
+        }
+      ],
+      "unknown_native_checks": [
+        {
+          "check": "declared_layer_count",
+          "note": "native header declares 449; 448 extruding layer records; mismatch requires review",
+          "status": "unknown"
+        },
+        {
+          "check": "volumetric_flow",
+          "note": "max linear 14.27 mm3/s; no calibrated Q_limit",
+          "status": "unknown"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_05_cylindrical_000",
+      "organizer_case": "5. Рабочее колесо насоса Wilo - 5D",
+      "mode": "cylindrical",
+      "phase_deg": 0,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": true,
+      "strict_physics_status": "needs_input",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {},
+        "normal_structure_tensor": [
+          [
+            0.5003276389467195,
+            2.1264242921094376e-09,
+            0.009300388293424082
+          ],
+          [
+            2.1264242921094376e-09,
+            3.854732846500395e-11,
+            3.5359435536747556e-07
+          ],
+          [
+            0.009300388293424082,
+            3.5359435536747556e-07,
+            0.49967236101472273
+          ]
+        ],
+        "normalized_gcode_sha256": "f9ec4078ef14c3169d703461bdc1a45153befe170fefa0005309f7f532fced47",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 500986.662310956,
+        "part_volume_mm3": 161405.46728846154,
+        "physical_print_approval": false,
+        "pose_source": "analysis_assumption",
+        "road_count": 1232241,
+        "rotary_subdivisions": 1189,
+        "tangent_structure_tensor": [
+          [
+            0.25363312990336834,
+            0.00031605107674560485,
+            -0.003957506465547029
+          ],
+          [
+            0.00031605107674560485,
+            0.4896196822456053,
+            -0.0045805889250656725
+          ],
+          [
+            -0.003957506465547029,
+            -0.0045805889250656725,
+            0.25674718785097483
+          ]
+        ]
+      },
+      "kinematics_assumed": true,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "check": "volumetric_flow",
+          "status": "unknown",
+          "note": "max linear 7.38 mm3/s; no calibrated Q_limit"
+        }
+      ],
+      "native_physics_context": {
+        "mode_specific_settings": {
+          "reinforcement_layer_count_cylindrical": [
+            1
+          ],
+          "cylindrical_mode_overlap": 0,
+          "speed_wall_0_cylindrical": 20.0,
+          "fiber_infill_pattern_cylindrical": [
+            2
+          ],
+          "cylindrical_raft_type": "none",
+          "speed_topbottom_cylindrical": 20.0,
+          "speed_travel_cylindrical": 60,
+          "reinforcement_wall_count_cylindrical": [
+            0
+          ],
+          "cylindrical_raft_extruder_nr": "0",
+          "speed_support_infill_cylindrical": 40.0,
+          "cylindrical_infill_extruder_nr": "-1",
+          "speed_roofing_cylindrical": 20.0,
+          "reinforcement_bottom_skin_layers_cylindrical": [
+            0
+          ],
+          "cool_chamber_fan_speed_min_cylindrical": 0.0,
+          "reinforcement_start_layer_cylindrical": [
+            1
+          ],
+          "speed_wall_x_cylindrical": 40.0,
+          "cylindrical_raft_gap": 0.6,
+          "reinforcement_enabled_cylindrical": false,
+          "fiber_density_cylindrical": 50,
+          "support_xy_distance_cylindrical": 0.2,
+          "cylindrical_fiber_infill_extruder_nr": -1,
+          "cool_fan_speed_min_cylindrical": 0.0,
+          "speed_print_layer_0_cylindrical": 20.0,
+          "speed_infill_cylindrical": 40.0,
+          "reinforcement_intermediate_layers_cylindrical": [
+            0
+          ],
+          "fiber_infill_angles_cylindrical": [
+            45
+          ],
+          "fiber_infill_round_connect_cylindrical": [
+            1
+          ],
+          "speed_travel_layer_0_cylindrical": 30.0,
+          "reinforcement_top_skin_layers_cylindrical": [
+            0
+          ],
+          "cool_chamber_fan_speed_max_cylindrical": 0.0,
+          "support_enable_cylindrical": false,
+          "cylindrical_layer_height": 0.3,
+          "support_offset_cylindrical": 0.2,
+          "cool_fan_enabled_cylindrical": true,
+          "fiber_line_distance_cylindrical": [
+            1.2
+          ],
+          "cylindrical_round_segments": 128,
+          "cylindrical_layer_height_0": 0.3,
+          "support_top_distance_cylindrical": 0.1,
+          "cool_fan_speed_max_cylindrical": 0.0,
+          "cylindrical_mode_base_diameter": 7.98,
+          "cylindrical_raft_diameter": 10.98,
+          "support_z_distance_cylindrical": 0.1,
+          "support_bottom_distance_cylindrical": 0.1,
+          "cylindrical_raft_base_height": 15,
+          "cylindrical_raft_thickness": 0.3
+        },
+        "filament_diameter_mm": 1.75,
+        "source": "native_effective_stack"
+      }
+    },
+    {
+      "id": "case_05_cylindrical_090",
+      "organizer_case": "5. Рабочее колесо насоса Wilo - 5D",
+      "mode": "cylindrical",
+      "phase_deg": 90,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": true,
+      "strict_physics_status": "needs_input",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {},
+        "normal_structure_tensor": [
+          [
+            0.49954198265675775,
+            4.594356609791431e-09,
+            0.0014322568505467197
+          ],
+          [
+            4.594356609791431e-09,
+            4.206232497638547e-11,
+            3.589488260615266e-07
+          ],
+          [
+            0.0014322568505467197,
+            3.589488260615266e-07,
+            0.5004580173012502
+          ]
+        ],
+        "normalized_gcode_sha256": "ee8e148c70f81c1a69680a13a9e433a1ef0c850e434c8a1bb9c7d4ae0a626eb5",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 500990.84737688326,
+        "part_volume_mm3": 161408.9856626163,
+        "physical_print_approval": false,
+        "pose_source": "analysis_assumption",
+        "road_count": 1231212,
+        "rotary_subdivisions": 1179,
+        "tangent_structure_tensor": [
+          [
+            0.25322827465945535,
+            -0.0008002405651946518,
+            -0.00039809187688540093
+          ],
+          [
+            -0.0008002405651946518,
+            0.48961498607057913,
+            -5.9345623797458304e-05
+          ],
+          [
+            -0.00039809187688540093,
+            -5.9345623797458304e-05,
+            0.25715673927001786
+          ]
+        ]
+      },
+      "kinematics_assumed": true,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "status": "unknown",
+          "check": "volumetric_flow",
+          "note": "max linear 7.38 mm3/s; no calibrated Q_limit"
+        }
+      ],
+      "native_physics_context": {
+        "filament_diameter_mm": 1.75,
+        "mode_specific_settings": {
+          "support_bottom_distance_cylindrical": 0.1,
+          "cylindrical_raft_type": "none",
+          "cool_fan_speed_max_cylindrical": 0.0,
+          "cylindrical_raft_gap": 0.6,
+          "reinforcement_bottom_skin_layers_cylindrical": [
+            0
+          ],
+          "fiber_line_distance_cylindrical": [
+            1.2
+          ],
+          "cylindrical_mode_overlap": 0,
+          "reinforcement_wall_count_cylindrical": [
+            0
+          ],
+          "speed_wall_x_cylindrical": 40.0,
+          "speed_roofing_cylindrical": 20.0,
+          "speed_infill_cylindrical": 40.0,
+          "speed_travel_cylindrical": 60,
+          "cylindrical_mode_base_diameter": 7.98,
+          "reinforcement_enabled_cylindrical": false,
+          "reinforcement_intermediate_layers_cylindrical": [
+            0
+          ],
+          "cylindrical_raft_extruder_nr": "0",
+          "support_offset_cylindrical": 0.2,
+          "speed_topbottom_cylindrical": 20.0,
+          "cylindrical_fiber_infill_extruder_nr": -1,
+          "speed_print_layer_0_cylindrical": 20.0,
+          "cylindrical_layer_height": 0.3,
+          "reinforcement_top_skin_layers_cylindrical": [
+            0
+          ],
+          "reinforcement_start_layer_cylindrical": [
+            1
+          ],
+          "cylindrical_raft_diameter": 10.98,
+          "support_top_distance_cylindrical": 0.1,
+          "support_z_distance_cylindrical": 0.1,
+          "cool_chamber_fan_speed_min_cylindrical": 0.0,
+          "speed_wall_0_cylindrical": 20.0,
+          "cylindrical_layer_height_0": 0.3,
+          "cylindrical_raft_base_height": 15,
+          "support_xy_distance_cylindrical": 0.2,
+          "cool_chamber_fan_speed_max_cylindrical": 0.0,
+          "fiber_infill_round_connect_cylindrical": [
+            1
+          ],
+          "cool_fan_speed_min_cylindrical": 0.0,
+          "fiber_infill_pattern_cylindrical": [
+            2
+          ],
+          "fiber_density_cylindrical": 50,
+          "cylindrical_raft_thickness": 0.3,
+          "cylindrical_infill_extruder_nr": "-1",
+          "cool_fan_enabled_cylindrical": true,
+          "support_enable_cylindrical": false,
+          "speed_support_infill_cylindrical": 40.0,
+          "speed_travel_layer_0_cylindrical": 30.0,
+          "cylindrical_round_segments": 128,
+          "reinforcement_layer_count_cylindrical": [
+            1
+          ],
+          "fiber_infill_angles_cylindrical": [
+            45
+          ]
+        },
+        "source": "native_effective_stack"
+      }
+    },
+    {
+      "id": "case_05_cylindrical_full",
+      "organizer_case": "5. Рабочее колесо насоса Wilo - 5D",
+      "status": "route_refused_before_slicing",
+      "reason": "requested route cylindrical_full is infeasible: ['axis: rotational symmetry (inertia + sector radii)', 'Stereotech prints pump impellers in 5D without supports (5dtech.pro/printers/solutions/pumpwheels)', 'part has a bore: Spiral is the matching 5D route']"
+    },
+    {
+      "id": "case_06_classic_000",
+      "organizer_case": "6. Крыльчатка охлаждения электродвигателя - 3D",
+      "mode": "classic",
+      "phase_deg": 0,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": true,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 1330.8584808386922,
+          "SUPPORT": 11421.562259833649
+        },
+        "normal_structure_tensor": [
+          [
+            4.3438088133361287e-17,
+            6.590757781420987e-09,
+            7.194127646402792e-17
+          ],
+          [
+            6.590757781420987e-09,
+            1.0,
+            1.0915478743100946e-08
+          ],
+          [
+            7.194127646402792e-17,
+            1.0915478743100946e-08,
+            1.1914767619108863e-16
+          ]
+        ],
+        "normalized_gcode_sha256": "c62a5e970afbbb3d92e2427e7a1ea67aa633c070f6f9faef04f9919df0550a94",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 713209.146587595,
+        "part_volume_mm3": 54008.767983289064,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 308379,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5000007245185973,
+            -3.344710521168043e-09,
+            0.0045189822907076875
+          ],
+          [
+            -3.3447105211680435e-09,
+            8.194303049457837e-17,
+            -5.4875150024987225e-09
+          ],
+          [
+            0.0045189822907076875,
+            -5.4875150024987225e-09,
+            0.49999927548140244
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "status": "unknown",
+          "check": "volumetric_flow",
+          "note": "max linear 2.89 mm3/s; no calibrated Q_limit"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_06_classic_090",
+      "organizer_case": "6. Крыльчатка охлаждения электродвигателя - 3D",
+      "mode": "classic",
+      "phase_deg": 90,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": true,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 1055.6947875072383,
+          "SUPPORT": 65789.47861050138
+        },
+        "normal_structure_tensor": [
+          [
+            4.3438089081656374e-17,
+            7.194127765286901e-17,
+            -6.590757853362265e-09
+          ],
+          [
+            7.194127765286901e-17,
+            1.1914767752784933e-16,
+            -1.0915478804333289e-08
+          ],
+          [
+            -6.590757853362265e-09,
+            -1.0915478804333289e-08,
+            1.0
+          ]
+        ],
+        "normalized_gcode_sha256": "f4ead23ccba272637c9aa0986f785249d52aaee15f7e70d0605a4ad051226801",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 736230.4886710478,
+        "part_volume_mm3": 53215.98753415921,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 384598,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.41238777097996354,
+            0.0010937834844460268,
+            2.7298871106102518e-09
+          ],
+          [
+            0.0010937834844460279,
+            0.5876122290200375,
+            6.4212776676005035e-09
+          ],
+          [
+            2.7298871106102518e-09,
+            6.421277667600505e-09,
+            8.808334491155058e-17
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "note": "native header declares 845; 844 extruding layer records; mismatch requires review",
+          "check": "declared_layer_count",
+          "status": "unknown"
+        },
+        {
+          "note": "max linear 2.89 mm3/s; no calibrated Q_limit",
+          "check": "volumetric_flow",
+          "status": "unknown"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_07_classic_000",
+      "organizer_case": "7. Ось вращения передающих звёзд формовщика коробов Krones - 5D",
+      "mode": "classic",
+      "phase_deg": 0,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": true,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 397.91879322314253,
+          "SUPPORT": 199.85287464341482
+        },
+        "normal_structure_tensor": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "normalized_gcode_sha256": "a214671945b8ab9dda48e1afdee416422c4bec55bbc0e8cf24c5b6f87c42ba6b",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 377155.5215065336,
+        "part_volume_mm3": 15245.766287374185,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 214800,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5440466116972369,
+            -0.017600154038408016,
+            0.0
+          ],
+          [
+            -0.017600154038408016,
+            0.4559533883027636,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "check": "declared_layer_count",
+          "status": "unknown",
+          "note": "native header declares 404; 403 extruding layer records; mismatch requires review"
+        },
+        {
+          "check": "volumetric_flow",
+          "status": "unknown",
+          "note": "max linear 3.02 mm3/s; no calibrated Q_limit"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_07_classic_090",
+      "organizer_case": "7. Ось вращения передающих звёзд формовщика коробов Krones - 5D",
+      "mode": "classic",
+      "phase_deg": 90,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": false,
+      "strict_physics_status": "needs_calibration",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 631.6701712381125,
+          "SUPPORT": 1378.1468997768243
+        },
+        "normal_structure_tensor": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            6.123233995736766e-17
+          ],
+          [
+            0.0,
+            6.123233995736766e-17,
+            3.749399456654644e-33
+          ]
+        ],
+        "normalized_gcode_sha256": "7ab3d18ce80603b2c35292ba53452d5d35643c363ec94fcdb0c982bcc6506416",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 381106.3052742837,
+        "part_volume_mm3": 15246.257205404956,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 57403,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.510685864490346,
+            -3.9200569114162043e-20,
+            0.000640193876984898
+          ],
+          [
+            -3.920056911416191e-20,
+            1.8346341538133318e-33,
+            -2.996184949147262e-17
+          ],
+          [
+            0.0006401938769848994,
+            -2.996184949147262e-17,
+            0.48931413550965386
+          ]
+        ]
+      },
+      "kinematics_assumed": false,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "note": "max linear 3.06 mm3/s; no calibrated Q_limit",
+          "check": "volumetric_flow",
+          "status": "unknown"
+        }
+      ],
+      "native_physics_context": null
+    },
+    {
+      "id": "case_07_cylindrical",
+      "organizer_case": "7. Ось вращения передающих звёзд формовщика коробов Krones - 5D",
+      "status": "route_refused_before_slicing",
+      "reason": "requested route cylindrical is infeasible: ['axis: coaxial cylindrical surfaces (29% of area)', 'working profile must have no layer steps; 5D layers follow the profile', 'no axial bore for a mandrel: 5D Spiral would cut the part']"
+    },
+    {
+      "id": "case_07_cylindrical_full_000",
+      "organizer_case": "7. Ось вращения передающих звёзд формовщика коробов Krones - 5D",
+      "mode": "cylindrical_full",
+      "phase_deg": 0,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": true,
+      "strict_physics_status": "needs_input",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": null,
+      "kinematics_assumed": true,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "check": "volumetric_flow",
+          "note": "max linear 2.88 mm3/s; no calibrated Q_limit",
+          "status": "unknown"
+        }
+      ],
+      "native_physics_context": {
+        "source": "native_effective_stack",
+        "filament_diameter_mm": 1.75,
+        "mode_specific_settings": {
+          "cool_fan_speed_max_cylindrical": 0.0,
+          "fiber_line_distance_cylindrical": [
+            0.8
+          ],
+          "fiber_infill_pattern_cylindrical": [
+            2
+          ],
+          "reinforcement_top_skin_layers_cylindrical": [
+            0
+          ],
+          "support_offset_cylindrical": 0.2,
+          "reinforcement_intermediate_layers_cylindrical": [
+            0
+          ],
+          "speed_wall_x_cylindrical": 50.0,
+          "fiber_density_cylindrical": 50,
+          "speed_wall_0_cylindrical": 25.0,
+          "reinforcement_wall_count_cylindrical": [
+            0
+          ],
+          "cylindrical_fiber_infill_extruder_nr": -1,
+          "cylindrical_mode_overlap": 0,
+          "speed_travel_cylindrical": 60,
+          "support_xy_distance_cylindrical": 0.2,
+          "support_bottom_distance_cylindrical": 0.1,
+          "cylindrical_layer_height": 0.1,
+          "reinforcement_bottom_skin_layers_cylindrical": [
+            0
+          ],
+          "speed_print_layer_0_cylindrical": 25.0,
+          "cylindrical_raft_base_height": 15,
+          "reinforcement_start_layer_cylindrical": [
+            2
+          ],
+          "fiber_infill_round_connect_cylindrical": [
+            1
+          ],
+          "cylindrical_raft_diameter": 9.0,
+          "cylindrical_raft_thickness": 0.3,
+          "cylindrical_raft_extruder_nr": "0",
+          "fiber_infill_angles_cylindrical": [
+            45
+          ],
+          "support_z_distance_cylindrical": 0.1,
+          "reinforcement_enabled_cylindrical": false,
+          "cylindrical_round_segments": 128,
+          "speed_topbottom_cylindrical": 25.0,
+          "reinforcement_layer_count_cylindrical": [
+            2
+          ],
+          "cool_chamber_fan_speed_min_cylindrical": 0.0,
+          "cool_chamber_fan_speed_max_cylindrical": 0.0,
+          "cylindrical_raft_type": "solid",
+          "cool_fan_speed_min_cylindrical": 0.0,
+          "cylindrical_mode_base_diameter": 6.2,
+          "speed_roofing_cylindrical": 25.0,
+          "speed_travel_layer_0_cylindrical": 30.0,
+          "speed_support_infill_cylindrical": 50.0,
+          "cool_fan_enabled_cylindrical": true,
+          "cylindrical_infill_extruder_nr": "-1",
+          "cylindrical_layer_height_0": 0.3,
+          "support_top_distance_cylindrical": 0.1,
+          "speed_infill_cylindrical": 50.0,
+          "cylindrical_raft_gap": 0.4,
+          "support_enable_cylindrical": false
+        }
+      }
+    },
+    {
+      "id": "case_07_cylindrical_full_090",
+      "organizer_case": "7. Ось вращения передающих звёзд формовщика коробов Krones - 5D",
+      "mode": "cylindrical_full",
+      "phase_deg": 90,
+      "status": "slice_completed",
+      "decision_and_source_binding": "pass",
+      "earlier_failed_attempt_preserved": true,
+      "strict_physics_status": "needs_input",
+      "gcode_archive_hash": "pass",
+      "nominal_deposition": null,
+      "kinematics_assumed": true,
+      "failed_native_checks": [],
+      "unknown_native_checks": [
+        {
+          "note": "max linear 2.88 mm3/s; no calibrated Q_limit",
+          "status": "unknown",
+          "check": "volumetric_flow"
+        }
+      ],
+      "native_physics_context": {
+        "mode_specific_settings": {
+          "cylindrical_raft_gap": 0.4,
+          "reinforcement_enabled_cylindrical": false,
+          "reinforcement_start_layer_cylindrical": [
+            2
+          ],
+          "support_enable_cylindrical": false,
+          "speed_wall_x_cylindrical": 50.0,
+          "speed_print_layer_0_cylindrical": 25.0,
+          "fiber_infill_pattern_cylindrical": [
+            2
+          ],
+          "support_z_distance_cylindrical": 0.1,
+          "speed_wall_0_cylindrical": 25.0,
+          "cylindrical_round_segments": 128,
+          "fiber_infill_angles_cylindrical": [
+            45
+          ],
+          "reinforcement_intermediate_layers_cylindrical": [
+            0
+          ],
+          "cool_chamber_fan_speed_min_cylindrical": 0.0,
+          "cylindrical_raft_base_height": 15,
+          "cylindrical_raft_type": "solid",
+          "fiber_line_distance_cylindrical": [
+            0.8
+          ],
+          "cylindrical_raft_thickness": 0.3,
+          "speed_travel_layer_0_cylindrical": 30.0,
+          "reinforcement_layer_count_cylindrical": [
+            2
+          ],
+          "cylindrical_layer_height_0": 0.3,
+          "cool_fan_speed_max_cylindrical": 0.0,
+          "support_offset_cylindrical": 0.2,
+          "cylindrical_infill_extruder_nr": "-1",
+          "support_bottom_distance_cylindrical": 0.1,
+          "cylindrical_mode_base_diameter": 6.2,
+          "speed_support_infill_cylindrical": 50.0,
+          "speed_roofing_cylindrical": 25.0,
+          "cylindrical_fiber_infill_extruder_nr": -1,
+          "cylindrical_raft_diameter": 9.0,
+          "speed_travel_cylindrical": 60,
+          "speed_infill_cylindrical": 50.0,
+          "speed_topbottom_cylindrical": 25.0,
+          "cylindrical_layer_height": 0.1,
+          "reinforcement_top_skin_layers_cylindrical": [
+            0
+          ],
+          "fiber_density_cylindrical": 50,
+          "cool_chamber_fan_speed_max_cylindrical": 0.0,
+          "fiber_infill_round_connect_cylindrical": [
+            1
+          ],
+          "reinforcement_wall_count_cylindrical": [
+            0
+          ],
+          "cylindrical_mode_overlap": 0,
+          "cool_fan_speed_min_cylindrical": 0.0,
+          "support_xy_distance_cylindrical": 0.2,
+          "cylindrical_raft_extruder_nr": "0",
+          "reinforcement_bottom_skin_layers_cylindrical": [
+            0
+          ],
+          "cool_fan_enabled_cylindrical": true,
+          "support_top_distance_cylindrical": 0.1
+        },
+        "filament_diameter_mm": 1.75,
+        "source": "native_effective_stack"
+      }
+    }
+  ]
+}

@@ -10,6 +10,19 @@ from ste_planner import planner, gcode
 from ste_planner import runtime_adapter as A
 
 
+def test_5d_mesh_representation_survives_actual_vendor_double_index_algorithm():
+    mesh = make_box(2, 3, 4)
+    v, f = mesh.vertices, mesh.faces
+    # Reproduce CLIParserBackend StartSliceJob's independent two operations:
+    # flat_verts=np.take(vertices,faces.flatten()); Trimesh(flat_verts,faces).
+    broken = v[f.reshape(-1)][f]
+    assert not np.array_equal(broken, v[f])
+    vv, ff = A.sequential_triangles(v, f)
+    vendor_triangles = vv[ff.reshape(-1)][ff]
+    assert np.array_equal(vendor_triangles, v[f])
+    assert np.array_equal(vv[ff], v[f])
+
+
 def test_scene_axis_conversion_and_placed_modifier_parenting():
     rotation = [[0, -1, 0], [1, 0, 0], [0, 0, 1]]
     parent = A.scene_transform(rotation, [12, -7, 5])

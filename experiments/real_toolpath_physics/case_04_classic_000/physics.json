@@ -1,0 +1,106 @@
+{
+  "archive": {
+    "path": "part.gcode.gz",
+    "sha256": "e16c7b036e4165c1531ff521f9ab40ac41d3630b0608407389f17a7fd3b08ee8",
+    "uncompressed_bytes": 129028943,
+    "uncompressed_sha256": "7218eab56d01113c7ad6b2bb0dcd49c29c0bf1bc9383cf0c5fea9fccdaf6248a"
+  },
+  "diameter_source": "nominal selected STE material profile, not measured filament",
+  "filament_diameter_mm": 1.75,
+  "id": "case_04_classic_000",
+  "input": {
+    "analysis_only": true,
+    "id": "case_04_classic_000",
+    "mode": "classic",
+    "organizer_case": "4. Фигурка",
+    "orientation_parameter": "build tilt about X",
+    "orientation_phase_deg": 0,
+    "physical_print_approval": false,
+    "planner_status": "candidate",
+    "specimens_per_slice": 1,
+    "stl": "data\\examples\\4. Фигурка\\Декоративная фигурка.stl",
+    "stl_sha256": "e9fa3c6831fc511bfd37174e48077371956b725c544bec96e6d7d456db4d016c",
+    "tz": "data\\examples\\4. Фигурка\\Техническое задание для декоративной фигурки.docx"
+  },
+  "physical_print_approval": false,
+  "strict": {
+    "domain": {},
+    "evidence": "simulation",
+    "model_class": "A",
+    "model_id": "sliced_physics",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "inputs": {},
+        "model_id": "sliced_physics",
+        "note": "actual slices; no measured constants or service boundary conditions invented"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": {
+      "deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 1539.7795808390324,
+          "SUPPORT": 11236.361448367752
+        },
+        "normal_structure_tensor": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "normalized_gcode_sha256": "d2adea5f2c53258ecdcdf94a3e86f1868a9685161b8ad0d5289365b3d77c8c7e",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 5536487.449709848,
+        "part_volume_mm3": 221747.0936713854,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 3309746,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5025649336325693,
+            -0.001749214496356783,
+            0.0
+          ],
+          [
+            -0.0017492144963567817,
+            0.4974350663674298,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "failure_capacity": null,
+      "gcode_bytes_sha256": "7218eab56d01113c7ad6b2bb0dcd49c29c0bf1bc9383cf0c5fea9fccdaf6248a",
+      "missing": [
+        "measured road/interface constitutive properties and protocol",
+        "volume mesh for toolpath-to-FE transfer"
+      ],
+      "native_failed_checks": [],
+      "physical_print_approval": false,
+      "source_geometry_sha256": "e9fa3c6831fc511bfd37174e48077371956b725c544bec96e6d7d456db4d016c",
+      "stiffness": null
+    }
+  }
+}

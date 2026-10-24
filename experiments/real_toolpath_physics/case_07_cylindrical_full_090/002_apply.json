@@ -1,0 +1,105 @@
+{
+  "nodes": [
+    {
+      "modifier": {
+        "anti_overhang_mesh": false,
+        "support_mesh_drop_down": true,
+        "support_mesh": false
+      },
+      "parent": "Root",
+      "name": "Ось вращения передающих звёзд.STL",
+      "world_bounds": [
+        [
+          -10.046319961547852,
+          0.0,
+          -30.850000381469727
+        ],
+        [
+          13.450000762939453,
+          40.5,
+          30.850000381469727
+        ]
+      ],
+      "vertices": 21204,
+      "matrix": [
+        [
+          6.123234262925839e-17,
+          0.0,
+          1.0,
+          24.781625747680664
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          6.123234262925839e-17,
+          30.850000381469727
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "mesh_sha256": "2f147e3efe8cee5eac042b71905f824134080ccdb23fb35e2e67c04178a2e77e"
+    }
+  ],
+  "qt_thread": true,
+  "readback": {
+    "actual": {
+      "support_interface_enable": false,
+      "cool_fan_enabled": true,
+      "support_line_width": 0.4,
+      "support_xy_distance": 0.7,
+      "material_print_temperature": 260.0,
+      "cylindrical_mode_base_diameter": 6.2,
+      "line_width": 0.4,
+      "printing_mode": "cylindrical_full",
+      "wall_line_count": 4,
+      "material_bed_temperature": 95.0,
+      "bottom_layers": 12,
+      "machine_height": 231.1,
+      "speed_print": 50.0,
+      "support_bottom_distance": 0.1,
+      "cylindrical_mode_overlap": 0,
+      "support_roof_enable": false,
+      "wall_thickness": 0.8,
+      "top_layers": 12,
+      "support_bottom_enable": false,
+      "machine_center_is_zero": true,
+      "machine_depth": 300.3,
+      "machine_nozzle_size": 0.4,
+      "retraction_enable": true,
+      "machine_width": 351,
+      "layer_height": 0.1,
+      "infill_pattern": "lines",
+      "material_flow": 100,
+      "support_angle": 50,
+      "retraction_speed": 20,
+      "support_type": "everywhere",
+      "layer_height_0": 0.3,
+      "machine_heated_bed": false,
+      "adhesion_type": "raft",
+      "support_top_distance": 0.1,
+      "support_enable": false,
+      "non_printing_base_diameter": 6.0,
+      "retraction_amount": 2.11,
+      "cool_fan_speed": 0.0,
+      "infill_sparse_density": 100.0
+    },
+    "differences": [],
+    "quality_id": "ste_planner_quality_1591ffb03ea3476799042ae167918e44",
+    "machine_definition": "hte530v5.2.4",
+    "status": "pass",
+    "material_id": "enduse_pa6"
+  },
+  "decision_sha256": "51cff813532afcb833950e129bc8539dd4021e0de48434b4e619382c4b9c0233",
+  "status": "analysis_scene",
+  "physical_print_approval": false
+}

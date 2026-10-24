@@ -1,0 +1,105 @@
+{
+  "decision_sha256": "d7402f176fcd22a9bdc372eb3f8291322154326ba09fffb9d97242a68a32060f",
+  "readback": {
+    "material_id": "sealant_tpu_A95",
+    "quality_id": "ste_planner_quality_8f2dab2906a249969608d732b1baa050",
+    "status": "pass",
+    "machine_definition": "hte530v5.2.4",
+    "differences": [],
+    "actual": {
+      "cylindrical_mode_base_diameter": 15.99,
+      "speed_print": 30.0,
+      "machine_nozzle_size": 0.4,
+      "support_angle": 50,
+      "machine_heated_bed": false,
+      "machine_height": 231.1,
+      "wall_line_count": 4,
+      "infill_pattern": "lines",
+      "support_top_distance": 0.1,
+      "cylindrical_mode_overlap": 0,
+      "support_roof_enable": false,
+      "retraction_speed": 37,
+      "support_xy_distance": 0.7,
+      "retraction_amount": 5.7,
+      "adhesion_type": "brim",
+      "bottom_layers": 6,
+      "support_interface_enable": false,
+      "printing_mode": "cylindrical",
+      "machine_depth": 300.3,
+      "material_bed_temperature": 60.0,
+      "support_line_width": 0.4,
+      "top_layers": 6,
+      "machine_center_is_zero": true,
+      "infill_sparse_density": 100.0,
+      "non_printing_base_diameter": 15.99,
+      "cool_fan_speed": 20.0,
+      "support_type": "everywhere",
+      "wall_thickness": 0.8,
+      "support_enable": false,
+      "support_bottom_distance": 0.1,
+      "line_width": 0.4,
+      "layer_height_0": 0.3,
+      "cool_fan_enabled": true,
+      "retraction_enable": true,
+      "support_bottom_enable": false,
+      "machine_width": 351,
+      "layer_height": 0.2,
+      "material_print_temperature": 215.0,
+      "material_flow": 100
+    }
+  },
+  "status": "analysis_scene",
+  "qt_thread": true,
+  "nodes": [
+    {
+      "vertices": 7284,
+      "modifier": {
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false,
+        "support_mesh": false
+      },
+      "name": "Колесо.STL",
+      "parent": "Root",
+      "matrix": [
+        [
+          6.920556905321007e-10,
+          1.0,
+          3.676568383070844e-09,
+          -29.5
+        ],
+        [
+          6.920555795097982e-10,
+          3.676568383070844e-09,
+          -1.0,
+          -3.441573781515217e-08
+        ],
+        [
+          -1.0,
+          6.920556905321007e-10,
+          -6.920555795097982e-10,
+          29.5
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "mesh_sha256": "a69b246edb7461a16e54d3bc6a9acefae23f74284e25d0c1eef23a574a21b1cc",
+      "world_bounds": [
+        [
+          -29.494903564453125,
+          -3.552713678800501e-15,
+          -29.49872589111328
+        ],
+        [
+          29.5,
+          25.0,
+          29.49872589111328
+        ]
+      ]
+    }
+  ],
+  "physical_print_approval": false
+}

@@ -18,6 +18,17 @@ class ApplyError(ValueError):
     pass
 
 
+def sequential_triangles(vertices, faces):
+    """Preserve triangles for 7.10 CLIParser's double-index preprocessing.
+
+    That backend flattens v[f] and then uses the ORIGINAL f again. Sequential
+    triangle indices make both passes identical, without geometry repair or the
+    backend's off-by-one allocation for completely unindexed mesh data.
+    """
+    v, f = np.asarray(vertices), np.asarray(faces, int)
+    return v[f].reshape(-1, 3), np.arange(f.size, dtype=np.int32).reshape(-1, 3)
+
+
 def file_sha256(path):
     digest = hashlib.sha256()
     with open(path, "rb") as handle:
@@ -60,11 +71,12 @@ def modifier_local_vertices(operation, parent_matrix):
     return local, mesh.faces
 
 
-def preflight(decision, mesh_path, machine_definition, demonstration=False):
+def preflight(decision, mesh_path, machine_definition, demonstration=False, analysis_only=False):
     context = decision.get("calibration_context") or {}
-    if decision.get("route", {}).get("mode") != "classic":
+    mode = decision.get("route", {}).get("mode")
+    if mode != "classic" and not (analysis_only and mode in ("cylindrical", "cylindrical_full")):
         raise ApplyError("needs_input: 5D requires machine kinematics, head/mandrel geometry and full trajectory collision checks")
-    if context.get("machine_id") != machine_definition or context.get("printing_mode") != "classic":
+    if context.get("machine_id") != machine_definition or context.get("printing_mode") != mode:
         raise ApplyError("machine/mode context mismatch")
     if file_sha256(mesh_path) != context.get("geometry_sha256"):
         raise ApplyError("source STL SHA-256 differs")
@@ -78,11 +90,11 @@ def preflight(decision, mesh_path, machine_definition, demonstration=False):
     for key, value in assigned.items():
         if key in decision.get("effective_settings", {}) and not _equal(value, decision["effective_settings"][key]):
             raise ApplyError("compiled patch disagrees with expected readback: " + key)
-    if decision.get("status") == "infeasible":
+    if decision.get("status") == "infeasible" and not analysis_only:
         raise ApplyError("infeasible plan cannot be applied")
     result = decision.get("functional_analysis") or {}
     value = result.get("value") or {}
-    if value.get("selected") and not value.get("applied") and not demonstration:
+    if value.get("selected") and not value.get("applied") and not demonstration and not analysis_only:
         raise ApplyError("functional recommendation is not applicable; use an isolated software demonstration")
     operations = decision.get("scene_operations") or []
     if not operations or operations[0].get("op") != "load_mesh":
@@ -134,7 +146,7 @@ def readback(app, decision):
             "material_id": extruder.material.getId(), "quality_id": extruder.quality.getId()}
 
 
-def create_operation(app, decision, mesh_path, demonstration=False):
+def create_operation(app, decision, mesh_path, demonstration=False, analysis_only=False):
     """Stage an operation without touching the existing scene or stack contents.
 
     Caller must redo/check before pushing to the Uranium undo stack: push()
@@ -154,13 +166,13 @@ def create_operation(app, decision, mesh_path, demonstration=False):
 
     if QThread.currentThread() != app.thread():
         raise ApplyError("Qt thread required")
-    if demonstration:
+    if demonstration or analysis_only:
         isolated_root = os.environ.get("STE_PLANNER_ISOLATED_ROOT")
         if not isolated_root or os.path.commonpath([os.path.realpath(isolated_root),
                 os.path.realpath(Resources.getConfigStoragePath())]) != os.path.realpath(isolated_root):
             raise ApplyError("software fixture may be applied only in the isolated validation profile")
     stack = app.getGlobalContainerStack()
-    preflight(decision, mesh_path, stack.definition.getId(), demonstration)
+    preflight(decision, mesh_path, stack.definition.getId(), demonstration, analysis_only)
     scene = app.getController().getScene()
     # Global settings affect all plates. Require a clean project instead of
     # silently modifying settings for pre-existing models on another plate.
@@ -195,6 +207,8 @@ def create_operation(app, decision, mesh_path, demonstration=False):
 
     def node_from_mesh(vertices, faces, name):
         node = SteSlicerSceneNode(name=name)
+        if decision["route"]["mode"] != "classic":
+            vertices, faces = sequential_triangles(vertices, faces)
         node.setMeshData(MeshData(vertices=np.asarray(vertices, dtype=np.float32),
                                   indices=np.asarray(faces, dtype=np.int32), file_name=mesh_path))
         node.setSelectable(True)

@@ -1,0 +1,106 @@
+{
+  "archive": {
+    "path": "part.gcode.gz",
+    "sha256": "854f6da56e6841726d1739b793dee360249f50a5f4bb47b55a133310a0d1f03b",
+    "uncompressed_bytes": 65945463,
+    "uncompressed_sha256": "6e1f2b10cb26fc1a5392a0175aac6fea6ba9c838f899c96068345f92c985fb40"
+  },
+  "diameter_source": "nominal selected STE material profile, not measured filament",
+  "filament_diameter_mm": 1.75,
+  "id": "case_03_classic_090",
+  "input": {
+    "analysis_only": true,
+    "id": "case_03_classic_090",
+    "mode": "classic",
+    "organizer_case": "3. Пыльник Шруса - 3D",
+    "orientation_parameter": "build tilt about X",
+    "orientation_phase_deg": 90,
+    "physical_print_approval": false,
+    "planner_status": "needs_input",
+    "specimens_per_slice": 1,
+    "stl": "data\\examples\\3. Пыльник Шруса - 3D\\Пыльник шруса.STL",
+    "stl_sha256": "70663df1130d2d969063537c506b9ca767e36f3949bfe5c7d5dc0217d58ca467",
+    "tz": "data\\examples\\3. Пыльник Шруса - 3D\\Техническое задание для пыльника шруса.docx"
+  },
+  "physical_print_approval": false,
+  "strict": {
+    "domain": {},
+    "evidence": "simulation",
+    "model_class": "A",
+    "model_id": "sliced_physics",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "inputs": {},
+        "model_id": "sliced_physics",
+        "note": "actual slices; no measured constants or service boundary conditions invented"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": {
+      "deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 1450.8152757965372,
+          "SUPPORT": 53368.09967661467
+        },
+        "normal_structure_tensor": [
+          [
+            2.886523480926163e-09,
+            -5.372637587128051e-05,
+            2.8865261903302057e-09
+          ],
+          [
+            -5.372637587128051e-05,
+            0.9999999942269479,
+            -5.372642630096203e-05
+          ],
+          [
+            2.8865261903302057e-09,
+            -5.372642630096203e-05,
+            2.886528899736787e-09
+          ]
+        ],
+        "normalized_gcode_sha256": "c05061c4749562f75413299248ec38cf7ebbd2adf043eda5d1b24b857b93ab05",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 950797.9514805058,
+        "part_volume_mm3": 71468.03207810936,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 1312239,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.3592550376594664,
+            1.9311086621673486e-05,
+            0.000178968226775163
+          ],
+          [
+            1.9311086621673483e-05,
+            2.8875601542844307e-09,
+            3.443455235477631e-05
+          ],
+          [
+            0.00017896822677516277,
+            3.443455235477631e-05,
+            0.6407449594529734
+          ]
+        ]
+      },
+      "failure_capacity": null,
+      "gcode_bytes_sha256": "6e1f2b10cb26fc1a5392a0175aac6fea6ba9c838f899c96068345f92c985fb40",
+      "missing": [
+        "measured road/interface constitutive properties and protocol",
+        "volume mesh for toolpath-to-FE transfer"
+      ],
+      "native_failed_checks": [],
+      "physical_print_approval": false,
+      "source_geometry_sha256": "70663df1130d2d969063537c506b9ca767e36f3949bfe5c7d5dc0217d58ca467",
+      "stiffness": null
+    }
+  }
+}

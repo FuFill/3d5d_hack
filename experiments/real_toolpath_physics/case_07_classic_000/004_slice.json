@@ -1,0 +1,262 @@
+{
+  "status": "slice_completed",
+  "backend_state": 3,
+  "nodes": [
+    {
+      "name": "Ось вращения передающих звёзд.STL",
+      "parent": "Root",
+      "mesh_sha256": "2358bb8333f83edf3178f3077514bb67a56daca7ffcaeadee6454da6ae492a40",
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -30.850000381469727
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          40.5
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -23.07978630065918
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "modifier": {
+        "support_mesh_drop_down": true,
+        "support_mesh": false,
+        "anti_overhang_mesh": false
+      },
+      "vertices": 3536,
+      "world_bounds": [
+        [
+          -30.850000381469727,
+          0.0,
+          -11.748161315917969
+        ],
+        [
+          30.850000381469727,
+          40.5,
+          11.748159408569336
+        ]
+      ]
+    }
+  ],
+  "project": {
+    "path": "part.3mf",
+    "sha256": "2567e820285438f241fd84d3177ec49ab003ce55beb40f804d574952d17da07a"
+  },
+  "inspection": {
+    "checks": [
+      {
+        "check": "has_layers",
+        "status": "pass",
+        "note": "403 layers"
+      },
+      {
+        "check": "no_empty_layers",
+        "status": "pass",
+        "note": "empty layers: none"
+      },
+      {
+        "check": "extrusion_present",
+        "status": "pass",
+        "note": "filament mm per tool: {0: 6930.5}"
+      },
+      {
+        "check": "finite_coordinates",
+        "status": "pass",
+        "note": "nonfinite numbers on lines: []"
+      },
+      {
+        "check": "supported_commands",
+        "status": "pass",
+        "note": "unrecognised: none"
+      },
+      {
+        "check": "single_extrusion_mode",
+        "status": "pass",
+        "note": "modes: ['absolute']"
+      },
+      {
+        "check": "nozzle_temperature",
+        "status": "pass",
+        "note": "expected 260, found [260.0]"
+      },
+      {
+        "check": "bed_temperature",
+        "status": "pass",
+        "note": "expected 95, found [0.0, 95.0]"
+      },
+      {
+        "check": "mode_consistency",
+        "status": "pass",
+        "note": "rotary extrusion moves: 0; systems: ['G54']"
+      },
+      {
+        "check": "layer_sequence",
+        "status": "pass",
+        "note": "observed 0..402 (403); declared 404"
+      },
+      {
+        "check": "declared_layer_count",
+        "status": "unknown",
+        "note": "native header declares 404; 403 extruding layer records; mismatch requires review"
+      },
+      {
+        "check": "program_termination",
+        "status": "pass",
+        "note": "native end-of-program marker present=True"
+      },
+      {
+        "check": "model_height_coverage",
+        "status": "pass",
+        "note": "top extrusion Z=40.5 vs model top=40.5, tolerance=0.061"
+      },
+      {
+        "check": "volumetric_flow",
+        "status": "unknown",
+        "note": "max linear 3.02 mm3/s; no calibrated Q_limit"
+      },
+      {
+        "check": "z_within_build_volume",
+        "status": "pass",
+        "note": "max Z 40.50 vs 300.0"
+      },
+      {
+        "check": "extrusion_within_build_volume",
+        "status": "pass",
+        "note": "extrusion bounds [[0.0, 0.0, 0.0], [214.149, 169.688, 40.5]]; spatial G92 needs a coordinate transform"
+      },
+      {
+        "check": "layer_schedule",
+        "status": "pass",
+        "note": "planar=True; observed increments=[0.1] mm"
+      }
+    ],
+    "summary": {
+      "layers": 403,
+      "feature_extruded_mm": {
+        "WALL-OUTER": 510.2085100000035,
+        "SKIRT": 166.93541,
+        "WALL-INNER": 1428.9998399999936,
+        "SKIN": 718.0270500000044,
+        "FILL": 3681.2176699999973,
+        "SUPPORT": 83.08916999999893
+      },
+      "rotary_ranges": {
+        "A": [
+          0.0,
+          0.0
+        ],
+        "C": [
+          0.0,
+          0.0
+        ]
+      },
+      "label": "slicer estimate",
+      "time_header": "12841",
+      "support_extruded_mm": 83.08916999999893,
+      "max_linear_flow_mm3_s": 3.0159638687026473,
+      "filament_volume_mm3": {
+        "0": 16669.872543534093
+      },
+      "retractions": 157,
+      "filament_used_header": "6.58848m, 0m",
+      "bbox": {
+        "G54": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            214.149,
+            169.688,
+            40.5
+          ]
+        ]
+      },
+      "coordinate_systems": [
+        "G54"
+      ]
+    }
+  },
+  "expected": {
+    "model_top_z": 40.5,
+    "xy_centered": false,
+    "build_volume": [
+      351,
+      300.3,
+      300
+    ],
+    "bed_temperature": 95.0,
+    "nozzle_temperature": 260.0,
+    "layer_height": 0.1,
+    "printing_mode": "classic"
+  },
+  "readback": {
+    "status": "pass",
+    "differences": [],
+    "quality_id": "normal",
+    "machine_definition": "hte530v5.2.4",
+    "actual": {
+      "wall_line_count": 4,
+      "machine_width": 351,
+      "cylindrical_mode_overlap": 0,
+      "support_interface_enable": false,
+      "support_bottom_enable": false,
+      "wall_thickness": 0.8,
+      "printing_mode": "classic",
+      "material_bed_temperature": 95.0,
+      "machine_nozzle_size": 0.4,
+      "adhesion_type": "brim",
+      "infill_pattern": "lines",
+      "layer_height": 0.1,
+      "retraction_amount": 2.11,
+      "top_layers": 12,
+      "material_flow": 100,
+      "retraction_speed": 20,
+      "support_line_width": 0.4,
+      "cylindrical_mode_base_diameter": 6,
+      "speed_print": 50.0,
+      "line_width": 0.4,
+      "infill_sparse_density": 100.0,
+      "support_type": "everywhere",
+      "machine_center_is_zero": false,
+      "bottom_layers": 12,
+      "non_printing_base_diameter": 6,
+      "material_print_temperature": 260.0,
+      "machine_heated_bed": true,
+      "support_bottom_distance": 0.1,
+      "support_roof_enable": false,
+      "support_angle": 50,
+      "support_xy_distance": 0.7,
+      "layer_height_0": 0.3,
+      "support_enable": true,
+      "retraction_enable": true,
+      "machine_height": 300,
+      "cool_fan_enabled": true,
+      "support_top_distance": 0.1,
+      "cool_fan_speed": 0.0,
+      "machine_depth": 300.3
+    },
+    "material_id": "enduse_pa6"
+  },
+  "gcode": {
+    "path": "part.gcode",
+    "sha256": "cbd3f6d57cd78cf4ddbdee99bb62ba7d11840d5d1d7605a01c1af9d4ef6ca6ed",
+    "bytes": 8585502
+  },
+  "backend": "CuraEngineBackend"
+}

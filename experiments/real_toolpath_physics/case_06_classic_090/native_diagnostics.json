@@ -1,0 +1,15 @@
+{
+  "log_sha256": "a14b57c42582210b1339ae55c943b2ea8198cc7215a8f64eea176fd06ab094eb",
+  "error_lines": [
+    "2026-10-24 10:27:40,996 - ERROR - [MainThread] CylindricalBackend.CylindricalBackend.initialize [149]: Error occurred while checking global stack: 'NoneType' object has no attribute 'userChanges'",
+    "2026-10-24 10:27:41,501 - ERROR - [MainThread] UM.Logger.logException [84]: Exception: Exception occurred while loading post processing plugin: No module named 'statistics'",
+    "2026-10-24 10:27:41,505 - ERROR - [MainThread] UM.Logger.logException [88]: Traceback (most recent call last):",
+    "2026-10-24 10:27:41,508 - ERROR - [MainThread] UM.Logger.logException [88]:   File \"C:\\Program Files\\Stereotech STE Slicer 7.10\\plugins\\PostProcessingPlugin\\PostProcessingPlugin.py\", line 175, in loadScripts",
+    "2026-10-24 10:27:41,511 - ERROR - [MainThread] UM.Logger.logException [88]:     spec.loader.exec_module(loaded_script)",
+    "2026-10-24 10:27:41,515 - ERROR - [MainThread] UM.Logger.logException [88]:   File \"<frozen importlib._bootstrap_external>\", line 697, in exec_module",
+    "2026-10-24 10:27:41,519 - ERROR - [MainThread] UM.Logger.logException [88]:   File \"<frozen importlib._bootstrap>\", line 222, in _call_with_frames_removed",
+    "2026-10-24 10:27:41,522 - ERROR - [MainThread] UM.Logger.logException [88]:   File \"C:\\Program Files\\Stereotech STE Slicer 7.10\\plugins\\PostProcessingPlugin\\scripts\\ExcludeObject.py\", line 8, in <module>",
+    "2026-10-24 10:27:41,524 - ERROR - [MainThread] UM.Logger.logException [88]:     import statistics",
+    "2026-10-24 10:27:41,527 - ERROR - [MainThread] UM.Logger.logException [88]: ImportError: No module named 'statistics'"
+  ]
+}

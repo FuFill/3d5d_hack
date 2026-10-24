@@ -1,0 +1,1332 @@
+{
+  "assumptions": [
+    "blades and hub not covered",
+    "material properties are manufacturer typical values (Stereotech wiki), not batch data",
+    "process settings start from the Stereotech material profile; volumetric flow limit uncalibrated",
+    "thin ring rho*v^2 bounds disc hoop stress"
+  ],
+  "calibration_context": {
+    "geometry_sha256": "32f253b238959eae223c0df27e012eb4722c536ed7e3a3ecd078d94b769bfc4d",
+    "machine_id": "hte530v5.2.4",
+    "material_id": "enduse_pp",
+    "printing_mode": "classic",
+    "rotation": [
+      [
+        1.0,
+        -6.590757853362263e-09,
+        6.5907577814209864e-09
+      ],
+      [
+        6.5907577814209864e-09,
+        1.0,
+        1.0915478804333287e-08
+      ],
+      [
+        -6.590757853362263e-09,
+        -1.0915478804333287e-08,
+        1.0
+      ]
+    ],
+    "settings": {
+      "adhesion_type": "brim",
+      "bottom_layers": 6,
+      "cool_fan_enabled": true,
+      "cool_fan_speed": 0.0,
+      "cylindrical_mode_base_diameter": 6.0,
+      "cylindrical_mode_overlap": 0.0,
+      "infill_pattern": "lines",
+      "infill_sparse_density": 100.0,
+      "layer_height": 0.2,
+      "layer_height_0": 0.3,
+      "line_width": 0.4,
+      "machine_center_is_zero": false,
+      "machine_depth": 300.3,
+      "machine_heated_bed": true,
+      "machine_height": 300.0,
+      "machine_nozzle_size": 0.4,
+      "machine_width": 351.0,
+      "material_bed_temperature": 78.0,
+      "material_flow": 100.0,
+      "material_print_temperature": 240.0,
+      "non_printing_base_diameter": 6.0,
+      "printing_mode": "classic",
+      "retraction_amount": 3.55,
+      "retraction_enable": true,
+      "retraction_speed": 30.0,
+      "speed_print": 30.0,
+      "support_angle": 50.0,
+      "support_bottom_distance": 0.1,
+      "support_bottom_enable": false,
+      "support_enable": true,
+      "support_interface_enable": false,
+      "support_line_width": 0.4,
+      "support_roof_enable": false,
+      "support_top_distance": 0.1,
+      "support_type": "everywhere",
+      "support_xy_distance": 0.7,
+      "top_layers": 6,
+      "wall_line_count": 4,
+      "wall_thickness": 0.8
+    }
+  },
+  "candidate_geometry": {
+    "base_area": 135.81162910723623,
+    "critical_support_contact": null,
+    "fits_build_volume": true,
+    "height": 169.00000024014054,
+    "overhang_area": 8310.202479506828,
+    "rotation": [
+      [
+        1.0,
+        -6.590757853362263e-09,
+        6.5907577814209864e-09
+      ],
+      [
+        6.5907577814209864e-09,
+        1.0,
+        1.0915478804333287e-08
+      ],
+      [
+        -6.590757853362263e-09,
+        -1.0915478804333287e-08,
+        1.0
+      ]
+    ],
+    "size": [
+      169.00000014499665,
+      22.000003154879913,
+      169.00000024014054
+    ],
+    "staircase_mean_mm": 0.08312755671151002,
+    "support_angle_deg": 50.0,
+    "support_volume_upper": 694900.534548139,
+    "up": [
+      -6.590757853362263e-09,
+      -1.0915478804333287e-08,
+      1.0
+    ]
+  },
+  "candidates": {
+    "materials": [
+      {
+        "id": "enduse_pp",
+        "summary": {
+          "hinted_unknown": [
+            "R01"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R06",
+            "R07",
+            "R08",
+            "R09",
+            "R11"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R02",
+            "R03",
+            "R10"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 6.5
+      },
+      {
+        "id": "fiberpart_pp_g30",
+        "summary": {
+          "hinted_unknown": [
+            "R01"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R06",
+            "R07",
+            "R08",
+            "R09",
+            "R11"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R02",
+            "R03",
+            "R10"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 6.5
+      },
+      {
+        "id": "sealant_tpu_A95",
+        "summary": {
+          "hinted_unknown": [
+            "R01"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R06",
+            "R07",
+            "R08",
+            "R09",
+            "R11"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R02",
+            "R03",
+            "R10"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 5.5
+      },
+      {
+        "id": "enduse_tpu_d70",
+        "summary": {
+          "hinted_unknown": [
+            "R01"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R06",
+            "R07",
+            "R08",
+            "R09",
+            "R11"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R02",
+            "R03",
+            "R10"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 5.5
+      },
+      {
+        "id": "sealant_tpu",
+        "summary": {
+          "hinted_unknown": [
+            "R01"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R06",
+            "R07",
+            "R08",
+            "R09",
+            "R11"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R02",
+            "R03",
+            "R10"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 5.5
+      },
+      {
+        "id": "sealant_tpu93",
+        "summary": {
+          "hinted_unknown": [
+            "R01"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R06",
+            "R07",
+            "R08",
+            "R09",
+            "R11"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R02",
+            "R03",
+            "R10"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 5.5
+      }
+    ],
+    "routes": [
+      {
+        "feasible": true,
+        "mode": "classic",
+        "score": 0.0
+      },
+      {
+        "feasible": true,
+        "mode": "cylindrical",
+        "score": 0.5
+      },
+      {
+        "feasible": false,
+        "mode": "cylindrical_full",
+        "score": 0.0
+      }
+    ]
+  },
+  "causal_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "assess_double_ml",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "calibration_data"
+        ],
+        "model_id": "assess_double_ml",
+        "reason": "no measured print experiments supplied"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "chosen_material": {
+    "base_polymer": "PP",
+    "excluded": null,
+    "filler": null,
+    "id": "enduse_pp",
+    "label": "Enduse PP",
+    "selectable": true,
+    "series": "Enduse",
+    "slicer_file": "enduse_pp.xml.fdm_material",
+    "wiki_url": "https://wiki.stereotech.org/ru/fdm-materials/enduse/pp_d60"
+  },
+  "effective_settings": {
+    "adhesion_type": "brim",
+    "bottom_layers": 6,
+    "cool_fan_enabled": true,
+    "cool_fan_speed": 0.0,
+    "cylindrical_mode_base_diameter": 6.0,
+    "cylindrical_mode_overlap": 0.0,
+    "infill_pattern": "lines",
+    "infill_sparse_density": 100.0,
+    "layer_height": 0.2,
+    "layer_height_0": 0.3,
+    "line_width": 0.4,
+    "machine_center_is_zero": false,
+    "machine_depth": 300.3,
+    "machine_heated_bed": true,
+    "machine_height": 300.0,
+    "machine_nozzle_size": 0.4,
+    "machine_width": 351.0,
+    "material_bed_temperature": 78.0,
+    "material_flow": 100.0,
+    "material_print_temperature": 240.0,
+    "non_printing_base_diameter": 6.0,
+    "printing_mode": "classic",
+    "retraction_amount": 3.55,
+    "retraction_enable": true,
+    "retraction_speed": 30.0,
+    "speed_print": 30.0,
+    "support_angle": 50.0,
+    "support_bottom_distance": 0.1,
+    "support_bottom_enable": false,
+    "support_enable": true,
+    "support_interface_enable": false,
+    "support_line_width": 0.4,
+    "support_roof_enable": false,
+    "support_top_distance": 0.1,
+    "support_type": "everywhere",
+    "support_xy_distance": 0.7,
+    "top_layers": 6,
+    "wall_line_count": 4,
+    "wall_thickness": 0.8
+  },
+  "evidence_level": "document",
+  "explanation": [
+    "Статус: needs_input; уровень доказательности: document.",
+    "Материал: Enduse PP — выбран из 7 допустимых; отклонено 13 (обязательное требование не выполнено).",
+    "Режим: classic. mode requested by the user",
+    "  printing_mode = classic (было classic): route selected by documented policy",
+    "  bottom_layers = 6 (было 8): skin_layers, policy:skin",
+    "  infill_sparse_density = 100.0 (было 20.0): no calibrated relation load -> infill exists; policy by load class structural",
+    "  layer_height = 0.2 (было 0.1): choose_layer_height, policy:layer",
+    "  top_layers = 6 (было 8): skin_layers, policy:skin",
+    "  wall_line_count = 4 (было 2): shell 1.60 mm -> 4 walls (1.60 mm)",
+    "  material_bed_temperature = 78.0 (было 60.0): slicer profile 50 C outside data-sheet window 75..80 C; explicit because STE takes max() over extruders",
+    "  material_print_temperature = 240.0 (было 225.0): slicer profile 225 C outside data-sheet window 240..240 C",
+    "  speed_print = 30.0 (было 60.0): material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+    "  support_enable = True (было False): overhang 5785 mm2, support volume bound 63652 mm3 (thresholds 25 mm2, 200 mm3)",
+    "Не подтверждено расчётом/данными (нужны испытания): oil_fuel_resistance, ozone_resistance, ductile_failure, fatigue_resistance",
+    "Double ML: оценка отсутствует или часть изменений не подтверждена; нужны измеренные испытания в тех же условиях."
+  ],
+  "functional_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "functional_orientation",
+    "status": "needs_input",
+    "trace": [
+      {
+        "missing": [
+          "functional_spec"
+        ],
+        "model_id": "functional_orientation",
+        "reason": "purpose, service loads and scoped printed properties required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "materials_considered": 7,
+  "materials_rejected": 13,
+  "missing_inputs": [
+    {
+      "field": "load_history",
+      "requirement_type": "lifetime"
+    },
+    {
+      "field": "duration",
+      "requirement_type": "lifetime"
+    },
+    {
+      "field": "environment",
+      "requirement_type": "lifetime"
+    },
+    {
+      "field": "allowed_failure_probability",
+      "requirement_type": "lifetime"
+    },
+    {
+      "field": "balancing",
+      "requirement_type": "safe_rotation"
+    },
+    {
+      "field": "max_acceleration",
+      "requirement_type": "safe_rotation"
+    }
+  ],
+  "part_name": "Осевая крыльчатка наружного обдува асинхронного электродвигателя.",
+  "part_type": "fan_impeller",
+  "prototype_only": false,
+  "qualification_plan": [
+    {
+      "conditions": "изменение массы, твёрдости, прочности",
+      "mandatory": true,
+      "property": "oil_fuel_resistance",
+      "reason": "unverified",
+      "requirement_id": "R01",
+      "test": "Выдержка в маслах/топливе/СОЖ"
+    },
+    {
+      "conditions": "растрескивание под нагрузкой",
+      "mandatory": true,
+      "property": "ozone_resistance",
+      "reason": "unverified",
+      "requirement_id": "R02",
+      "test": "Озоновое старение (ISO 1431 аналог)"
+    },
+    {
+      "conditions": "характер разрушения: изгиб/отрыв лопасти",
+      "mandatory": true,
+      "property": "ductile_failure",
+      "reason": "unverified",
+      "requirement_id": "R03",
+      "test": "Ударное нагружение детали/кожуха"
+    },
+    {
+      "conditions": "та же ориентация слоёв и режим печати",
+      "mandatory": true,
+      "property": "fatigue_resistance",
+      "reason": "unverified",
+      "requirement_id": "R10",
+      "test": "S–N испытания образцов/деталей"
+    }
+  ],
+  "requirement_issues": [],
+  "requirements": [
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R01",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужны данные химстойкости SKU к конкретной среде",
+      "property": "oil_fuel_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Среда эксплуатации: Цех металлообработки (воздействие масляного тумана СОЖ, металлической пыли, озона)."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R02",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужны данные озонового старения",
+      "property": "ozone_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Среда эксплуатации: Цех металлообработки (воздействие масляного тумана СОЖ, металлической пыли, озона)."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R03",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужны ударная вязкость/характер разрушения по испытанию",
+      "property": "ductile_failure",
+      "provenance": {
+        "file": null,
+        "fragment": "Штатные литые пластиковые крыльчатки со временем становятся хрупкими из-за старения полимера и воздействия озона, лопасти лопаются от случайного попадания стружки или при заклинивании кожуха."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "==",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R04",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "rotation_speed",
+      "provenance": {
+        "file": null,
+        "fragment": "Кинематика: скорость вращения вала 2950 обмин (номинальная для 2-полюсного двигателя 50 Гц)."
+      },
+      "region": null,
+      "unit": "rad/s",
+      "value": 308.92327760299634
+    },
+    {
+      "comparator": "==",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R05",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "peripheral_speed",
+      "provenance": {
+        "file": null,
+        "fragment": "Окружная скорость на концах лопастей ~32 мс."
+      },
+      "region": null,
+      "unit": "mm/s",
+      "value": 32000.0
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R06",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "service_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Температурный режим: диапазон +10°C ... +70°C."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": [
+        10.0,
+        70.0
+      ]
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R07",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "service_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Температура на поверхности крыльчатки может стабильно держаться около 60-65°C."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": [
+        60.0,
+        65.0
+      ]
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R08",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна ударная вязкость в рабочих условиях",
+      "property": "impact_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Вибрация и удары: возможны кратковременные задевания защитного кожуха за лопасти при деформации кожуха."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": ">=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R09",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "no_softening_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал не должен размягчаться при +65°C."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": 65.0
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R10",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна S–N зависимость материала/процесса",
+      "property": "fatigue_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Внутренняя цанговая клипса ступицы работает на постоянный изгиб и сжатие."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R11",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "density",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал должен быть максимально легким (не тяжелее 1.25 гсм³), чтобы снизить момент инерции ротора и нагрузку на подшипники при пуске и торможении."
+      },
+      "region": null,
+      "unit": "g/mm3",
+      "value": 0.00125
+    }
+  ],
+  "robustness_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "process_stability",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "noise_bounds",
+          "first_layer_gap_limits",
+          "process_response_calibration"
+        ],
+        "model_id": "process_stability",
+        "reason": "measured noise bounds and quality tolerances required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "route": {
+    "mode": "classic",
+    "note": "mode requested by the user",
+    "parameters": {}
+  },
+  "scene_operations": [
+    {
+      "coordinates": "printer (Z up); the adapter converts to the Uranium scene (Y up)",
+      "op": "load_mesh",
+      "path": "C:\\Users\\Ilya\\Working projects\\3d5d_hack\\data\\examples\\6. Крыльчатка охлаждения электродвигателя - 3D\\Крыльчатка охлаждения электродвигателя.STL",
+      "units": "mm"
+    },
+    {
+      "note": "minimum J_R among stable orientations",
+      "op": "set_transform",
+      "rotation": [
+        [
+          1.0,
+          -6.590757853362263e-09,
+          6.5907577814209864e-09
+        ],
+        [
+          6.5907577814209864e-09,
+          1.0,
+          1.0915478804333287e-08
+        ],
+        [
+          -6.590757853362263e-09,
+          -1.0915478804333287e-08,
+          1.0
+        ]
+      ],
+      "translation": [
+        -84.50000048440421,
+        -11.002501979276978,
+        7.970868719169333e-07
+      ]
+    },
+    {
+      "op": "arrange"
+    }
+  ],
+  "setting_patch": {
+    "errors": [],
+    "items": [
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "printing_mode",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": "classic",
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "configuration",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": "classic"
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "bottom_layers",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 6
+      },
+      {
+        "decision_unit": "fraction",
+        "enabled_after_patch": true,
+        "key": "infill_sparse_density",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 20.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "%",
+        "validation": "valid",
+        "value": 100.0
+      },
+      {
+        "decision_unit": "mm",
+        "enabled_after_patch": true,
+        "key": "layer_height",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 0.1,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "geometry",
+        "target": "global",
+        "unit": "mm",
+        "validation": "valid",
+        "value": 0.2
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "top_layers",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 6
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "wall_line_count",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 2,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 4
+      },
+      {
+        "decision_unit": "degC",
+        "enabled_after_patch": true,
+        "key": "material_bed_temperature",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 60.0,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "thermal_flow",
+        "target": "global",
+        "unit": "°C",
+        "validation": "valid",
+        "value": 78.0
+      },
+      {
+        "decision_unit": "degC",
+        "enabled_after_patch": true,
+        "key": "material_print_temperature",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 225.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "thermal_flow",
+        "target": "extruder_0",
+        "unit": "°C",
+        "validation": "valid",
+        "value": 240.0
+      },
+      {
+        "decision_unit": "mm/s",
+        "enabled_after_patch": true,
+        "key": "speed_print",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 60.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "motion",
+        "target": "extruder_0",
+        "unit": "mm/s",
+        "validation": "valid",
+        "value": 30.0
+      },
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "support_enable",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": false,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "support_adhesion",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": true
+      }
+    ],
+    "ok": true,
+    "payload": {
+      "extruders": {
+        "0": {
+          "bottom_layers": 6,
+          "infill_sparse_density": 100.0,
+          "material_print_temperature": 240.0,
+          "speed_print": 30.0,
+          "top_layers": 6,
+          "wall_line_count": 4
+        }
+      },
+      "global": {
+        "layer_height": 0.2,
+        "material_bed_temperature": 78.0,
+        "printing_mode": "classic",
+        "support_enable": true
+      }
+    },
+    "warnings": []
+  },
+  "status": "needs_input",
+  "structural_checks": [
+    {
+      "assumptions": [
+        "thin ring rho*v^2 bounds disc hoop stress",
+        "blades and hub not covered"
+      ],
+      "check": "rotating_rim",
+      "evidence": "analytical_screen",
+      "note": "rim stress 0.92 MPa, SF 4 against 15.2 MPa",
+      "peripheral_speed_mm_s": 32000.0,
+      "policy_safety_factor": 4.0,
+      "sigma_MPa": 0.9216000000000001,
+      "status": "pass"
+    }
+  ],
+  "trace": [
+    {
+      "count": 11,
+      "issues": [],
+      "part_type": "fan_impeller",
+      "step": "parse_requirements"
+    },
+    {
+      "errors": [],
+      "rotational": {
+        "axial_length": 22.00000315487989,
+        "axis": [
+          6.5907577814209864e-09,
+          1.0,
+          1.0915478652895329e-08
+        ],
+        "bore_radius": 50.98992371370772,
+        "is_rotational_candidate": true,
+        "moment_mismatch": 1.684960425363145e-08,
+        "r_max": 84.50002222167413,
+        "sector_cv": 1.3448822792590406e-07
+      },
+      "size": [
+        169.0,
+        22.000000999999997,
+        169.0
+      ],
+      "status": "ok",
+      "step": "analyze_mesh",
+      "volume_mm3": 53179.152631376055,
+      "warnings": []
+    },
+    {
+      "build_volume": {
+        "classic": [
+          351.0,
+          300.3,
+          300.0
+        ],
+        "cylindrical": [
+          351.0,
+          300.3,
+          231.1
+        ],
+        "cylindrical_full": [
+          351.0,
+          300.3,
+          231.1
+        ]
+      },
+      "chain": [
+        "fdmprinter",
+        "steprinter_v5",
+        "steprinter530_v5.2.4",
+        "hte530v5.2.4"
+      ],
+      "machine": "hte530v5.2.4",
+      "note": "offline schema from the slicer resources; installed runtime confirmed by read-back",
+      "nozzles": [
+        0.4
+      ],
+      "step": "inspect_machine"
+    },
+    {
+      "chosen": "enduse_pp",
+      "policy": "hard constraints first (any mandatory fail rejects); ranking by support = passes + 0.5*hinted unknowns + 1*manufacturer application match + 0.25*optional passes, then fewer unknowns, printability, print difficulty (Stereotech memo)",
+      "prototype_only": false,
+      "ranked": [
+        "enduse_pp",
+        "fiberpart_pp_g30",
+        "sealant_tpu_A95",
+        "enduse_tpu_d70",
+        "sealant_tpu",
+        "sealant_tpu93",
+        "fiberpart_tpu_c5"
+      ],
+      "rejected": 45,
+      "step": "screen_materials"
+    },
+    {
+      "chosen": "classic",
+      "routes": [
+        {
+          "feasible": true,
+          "mode": "classic",
+          "reasons": [
+            "flat layers, heated platform"
+          ],
+          "score": 0.0
+        },
+        {
+          "feasible": true,
+          "mode": "cylindrical",
+          "reasons": [
+            "axis: rotational symmetry (inertia + sector radii)",
+            "through bore 101.97 mm: mandrel defines the bore, base cylinder removes no material"
+          ],
+          "score": 0.5
+        },
+        {
+          "feasible": false,
+          "mode": "cylindrical_full",
+          "reasons": [
+            "axis: rotational symmetry (inertia + sector radii)",
+            "part has a bore: Spiral is the matching 5D route"
+          ],
+          "score": 0.0
+        }
+      ],
+      "step": "enumerate_routes"
+    },
+    {
+      "candidates": [
+        {
+          "height": 22.00000315487991,
+          "score": 0.3336024887200772,
+          "support_volume": 63651.502563052214,
+          "up": [
+            -6.5907577814209864e-09,
+            -1.0,
+            -1.0915478652895329e-08
+          ]
+        },
+        {
+          "height": 22.00000315487989,
+          "score": 0.49176054837519284,
+          "support_volume": 173907.52483145992,
+          "up": [
+            6.5907577814209864e-09,
+            1.0,
+            1.0915478652895329e-08
+          ]
+        },
+        {
+          "height": 168.97558615167665,
+          "score": 1.7871745257933722,
+          "support_volume": 692170.6408319132,
+          "up": [
+            0.9957166330302445,
+            -0.0,
+            -0.09245748594307292
+          ]
+        },
+        {
+          "height": 168.97624016443092,
+          "score": 1.7871787925408649,
+          "support_volume": 692172.6623226431,
+          "up": [
+            -0.9956954168106433,
+            -0.0,
+            0.09268568898313999
+          ]
+        },
+        {
+          "height": 168.97463098310715,
+          "score": 1.7874123433357993,
+          "support_volume": 692088.6309933737,
+          "up": [
+            0.9998498865915469,
+            -6.778894415639461e-09,
+            0.017326404210644977
+          ]
+        },
+        {
+          "height": 168.97463098310715,
+          "score": 1.7874167667936813,
+          "support_volume": 692091.714698825,
+          "up": [
+            -0.9998498865915469,
+            6.778894415639461e-09,
+            -0.017326404210644977
+          ]
+        }
+      ],
+      "chosen_up": [
+        -6.5907577814209864e-09,
+        -1.0,
+        -1.0915478652895329e-08
+      ],
+      "step": "orientation"
+    },
+    {
+      "chosen": "enduse_pp",
+      "rejected_by_structure": [],
+      "step": "solve_structure"
+    },
+    {
+      "errors": [],
+      "items": 10,
+      "process_notes": [
+        {
+          "item": "load_class",
+          "model": "P",
+          "value": "structural"
+        },
+        {
+          "item": "layer_height",
+          "model": "P",
+          "note": "h/d = 0.50 functional seed",
+          "value": 0.2
+        }
+      ],
+      "step": "compile_patch",
+      "warnings": []
+    },
+    {
+      "applied": false,
+      "note": "simulation estimates; no qualification promotion",
+      "status": "needs_input",
+      "step": "functional_orientation"
+    },
+    {
+      "note": "independent single-setting comparisons; deterministic patch and qualification unchanged",
+      "status": "needs_calibration",
+      "step": "assess_double_ml"
+    }
+  ],
+  "verification": [
+    {
+      "evidence_level": "document",
+      "fragment": "Среда эксплуатации: Цех металлообработки (воздействие масляного тумана СОЖ, металлической пыли, озона).",
+      "mandatory": true,
+      "notes": [
+        "resistant at room temperature only; service up to 70 C needs a test"
+      ],
+      "property": "oil_fuel_resistance",
+      "requirement_id": "R01",
+      "sources": [
+        "material:enduse_pp"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Среда эксплуатации: Цех металлообработки (воздействие масляного тумана СОЖ, металлической пыли, озона).",
+      "mandatory": true,
+      "notes": [
+        "no chemical data for Озон"
+      ],
+      "property": "ozone_resistance",
+      "requirement_id": "R02",
+      "sources": [
+        "material:enduse_pp"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Штатные литые пластиковые крыльчатки со временем становятся хрупкими из-за старения полимера и воздействия озона, лопасти лопаются от случайного попадания стружки или при заклинивании кожуха.",
+      "mandatory": true,
+      "notes": [
+        "elongation 0.16..5.878 vs policy 0.05; fracture mode needs a test"
+      ],
+      "property": "ductile_failure",
+      "requirement_id": "R03",
+      "sources": [
+        "material:enduse_pp"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Кинематика: скорость вращения вала 2950 обмин (номинальная для 2-полюсного двигателя 50 Гц).",
+      "mandatory": true,
+      "notes": [],
+      "property": "rotation_speed",
+      "requirement_id": "R04",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Окружная скорость на концах лопастей ~32 мс.",
+      "mandatory": true,
+      "notes": [],
+      "property": "peripheral_speed",
+      "requirement_id": "R05",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Температурный режим: диапазон +10°C ... +70°C.",
+      "mandatory": true,
+      "notes": [
+        "manufacturer operating range -10..80 C"
+      ],
+      "property": "service_temperature",
+      "requirement_id": "R06",
+      "sources": [
+        "material:enduse_pp"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Температура на поверхности крыльчатки может стабильно держаться около 60-65°C.",
+      "mandatory": true,
+      "notes": [
+        "manufacturer operating range -10..80 C"
+      ],
+      "property": "service_temperature",
+      "requirement_id": "R07",
+      "sources": [
+        "material:enduse_pp"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Вибрация и удары: возможны кратковременные задевания защитного кожуха за лопасти при деформации кожуха.",
+      "mandatory": true,
+      "notes": [
+        "elongation 0.16..5.878 vs policy 0.05"
+      ],
+      "property": "impact_resistance",
+      "requirement_id": "R08",
+      "sources": [
+        "material:enduse_pp"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Материал не должен размягчаться при +65°C.",
+      "mandatory": true,
+      "notes": [
+        "operating max 80 C, Vicat 95 C"
+      ],
+      "property": "no_softening_temperature",
+      "requirement_id": "R09",
+      "sources": [
+        "material:enduse_pp"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Внутренняя цанговая клипса ступицы работает на постоянный изгиб и сжатие.",
+      "mandatory": true,
+      "notes": [
+        "Нужна S–N зависимость материала/процесса"
+      ],
+      "property": "fatigue_resistance",
+      "requirement_id": "R10",
+      "sources": [
+        "material:enduse_pp"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Материал должен быть максимально легким (не тяжелее 1.25 гсм³), чтобы снизить момент инерции ротора и нагрузку на подшипники при пуске и торможении.",
+      "mandatory": true,
+      "notes": [
+        "typical manufacturer value(s) 0.0009 g/mm3"
+      ],
+      "property": "density",
+      "requirement_id": "R11",
+      "sources": [
+        "material:enduse_pp"
+      ],
+      "status": "pass"
+    }
+  ]
+}

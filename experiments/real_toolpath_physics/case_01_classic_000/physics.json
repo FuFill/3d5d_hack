@@ -1,0 +1,116 @@
+{
+  "archive": {
+    "path": "part.gcode.gz",
+    "sha256": "4c8f58ffc4a7374142fd338cd27c517d28864f45c239cc90e2ca4d102ebe436a",
+    "uncompressed_bytes": 2497471,
+    "uncompressed_sha256": "fb4c95c99761c53c8a426bafe6adba7bfbca03e76aca0062f0fa253f355421e1"
+  },
+  "diameter_source": "nominal selected STE material profile, not measured filament",
+  "filament_diameter_mm": 1.75,
+  "id": "case_01_classic_000",
+  "input": {
+    "analysis_only": true,
+    "id": "case_01_classic_000",
+    "mode": "classic",
+    "organizer_case": "1. Шестерня - 3D",
+    "orientation_parameter": "build tilt about X",
+    "orientation_phase_deg": 0,
+    "physical_print_approval": false,
+    "planner_status": "infeasible",
+    "specimens_per_slice": 1,
+    "stl": "data\\examples\\1. Шестерня - 3D\\Шестерня.stl",
+    "stl_sha256": "df0486ac08dd9a2672ab4a9aa2b4651019efb1d7894f9cae1672696e720ee5cf",
+    "tz": "data\\examples\\1. Шестерня - 3D\\Техническое задание для шестерни.docx"
+  },
+  "meshing": {
+    "element_count": null,
+    "status": "invalid_input",
+    "trace": [
+      {
+        "missing": [],
+        "model_id": "volume_mesh",
+        "reason": "meshing failed: Invalid boundary mesh (overlapping facets) on surface 166 surface 369"
+      }
+    ]
+  },
+  "physical_print_approval": false,
+  "strict": {
+    "domain": {},
+    "evidence": "simulation",
+    "model_class": "A",
+    "model_id": "sliced_physics",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "inputs": {},
+        "model_id": "sliced_physics",
+        "note": "actual slices; no measured constants or service boundary conditions invented"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": {
+      "deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 334.17997806021503
+        },
+        "normal_structure_tensor": [
+          [
+            4.169409041571409e-06,
+            0.0020419088269557125,
+            -1.3601873519146232e-18
+          ],
+          [
+            0.0020419088269557125,
+            0.9999958305909585,
+            -6.661324260814714e-16
+          ],
+          [
+            -1.3601873519146232e-18,
+            -6.661324260814714e-16,
+            4.437342591868192e-31
+          ]
+        ],
+        "normalized_gcode_sha256": "c881a78a263c83cd5153b5853ddecb8d80bcbc91aad149c4c4d164fdca0c479a",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 48794.41666717113,
+        "part_volume_mm3": 3862.195863660402,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 62120,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5029573779282241,
+            -0.001026997391546354,
+            -0.0050273383622976816
+          ],
+          [
+            -0.001026997391546354,
+            2.097043782492305e-06,
+            1.0265409379032361e-05
+          ],
+          [
+            -0.005027338362297678,
+            1.0265409379032376e-05,
+            0.497040525027993
+          ]
+        ]
+      },
+      "failure_capacity": null,
+      "gcode_bytes_sha256": "fb4c95c99761c53c8a426bafe6adba7bfbca03e76aca0062f0fa253f355421e1",
+      "missing": [
+        "measured road/interface constitutive properties and protocol",
+        "volume mesh for toolpath-to-FE transfer"
+      ],
+      "native_failed_checks": [],
+      "physical_print_approval": false,
+      "source_geometry_sha256": "df0486ac08dd9a2672ab4a9aa2b4651019efb1d7894f9cae1672696e720ee5cf",
+      "stiffness": null
+    }
+  }
+}

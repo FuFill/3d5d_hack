@@ -201,12 +201,16 @@ def plan_process(reqset, material, route_mode, part_type, analysis, caps, orient
         decisions.append(Decision("support_enabled", False, model_ids=["plan_5d"],
                                   note="5D route prints the part without supports"))
     # 5D parameters
-    if route_mode in ("cylindrical", "cylindrical_full") and route:
+    if route_mode in ("cylindrical", "cylindrical_full") and route and all(
+            key in route.get("parameters", {}) for key in ("base_diameter", "non_printing_base_diameter")):
         p = route["parameters"]
         decisions.append(Decision("base_diameter_5d", float(p["base_diameter"]), model_ids=["plan_5d"],
                                   note="Spiral: equals the bore; Full: core inside the smallest section"))
         decisions.append(Decision("non_printing_base_diameter", float(p["non_printing_base_diameter"]),
                                   model_ids=["plan_5d"], note="tooling diameter (%s)" % p.get("mandrel", "6 mm rod")))
+    elif route_mode in ("cylindrical", "cylindrical_full"):
+        notes.append({"item": "5d_route", "status": "needs_input", "model": "plan_5d",
+                      "note": "route lacks a feasible core/tooling diameter; no value invented"})
     return decisions, notes
 
 

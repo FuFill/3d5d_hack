@@ -1,5 +1,6 @@
 """Check staged files/3MF contents for local secret values; never print secrets."""
 import base64
+import gzip
 import io
 import json
 import re
@@ -34,6 +35,8 @@ def main():
             with zipfile.ZipFile(io.BytesIO(data)) as archive:
                 buffers.extend(archive.read(member) for member in archive.namelist())
             archives += 1
+        elif name.lower().endswith(".gcode.gz"):
+            buffers.append(gzip.decompress(data))
         if any(secret in buffer for buffer in buffers for secret in secrets):
             problems.append({"file": name, "reason": "local secret value detected"})
         key_block = re.compile(br"-----BEGIN (?:RSA )?PRIVATE KEY-----\r?\n[A-Za-z0-9+/=\r\n]{64,}\r?\n-----END (?:RSA )?PRIVATE KEY-----")

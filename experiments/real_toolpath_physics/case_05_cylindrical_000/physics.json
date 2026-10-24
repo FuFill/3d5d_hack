@@ -1,0 +1,222 @@
+{
+  "archive": {
+    "path": "part.gcode.gz",
+    "sha256": "8391c8f610bc450d1c357bee9b3ec762e029712e917c8ff10a4fc6f5e0db6a15",
+    "uncompressed_bytes": 44171521,
+    "uncompressed_sha256": "10b92b345f300440c4c39283497c4c51c0e47aca04cd0cd7b5339abeb4a4205c"
+  },
+  "conditional_nominal_pose": {
+    "domain": {},
+    "evidence": "simulation",
+    "model_class": "A",
+    "model_id": "sliced_physics",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "inputs": {},
+        "model_id": "sliced_physics",
+        "note": "actual slices; no measured constants or service boundary conditions invented"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": {
+      "deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {},
+        "normal_structure_tensor": [
+          [
+            0.5003276389467195,
+            2.1264242921094376e-09,
+            0.009300388293424082
+          ],
+          [
+            2.1264242921094376e-09,
+            3.854732846500395e-11,
+            3.5359435536747556e-07
+          ],
+          [
+            0.009300388293424082,
+            3.5359435536747556e-07,
+            0.49967236101472273
+          ]
+        ],
+        "normalized_gcode_sha256": "f9ec4078ef14c3169d703461bdc1a45153befe170fefa0005309f7f532fced47",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 500986.662310956,
+        "part_volume_mm3": 161405.46728846154,
+        "physical_print_approval": false,
+        "pose_source": "analysis_assumption",
+        "road_count": 1232241,
+        "rotary_subdivisions": 1189,
+        "tangent_structure_tensor": [
+          [
+            0.25363312990336834,
+            0.00031605107674560485,
+            -0.003957506465547029
+          ],
+          [
+            0.00031605107674560485,
+            0.4896196822456053,
+            -0.0045805889250656725
+          ],
+          [
+            -0.003957506465547029,
+            -0.0045805889250656725,
+            0.25674718785097483
+          ]
+        ]
+      },
+      "failure_capacity": null,
+      "gcode_bytes_sha256": "10b92b345f300440c4c39283497c4c51c0e47aca04cd0cd7b5339abeb4a4205c",
+      "missing": [
+        "measured/authoritative kinematic contract; nominal pose is an analysis assumption",
+        "measured road/interface constitutive properties and protocol",
+        "volume mesh for toolpath-to-FE transfer"
+      ],
+      "native_failed_checks": [],
+      "physical_print_approval": false,
+      "source_geometry_sha256": "c78061849c43078ea5dda6e21e9f0614735d36f57880441b829ed529ffe89510",
+      "stiffness": null
+    }
+  },
+  "diameter_source": "native effective stack",
+  "filament_diameter_mm": 1.75,
+  "id": "case_05_cylindrical_000",
+  "input": {
+    "analysis_only": true,
+    "id": "case_05_cylindrical_000",
+    "mode": "cylindrical",
+    "organizer_case": "5. Рабочее колесо насоса Wilo - 5D",
+    "orientation_parameter": "phase about retained tooling axis",
+    "orientation_phase_deg": 0,
+    "physical_print_approval": false,
+    "planner_status": "needs_input",
+    "specimens_per_slice": 1,
+    "stl": "data\\examples\\5. Рабочее колесо насоса Wilo - 5D\\Рабочее_колесо насоса Wilo IPL 80140-42. 2063106.STL",
+    "stl_sha256": "c78061849c43078ea5dda6e21e9f0614735d36f57880441b829ed529ffe89510",
+    "tz": "data\\examples\\5. Рабочее колесо насоса Wilo - 5D\\Техническое задания для рабочего колеса насоса.docx"
+  },
+  "nominal_pose_assumption": {
+    "angle_unit": "degree",
+    "interpolation": "linear_unwrapped_joints",
+    "nozzle_axis_machine": [
+      0,
+      0,
+      1
+    ],
+    "source": "analysis_assumption",
+    "table_pivot_mm": [
+      0,
+      0,
+      0
+    ],
+    "type": "table_AC",
+    "work_offsets": {
+      "G54": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "G55": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "G56": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  },
+  "physical_print_approval": false,
+  "strict": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "toolpath_deposition",
+    "status": "needs_input",
+    "trace": [
+      {
+        "missing": [
+          "forward_kinematics",
+          "work_offsets",
+          "TCP_and_table_pivot",
+          "controller_interpolation"
+        ],
+        "model_id": "toolpath_deposition",
+        "reason": "rotary coordinate letters do not determine physical deposition directions"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  }
+}

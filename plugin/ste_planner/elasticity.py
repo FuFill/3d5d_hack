@@ -18,6 +18,8 @@ _FACES = ((0, 2, 1), (0, 1, 3), (1, 2, 3), (2, 0, 3))
 
 def constitutive(properties):
     """Transverse isotropy: plane 1/2, layer normal 3; five measured constants."""
+    if "E1_MPa" in properties:
+        return orthotropic_constitutive(properties)
     if any(isinstance(v, bool) for v in properties.values()):
         raise ValueError("boolean values are not elastic constants")
     ex, ez, nxy, nxz, gxz = [float(properties[k]) for k in
@@ -35,6 +37,27 @@ def constitutive(properties):
     if np.linalg.eigvalsh(compliance).min() <= 0:
         raise ValueError("elastic compliance must be positive definite with reciprocal Poisson ratios")
     return np.linalg.inv(compliance)
+
+
+def orthotropic_constitutive(properties):
+    """Nine constants; nu_ij=-epsilon_j/epsilon_i under uniaxial sigma_i.
+
+    Reciprocal nu_ji/E_j=nu_ij/E_i is imposed, not independently fitted.
+    Engineering Voigt order is xx,yy,zz,xy,yz,xz.
+    """
+    keys = ("E1_MPa", "E2_MPa", "E3_MPa", "nu12", "nu13", "nu23", "G12_MPa", "G23_MPa", "G13_MPa")
+    if any(isinstance(properties[k], bool) for k in keys):
+        raise ValueError("boolean elastic constant")
+    e1, e2, e3, n12, n13, n23, g12, g23, g13 = [float(properties[k]) for k in keys]
+    if not np.isfinite([e1, e2, e3, n12, n13, n23, g12, g23, g13]).all() or min(e1, e2, e3, g12, g23, g13) <= 0:
+        raise ValueError("finite positive orthotropic moduli required")
+    s = np.diag([1/e1, 1/e2, 1/e3, 1/g12, 1/g23, 1/g13])
+    s[0, 1] = s[1, 0] = -n12/e1
+    s[0, 2] = s[2, 0] = -n13/e1
+    s[1, 2] = s[2, 1] = -n23/e2
+    if np.linalg.eigvalsh(s).min() <= 0:
+        raise ValueError("orthotropic compliance is not positive definite")
+    return np.linalg.inv(s)
 
 
 def basis(normal):
@@ -68,12 +91,17 @@ def strain_transform(q):
 def failure_index(stress, strengths):
     if any(isinstance(v, bool) for v in strengths.values()):
         raise ValueError("boolean values are not strengths")
-    tensile = np.array([strengths["tensile_xy_MPa"], strengths["tensile_xy_MPa"],
-                        strengths["tensile_z_MPa"]], dtype=float)
-    compressive = np.array([strengths["compressive_xy_MPa"], strengths["compressive_xy_MPa"],
-                            strengths["compressive_z_MPa"]], dtype=float)
-    shear = np.array([strengths["shear_xy_MPa"], strengths["shear_xz_MPa"],
-                      strengths["shear_xz_MPa"]], dtype=float)
+    if "tensile_1_MPa" in strengths:
+        tensile = np.array([strengths["tensile_%d_MPa" % i] for i in (1, 2, 3)], float)
+        compressive = np.array([strengths["compressive_%d_MPa" % i] for i in (1, 2, 3)], float)
+        shear = np.array([strengths["shear_%s_MPa" % i] for i in ("12", "23", "13")], float)
+    else:
+        tensile = np.array([strengths["tensile_xy_MPa"], strengths["tensile_xy_MPa"],
+                            strengths["tensile_z_MPa"]], dtype=float)
+        compressive = np.array([strengths["compressive_xy_MPa"], strengths["compressive_xy_MPa"],
+                                strengths["compressive_z_MPa"]], dtype=float)
+        shear = np.array([strengths["shear_xy_MPa"], strengths["shear_xz_MPa"],
+                          strengths["shear_xz_MPa"]], dtype=float)
     if not np.isfinite(np.r_[tensile, compressive, shear]).all() or min(tensile.min(), compressive.min(), shear.min()) <= 0:
         raise ValueError("positive finite directional strengths required")
     return float(max((np.maximum(stress[:3], 0) / tensile).max(),
@@ -163,7 +191,8 @@ def _mesh(data):
     return nodes, elements
 
 
-def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=None):
+def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=None,
+          material_frames=None, element_stiffness=None):
     """Return fields in the original part coordinates for the exact supplied properties.
 
     Loads are total forces distributed as uniform tractions over selected boundary
@@ -176,11 +205,31 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
         return unknown("elasticity", "SciPy sparse solver unavailable", status="needs_input")
     try:
         nodes, elements = _mesh(volume_mesh)
-        local_c = constitutive(elastic)
-        failure_index(np.zeros(6), strengths)  # validate strengths even under zero local stress
+        if element_stiffness is not None:
+            local_cs = np.asarray(element_stiffness, float)
+            if local_cs.shape != (len(elements), 6, 6) or not np.isfinite(local_cs).all():
+                raise ValueError("one finite global 6x6 stiffness per element required")
+            if not np.allclose(local_cs, local_cs.transpose(0, 2, 1), atol=1e-8) or np.linalg.eigvalsh(local_cs).min() <= 0:
+                raise ValueError("every element stiffness must be symmetric positive definite")
+            if strengths is not None:
+                raise ValueError("homogenized field stress cannot certify bead/interface failure")
+            qs = np.tile(np.eye(3), (len(elements), 1, 1))
+        else:
+            local_cs = np.tile(constitutive(elastic), (len(elements), 1, 1))
+            qs = None
+        if strengths is not None:
+            failure_index(np.zeros(6), strengths)  # validate even under zero stress
         ns = np.asarray(normals, dtype=float)
         if ns.shape != (len(elements), 3) or not np.isfinite(ns).all():
             raise ValueError("one layer normal per element required")
+        if qs is None:
+            if "E1_MPa" in elastic and material_frames is None:
+                raise ValueError("full orthotropy requires road material frames; a layer normal alone is insufficient")
+            qs = np.asarray(material_frames, float) if material_frames is not None else np.asarray([basis(n) for n in ns])
+            if (qs.shape != (len(elements), 3, 3) or not np.isfinite(qs).all() or
+                    not np.allclose(np.matmul(qs.transpose(0, 2, 1), qs), np.eye(3), atol=1e-7) or
+                    not np.allclose(np.linalg.det(qs), 1., atol=1e-7)):
+                raise ValueError("proper orthonormal material frames required")
         if not isinstance(load_cases, list) or not load_cases or len(load_cases) > 20:
             raise ValueError("one to twenty explicit load cases required")
         if not isinstance(fixed, list) or not fixed:
@@ -204,8 +253,8 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
         transforms, b_matrices, peak_b_matrices, volumes, dof_ids, rows, cols, vals = [], [], [], [], [], [], [], []
         for index, element in enumerate(elements):
             volume, gradients = _gradients(nodes[element], len(element))
-            transform = strain_transform(basis(ns[index]))
-            c = transform.T.dot(local_c).dot(transform)
+            transform = strain_transform(qs[index])
+            c = transform.T.dot(local_cs[index]).dot(transform)
             bs = [_b_matrix(g) for g in gradients]
             ke = sum(b.T.dot(c).dot(b) for b in bs) * volume / len(bs)
             ids = (3 * element[:, None] + np.arange(3)).reshape(-1)
@@ -251,9 +300,11 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
             if not isinstance(case_id, str) or not case_id or case_id in case_ids:
                 raise ValueError("distinct load-case ids required")
             case_ids.add(case_id)
-            force = np.asarray(case["force_N"], dtype=float)
-            if force.shape != (3,) or not np.isfinite(force).all() or np.linalg.norm(force) == 0:
-                raise ValueError("nonzero finite total force required")
+            force = np.asarray(case.get("force_N", [0., 0., 0.]), dtype=float)
+            moment = np.asarray(case.get("moment_Nmm", [0., 0., 0.]), dtype=float)
+            if (force.shape != (3,) or moment.shape != (3,) or not np.isfinite(np.r_[force, moment]).all()
+                    or not (np.linalg.norm(force) > 0 or np.linalg.norm(moment) > 0)):
+                raise ValueError("finite nonzero force and/or moment required; moment unit N mm")
             selected = select_points(nodes, case["on"])
             weights = np.zeros(len(nodes))
             for _, face in faces:
@@ -266,7 +317,22 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
                 weights[active] += area / 3.0
             if weights.sum() <= 0:
                 raise ValueError("load selector must cover boundary faces, not isolated nodes")
-            f = (weights[:, None] * force[None, :] / weights.sum()).reshape(-1)
+            nodal_force = weights[:, None] * force[None, :] / weights.sum()
+            center = (weights[:, None] * nodes).sum(axis=0) / weights.sum()
+            reference = np.asarray(case.get("reference_point_mm", center), float)
+            if reference.shape != (3,) or not np.isfinite(reference).all():
+                raise ValueError("finite moment reference point required")
+            if "moment_Nmm" in case:
+                r = nodes - center
+                inertia = sum(w * (p.dot(p) * np.eye(3) - np.outer(p, p)) for w, p in zip(weights, r))
+                target = moment - np.cross(nodes - reference, nodal_force).sum(axis=0)
+                if np.linalg.matrix_rank(inertia) < 3:
+                    raise ValueError("load patch cannot carry the requested couple")
+                a = np.linalg.solve(inertia, target)
+                nodal_force += weights[:, None] * np.cross(a, r)
+                if not np.allclose(np.cross(nodes - reference, nodal_force).sum(axis=0), moment, atol=1e-7):
+                    raise ValueError("moment distribution failed resultant check")
+            f = nodal_force.reshape(-1)
             if np.linalg.norm(f[fixed_ids]) > 1e-12:
                 raise ValueError("load overlaps constrained degrees of freedom")
             displacement = np.zeros(3 * len(nodes))
@@ -281,17 +347,18 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
                 raise ValueError("elastic equilibrium residual exceeds tolerance")
             density, fis, stress_max, tension_directions, tension_values = [], [], [], [], []
             for element_index, (transform, bs, peak_bs, ids) in enumerate(zip(transforms, b_matrices, peak_b_matrices, dof_ids)):
+                local_c = local_cs[element_index]
                 strains = [transform.dot(b.dot(displacement[ids])) for b in bs]
                 stresses = [local_c.dot(e) for e in strains]
                 density.append(float(sum(s.dot(e) for s, e in zip(stresses, strains)) / len(bs)))
                 # On a straight T10, stress is affine. Maximum-stress FI is convex,
                 # so its element maximum occurs at a vertex, not a Gauss point.
                 peak_stresses = [local_c.dot(transform.dot(b.dot(displacement[ids]))) for b in peak_bs]
-                fis.append(max(failure_index(s, strengths) for s in peak_stresses))
+                fis.append(max(failure_index(s, strengths) for s in peak_stresses) if strengths is not None else None)
                 stress_max.append(float(max(np.abs(s).max() for s in peak_stresses)))
                 s = np.mean(stresses, axis=0)
                 local_tensor = np.array([[s[0], s[3], s[5]], [s[3], s[1], s[4]], [s[5], s[4], s[2]]])
-                q = basis(ns[element_index])
+                q = qs[element_index]
                 principal, directions = np.linalg.eigh(q.dot(local_tensor).dot(q.T))
                 tension_directions.append(directions[:, -1].tolist())
                 tension_values.append(float(max(principal[-1], 0)))
@@ -300,25 +367,32 @@ def solve(volume_mesh, elastic, strengths, normals, load_cases, fixed, blocks=No
             if compliance <= 0 or not np.isclose(contributions.sum(), compliance, rtol=1e-7):
                 raise ValueError("strain energy/work consistency failed")
             nodal_u = displacement.reshape(-1, 3)
-            weighted_delta = compliance / np.linalg.norm(force)
+            force_only = np.linalg.norm(force) > 0 and np.linalg.norm(moment) == 0
+            torque_only = np.linalg.norm(force) == 0 and np.linalg.norm(moment) > 0
+            weighted_delta = compliance / np.linalg.norm(force) if force_only else None
             summaries = []
             for label in sorted(set(labels)):
                 mask = labels == label
-                max_fi = float(np.asarray(fis)[mask].max())
+                max_fi = float(np.asarray(fis)[mask].max()) if strengths is not None else None
                 summaries.append({"id": label, "volume_mm3": float(np.asarray(volumes)[mask].sum()),
                                   "compliance_contribution_Nmm": float(contributions[mask].sum()),
                                   "energy_share": float(contributions[mask].sum() / compliance),
                                   "max_displacement_mm": float(np.linalg.norm(nodal_u[np.unique(elements[mask])], axis=1).max()),
                                   "failure_index_max": max_fi, "safety_factor_min": 1.0 / max_fi if max_fi else None})
-            max_fi = max(fis)
+            max_fi = max(fis) if strengths is not None else None
             outcomes.append({"id": case_id, "compliance_Nmm": compliance,
-                             "effective_stiffness_N_per_mm": float(np.linalg.norm(force) / weighted_delta),
+                             "effective_stiffness_N_per_mm": float(np.linalg.norm(force) / weighted_delta) if force_only else None,
+                             "rotational_stiffness_Nmm_per_rad": float(moment.dot(moment) / compliance) if torque_only else None,
+                             "work_conjugate_rotation_rad": float(compliance / np.linalg.norm(moment)) if torque_only else None,
                              "load_weighted_deflection_mm": weighted_delta,
                              "max_displacement_mm": float(np.linalg.norm(nodal_u, axis=1).max()),
                              "failure_index_max": max_fi, "safety_factor_min": 1.0 / max_fi if max_fi else None,
                              "equilibrium_relative_residual": float(relative_residual),
                              "energy_relative_error": float(abs(contributions.sum() - compliance) / compliance),
-                             "reaction_N": residual.reshape(-1, 3).sum(axis=0).tolist(), "blocks": summaries,
+                             "reaction_N": residual.reshape(-1, 3).sum(axis=0).tolist(),
+                             "reaction_moment_Nmm": np.cross(nodes - reference, residual.reshape(-1, 3)).sum(axis=0).tolist(),
+                             "failure_assessment": "maximum_stress_model" if strengths is not None else "needs_calibration",
+                             "blocks": summaries,
                              "maps": {"nodal_displacement_mm": nodal_u.tolist(), "element_compliance_density_MPa": density,
                                       "element_failure_index": fis, "element_stress_max_MPa": stress_max,
                                       "principal_tension_direction": tension_directions,

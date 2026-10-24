@@ -1,0 +1,105 @@
+{
+  "physical_print_approval": false,
+  "nodes": [
+    {
+      "vertices": 169263,
+      "mesh_sha256": "7ffe21fbe76c0fdef5ea49360ee99df654e957c7eb5adee4ebce44b6af9693de",
+      "matrix": [
+        [
+          9.400808380632952e-07,
+          -1.0,
+          5.372637679101899e-05,
+          51.49498748779297
+        ],
+        [
+          -5.372637679101899e-05,
+          -5.372642772272229e-05,
+          -1.0,
+          0.002049528993666172
+        ],
+        [
+          1.0,
+          9.371943292535434e-07,
+          -5.372642772272229e-05,
+          -55.50201416015625
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "modifier": {
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false,
+        "support_mesh": false
+      },
+      "name": "Пыльник шруса.STL",
+      "parent": "Root",
+      "world_bounds": [
+        [
+          -51.49219512939453,
+          0.0,
+          -55.50168228149414
+        ],
+        [
+          51.492191314697266,
+          102.98782348632812,
+          55.501686096191406
+        ]
+      ]
+    }
+  ],
+  "status": "analysis_scene",
+  "decision_sha256": "325dd077e2d841c6b0f5906f7124ccf7e028b3e3674fe180910dd4e331853d3b",
+  "readback": {
+    "quality_id": "ste_planner_quality_d5791cc5e6f74740a48e8ba8ea925589",
+    "machine_definition": "hte530v5.2.4",
+    "status": "pass",
+    "actual": {
+      "bottom_layers": 5,
+      "support_line_width": 0.4,
+      "adhesion_type": "brim",
+      "support_roof_enable": false,
+      "retraction_speed": 37,
+      "support_angle": 50,
+      "line_width": 0.4,
+      "support_xy_distance": 0.7,
+      "infill_pattern": "lines",
+      "support_interface_enable": false,
+      "machine_nozzle_size": 0.4,
+      "support_top_distance": 0.1,
+      "wall_thickness": 0.8,
+      "retraction_amount": 5.7,
+      "support_enable": true,
+      "printing_mode": "classic",
+      "machine_center_is_zero": false,
+      "wall_line_count": 3,
+      "speed_print": 30.0,
+      "layer_height_0": 0.3,
+      "machine_depth": 300.3,
+      "cylindrical_mode_overlap": 0,
+      "non_printing_base_diameter": 6,
+      "support_type": "everywhere",
+      "retraction_enable": true,
+      "machine_width": 351,
+      "material_print_temperature": 215.0,
+      "support_bottom_distance": 0.1,
+      "support_bottom_enable": false,
+      "machine_heated_bed": true,
+      "top_layers": 5,
+      "machine_height": 300,
+      "cool_fan_speed": 20.0,
+      "layer_height": 0.2,
+      "material_bed_temperature": 45.0,
+      "cool_fan_enabled": true,
+      "material_flow": 100,
+      "infill_sparse_density": 100.0,
+      "cylindrical_mode_base_diameter": 6
+    },
+    "differences": [],
+    "material_id": "sealant_tpu_A95"
+  },
+  "qt_thread": true
+}

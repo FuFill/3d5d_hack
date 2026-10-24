@@ -1,0 +1,1522 @@
+{
+  "assumptions": [
+    "20 deg full-depth involute (Lewis Y table)",
+    "dynamic/load factor K=1 (lower bound of stress)",
+    "face width = axial length 10.14 mm (upper bound)",
+    "material properties are manufacturer typical values (Stereotech wiki), not batch data",
+    "module m=d_a/(z+2)=0.802 mm",
+    "process settings start from the Stereotech material profile; volumetric flow limit uncalibrated",
+    "strength = XY tensile strength of the material data sheet (upper bound)",
+    "z=40 from the outer contour harmonic"
+  ],
+  "calibration_context": {
+    "geometry_sha256": "df0486ac08dd9a2672ab4a9aa2b4651019efb1d7894f9cae1672696e720ee5cf",
+    "machine_id": "hte530v5.2.4",
+    "material_id": "fiberpart_tpu_c5",
+    "printing_mode": "classic",
+    "rotation": [
+      [
+        0.9999958305909584,
+        -0.0020419088269557134,
+        -0.0020419130837455862
+      ],
+      [
+        -0.0020419088269557134,
+        4.169409041021588e-06,
+        -0.9999979152933063
+      ],
+      [
+        0.0020419130837455862,
+        0.9999979152933063,
+        -6.661338147750939e-16
+      ]
+    ],
+    "settings": {
+      "adhesion_type": "brim",
+      "bottom_layers": 6,
+      "cool_fan_enabled": true,
+      "cool_fan_speed": 20.0,
+      "cylindrical_mode_base_diameter": 6.0,
+      "cylindrical_mode_overlap": 0.0,
+      "infill_pattern": "lines",
+      "infill_sparse_density": 100.0,
+      "layer_height": 0.2,
+      "layer_height_0": 0.3,
+      "line_width": 0.4,
+      "machine_center_is_zero": false,
+      "machine_depth": 300.3,
+      "machine_heated_bed": true,
+      "machine_height": 300.0,
+      "machine_nozzle_size": 0.4,
+      "machine_width": 351.0,
+      "material_bed_temperature": 95.0,
+      "material_flow": 100.0,
+      "material_print_temperature": 230.0,
+      "non_printing_base_diameter": 6.0,
+      "printing_mode": "classic",
+      "retraction_amount": 1.5,
+      "retraction_enable": true,
+      "retraction_speed": 18.0,
+      "speed_print": 40.0,
+      "support_angle": 50.0,
+      "support_bottom_distance": 0.1,
+      "support_bottom_enable": false,
+      "support_enable": false,
+      "support_interface_enable": false,
+      "support_line_width": 0.4,
+      "support_roof_enable": false,
+      "support_top_distance": 0.1,
+      "support_type": "everywhere",
+      "support_xy_distance": 0.7,
+      "top_layers": 6,
+      "wall_line_count": 4,
+      "wall_thickness": 0.8
+    }
+  },
+  "candidate_geometry": {
+    "base_area": 579.5570034156366,
+    "critical_support_contact": null,
+    "fits_build_volume": true,
+    "height": 10.1434198836855,
+    "overhang_area": 149.92123579655515,
+    "rotation": [
+      [
+        0.9999958305909584,
+        -0.0020419088269557134,
+        -0.0020419130837455862
+      ],
+      [
+        -0.0020419088269557134,
+        4.169409041021588e-06,
+        -0.9999979152933063
+      ],
+      [
+        0.0020419130837455862,
+        0.9999979152933063,
+        -6.661338147750939e-16
+      ]
+    ],
+    "size": [
+      33.10925246977256,
+      33.0996390611133,
+      10.1434198836855
+    ],
+    "staircase_mean_mm": 0.0029558368736617643,
+    "support_angle_deg": 50.0,
+    "support_volume_upper": 8.46290893240843,
+    "up": [
+      0.0020419130837455862,
+      0.9999979152933063,
+      -6.661338147750939e-16
+    ]
+  },
+  "candidates": {
+    "materials": [
+      {
+        "id": "fiberpart_tpu_c5",
+        "summary": {
+          "hinted_unknown": [
+            "R09"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R05",
+            "R07",
+            "R08",
+            "R12"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R09",
+            "R10",
+            "R11",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 5.5
+      },
+      {
+        "id": "fiberpart_abspa_g8",
+        "summary": {
+          "hinted_unknown": [
+            "R09"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R05",
+            "R07",
+            "R08",
+            "R12"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R09",
+            "R10",
+            "R11",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 4.5
+      },
+      {
+        "id": "fiberpart_tpu_g30",
+        "summary": {
+          "hinted_unknown": [
+            "R09"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R05",
+            "R07",
+            "R08",
+            "R12"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R09",
+            "R10",
+            "R11",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 4.5
+      },
+      {
+        "id": "enduse_tpu_d70",
+        "summary": {
+          "hinted_unknown": [
+            "R09"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R05",
+            "R07",
+            "R08"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R09",
+            "R10",
+            "R11",
+            "R12",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 3.5
+      },
+      {
+        "id": "fiberpart_abs_g13",
+        "summary": {
+          "hinted_unknown": [
+            "R09"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R05",
+            "R07",
+            "R12"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R08",
+            "R09",
+            "R10",
+            "R11",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 3.5
+      },
+      {
+        "id": "fiberpart_pp_g30",
+        "summary": {
+          "hinted_unknown": [
+            "R09"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R05",
+            "R07",
+            "R12"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R08",
+            "R09",
+            "R10",
+            "R11",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 3.5
+      }
+    ],
+    "routes": [
+      {
+        "feasible": true,
+        "mode": "classic",
+        "score": 0.0
+      },
+      {
+        "feasible": true,
+        "mode": "cylindrical",
+        "score": -1.5
+      },
+      {
+        "feasible": false,
+        "mode": "cylindrical_full",
+        "score": -2.0
+      }
+    ]
+  },
+  "causal_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "assess_double_ml",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "calibration_data"
+        ],
+        "model_id": "assess_double_ml",
+        "reason": "no measured print experiments supplied"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "chosen_material": {
+    "base_polymer": "TPU",
+    "excluded": null,
+    "filler": {
+      "mass_percent": 5.0,
+      "type": "carbon"
+    },
+    "id": "fiberpart_tpu_c5",
+    "label": "Fiberpart TPU C5",
+    "selectable": true,
+    "series": "Fiberpart",
+    "slicer_file": "fiberpart_tpu_c5.xml.fdm_material",
+    "wiki_url": "https://wiki.stereotech.org/ru/fdm-materials/fiberpart/tpu-c5"
+  },
+  "effective_settings": {
+    "adhesion_type": "brim",
+    "bottom_layers": 6,
+    "cool_fan_enabled": true,
+    "cool_fan_speed": 20.0,
+    "cylindrical_mode_base_diameter": 6.0,
+    "cylindrical_mode_overlap": 0.0,
+    "infill_pattern": "lines",
+    "infill_sparse_density": 100.0,
+    "layer_height": 0.2,
+    "layer_height_0": 0.3,
+    "line_width": 0.4,
+    "machine_center_is_zero": false,
+    "machine_depth": 300.3,
+    "machine_heated_bed": true,
+    "machine_height": 300.0,
+    "machine_nozzle_size": 0.4,
+    "machine_width": 351.0,
+    "material_bed_temperature": 95.0,
+    "material_flow": 100.0,
+    "material_print_temperature": 230.0,
+    "non_printing_base_diameter": 6.0,
+    "printing_mode": "classic",
+    "retraction_amount": 1.5,
+    "retraction_enable": true,
+    "retraction_speed": 18.0,
+    "speed_print": 40.0,
+    "support_angle": 50.0,
+    "support_bottom_distance": 0.1,
+    "support_bottom_enable": false,
+    "support_enable": true,
+    "support_interface_enable": false,
+    "support_line_width": 0.4,
+    "support_roof_enable": false,
+    "support_top_distance": 0.1,
+    "support_type": "everywhere",
+    "support_xy_distance": 0.7,
+    "top_layers": 6,
+    "wall_line_count": 4,
+    "wall_thickness": 0.8
+  },
+  "evidence_level": "analytical_screen",
+  "explanation": [
+    "Статус: infeasible; уровень доказательности: analytical_screen.",
+    "Материал: Fiberpart TPU C5 — выбран из 7 допустимых; отклонено 13 (обязательное требование не выполнено).",
+    "Режим: classic. mode requested by the user",
+    "  printing_mode = classic (было classic): route selected by documented policy",
+    "  bottom_layers = 6 (было 8): skin_layers, policy:skin",
+    "  infill_sparse_density = 100.0 (было 20.0): no calibrated relation load -> infill exists; policy by load class structural",
+    "  layer_height = 0.2 (было 0.1): choose_layer_height, policy:layer",
+    "  top_layers = 6 (было 8): skin_layers, policy:skin",
+    "  wall_line_count = 4 (было 2): shell 1.60 mm -> 4 walls (1.60 mm)",
+    "  material_bed_temperature = 95.0 (было 95.0): material profile value; explicit because STE takes max() over extruders",
+    "  speed_print = 40.0 (было 60.0): material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+    "  support_enable = False (было False): overhang 150 mm2, support volume bound 8 mm3 (thresholds 25 mm2, 200 mm3)",
+    "Не выполнено: torque (lower-bound bending stress 493 MPa exceeds upper-bound strength 47 MPa (material data sheet): the tooth cannot carry 25 N*m in this size/material); torque (lower-bound bending stress 1478 MPa exceeds upper-bound strength 47 MPa (material data sheet): the tooth cannot carry 75 N*m in this size/material)",
+    "Не подтверждено расчётом/данными (нужны испытания): fatigue_resistance, acid_salt_resistance, gear_accuracy, hydrophobic, glass_transition_temperature",
+    "Double ML: оценка отсутствует или часть изменений не подтверждена; нужны измеренные испытания в тех же условиях."
+  ],
+  "functional_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "functional_orientation",
+    "status": "needs_input",
+    "trace": [
+      {
+        "missing": [
+          "functional_spec"
+        ],
+        "model_id": "functional_orientation",
+        "reason": "purpose, service loads and scoped printed properties required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "materials_considered": 7,
+  "materials_rejected": 13,
+  "missing_inputs": [
+    {
+      "field": "contact",
+      "requirement_type": "gear_torque"
+    },
+    {
+      "field": "load_spectrum",
+      "requirement_type": "gear_torque"
+    },
+    {
+      "field": "fixture",
+      "requirement_type": "gear_torque"
+    },
+    {
+      "field": "load_history",
+      "requirement_type": "lifetime"
+    },
+    {
+      "field": "duration",
+      "requirement_type": "lifetime"
+    },
+    {
+      "field": "environment",
+      "requirement_type": "lifetime"
+    },
+    {
+      "field": "allowed_failure_probability",
+      "requirement_type": "lifetime"
+    }
+  ],
+  "part_name": "Ведущая шестерня привода натяжения троса",
+  "part_type": "gear",
+  "prototype_only": false,
+  "qualification_plan": [
+    {
+      "conditions": "в рабочей ориентации, с ответной деталью, при +70 °C и влажности",
+      "mandatory": true,
+      "property": "torque",
+      "reason": "fail",
+      "requirement_id": "R03",
+      "test": "Испытание на статический и циклический момент на напечатанных деталях"
+    },
+    {
+      "conditions": "в рабочей ориентации, с ответной деталью, при +70 °C и влажности",
+      "mandatory": true,
+      "property": "torque",
+      "reason": "fail",
+      "requirement_id": "R04",
+      "test": "Испытание на статический и циклический момент на напечатанных деталях"
+    },
+    {
+      "conditions": "та же ориентация слоёв и режим печати",
+      "mandatory": true,
+      "property": "fatigue_resistance",
+      "reason": "unverified",
+      "requirement_id": "R01",
+      "test": "S–N испытания образцов/деталей"
+    },
+    {
+      "conditions": "изменение массы и прочности",
+      "mandatory": true,
+      "property": "acid_salt_resistance",
+      "reason": "unverified",
+      "requirement_id": "R09",
+      "test": "Выдержка в растворах кислот/солей"
+    },
+    {
+      "conditions": "класс точности по ТЗ",
+      "mandatory": true,
+      "property": "gear_accuracy",
+      "reason": "unverified",
+      "requirement_id": "R10",
+      "test": "Контроль профиля и шага зубьев"
+    },
+    {
+      "conditions": "изменение размеров и модуля",
+      "mandatory": true,
+      "property": "hydrophobic",
+      "reason": "unverified",
+      "requirement_id": "R11",
+      "test": "Равновесная влажность при 85–98% RH"
+    },
+    {
+      "conditions": "Tg не заменяется Vicat/HDT",
+      "mandatory": true,
+      "property": "glass_transition_temperature",
+      "reason": "unverified",
+      "requirement_id": "R13",
+      "test": "DSC/DMA по ISO 11357 / ISO 6721"
+    }
+  ],
+  "requirement_issues": [],
+  "requirements": [
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R01",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна S–N зависимость материала/процесса",
+      "property": "fatigue_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Проблема: Штатные шестерни из литого под давлением пластика (POM/ацеталь) со временем накапливают усталостные микротрещины в основании зуба и ломаются, а латунные аналоги стачивают ответные полимерные валы."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R02",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "rotation_speed",
+      "provenance": {
+        "file": null,
+        "fragment": "Скорость вращения: 4–6 об/мин."
+      },
+      "region": null,
+      "unit": "rad/s",
+      "value": [
+        0.41887902047863906,
+        0.6283185307179586
+      ]
+    },
+    {
+      "comparator": "==",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R03",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": "nominal",
+      "mandatory": true,
+      "note": null,
+      "property": "torque",
+      "provenance": {
+        "file": null,
+        "fragment": "Номинальный крутящий момент: 25 Н·м."
+      },
+      "region": null,
+      "unit": "N*mm",
+      "value": 25000.0
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R04",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": "peak",
+      "mandatory": true,
+      "note": null,
+      "property": "torque",
+      "provenance": {
+        "file": null,
+        "fragment": "Пиковый (стопорный) момент при натяжении троса: до 75 Н·м (возможны микроудары при порывах ветра, раскачивающих штору)."
+      },
+      "region": null,
+      "unit": "N*mm",
+      "value": 75000.0
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R05",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна ударная вязкость в рабочих условиях",
+      "property": "impact_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Пиковый (стопорный) момент при натяжении троса: до 75 Н·м (возможны микроудары при порывах ветра, раскачивающих штору)."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R06",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "service_humidity",
+      "provenance": {
+        "file": null,
+        "fragment": "Влажность: 85–98% (тропический климат внутри оранжереи, регулярный туман)."
+      },
+      "region": null,
+      "unit": "fraction",
+      "value": [
+        0.85,
+        0.98
+      ]
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R07",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "service_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Температура: от +10°C ночью до +70°C днем (нагрев под стеклянной крышей)."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": [
+        10.0,
+        70.0
+      ]
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R08",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужны данные старения UV для SKU",
+      "property": "uv_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Химия/УФ: Постоянное воздействие жесткого ультрафиолета и периодическое попадание внекорневых подкормок (слабые кислоты, соли)."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R09",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна стойкость к среде при рабочей температуре",
+      "property": "acid_salt_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Химия/УФ: Постоянное воздействие жесткого ультрафиолета и периодическое попадание внекорневых подкормок (слабые кислоты, соли)."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R10",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужны модуль, число зубьев и класс точности",
+      "property": "gear_accuracy",
+      "provenance": {
+        "file": null,
+        "fragment": "Необходимо соблюсти точность эвольвенты и шаг зубьев."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R11",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужен критерий: водопоглощение/равновесная влажность в условиях эксплуатации",
+      "property": "hydrophobic",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал должен быть гидрофобным."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R12",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна допускаемая деформация зуба",
+      "property": "high_modulus",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал должен иметь высокий модуль упругости, чтобы зуб не «подгибался» под нагрузкой 75 Н·м, выходя из зацепления."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": ">=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R13",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "glass_transition_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Температура стеклования (Tg) должна быть не ниже 85-90°C."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": [
+        85.0,
+        90.0
+      ]
+    }
+  ],
+  "robustness_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "process_stability",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "noise_bounds",
+          "first_layer_gap_limits",
+          "process_response_calibration"
+        ],
+        "model_id": "process_stability",
+        "reason": "measured noise bounds and quality tolerances required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "route": {
+    "mode": "classic",
+    "note": "mode requested by the user",
+    "parameters": {}
+  },
+  "scene_operations": [
+    {
+      "coordinates": "printer (Z up); the adapter converts to the Uranium scene (Y up)",
+      "op": "load_mesh",
+      "path": "C:\\Users\\Ilya\\Working projects\\3d5d_hack\\data\\examples\\1. Шестерня - 3D\\Шестерня.stl",
+      "units": "mm"
+    },
+    {
+      "note": "minimum J_R among stable orientations",
+      "op": "set_transform",
+      "rotation": [
+        [
+          0.9999958305909584,
+          -0.0020419088269557134,
+          -0.0020419130837455862
+        ],
+        [
+          -0.0020419088269557134,
+          4.169409041021588e-06,
+          -0.9999979152933063
+        ],
+        [
+          0.0020419130837455862,
+          0.9999979152933063,
+          -6.661338147750939e-16
+        ]
+      ],
+      "translation": [
+        0.004841204902596985,
+        -0.0,
+        0.033792899902409294
+      ]
+    },
+    {
+      "op": "arrange"
+    }
+  ],
+  "setting_patch": {
+    "errors": [],
+    "items": [
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "printing_mode",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": "classic",
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "configuration",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": "classic"
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "bottom_layers",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 6
+      },
+      {
+        "decision_unit": "fraction",
+        "enabled_after_patch": true,
+        "key": "infill_sparse_density",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 20.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "%",
+        "validation": "valid",
+        "value": 100.0
+      },
+      {
+        "decision_unit": "mm",
+        "enabled_after_patch": true,
+        "key": "layer_height",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 0.1,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "geometry",
+        "target": "global",
+        "unit": "mm",
+        "validation": "valid",
+        "value": 0.2
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "top_layers",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 6
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "wall_line_count",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 2,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 4
+      },
+      {
+        "decision_unit": "degC",
+        "enabled_after_patch": true,
+        "key": "material_bed_temperature",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 95.0,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "thermal_flow",
+        "target": "global",
+        "unit": "°C",
+        "validation": "valid",
+        "value": 95.0
+      },
+      {
+        "decision_unit": "mm/s",
+        "enabled_after_patch": true,
+        "key": "speed_print",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 60.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "motion",
+        "target": "extruder_0",
+        "unit": "mm/s",
+        "validation": "valid",
+        "value": 40.0
+      },
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "support_enable",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": false,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "support_adhesion",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": true
+      }
+    ],
+    "ok": true,
+    "payload": {
+      "extruders": {
+        "0": {
+          "bottom_layers": 6,
+          "infill_sparse_density": 100.0,
+          "speed_print": 40.0,
+          "top_layers": 6,
+          "wall_line_count": 4
+        }
+      },
+      "global": {
+        "layer_height": 0.2,
+        "material_bed_temperature": 95.0,
+        "printing_mode": "classic",
+        "support_enable": true
+      }
+    },
+    "warnings": []
+  },
+  "status": "infeasible",
+  "structural_checks": [
+    {
+      "Ft_N": 1559.2135178873125,
+      "Y": 0.3892,
+      "assumptions": [
+        "z=40 from the outer contour harmonic",
+        "module m=d_a/(z+2)=0.802 mm",
+        "20 deg full-depth involute (Lewis Y table)",
+        "face width = axial length 10.14 mm (upper bound)",
+        "dynamic/load factor K=1 (lower bound of stress)",
+        "strength = XY tensile strength of the material data sheet (upper bound)"
+      ],
+      "check": "gear_tooth_bending",
+      "evidence": "analytical_screen",
+      "load_case": "nominal",
+      "module_mm": 0.8016862255617899,
+      "note": "lower-bound bending stress 493 MPa exceeds upper-bound strength 47 MPa (material data sheet): the tooth cannot carry 25 N*m in this size/material",
+      "pitch_radius_mm": 16.0337245112358,
+      "ratio_lower": 10.549382860651443,
+      "requirement_id": "R03",
+      "sigma_lower_MPa": 492.6561795924224,
+      "status": "fail",
+      "strength_source": "material data sheet",
+      "strength_upper_MPa": 46.7,
+      "teeth": 40,
+      "torque_Nmm": 25000.0
+    },
+    {
+      "Ft_N": 4677.640553661937,
+      "Y": 0.3892,
+      "assumptions": [
+        "z=40 from the outer contour harmonic",
+        "module m=d_a/(z+2)=0.802 mm",
+        "20 deg full-depth involute (Lewis Y table)",
+        "face width = axial length 10.14 mm (upper bound)",
+        "dynamic/load factor K=1 (lower bound of stress)",
+        "strength = XY tensile strength of the material data sheet (upper bound)"
+      ],
+      "check": "gear_tooth_bending",
+      "evidence": "analytical_screen",
+      "load_case": "peak",
+      "module_mm": 0.8016862255617899,
+      "note": "lower-bound bending stress 1478 MPa exceeds upper-bound strength 47 MPa (material data sheet): the tooth cannot carry 75 N*m in this size/material",
+      "pitch_radius_mm": 16.0337245112358,
+      "ratio_lower": 31.648148581954324,
+      "requirement_id": "R04",
+      "sigma_lower_MPa": 1477.968538777267,
+      "status": "fail",
+      "strength_source": "material data sheet",
+      "strength_upper_MPa": 46.7,
+      "teeth": 40,
+      "torque_Nmm": 75000.0
+    }
+  ],
+  "trace": [
+    {
+      "count": 13,
+      "issues": [],
+      "part_type": "gear",
+      "step": "parse_requirements"
+    },
+    {
+      "errors": [],
+      "rotational": {
+        "axial_length": 10.1434198836855,
+        "axis": [
+          0.0020419130837455862,
+          0.9999979152933063,
+          -3.4316720830777436e-16
+        ],
+        "bore_radius": 2.1289708872997353,
+        "is_rotational_candidate": true,
+        "moment_mismatch": 0.04226634427515759,
+        "r_max": 16.835410736797588,
+        "sector_cv": 0.011984484665977669
+      },
+      "size": [
+        33.099254,
+        10.1,
+        33.099254
+      ],
+      "status": "ok",
+      "step": "analyze_mesh",
+      "volume_mm3": 3795.58924189917,
+      "warnings": []
+    },
+    {
+      "build_volume": {
+        "classic": [
+          351.0,
+          300.3,
+          300.0
+        ],
+        "cylindrical": [
+          351.0,
+          300.3,
+          231.1
+        ],
+        "cylindrical_full": [
+          351.0,
+          300.3,
+          231.1
+        ]
+      },
+      "chain": [
+        "fdmprinter",
+        "steprinter_v5",
+        "steprinter530_v5.2.4",
+        "hte530v5.2.4"
+      ],
+      "machine": "hte530v5.2.4",
+      "note": "offline schema from the slicer resources; installed runtime confirmed by read-back",
+      "nozzles": [
+        0.4
+      ],
+      "step": "inspect_machine"
+    },
+    {
+      "chosen": "fiberpart_tpu_c5",
+      "policy": "hard constraints first (any mandatory fail rejects); ranking by support = passes + 0.5*hinted unknowns + 1*manufacturer application match + 0.25*optional passes, then fewer unknowns, printability, print difficulty (Stereotech memo)",
+      "prototype_only": false,
+      "ranked": [
+        "fiberpart_tpu_c5",
+        "fiberpart_abspa_g8",
+        "fiberpart_tpu_g30",
+        "enduse_tpu_d70",
+        "fiberpart_abs_g13",
+        "fiberpart_pp_g30",
+        "fiberpart_abs_g4"
+      ],
+      "rejected": 45,
+      "step": "screen_materials"
+    },
+    {
+      "chosen": "classic",
+      "routes": [
+        {
+          "feasible": true,
+          "mode": "classic",
+          "reasons": [
+            "flat layers, heated platform"
+          ],
+          "score": 0.0
+        },
+        {
+          "feasible": true,
+          "mode": "cylindrical",
+          "reasons": [
+            "axis: rotational symmetry (inertia + sector radii)",
+            "against: tooth profile accuracy is best in flat layers normal to the axis",
+            "through bore 4.25 mm: mandrel defines the bore, base cylinder removes no material"
+          ],
+          "score": -1.5
+        },
+        {
+          "feasible": false,
+          "mode": "cylindrical_full",
+          "reasons": [
+            "axis: rotational symmetry (inertia + sector radii)",
+            "against: tooth profile accuracy is best in flat layers normal to the axis",
+            "part has a bore: Spiral is the matching 5D route"
+          ],
+          "score": -2.0
+        }
+      ],
+      "step": "enumerate_routes"
+    },
+    {
+      "candidates": [
+        {
+          "height": 10.1434198836855,
+          "score": 0.11771678801761565,
+          "support_volume": 8.46290893240843,
+          "up": [
+            0.0020419130837455862,
+            0.9999979152933063,
+            -3.4316720830777436e-16
+          ]
+        },
+        {
+          "height": 10.1434198836855,
+          "score": 1.0854954529833716,
+          "support_volume": 3576.6616077902504,
+          "up": [
+            -0.0020419130837455862,
+            -0.9999979152933063,
+            3.4316720830777436e-16
+          ]
+        },
+        {
+          "height": 33.108822180907495,
+          "score": 1.7051883967940968,
+          "support_volume": 3337.428460231865,
+          "up": [
+            0.9999979152933063,
+            -0.0020419130837455862,
+            -6.131683648384772e-16
+          ]
+        },
+        {
+          "height": 33.083802248163096,
+          "score": 1.724090631596666,
+          "support_volume": 3413.4525009233535,
+          "up": [
+            0.7640491689588471,
+            -0.00015015903538475692,
+            0.645157999923708
+          ]
+        },
+        {
+          "height": 33.09999525130801,
+          "score": 1.7469520250033215,
+          "support_volume": 3493.3351150313624,
+          "up": [
+            0.2995280573029018,
+            2.9247435973531227e-08,
+            0.9540874922607198
+          ]
+        },
+        {
+          "height": 33.099254,
+          "score": 1.7562940619669125,
+          "support_volume": 3533.0943424836637,
+          "up": [
+            6.138678041748387e-16,
+            3.419144563980935e-16,
+            1.0
+          ]
+        }
+      ],
+      "chosen_up": [
+        0.0020419130837455862,
+        0.9999979152933063,
+        -3.4316720830777436e-16
+      ],
+      "step": "orientation"
+    },
+    {
+      "chosen": "fiberpart_tpu_c5",
+      "rejected_by_structure": [
+        {
+          "checks": [
+            "gear_tooth_bending",
+            "gear_tooth_bending"
+          ],
+          "material": "fiberpart_tpu_c5"
+        },
+        {
+          "checks": [
+            "gear_tooth_bending",
+            "gear_tooth_bending"
+          ],
+          "material": "fiberpart_abspa_g8"
+        },
+        {
+          "checks": [
+            "gear_tooth_bending",
+            "gear_tooth_bending"
+          ],
+          "material": "fiberpart_tpu_g30"
+        },
+        {
+          "checks": [
+            "gear_tooth_bending",
+            "gear_tooth_bending"
+          ],
+          "material": "enduse_tpu_d70"
+        },
+        {
+          "checks": [
+            "gear_tooth_bending",
+            "gear_tooth_bending"
+          ],
+          "material": "fiberpart_abs_g13"
+        },
+        {
+          "checks": [
+            "gear_tooth_bending",
+            "gear_tooth_bending"
+          ],
+          "material": "fiberpart_pp_g30"
+        },
+        {
+          "checks": [
+            "gear_tooth_bending",
+            "gear_tooth_bending"
+          ],
+          "material": "fiberpart_abs_g4"
+        }
+      ],
+      "step": "solve_structure"
+    },
+    {
+      "errors": [],
+      "items": 9,
+      "process_notes": [
+        {
+          "item": "load_class",
+          "model": "P",
+          "value": "structural"
+        },
+        {
+          "item": "layer_height",
+          "model": "P",
+          "note": "h/d = 0.50 functional seed",
+          "value": 0.2
+        },
+        {
+          "item": "nozzle_temperature",
+          "model": "S",
+          "note": "material profile value inside data-sheet window 215..240 C",
+          "value": 230.0
+        }
+      ],
+      "step": "compile_patch",
+      "warnings": []
+    },
+    {
+      "applied": false,
+      "note": "simulation estimates; no qualification promotion",
+      "status": "needs_input",
+      "step": "functional_orientation"
+    },
+    {
+      "note": "independent single-setting comparisons; deterministic patch and qualification unchanged",
+      "status": "needs_calibration",
+      "step": "assess_double_ml"
+    }
+  ],
+  "verification": [
+    {
+      "evidence_level": null,
+      "fragment": "Проблема: Штатные шестерни из литого под давлением пластика (POM/ацеталь) со временем накапливают усталостные микротрещины в основании зуба и ломаются, а латунные аналоги стачивают ответные полимерные валы.",
+      "mandatory": true,
+      "notes": [
+        "Нужна S–N зависимость материала/процесса"
+      ],
+      "property": "fatigue_resistance",
+      "requirement_id": "R01",
+      "sources": [
+        "material:fiberpart_tpu_c5"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Скорость вращения: 4–6 об/мин.",
+      "mandatory": true,
+      "notes": [],
+      "property": "rotation_speed",
+      "requirement_id": "R02",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": "analytical_screen",
+      "fragment": "Номинальный крутящий момент: 25 Н·м.",
+      "mandatory": true,
+      "notes": [
+        "lower-bound bending stress 493 MPa exceeds upper-bound strength 47 MPa (material data sheet): the tooth cannot carry 25 N*m in this size/material"
+      ],
+      "property": "torque",
+      "requirement_id": "R03",
+      "sources": [
+        "gear_tooth_bending"
+      ],
+      "status": "fail"
+    },
+    {
+      "evidence_level": "analytical_screen",
+      "fragment": "Пиковый (стопорный) момент при натяжении троса: до 75 Н·м (возможны микроудары при порывах ветра, раскачивающих штору).",
+      "mandatory": true,
+      "notes": [
+        "lower-bound bending stress 1478 MPa exceeds upper-bound strength 47 MPa (material data sheet): the tooth cannot carry 75 N*m in this size/material"
+      ],
+      "property": "torque",
+      "requirement_id": "R04",
+      "sources": [
+        "gear_tooth_bending"
+      ],
+      "status": "fail"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Пиковый (стопорный) момент при натяжении троса: до 75 Н·м (возможны микроудары при порывах ветра, раскачивающих штору).",
+      "mandatory": true,
+      "notes": [
+        "elongation 0.14 vs policy 0.05"
+      ],
+      "property": "impact_resistance",
+      "requirement_id": "R05",
+      "sources": [
+        "material:fiberpart_tpu_c5"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Влажность: 85–98% (тропический климат внутри оранжереи, регулярный туман).",
+      "mandatory": true,
+      "notes": [],
+      "property": "service_humidity",
+      "requirement_id": "R06",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Температура: от +10°C ночью до +70°C днем (нагрев под стеклянной крышей).",
+      "mandatory": true,
+      "notes": [
+        "manufacturer operating range -50..120 C"
+      ],
+      "property": "service_temperature",
+      "requirement_id": "R07",
+      "sources": [
+        "material:fiberpart_tpu_c5"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Химия/УФ: Постоянное воздействие жесткого ультрафиолета и периодическое попадание внекорневых подкормок (слабые кислоты, соли).",
+      "mandatory": true,
+      "notes": [
+        "UV resistant per manufacturer"
+      ],
+      "property": "uv_resistance",
+      "requirement_id": "R08",
+      "sources": [
+        "material:fiberpart_tpu_c5"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Химия/УФ: Постоянное воздействие жесткого ультрафиолета и периодическое попадание внекорневых подкормок (слабые кислоты, соли).",
+      "mandatory": true,
+      "notes": [
+        "resistant at room temperature only; service up to 70 C needs a test"
+      ],
+      "property": "acid_salt_resistance",
+      "requirement_id": "R09",
+      "sources": [
+        "material:fiberpart_tpu_c5"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Необходимо соблюсти точность эвольвенты и шаг зубьев.",
+      "mandatory": true,
+      "notes": [
+        "Нужны модуль, число зубьев и класс точности"
+      ],
+      "property": "gear_accuracy",
+      "requirement_id": "R10",
+      "sources": [
+        "material:fiberpart_tpu_c5"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Материал должен быть гидрофобным.",
+      "mandatory": true,
+      "notes": [
+        "moisture uptake class: medium (Stereotech memo)"
+      ],
+      "property": "hydrophobic",
+      "requirement_id": "R11",
+      "sources": [
+        "material:fiberpart_tpu_c5"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Материал должен иметь высокий модуль упругости, чтобы зуб не «подгибался» под нагрузкой 75 Н·м, выходя из зацепления.",
+      "mandatory": true,
+      "notes": [
+        "stiffness class: hard_rigid; tooth deflection needs a load model"
+      ],
+      "property": "high_modulus",
+      "requirement_id": "R12",
+      "sources": [
+        "material:fiberpart_tpu_c5"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Температура стеклования (Tg) должна быть не ниже 85-90°C.",
+      "mandatory": true,
+      "notes": [
+        "no data for glass_transition_temperature; Tg is not replaced by Vicat/HDT"
+      ],
+      "property": "glass_transition_temperature",
+      "requirement_id": "R13",
+      "sources": [
+        "material:fiberpart_tpu_c5"
+      ],
+      "status": "unknown"
+    }
+  ]
+}

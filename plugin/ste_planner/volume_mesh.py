@@ -6,6 +6,7 @@ with Gmsh prepares them. A lock owns Gmsh's process-wide state.
 """
 
 import hashlib
+import itertools
 import math
 import threading
 import uuid
@@ -16,6 +17,45 @@ from . import geometry
 from .result import computed, invalid, unknown, MODEL_GEOMETRIC, EVIDENCE_SIMULATION
 
 _LOCK = threading.Lock()
+
+
+def deposition_background(bounds_mm, size_mm, geometry_sha256):
+    """Explicit integration grid, NOT a solid repair/fill of the STL.
+
+    Material exists only where road-volume transfer deposits it. Empty cells
+    remain empty; this coarse background does not resolve bead boundaries.
+    """
+    try:
+        bounds = np.asarray(bounds_mm, float)
+        size = float(size_mm)
+        if (bounds.shape != (2, 3) or not np.isfinite(bounds).all() or
+                (bounds[1] <= bounds[0]).any() or not math.isfinite(size) or size <= 0 or not geometry_sha256):
+            raise ValueError("finite bounds, positive cell size and original geometry digest required")
+        counts = np.maximum(1, np.ceil((bounds[1]-bounds[0])/size).astype(int))
+        if 6 * np.prod(counts) > 20000:
+            raise ValueError("background exceeds 20000 tetrahedra; choose explicit coarser integration scale")
+        axes = [np.linspace(bounds[0, i], bounds[1, i], int(counts[i])+1) for i in range(3)]
+        nodes = np.array(list(itertools.product(*axes)))
+        def index(corner):
+            i, j, k = corner
+            return int((i*(counts[1]+1)+j)*(counts[2]+1)+k)
+        elements = []
+        for cell in itertools.product(*(range(int(n)) for n in counts)):
+            for order in itertools.permutations(range(3)):
+                corner = np.array(cell)
+                tet = [index(corner)]
+                for axis in order:
+                    corner[axis] += 1
+                    tet.append(index(corner))
+                elements.append(tet)
+        return computed({"nodes_mm": nodes.tolist(), "elements": elements,
+                         "geometry_sha256": geometry_sha256, "size_mm": size, "order": 1,
+                         "generator": "Freudenthal background integration grid",
+                         "domain_role": "integration background; occupancy comes exclusively from toolpaths",
+                         "is_STL_solid_mesh": False}, None, "deposition_background", MODEL_GEOMETRIC,
+                        evidence=EVIDENCE_SIMULATION)
+    except (ValueError, TypeError, OverflowError) as exc:
+        return invalid("deposition_background", str(exc))
 
 
 def file_digest(path):

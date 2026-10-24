@@ -96,7 +96,7 @@ _WORD = re.compile(r"([A-Z])\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)")
 _NONFINITE = re.compile(r"[XYZACEFS]\s*[-+]?(?:NAN|INF(?:INITY)?)(?=$|\s)")
 
 
-def parse_gcode(text, filament_diameter=1.75, collect_segments=False):
+def parse_gcode(text, filament_diameter=1.75, collect_segments=False, segment_callback=None, physical_rotary_resets=False):
     if (isinstance(filament_diameter, bool) or not isinstance(filament_diameter, (int, float))
             or not math.isfinite(filament_diameter) or filament_diameter <= 0):
         raise ValueError("finite positive filament diameter required")
@@ -107,7 +107,10 @@ def parse_gcode(text, filament_diameter=1.75, collect_segments=False):
             "extruded_mm": {}, "coordinate_systems": set(), "extrusion_modes": set(), "tools": set(),
             "bbox": {}, "rotary": {"A": [None, None], "C": [None, None]}, "max_linear_flow_mm3_s": 0.0,
             "rotary_extrusion_moves": 0, "moves": 0, "retractions": 0, "lines": 0,
-            "feature_extruded_mm": {}, "parse_errors": [], "spatial_resets": 0}
+            "feature_extruded_mm": {}, "parse_errors": [], "spatial_resets": 0,
+            "spatial_reset_events": [], "opaque_macros": [], "physical_controls": []}
+    retraction_debt = {}
+    rotary_offset = {"A": 0., "C": 0.}
     layer = None
     if collect_segments:
         info["extrusion_segments"] = []
@@ -139,6 +142,7 @@ def parse_gcode(text, filament_diameter=1.75, collect_segments=False):
         if not code:
             continue
         if code in KNOWN_WORDS:
+            info["opaque_macros"].append(code)
             continue
         m = re.match(r"([GMT])(\d+)", code)
         if not m:
@@ -154,6 +158,8 @@ def parse_gcode(text, filament_diameter=1.75, collect_segments=False):
             info["tools"].add(int(num))
             continue
         if letter == "M":
+            if num == "221" and words.get("S", 100.) != 100.:
+                info["physical_controls"].append({"line": info["lines"], "command": code})
             if num not in KNOWN_M:
                 info["unsupported"]["M" + num] = info["unsupported"].get("M" + num, 0) + 1
             if num in ("104", "109") and "S" in words:
@@ -174,6 +180,8 @@ def parse_gcode(text, filament_diameter=1.75, collect_segments=False):
         if num not in KNOWN_G:
             info["unsupported"]["G" + num] = info["unsupported"].get("G" + num, 0) + 1
             continue
+        if num in ("10", "11"):
+            info["physical_controls"].append({"line": info["lines"], "command": code})
         if num == "90":
             state["abs_xyz"] = True
             continue
@@ -189,8 +197,12 @@ def parse_gcode(text, filament_diameter=1.75, collect_segments=False):
                 state["e"] = words["E"]
             for ax in ("X", "Y", "Z", "A", "C"):
                 if ax in words:
+                    tracked = physical_rotary_resets and ax in rotary_offset
+                    if tracked:
+                        rotary_offset[ax] += state["pos"][ax] - words[ax]
                     state["pos"][ax] = words[ax]
                     info["spatial_resets"] += 1
+                    info["spatial_reset_events"].append({"line": info["lines"], "axis": ax, "value": words[ax], "tracked": tracked})
             continue
         if num in ("0", "1"):
             info["moves"] += 1
@@ -206,13 +218,33 @@ def parse_gcode(text, filament_diameter=1.75, collect_segments=False):
                 state["e"] = words["E"] if state["abs_e"] else state["e"] + words["E"]
             if de < 0:
                 info["retractions"] += 1
+                retraction_debt[state["tool"]] = retraction_debt.get(state["tool"], 0.) - de
             if de > 0:
+                consumed = min(de, retraction_debt.get(state["tool"], 0.))
+                retraction_debt[state["tool"]] = retraction_debt.get(state["tool"], 0.) - consumed
+                deposited = de - consumed
                 dist = math.sqrt(sum((state["pos"][ax] - old[ax]) ** 2 for ax in ("X", "Y", "Z")))
-                if dist > 1e-6:
+                rotary_motion = any(abs(state["pos"][a] - old[a]) > 1e-9 for a in ("A", "C"))
+                if (collect_segments or segment_callback is not None) and (dist > 1e-6 or rotary_motion) and deposited > 1e-12:
+                    # With synchronous linear E/joint interpolation, material
+                    # appears only after the retraction debt is repaid.
+                    start = dict((a, old[a] + consumed/de * (state["pos"][a]-old[a])) for a in old)
+                    end_axes = dict(state["pos"])
+                    if physical_rotary_resets:
+                        for axis in rotary_offset:
+                            start[axis] += rotary_offset[axis]
+                            end_axes[axis] += rotary_offset[axis]
+                    record = {"start": [start[a] for a in ("X", "Y", "Z")],
+                        "end": [state["pos"][a] for a in ("X", "Y", "Z")], "feature": feature,
+                        "cs": state["cs"], "rotary": rotary_motion, "start_axes": start,
+                        "end_axes": end_axes, "deposited_filament_mm": deposited,
+                        "tool": state["tool"], "feed_mm_min": state["f"], "line": info["lines"],
+                        "layer": layer["index"] if layer else None}
                     if collect_segments:
-                        info["extrusion_segments"].append({"start": [old[a] for a in ("X", "Y", "Z")],
-                            "end": [state["pos"][a] for a in ("X", "Y", "Z")], "feature": feature,
-                            "cs": state["cs"], "rotary": any(abs(state["pos"][a] - old[a]) > 1e-9 for a in ("A", "C"))})
+                        info["extrusion_segments"].append(record)
+                    if segment_callback is not None:
+                        segment_callback(record)
+                if dist > 1e-6:
                     info["feature_extruded_mm"][feature] = info["feature_extruded_mm"].get(feature, 0.0) + de
                     if layer is not None:
                         layer["extrusion_z"].append(state["pos"]["Z"])

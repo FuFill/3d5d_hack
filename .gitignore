@@ -9,5 +9,9 @@ __pycache__/
 /experiments/ste_runtime/**/job.json
 /experiments/ste_runtime/**/process*.json
 /experiments/ste_runtime/**/*.log
+/experiments/real_toolpath_physics/**/job.json
+/experiments/real_toolpath_physics/**/process*.json
+/experiments/real_toolpath_physics/**/*.log
+/experiments/real_toolpath_physics/**/*.gcode
 # Large reproducible FE field dumps stay local; metrics, input recipes and maps are versioned.
 /experiments/functional_artifacts/*_decision.json

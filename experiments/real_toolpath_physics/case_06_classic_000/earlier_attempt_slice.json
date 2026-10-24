@@ -1,0 +1,6 @@
+{
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\Ilya\\Working projects\\3d5d_hack\\.runtime\\ste\\run_861301fc54\\appdata\\steslicer\\7.10\\plugins\\STEPlannerRuntime\\RuntimeExtension.py\", line 360, in poll_once\n    result = self.wait_pending()\n  File \"C:\\Users\\Ilya\\Working projects\\3d5d_hack\\.runtime\\ste\\run_861301fc54\\appdata\\steslicer\\7.10\\plugins\\STEPlannerRuntime\\RuntimeExtension.py\", line 300, in wait_pending\n    raise ValueError(\"STE runtime command timed out\")\nValueError: STE runtime command timed out\n",
+  "status": "error",
+  "error": "ValueError",
+  "message": "STE runtime command timed out"
+}

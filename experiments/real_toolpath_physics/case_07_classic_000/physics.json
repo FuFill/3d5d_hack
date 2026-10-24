@@ -1,0 +1,106 @@
+{
+  "archive": {
+    "path": "part.gcode.gz",
+    "sha256": "b30824130ca6ee72e6187e7e2da82ae79f31e16d6d0695f58bca3c0888202846",
+    "uncompressed_bytes": 8845266,
+    "uncompressed_sha256": "cbd3f6d57cd78cf4ddbdee99bb62ba7d11840d5d1d7605a01c1af9d4ef6ca6ed"
+  },
+  "diameter_source": "nominal selected STE material profile, not measured filament",
+  "filament_diameter_mm": 1.75,
+  "id": "case_07_classic_000",
+  "input": {
+    "analysis_only": true,
+    "id": "case_07_classic_000",
+    "mode": "classic",
+    "organizer_case": "7. Ось вращения передающих звёзд формовщика коробов Krones - 5D",
+    "orientation_parameter": "build tilt about X",
+    "orientation_phase_deg": 0,
+    "physical_print_approval": false,
+    "planner_status": "needs_calibration",
+    "specimens_per_slice": 1,
+    "stl": "data\\examples\\7. Ось вращения передающих звёзд формовщика коробов Krones - 5D\\Ось вращения передающих звёзд.STL",
+    "stl_sha256": "9fa137ba0d1f8b0a7b3736e4094e412dd90c5ee38f5b9eb226bcead4c8066690",
+    "tz": "data\\examples\\7. Ось вращения передающих звёзд формовщика коробов Krones - 5D\\Ось вращения передающих звёзд.docx"
+  },
+  "physical_print_approval": false,
+  "strict": {
+    "domain": {},
+    "evidence": "simulation",
+    "model_class": "A",
+    "model_id": "sliced_physics",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "inputs": {},
+        "model_id": "sliced_physics",
+        "note": "actual slices; no measured constants or service boundary conditions invented"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": {
+      "deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 397.91879322314253,
+          "SUPPORT": 199.85287464341482
+        },
+        "normal_structure_tensor": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "normalized_gcode_sha256": "a214671945b8ab9dda48e1afdee416422c4bec55bbc0e8cf24c5b6f87c42ba6b",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 377155.5215065336,
+        "part_volume_mm3": 15245.766287374185,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 214800,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5440466116972369,
+            -0.017600154038408016,
+            0.0
+          ],
+          [
+            -0.017600154038408016,
+            0.4559533883027636,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "failure_capacity": null,
+      "gcode_bytes_sha256": "cbd3f6d57cd78cf4ddbdee99bb62ba7d11840d5d1d7605a01c1af9d4ef6ca6ed",
+      "missing": [
+        "measured road/interface constitutive properties and protocol",
+        "volume mesh for toolpath-to-FE transfer"
+      ],
+      "native_failed_checks": [],
+      "physical_print_approval": false,
+      "source_geometry_sha256": "9fa137ba0d1f8b0a7b3736e4094e412dd90c5ee38f5b9eb226bcead4c8066690",
+      "stiffness": null
+    }
+  }
+}

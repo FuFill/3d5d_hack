@@ -48,19 +48,19 @@ def test_geometry_smoothness_improves_but_is_not_reported_as_Ra():
     assert value["metrics"]["Ra_um"] is None and value["metrics"]["flatness_mm"] is None
 
 
-def test_scoped_physical_record_contract_updates_plan_and_calibration_context():
+def test_scoped_physical_record_cannot_apply_without_actual_slice_physics():
     # Simulated records exercise the physical-record CODE path, not printing evidence.
     path, spec, initial, _ = planning_fixture()
     for profile in spec["profiles"]:
         profile["source"] = "physical_test"
     dec = plan(spec, path)
     value = dec["functional_analysis"]["value"]
-    assert value["applied"], value["mesh_convergence"]
-    assert dec["effective_settings"]["layer_height"] == 0.1
-    assert dec["effective_settings"]["wall_line_count"] == 6
-    assert dec["effective_settings"]["infill_sparse_density"] == 60.0
+    assert not value["applied"], value["mesh_convergence"]
+    assert value["requires_actual_slice_evaluation"]
+    assert value["evaluation_basis"] == "pre_slice_screening_not_actual_toolpath"
+    assert dec["effective_settings"] == initial["effective_settings"]
     assert dec["calibration_context"]["settings"] == dec["effective_settings"]
-    assert dec["scene_operations"][1]["rotation"] == value["selected"]["rotation"]
+    assert dec["scene_operations"] == initial["scene_operations"]
     assert dec["setting_patch"]["errors"] == []
     assert dec["status"] != "qualified"
     assert any(q["property"] == "functional_strength_stiffness" for q in dec["qualification_plan"])

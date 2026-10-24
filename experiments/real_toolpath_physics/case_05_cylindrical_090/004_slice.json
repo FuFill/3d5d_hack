@@ -1,0 +1,303 @@
+{
+  "gcode": {
+    "sha256": "6ed6330f18d7d4abaa426587e38b0caeae2133a752bd8e3c69e12cb8aafadbe3",
+    "path": "part.gcode",
+    "bytes": 43094441
+  },
+  "inspection": {
+    "checks": [
+      {
+        "status": "pass",
+        "check": "has_layers",
+        "note": "210 layers"
+      },
+      {
+        "status": "pass",
+        "check": "no_empty_layers",
+        "note": "empty layers: none"
+      },
+      {
+        "status": "pass",
+        "check": "extrusion_present",
+        "note": "filament mm per tool: {0: 121911.6}"
+      },
+      {
+        "status": "pass",
+        "check": "finite_coordinates",
+        "note": "nonfinite numbers on lines: []"
+      },
+      {
+        "status": "pass",
+        "check": "supported_commands",
+        "note": "unrecognised: none"
+      },
+      {
+        "status": "pass",
+        "check": "single_extrusion_mode",
+        "note": "modes: ['absolute']"
+      },
+      {
+        "status": "pass",
+        "check": "nozzle_temperature",
+        "note": "expected 270, found [270.0]"
+      },
+      {
+        "status": "pass",
+        "check": "mode_consistency",
+        "note": "5D markers: coordinate systems ['G56'], rotary extrusion moves 1216642"
+      },
+      {
+        "status": "unknown",
+        "check": "volumetric_flow",
+        "note": "max linear 7.38 mm3/s; no calibrated Q_limit"
+      }
+    ],
+    "summary": {
+      "support_extruded_mm": 0,
+      "rotary_ranges": {
+        "A": [
+          0.0,
+          90.0
+        ],
+        "C": [
+          -30030.003,
+          0.0
+        ]
+      },
+      "time_header": "36739",
+      "label": "slicer estimate",
+      "retractions": 18265,
+      "feature_extruded_mm": {
+        "WALL-INNER": 20741.676949998855,
+        "WALL-OUTER": 10693.725789999924,
+        "SKIN": 3878.373820000016,
+        "FILL": 25049.902799999832
+      },
+      "max_linear_flow_mm3_s": 7.376197751075447,
+      "coordinate_systems": [
+        "G56"
+      ],
+      "layers": 210,
+      "filament_used_header": "67.1076m, 0m",
+      "filament_volume_mm3": {
+        "0": 293231.6614851066
+      },
+      "bbox": {
+        "G56": [
+          [
+            0.0,
+            -50.435,
+            4.289
+          ],
+          [
+            0.0,
+            -0.299,
+            66.989
+          ]
+        ],
+        "G54": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      }
+    }
+  },
+  "physics_context": {
+    "filament_diameter_mm": 1.75,
+    "mode_specific_settings": {
+      "support_bottom_distance_cylindrical": 0.1,
+      "cylindrical_raft_type": "none",
+      "cool_fan_speed_max_cylindrical": 0.0,
+      "cylindrical_raft_gap": 0.6,
+      "reinforcement_bottom_skin_layers_cylindrical": [
+        0
+      ],
+      "fiber_line_distance_cylindrical": [
+        1.2
+      ],
+      "cylindrical_mode_overlap": 0,
+      "reinforcement_wall_count_cylindrical": [
+        0
+      ],
+      "speed_wall_x_cylindrical": 40.0,
+      "speed_roofing_cylindrical": 20.0,
+      "speed_infill_cylindrical": 40.0,
+      "speed_travel_cylindrical": 60,
+      "cylindrical_mode_base_diameter": 7.98,
+      "reinforcement_enabled_cylindrical": false,
+      "reinforcement_intermediate_layers_cylindrical": [
+        0
+      ],
+      "cylindrical_raft_extruder_nr": "0",
+      "support_offset_cylindrical": 0.2,
+      "speed_topbottom_cylindrical": 20.0,
+      "cylindrical_fiber_infill_extruder_nr": -1,
+      "speed_print_layer_0_cylindrical": 20.0,
+      "cylindrical_layer_height": 0.3,
+      "reinforcement_top_skin_layers_cylindrical": [
+        0
+      ],
+      "reinforcement_start_layer_cylindrical": [
+        1
+      ],
+      "cylindrical_raft_diameter": 10.98,
+      "support_top_distance_cylindrical": 0.1,
+      "support_z_distance_cylindrical": 0.1,
+      "cool_chamber_fan_speed_min_cylindrical": 0.0,
+      "speed_wall_0_cylindrical": 20.0,
+      "cylindrical_layer_height_0": 0.3,
+      "cylindrical_raft_base_height": 15,
+      "support_xy_distance_cylindrical": 0.2,
+      "cool_chamber_fan_speed_max_cylindrical": 0.0,
+      "fiber_infill_round_connect_cylindrical": [
+        1
+      ],
+      "cool_fan_speed_min_cylindrical": 0.0,
+      "fiber_infill_pattern_cylindrical": [
+        2
+      ],
+      "fiber_density_cylindrical": 50,
+      "cylindrical_raft_thickness": 0.3,
+      "cylindrical_infill_extruder_nr": "-1",
+      "cool_fan_enabled_cylindrical": true,
+      "support_enable_cylindrical": false,
+      "speed_support_infill_cylindrical": 40.0,
+      "speed_travel_layer_0_cylindrical": 30.0,
+      "cylindrical_round_segments": 128,
+      "reinforcement_layer_count_cylindrical": [
+        1
+      ],
+      "fiber_infill_angles_cylindrical": [
+        45
+      ]
+    },
+    "source": "native_effective_stack"
+  },
+  "backend_state": 3,
+  "status": "slice_completed",
+  "backend": "CliParserBackend",
+  "project": {
+    "sha256": "fc30069b0ad813165c4e7c021e3709cb3c7244f07bb3149065051994ca82b8d3",
+    "path": "part.3mf"
+  },
+  "nodes": [
+    {
+      "name": "Рабочее_колесо насоса Wilo IPL 80140-42. 2063106.STL",
+      "mesh_sha256": "9f7f49bd6d5ce8bee5d46381f8f9b06c4ceb0c209e0786df153ecd4cd32df8e3",
+      "parent": "Root",
+      "matrix": [
+        [
+          -4.720583923756294e-09,
+          1.0,
+          -7.125590855139308e-07,
+          -76.31127166748047
+        ],
+        [
+          -4.720580371042615e-09,
+          -7.125590855139308e-07,
+          -1.0,
+          0.18407592177391052
+        ],
+        [
+          -1.0,
+          -4.720580371042615e-09,
+          4.720583923756294e-09,
+          -102.70733642578125
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "modifier": {
+        "support_mesh": false,
+        "anti_overhang_mesh": false,
+        "support_mesh_drop_down": true
+      },
+      "vertices": 220812,
+      "world_bounds": [
+        [
+          -67.32284545898438,
+          -1.4901161193847656e-08,
+          -67.3233642578125
+        ],
+        [
+          67.32280731201172,
+          50.735069274902344,
+          67.31642150878906
+        ]
+      ]
+    }
+  ],
+  "readback": {
+    "material_id": "fiberpart_pp_g30",
+    "quality_id": "normal",
+    "status": "pass",
+    "actual": {
+      "support_interface_enable": false,
+      "retraction_amount": 3,
+      "support_bottom_distance": 0.1,
+      "machine_depth": 300.3,
+      "machine_center_is_zero": true,
+      "cool_fan_enabled": true,
+      "wall_thickness": 0.8,
+      "support_bottom_enable": false,
+      "support_top_distance": 0.1,
+      "speed_print": 40.0,
+      "machine_heated_bed": false,
+      "cool_fan_speed": 0.0,
+      "material_print_temperature": 270.0,
+      "machine_width": 351,
+      "retraction_enable": true,
+      "cylindrical_mode_overlap": 0,
+      "infill_sparse_density": 100.0,
+      "support_roof_enable": false,
+      "material_flow": 100,
+      "support_angle": 50,
+      "top_layers": 4,
+      "retraction_speed": 25,
+      "support_type": "everywhere",
+      "line_width": 0.6,
+      "layer_height_0": 0.3,
+      "cylindrical_mode_base_diameter": 7.98,
+      "adhesion_type": "brim",
+      "wall_line_count": 3,
+      "bottom_layers": 4,
+      "machine_nozzle_size": 0.6,
+      "layer_height": 0.3,
+      "printing_mode": "cylindrical",
+      "support_xy_distance": 0.7,
+      "support_enable": false,
+      "machine_height": 231.1,
+      "material_bed_temperature": 110.0,
+      "non_printing_base_diameter": 7.98,
+      "support_line_width": 0.6,
+      "infill_pattern": "lines"
+    },
+    "machine_definition": "hte530v5.2.4",
+    "differences": []
+  },
+  "expected": {
+    "build_volume": [
+      351,
+      300.3,
+      231.1
+    ],
+    "printing_mode": "cylindrical",
+    "model_top_z": 50.735069274902344,
+    "bed_temperature": null,
+    "nozzle_temperature": 270.0,
+    "xy_centered": true,
+    "layer_height": 0.3
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "status": "pass",
+  "staged_files_checked": 246,
+  "three_mf_archives_checked": 20,
+  "local_secret_values_available": true,
+  "problems": [],
+  "scope": "exact local secret values/base64 and private-key markers; not a universal DLP guarantee"
+}

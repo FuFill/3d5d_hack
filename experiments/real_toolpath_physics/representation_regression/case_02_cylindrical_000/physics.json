@@ -1,0 +1,267 @@
+{
+  "archive": {
+    "path": "part.gcode.gz",
+    "sha256": "4ddf844cb0d674aa8fbd66c0632bfff2c8a0772d0e258c8e02f1827df777aa16",
+    "uncompressed_bytes": 1400038,
+    "uncompressed_sha256": "adab448921df87eb7d2a83662e9e4a7bf97b2cb22d40ca08e36cbba3caffd28f"
+  },
+  "conditional_nominal_pose": {
+    "domain": {},
+    "evidence": "simulation",
+    "model_class": "A",
+    "model_id": "sliced_physics",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "inputs": {},
+        "model_id": "sliced_physics",
+        "note": "actual slices; no measured constants or service boundary conditions invented"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": {
+      "deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {},
+        "normal_structure_tensor": [
+          [
+            0.37367982406538874,
+            1.2697377120968252e-09,
+            -0.4156987827881751
+          ],
+          [
+            1.2697377120968252e-09,
+            6.529637348054941e-18,
+            -2.015022172100397e-09
+          ],
+          [
+            -0.4156987827881751,
+            -2.015022172100397e-09,
+            0.6263201759346169
+          ]
+        ],
+        "normalized_gcode_sha256": "3dd0f4f9b62e4068262908060c2263785756b0e3743d16222fb48b729af7f22a",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 24070.91258302456,
+        "part_volume_mm3": 2431.8854715347784,
+        "physical_print_approval": false,
+        "pose_source": "analysis_assumption",
+        "road_count": 39398,
+        "rotary_subdivisions": 620,
+        "tangent_structure_tensor": [
+          [
+            0.15205042281661157,
+            0.01800194887195422,
+            0.11036074627700532
+          ],
+          [
+            0.01800194887195422,
+            0.7518511602831338,
+            0.012306299080824095
+          ],
+          [
+            0.11036074627700532,
+            0.012306299080824095,
+            0.09609841690024981
+          ]
+        ]
+      },
+      "failure_capacity": null,
+      "gcode_bytes_sha256": "adab448921df87eb7d2a83662e9e4a7bf97b2cb22d40ca08e36cbba3caffd28f",
+      "material_field": {
+        "coarse_element_count": 1536,
+        "constitutive_operator": "recompute with --field-case; no modulus fitted",
+        "operator_coefficients": [
+          "D11",
+          "D22",
+          "D33",
+          "D12",
+          "D13",
+          "D23",
+          "G12",
+          "G23",
+          "G13"
+        ],
+        "summary": {
+          "assigned_volume_mm3": 2431.8854715347775,
+          "fraction_above_one_elements": 12,
+          "fraction_range": [
+            0.0,
+            1.9243852367497494
+          ],
+          "line_tet_pairs": 252350,
+          "mass_assignment_relative_error": 9.349686821383695e-16,
+          "model": "coarse line-volume constant-strain approximation",
+          "physical_prediction_verified": false,
+          "requires_mesh_and_bead_convergence": true,
+          "shared_face_road_ties": 3429,
+          "unassigned_volume_mm3": 2.2737367544323206e-12,
+          "void_elements": 1388
+        }
+      },
+      "missing": [
+        "measured/authoritative kinematic contract; nominal pose is an analysis assumption",
+        "measured road/interface constitutive properties and protocol",
+        "bead/mesh convergence and resolved contact/porosity before physical prediction",
+        "resolve overfilled cells/unassigned deposition before numerical FE evaluation",
+        "explicit service load patches and fixtures, not manufacturing supports"
+      ],
+      "native_failed_checks": [],
+      "physical_print_approval": false,
+      "source_geometry_sha256": "9cebfe96ba84aef74161ddd98264a2e1e90df63b11ad9b19c3fe181003483bd4",
+      "stiffness": null
+    }
+  },
+  "diameter_source": "nominal selected STE material profile, not measured filament",
+  "filament_diameter_mm": 1.75,
+  "id": "case_02_cylindrical_000",
+  "input": {
+    "analysis_only": true,
+    "id": "case_02_cylindrical_000",
+    "mode": "cylindrical",
+    "organizer_case": "2. Колесо конвейерной линии - 5D",
+    "orientation_parameter": "phase about retained tooling axis",
+    "orientation_phase_deg": 0,
+    "physical_print_approval": false,
+    "planner_status": "needs_input",
+    "specimens_per_slice": 1,
+    "stl": "data\\examples\\2. Колесо конвейерной линии - 5D\\Колесо.STL",
+    "stl_sha256": "9cebfe96ba84aef74161ddd98264a2e1e90df63b11ad9b19c3fe181003483bd4",
+    "tz": "data\\examples\\2. Колесо конвейерной линии - 5D\\Техническое задание для колеса конвейерной линии.docx"
+  },
+  "meshing": {
+    "domain_role": "integration background; occupancy comes exclusively from toolpaths",
+    "element_count": 1536,
+    "status": "computed",
+    "trace": [
+      {
+        "inputs": {},
+        "model_id": "deposition_background",
+        "note": null
+      }
+    ]
+  },
+  "nominal_pose_assumption": {
+    "angle_unit": "degree",
+    "interpolation": "linear_unwrapped_joints",
+    "nozzle_axis_machine": [
+      0,
+      0,
+      1
+    ],
+    "source": "analysis_assumption",
+    "table_pivot_mm": [
+      0,
+      0,
+      0
+    ],
+    "type": "table_AC",
+    "work_offsets": {
+      "G54": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "G55": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "G56": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  },
+  "physical_print_approval": false,
+  "strict": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "toolpath_deposition",
+    "status": "needs_input",
+    "trace": [
+      {
+        "missing": [
+          "forward_kinematics",
+          "work_offsets",
+          "TCP_and_table_pivot",
+          "controller_interpolation"
+        ],
+        "model_id": "toolpath_deposition",
+        "reason": "rotary coordinate letters do not determine physical deposition directions"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "archive": {
+    "path": "part.gcode.gz",
+    "sha256": "ad2e37d570be1ca14635924ac1bb204552f434cf31e8c9ff02189719506f3353",
+    "uncompressed_bytes": 6621979,
+    "uncompressed_sha256": "0ac1a3159ef9bb2bf1794bbe8fde09bec080ffa677f82626973f3a30a717a2ba"
+  },
+  "diameter_source": "nominal selected STE material profile, not measured filament",
+  "filament_diameter_mm": 1.75,
+  "id": "case_02_classic_000",
+  "input": {
+    "analysis_only": true,
+    "id": "case_02_classic_000",
+    "mode": "classic",
+    "organizer_case": "2. Колесо конвейерной линии - 5D",
+    "orientation_parameter": "build tilt about X",
+    "orientation_phase_deg": 0,
+    "physical_print_approval": false,
+    "planner_status": "needs_input",
+    "specimens_per_slice": 1,
+    "stl": "data\\examples\\2. Колесо конвейерной линии - 5D\\Колесо.STL",
+    "stl_sha256": "9cebfe96ba84aef74161ddd98264a2e1e90df63b11ad9b19c3fe181003483bd4",
+    "tz": "data\\examples\\2. Колесо конвейерной линии - 5D\\Техническое задание для колеса конвейерной линии.docx"
+  },
+  "physical_print_approval": false,
+  "strict": {
+    "domain": {},
+    "evidence": "simulation",
+    "model_class": "A",
+    "model_id": "sliced_physics",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "inputs": {},
+        "model_id": "sliced_physics",
+        "note": "actual slices; no measured constants or service boundary conditions invented"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": {
+      "deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 753.0227031626077,
+          "SUPPORT": 1173.837518874639
+        },
+        "normal_structure_tensor": [
+          [
+            4.789409609061948e-19,
+            6.920556053570228e-10,
+            2.5443896047360307e-18
+          ],
+          [
+            6.920556053570228e-10,
+            1.0,
+            3.676568161633876e-09
+          ],
+          [
+            2.5443896047360307e-18,
+            3.676568161633876e-09,
+            1.351715344714256e-17
+          ]
+        ],
+        "normalized_gcode_sha256": "4bb0a7595860a0ddcf23e48e10b39c7a9ca75355f1280d343fb714bade51bec1",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 584244.7813909071,
+        "part_volume_mm3": 46768.96969425973,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 151089,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5000009188272161,
+            -3.419954446535634e-10,
+            -0.0010969451345929865
+          ],
+          [
+            -3.419954446535634e-10,
+            6.992453114313607e-18,
+            -1.837521555960267e-09
+          ],
+          [
+            -0.0010969451345929865,
+            -1.837521555960267e-09,
+            0.4999990811727734
+          ]
+        ]
+      },
+      "failure_capacity": null,
+      "gcode_bytes_sha256": "0ac1a3159ef9bb2bf1794bbe8fde09bec080ffa677f82626973f3a30a717a2ba",
+      "missing": [
+        "measured road/interface constitutive properties and protocol",
+        "volume mesh for toolpath-to-FE transfer"
+      ],
+      "native_failed_checks": [],
+      "physical_print_approval": false,
+      "source_geometry_sha256": "9cebfe96ba84aef74161ddd98264a2e1e90df63b11ad9b19c3fe181003483bd4",
+      "stiffness": null
+    }
+  }
+}

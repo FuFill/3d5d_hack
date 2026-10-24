@@ -1,0 +1,262 @@
+{
+  "status": "slice_completed",
+  "backend": "CuraEngineBackend",
+  "expected": {
+    "bed_temperature": 95.0,
+    "model_top_z": 33.099639892578125,
+    "nozzle_temperature": 230.0,
+    "printing_mode": "classic",
+    "layer_height": 0.2,
+    "build_volume": [
+      351,
+      300.3,
+      300
+    ],
+    "xy_centered": false
+  },
+  "readback": {
+    "status": "pass",
+    "quality_id": "normal",
+    "differences": [],
+    "actual": {
+      "support_type": "everywhere",
+      "speed_print": 40.0,
+      "support_roof_enable": false,
+      "cool_fan_speed": 20.0,
+      "machine_center_is_zero": false,
+      "support_line_width": 0.4,
+      "line_width": 0.4,
+      "material_print_temperature": 230.0,
+      "support_top_distance": 0.1,
+      "cylindrical_mode_base_diameter": 6,
+      "wall_thickness": 0.8,
+      "support_bottom_enable": false,
+      "non_printing_base_diameter": 6,
+      "infill_sparse_density": 100.0,
+      "retraction_amount": 1.5,
+      "retraction_enable": true,
+      "bottom_layers": 6,
+      "retraction_speed": 18,
+      "wall_line_count": 4,
+      "machine_depth": 300.3,
+      "cylindrical_mode_overlap": 0,
+      "cool_fan_enabled": true,
+      "machine_width": 351,
+      "support_bottom_distance": 0.1,
+      "support_enable": true,
+      "layer_height_0": 0.3,
+      "machine_height": 300,
+      "support_angle": 50,
+      "adhesion_type": "brim",
+      "machine_nozzle_size": 0.4,
+      "top_layers": 6,
+      "material_flow": 100,
+      "support_interface_enable": false,
+      "printing_mode": "classic",
+      "support_xy_distance": 0.7,
+      "machine_heated_bed": true,
+      "layer_height": 0.2,
+      "infill_pattern": "lines",
+      "material_bed_temperature": 95.0
+    },
+    "material_id": "fiberpart_tpu_c5",
+    "machine_definition": "hte530v5.2.4"
+  },
+  "backend_state": 3,
+  "project": {
+    "sha256": "dbdbd1fa6b92b2f5ed75c65b8b1731a23d622fa0a14fa99dda77d095bd1931de",
+    "path": "part.3mf"
+  },
+  "gcode": {
+    "bytes": 1249276,
+    "sha256": "93bf855a9847984218334d8e2a3d9fb6a004c04c0f48f71476d81138de8813a9",
+    "path": "part.gcode"
+  },
+  "nodes": [
+    {
+      "matrix": [
+        [
+          0.9999958276748657,
+          -0.002041913103312254,
+          0.002041908912360668,
+          0.004841204732656479
+        ],
+        [
+          -0.002041908912360668,
+          -0.9999979138374329,
+          -4.169408839516109e-06,
+          16.549819946289062
+        ],
+        [
+          0.002041913103312254,
+          -6.049015912598437e-16,
+          -0.9999979138374329,
+          -5.037917137145996
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_bounds": [
+        [
+          -16.554628372192383,
+          0.0,
+          -5.071710109710693
+        ],
+        [
+          16.55462646484375,
+          33.099639892578125,
+          5.071710586547852
+        ]
+      ],
+      "parent": "Root",
+      "modifier": {
+        "support_mesh": false,
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false
+      },
+      "name": "Шестерня.stl",
+      "vertices": 12458,
+      "mesh_sha256": "3d6a416cff3f4331ed263a4b742920c7e3e56477a8b689d8363787319698dbed"
+    }
+  ],
+  "inspection": {
+    "checks": [
+      {
+        "check": "has_layers",
+        "status": "pass",
+        "note": "165 layers"
+      },
+      {
+        "check": "no_empty_layers",
+        "status": "pass",
+        "note": "empty layers: none"
+      },
+      {
+        "check": "extrusion_present",
+        "status": "pass",
+        "note": "filament mm per tool: {0: 2981.0}"
+      },
+      {
+        "check": "finite_coordinates",
+        "status": "pass",
+        "note": "nonfinite numbers on lines: []"
+      },
+      {
+        "check": "supported_commands",
+        "status": "pass",
+        "note": "unrecognised: none"
+      },
+      {
+        "check": "single_extrusion_mode",
+        "status": "pass",
+        "note": "modes: ['absolute']"
+      },
+      {
+        "check": "nozzle_temperature",
+        "status": "pass",
+        "note": "expected 230, found [230.0]"
+      },
+      {
+        "check": "bed_temperature",
+        "status": "pass",
+        "note": "expected 95, found [0.0, 95.0]"
+      },
+      {
+        "check": "mode_consistency",
+        "status": "pass",
+        "note": "rotary extrusion moves: 0; systems: ['G54']"
+      },
+      {
+        "check": "layer_sequence",
+        "status": "pass",
+        "note": "observed 0..164 (165); declared 166"
+      },
+      {
+        "check": "declared_layer_count",
+        "status": "unknown",
+        "note": "native header declares 166; 165 extruding layer records; mismatch requires review"
+      },
+      {
+        "check": "program_termination",
+        "status": "pass",
+        "note": "native end-of-program marker present=True"
+      },
+      {
+        "check": "model_height_coverage",
+        "status": "pass",
+        "note": "top extrusion Z=33.1 vs model top=33.099639892578125, tolerance=0.111"
+      },
+      {
+        "check": "volumetric_flow",
+        "status": "unknown",
+        "note": "max linear 5.00 mm3/s; no calibrated Q_limit"
+      },
+      {
+        "check": "z_within_build_volume",
+        "status": "pass",
+        "note": "max Z 33.10 vs 300.0"
+      },
+      {
+        "check": "extrusion_within_build_volume",
+        "status": "pass",
+        "note": "extrusion bounds [[0.0, 0.0, 0.0], [200.737, 164.058, 33.1]]; spatial G92 needs a coordinate transform"
+      },
+      {
+        "check": "layer_schedule",
+        "status": "pass",
+        "note": "planar=True; observed increments=[0.2] mm"
+      }
+    ],
+    "summary": {
+      "rotary_ranges": {
+        "A": [
+          0.0,
+          0.0
+        ],
+        "C": [
+          0.0,
+          0.0
+        ]
+      },
+      "filament_volume_mm3": {
+        "0": 7170.209034604036
+      },
+      "coordinate_systems": [
+        "G54"
+      ],
+      "retractions": 701,
+      "feature_extruded_mm": {
+        "SKIN": 112.78731000000046,
+        "WALL-OUTER": 370.42659,
+        "FILL": 298.10645999999963,
+        "WALL-INNER": 793.8475800000001,
+        "SKIRT": 113.51481,
+        "SUPPORT": 228.84375999999975
+      },
+      "layers": 165,
+      "max_linear_flow_mm3_s": 5.000410792474736,
+      "support_extruded_mm": 228.84375999999975,
+      "bbox": {
+        "G54": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            200.737,
+            164.058,
+            33.1
+          ]
+        ]
+      },
+      "time_header": "3196",
+      "label": "slicer estimate",
+      "filament_used_header": "1.91753m, 0m"
+    }
+  }
+}

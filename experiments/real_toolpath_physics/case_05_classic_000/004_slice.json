@@ -1,0 +1,262 @@
+{
+  "backend": "CuraEngineBackend",
+  "readback": {
+    "material_id": "fiberpart_pp_g30",
+    "differences": [],
+    "status": "pass",
+    "actual": {
+      "infill_sparse_density": 100.0,
+      "top_layers": 4,
+      "speed_print": 40.0,
+      "support_enable": true,
+      "machine_height": 300,
+      "support_bottom_enable": false,
+      "retraction_speed": 25,
+      "machine_heated_bed": true,
+      "non_printing_base_diameter": 6,
+      "retraction_enable": true,
+      "line_width": 0.6,
+      "wall_thickness": 0.8,
+      "support_line_width": 0.6,
+      "support_interface_enable": false,
+      "support_xy_distance": 0.7,
+      "wall_line_count": 3,
+      "support_angle": 50,
+      "bottom_layers": 4,
+      "cool_fan_enabled": true,
+      "retraction_amount": 3,
+      "infill_pattern": "lines",
+      "machine_width": 351,
+      "support_type": "everywhere",
+      "support_top_distance": 0.1,
+      "adhesion_type": "brim",
+      "cylindrical_mode_overlap": 0,
+      "machine_nozzle_size": 0.6,
+      "layer_height_0": 0.3,
+      "machine_center_is_zero": false,
+      "cylindrical_mode_base_diameter": 6,
+      "support_bottom_distance": 0.1,
+      "material_print_temperature": 270.0,
+      "machine_depth": 300.3,
+      "material_flow": 100,
+      "printing_mode": "classic",
+      "layer_height": 0.3,
+      "cool_fan_speed": 0.0,
+      "support_roof_enable": false,
+      "material_bed_temperature": 110.0
+    },
+    "quality_id": "normal",
+    "machine_definition": "hte530v5.2.4"
+  },
+  "gcode": {
+    "path": "part.gcode",
+    "sha256": "73954600aa43529971e5b797eb12a55d555be4aef517619bff2ae3e27b02fa0c",
+    "bytes": 25388685
+  },
+  "backend_state": 3,
+  "expected": {
+    "printing_mode": "classic",
+    "build_volume": [
+      351,
+      300.3,
+      300
+    ],
+    "bed_temperature": 110.0,
+    "nozzle_temperature": 270.0,
+    "layer_height": 0.3,
+    "model_top_z": 50.735069274902344,
+    "xy_centered": false
+  },
+  "inspection": {
+    "summary": {
+      "feature_extruded_mm": {
+        "WALL-OUTER": 11984.009989999802,
+        "SKIRT": 644.42148,
+        "FILL": 21201.418340000222,
+        "SKIN": 12564.0163399999,
+        "WALL-INNER": 17848.001479999977,
+        "SUPPORT": 14376.161269999982
+      },
+      "filament_used_header": "78.618m, 0m",
+      "bbox": {
+        "G54": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            250.469,
+            225.114,
+            50.7
+          ]
+        ]
+      },
+      "label": "slicer estimate",
+      "rotary_ranges": {
+        "C": [
+          0.0,
+          0.0
+        ],
+        "A": [
+          0.0,
+          0.0
+        ]
+      },
+      "coordinate_systems": [
+        "G54"
+      ],
+      "support_extruded_mm": 14376.161269999982,
+      "time_header": "45874",
+      "layers": 169,
+      "retractions": 1139,
+      "max_linear_flow_mm3_s": 14.221968080874893,
+      "filament_volume_mm3": {
+        "0": 197339.01569834977
+      }
+    },
+    "checks": [
+      {
+        "check": "has_layers",
+        "status": "pass",
+        "note": "169 layers"
+      },
+      {
+        "check": "no_empty_layers",
+        "status": "pass",
+        "note": "empty layers: none"
+      },
+      {
+        "check": "extrusion_present",
+        "status": "pass",
+        "note": "filament mm per tool: {0: 82044.0}"
+      },
+      {
+        "check": "finite_coordinates",
+        "status": "pass",
+        "note": "nonfinite numbers on lines: []"
+      },
+      {
+        "check": "supported_commands",
+        "status": "pass",
+        "note": "unrecognised: none"
+      },
+      {
+        "check": "single_extrusion_mode",
+        "status": "pass",
+        "note": "modes: ['absolute']"
+      },
+      {
+        "check": "nozzle_temperature",
+        "status": "pass",
+        "note": "expected 270, found [270.0]"
+      },
+      {
+        "check": "bed_temperature",
+        "status": "pass",
+        "note": "expected 110, found [0.0, 110.0]"
+      },
+      {
+        "check": "mode_consistency",
+        "status": "pass",
+        "note": "rotary extrusion moves: 0; systems: ['G54']"
+      },
+      {
+        "check": "layer_sequence",
+        "status": "pass",
+        "note": "observed 0..168 (169); declared 170"
+      },
+      {
+        "check": "declared_layer_count",
+        "status": "unknown",
+        "note": "native header declares 170; 169 extruding layer records; mismatch requires review"
+      },
+      {
+        "check": "program_termination",
+        "status": "pass",
+        "note": "native end-of-program marker present=True"
+      },
+      {
+        "check": "model_height_coverage",
+        "status": "pass",
+        "note": "top extrusion Z=50.7 vs model top=50.735069274902344, tolerance=0.161"
+      },
+      {
+        "check": "volumetric_flow",
+        "status": "unknown",
+        "note": "max linear 14.22 mm3/s; no calibrated Q_limit"
+      },
+      {
+        "check": "z_within_build_volume",
+        "status": "pass",
+        "note": "max Z 50.70 vs 300.0"
+      },
+      {
+        "check": "extrusion_within_build_volume",
+        "status": "pass",
+        "note": "extrusion bounds [[0.0, 0.0, 0.0], [250.469, 225.114, 50.7]]; spatial G92 needs a coordinate transform"
+      },
+      {
+        "check": "layer_schedule",
+        "status": "pass",
+        "note": "planar=True; observed increments=[0.3] mm"
+      }
+    ]
+  },
+  "project": {
+    "path": "part.3mf",
+    "sha256": "b40cb44c4fdfe18acfc9758e3f80ffb03a6f35e56d2f344f11116b5469201beb"
+  },
+  "status": "slice_completed",
+  "nodes": [
+    {
+      "modifier": {
+        "anti_overhang_mesh": false,
+        "support_mesh": false,
+        "support_mesh_drop_down": true
+      },
+      "parent": "Root",
+      "mesh_sha256": "573c572fec4ad25929af21a305fe4f06879ac06d53040ba700302875bb042c13",
+      "name": "Рабочее_колесо насоса Wilo IPL 80140-42. 2063106.STL",
+      "world_bounds": [
+        [
+          -67.31989288330078,
+          -1.4901161193847656e-08,
+          -67.32283020019531
+        ],
+        [
+          67.31989288330078,
+          50.735069274902344,
+          67.32282257080078
+        ]
+      ],
+      "vertices": 36788,
+      "matrix": [
+        [
+          1.0,
+          4.720580371042615e-09,
+          -4.720583923756294e-09,
+          102.70386505126953
+        ],
+        [
+          -4.720580371042615e-09,
+          -7.125590855139308e-07,
+          -1.0,
+          0.18407592177391052
+        ],
+        [
+          -4.720583923756294e-09,
+          1.0,
+          -7.125590855139308e-07,
+          -76.3112564086914
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ]
+}

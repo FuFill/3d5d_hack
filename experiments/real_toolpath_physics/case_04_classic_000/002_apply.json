@@ -1,0 +1,105 @@
+{
+  "decision_sha256": "a3c1888aaa4adc366f0173021dddea188baf23fdaa2dcd902ecc2e7c47ede233",
+  "nodes": [
+    {
+      "name": "Декоративная фигурка.stl",
+      "vertices": 282344,
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          30.384347915649414
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          40.064090728759766
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          15.470970153808594
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "modifier": {
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false,
+        "support_mesh": false
+      },
+      "parent": "Root",
+      "world_bounds": [
+        [
+          -51.64624786376953,
+          0.0,
+          -64.37571716308594
+        ],
+        [
+          51.64624786376953,
+          149.97927856445312,
+          64.37571716308594
+        ]
+      ],
+      "mesh_sha256": "1670af408f95131874c2f4aa1bc7ac6e7c46846005ad52efd93754c2b69dc2e4"
+    }
+  ],
+  "qt_thread": true,
+  "status": "analysis_scene",
+  "physical_print_approval": false,
+  "readback": {
+    "material_id": "fiberpart_tpu_c5",
+    "quality_id": "ste_planner_quality_4d835e01b3b04368a6f442997b6185e7",
+    "actual": {
+      "retraction_amount": 1.5,
+      "machine_nozzle_size": 0.4,
+      "layer_height": 0.1,
+      "printing_mode": "classic",
+      "machine_depth": 300.3,
+      "machine_width": 351,
+      "wall_thickness": 0.8,
+      "retraction_speed": 18,
+      "cool_fan_enabled": true,
+      "support_angle": 50,
+      "adhesion_type": "brim",
+      "speed_print": 40.0,
+      "machine_height": 300,
+      "material_print_temperature": 230.0,
+      "line_width": 0.4,
+      "material_bed_temperature": 95.0,
+      "cylindrical_mode_overlap": 0,
+      "top_layers": 10,
+      "support_line_width": 0.4,
+      "support_top_distance": 0.1,
+      "cool_fan_speed": 20.0,
+      "support_bottom_distance": 0.1,
+      "non_printing_base_diameter": 6,
+      "support_interface_enable": false,
+      "support_xy_distance": 0.7,
+      "cylindrical_mode_base_diameter": 6,
+      "support_bottom_enable": false,
+      "wall_line_count": 3,
+      "layer_height_0": 0.3,
+      "infill_sparse_density": 25.0,
+      "machine_center_is_zero": false,
+      "support_type": "everywhere",
+      "support_roof_enable": false,
+      "machine_heated_bed": true,
+      "retraction_enable": true,
+      "infill_pattern": "grid",
+      "support_enable": true,
+      "bottom_layers": 10,
+      "material_flow": 100
+    },
+    "status": "pass",
+    "differences": [],
+    "machine_definition": "hte530v5.2.4"
+  }
+}

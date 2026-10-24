@@ -1,0 +1,108 @@
+{
+  "archive": {
+    "path": "part.gcode.gz",
+    "sha256": "fde44875be0a46bb6b3a863374abc98fc2cf9e80b15bf13dc88768b2f1286943",
+    "uncompressed_bytes": 25545609,
+    "uncompressed_sha256": "53397f5f2881dc64018d295392712f1dea5de6b04a3df5b8789efaa1e318b5a0"
+  },
+  "diameter_source": "nominal selected STE material profile, not measured filament",
+  "filament_diameter_mm": 1.75,
+  "id": "case_05_classic_090",
+  "input": {
+    "analysis_only": true,
+    "id": "case_05_classic_090",
+    "mode": "classic",
+    "organizer_case": "5. Рабочее колесо насоса Wilo - 5D",
+    "orientation_parameter": "build tilt about X",
+    "orientation_phase_deg": 90,
+    "physical_print_approval": false,
+    "planner_status": "needs_input",
+    "specimens_per_slice": 1,
+    "stl": "data\\examples\\5. Рабочее колесо насоса Wilo - 5D\\Рабочее_колесо насоса Wilo IPL 80140-42. 2063106.STL",
+    "stl_sha256": "c78061849c43078ea5dda6e21e9f0614735d36f57880441b829ed529ffe89510",
+    "tz": "data\\examples\\5. Рабочее колесо насоса Wilo - 5D\\Техническое задания для рабочего колеса насоса.docx"
+  },
+  "physical_print_approval": false,
+  "strict": {
+    "domain": {},
+    "evidence": "simulation",
+    "model_class": "A",
+    "model_id": "sliced_physics",
+    "status": "needs_slice_verification",
+    "trace": [
+      {
+        "inputs": {},
+        "model_id": "sliced_physics",
+        "note": "actual slices; no measured constants or service boundary conditions invented"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": {
+      "deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 998.9991908903305,
+          "SUPPORT": 57461.928562486995
+        },
+        "normal_structure_tensor": [
+          [
+            2.2283911383776918e-17,
+            -3.3636949695712288e-15,
+            -4.720583796922326e-09
+          ],
+          [
+            -3.3636949695712288e-15,
+            5.077404793736482e-13,
+            7.125591058806212e-07
+          ],
+          [
+            -4.720583796922326e-09,
+            7.125591058806212e-07,
+            0.9999999999994933
+          ]
+        ],
+        "normalized_gcode_sha256": "3ab741c49c6af46c0066dbf4e11ffa38a84f0b10433780aba4282a35521ab7ed",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 868264.7228853679,
+        "part_volume_mm3": 152971.83002238013,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 510846,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.6117471216113007,
+            -0.0012255872419849622,
+            3.761106899394271e-09
+          ],
+          [
+            -0.0012255872419849603,
+            0.388252878388502,
+            -2.7665890935885356e-07
+          ],
+          [
+            3.76110689939427e-09,
+            -2.7665890935885356e-07,
+            1.9715357970087534e-13
+          ]
+        ]
+      },
+      "failure_capacity": null,
+      "gcode_bytes_sha256": "53397f5f2881dc64018d295392712f1dea5de6b04a3df5b8789efaa1e318b5a0",
+      "missing": [
+        "measured road/interface constitutive properties and protocol",
+        "volume mesh for toolpath-to-FE transfer"
+      ],
+      "native_failed_checks": [
+        "model_height_coverage"
+      ],
+      "physical_print_approval": false,
+      "source_geometry_sha256": "c78061849c43078ea5dda6e21e9f0614735d36f57880441b829ed529ffe89510",
+      "stiffness": null
+    }
+  }
+}

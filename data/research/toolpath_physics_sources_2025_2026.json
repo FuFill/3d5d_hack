@@ -1,0 +1,57 @@
+{
+  "checked_at": "2026-10-24",
+  "scope": "Primary publications and author repositories; no physical constants transferred into STE calibration",
+  "sources": [
+    {
+      "title": "Toward numerical modeling and experimental full-field validation of non-planar 3D-printed components",
+      "year": 2026,
+      "published": "2026-04-09",
+      "country_context": "Germany",
+      "doi": "10.1007/s40964-026-01598-8",
+      "url": "https://link.springer.com/article/10.1007/s40964-026-01598-8",
+      "access": "Publisher full text inspected",
+      "relevance": "G-code directions, spatial anisotropy, FE and experimental DIC validation",
+      "author_dataset": "https://doi.org/10.5281/zenodo.18541374",
+      "dataset_used_as_our_measurements": false
+    },
+    {
+      "title": "A G-Code-Driven Modeling and Thermo-Mechanical Coupling Analysis Method for the FDM Process of Complex Lightweight Structures",
+      "year": 2026,
+      "publication_history": "Publisher notes: Published 17 March; Version of Record uploaded 18 March; HTML updated 3 September 2026",
+      "institution": "Civil Aviation University of China",
+      "doi": "10.3390/ma19061200",
+      "url": "https://www.mdpi.com/1996-1944/19/6/1200",
+      "access": "Official publisher text indexed in search; direct fetch returned HTTP 429",
+      "limitation": "Isotropic filament approximation and limited warpage validation; not a calibrated STE anisotropic strength model"
+    },
+    {
+      "title": "Curved-Layer Slicing and Continuous Path Planning for Multi-Axis Printing of Fiber-Reinforced Composite Structures",
+      "authors": "Yamin Li; Chenyang Shi; Xin Yan",
+      "year": 2025,
+      "institution": "Northwestern Polytechnical University, China",
+      "doi": "10.3390/pr13020473",
+      "url": "https://www.mdpi.com/2227-9717/13/2/473",
+      "author_preprint": "https://doi.org/10.21203/rs.3.rs-5171364/v1",
+      "access": "Publisher direct fetch limited by HTTP 429; primary author preprint accessible; final-version differences not fully audited"
+    },
+    {
+      "title": "Toolpath generation for high density spatial fiber printing guided by principal stresses",
+      "year": 2025,
+      "journal": "Composites Part B: Engineering 295, 112154, April 2025",
+      "url": "https://github.com/zhangty019/HighDensity_ToolpathGene4CFRTP",
+      "access": "Author repository README and bibliographic entry inspected",
+      "license": "BSD-3-Clause for author code",
+      "limitation": "Continuous-fiber gains cannot be transferred to ordinary FFF or STE materials without tests"
+    },
+    {
+      "title": "Mechanical analysis and optimized performance of G-Code driven material extrusion components",
+      "year": 2023,
+      "online": "2022-12-19",
+      "doi": "10.1016/j.addma.2022.103348",
+      "url": "https://cervera.rmee.upc.edu/papers/2023-ADDMAN-Gcode_driven.pdf",
+      "institutional_record": "https://upcommons.upc.edu/entities/publication/7e5210b4-8dd7-4e1a-aec0-7ebf9f5bb869",
+      "access": "Primary author PDF and institutional record inspected",
+      "relevance": "Earlier end-to-end G-code, voxel-FE and orientation optimization precedent"
+    }
+  ]
+}

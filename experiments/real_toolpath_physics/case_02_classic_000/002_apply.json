@@ -1,0 +1,105 @@
+{
+  "status": "analysis_scene",
+  "readback": {
+    "status": "pass",
+    "machine_definition": "hte530v5.2.4",
+    "quality_id": "ste_planner_quality_b8efd75c5ff34c1389a5bb591d210b43",
+    "differences": [],
+    "actual": {
+      "machine_nozzle_size": 0.4,
+      "support_top_distance": 0.1,
+      "material_bed_temperature": 45.0,
+      "support_bottom_enable": false,
+      "cool_fan_enabled": true,
+      "layer_height": 0.2,
+      "bottom_layers": 6,
+      "printing_mode": "classic",
+      "adhesion_type": "brim",
+      "retraction_enable": true,
+      "cylindrical_mode_base_diameter": 6,
+      "material_flow": 100,
+      "wall_thickness": 0.8,
+      "support_angle": 50,
+      "infill_pattern": "lines",
+      "layer_height_0": 0.3,
+      "support_interface_enable": false,
+      "support_type": "everywhere",
+      "machine_heated_bed": true,
+      "retraction_amount": 5.7,
+      "infill_sparse_density": 100.0,
+      "retraction_speed": 37,
+      "speed_print": 30.0,
+      "support_xy_distance": 0.7,
+      "wall_line_count": 4,
+      "line_width": 0.4,
+      "non_printing_base_diameter": 6,
+      "machine_width": 351,
+      "support_bottom_distance": 0.1,
+      "cylindrical_mode_overlap": 0,
+      "top_layers": 6,
+      "machine_height": 300,
+      "machine_center_is_zero": false,
+      "material_print_temperature": 215.0,
+      "machine_depth": 300.3,
+      "cool_fan_speed": 20.0,
+      "support_enable": true,
+      "support_roof_enable": false,
+      "support_line_width": 0.4
+    },
+    "material_id": "sealant_tpu_A95"
+  },
+  "physical_print_approval": false,
+  "qt_thread": true,
+  "nodes": [
+    {
+      "world_bounds": [
+        [
+          -29.49872589111328,
+          0.0,
+          -29.497451782226562
+        ],
+        [
+          29.49872589111328,
+          25.0,
+          29.497451782226562
+        ]
+      ],
+      "matrix": [
+        [
+          1.0,
+          6.920555795097982e-10,
+          6.920556350209495e-10,
+          -29.5
+        ],
+        [
+          -6.920555795097982e-10,
+          -3.676568161026239e-09,
+          1.0,
+          25.0
+        ],
+        [
+          6.920556350209495e-10,
+          -1.0,
+          -3.676568161026239e-09,
+          29.502548217773438
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "vertices": 1214,
+      "modifier": {
+        "support_mesh_drop_down": true,
+        "anti_overhang_mesh": false,
+        "support_mesh": false
+      },
+      "name": "Колесо.STL",
+      "mesh_sha256": "42c6d3e509bbbdbf4d6d08b61d1672d4a115f781279771bf7178bbe3bd59cb65",
+      "parent": "Root"
+    }
+  ],
+  "decision_sha256": "59be7c227ee73e35fedc6e1898fa49d4e2f6c7cfe208dd6afda6cce965e08150"
+}

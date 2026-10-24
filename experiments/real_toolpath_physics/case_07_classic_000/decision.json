@@ -1,0 +1,1274 @@
+{
+  "assumptions": [
+    "material properties are manufacturer typical values (Stereotech wiki), not batch data",
+    "process settings start from the Stereotech material profile; volumetric flow limit uncalibrated"
+  ],
+  "calibration_context": {
+    "geometry_sha256": "9fa137ba0d1f8b0a7b3736e4094e412dd90c5ee38f5b9eb226bcead4c8066690",
+    "machine_id": "hte530v5.2.4",
+    "material_id": "enduse_pa6",
+    "printing_mode": "classic",
+    "rotation": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    ],
+    "settings": {
+      "adhesion_type": "brim",
+      "bottom_layers": 12,
+      "cool_fan_enabled": true,
+      "cool_fan_speed": 0.0,
+      "cylindrical_mode_base_diameter": 6.0,
+      "cylindrical_mode_overlap": 0.0,
+      "infill_pattern": "lines",
+      "infill_sparse_density": 100.0,
+      "layer_height": 0.1,
+      "layer_height_0": 0.3,
+      "line_width": 0.4,
+      "machine_center_is_zero": false,
+      "machine_depth": 300.3,
+      "machine_heated_bed": true,
+      "machine_height": 300.0,
+      "machine_nozzle_size": 0.4,
+      "machine_width": 351.0,
+      "material_bed_temperature": 95.0,
+      "material_flow": 100.0,
+      "material_print_temperature": 260.0,
+      "non_printing_base_diameter": 6.0,
+      "printing_mode": "classic",
+      "retraction_amount": 2.11,
+      "retraction_enable": true,
+      "retraction_speed": 20.0,
+      "speed_print": 50.0,
+      "support_angle": 50.0,
+      "support_bottom_distance": 0.1,
+      "support_bottom_enable": false,
+      "support_enable": true,
+      "support_interface_enable": false,
+      "support_line_width": 0.4,
+      "support_roof_enable": false,
+      "support_top_distance": 0.1,
+      "support_type": "everywhere",
+      "support_xy_distance": 0.7,
+      "top_layers": 12,
+      "wall_line_count": 4,
+      "wall_thickness": 0.8
+    }
+  },
+  "candidate_geometry": {
+    "base_area": 793.658950479253,
+    "critical_support_contact": null,
+    "fits_build_volume": true,
+    "height": 40.5,
+    "overhang_area": 100.06553064785646,
+    "rotation": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    ],
+    "size": [
+      61.700001,
+      23.496320999999995,
+      40.5
+    ],
+    "staircase_mean_mm": 0.0009567867166242693,
+    "support_angle_deg": 50.0,
+    "support_volume_upper": 2026.3269956190934,
+    "up": [
+      0.0,
+      0.0,
+      -1.0
+    ]
+  },
+  "candidates": {
+    "materials": [
+      {
+        "id": "enduse_pa6",
+        "summary": {
+          "hinted_unknown": [
+            "R06"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R04",
+            "R09"
+          ],
+          "mandatory_unknown": [
+            "R06",
+            "R08",
+            "R12",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 3.5
+      },
+      {
+        "id": "fiberpart_pa12_g12",
+        "summary": {
+          "hinted_unknown": [
+            "R06",
+            "R12"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R04",
+            "R09"
+          ],
+          "mandatory_unknown": [
+            "R06",
+            "R08",
+            "R12",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 3.0
+      },
+      {
+        "id": "sealant_tpu_A95",
+        "summary": {
+          "hinted_unknown": [
+            "R06"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R04",
+            "R09"
+          ],
+          "mandatory_unknown": [
+            "R06",
+            "R08",
+            "R12",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 2.5
+      },
+      {
+        "id": "enduse_pp",
+        "summary": {
+          "hinted_unknown": [
+            "R06"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R04",
+            "R09"
+          ],
+          "mandatory_unknown": [
+            "R06",
+            "R08",
+            "R12",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 2.5
+      },
+      {
+        "id": "sealant_tpu",
+        "summary": {
+          "hinted_unknown": [
+            "R06"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R04",
+            "R09"
+          ],
+          "mandatory_unknown": [
+            "R06",
+            "R08",
+            "R12",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 2.5
+      },
+      {
+        "id": "enduse_tpu_d70",
+        "summary": {
+          "hinted_unknown": [
+            "R06"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R04"
+          ],
+          "mandatory_unknown": [
+            "R06",
+            "R08",
+            "R09",
+            "R12",
+            "R13"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 2.5
+      }
+    ],
+    "routes": [
+      {
+        "feasible": true,
+        "mode": "classic",
+        "score": 0.0
+      },
+      {
+        "feasible": false,
+        "mode": "cylindrical",
+        "score": 2.0
+      },
+      {
+        "feasible": true,
+        "mode": "cylindrical_full",
+        "score": 2.0
+      }
+    ]
+  },
+  "causal_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "assess_double_ml",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "calibration_data"
+        ],
+        "model_id": "assess_double_ml",
+        "reason": "no measured print experiments supplied"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "chosen_material": {
+    "base_polymer": "PA6",
+    "excluded": null,
+    "filler": null,
+    "id": "enduse_pa6",
+    "label": "Enduse PA6",
+    "selectable": true,
+    "series": "Enduse",
+    "slicer_file": "enduse_pa6.xml.fdm_material",
+    "wiki_url": "https://wiki.stereotech.org/ru/fdm-materials/enduse/pa6"
+  },
+  "effective_settings": {
+    "adhesion_type": "brim",
+    "bottom_layers": 12,
+    "cool_fan_enabled": true,
+    "cool_fan_speed": 0.0,
+    "cylindrical_mode_base_diameter": 6.0,
+    "cylindrical_mode_overlap": 0.0,
+    "infill_pattern": "lines",
+    "infill_sparse_density": 100.0,
+    "layer_height": 0.1,
+    "layer_height_0": 0.3,
+    "line_width": 0.4,
+    "machine_center_is_zero": false,
+    "machine_depth": 300.3,
+    "machine_heated_bed": true,
+    "machine_height": 300.0,
+    "machine_nozzle_size": 0.4,
+    "machine_width": 351.0,
+    "material_bed_temperature": 95.0,
+    "material_flow": 100.0,
+    "material_print_temperature": 260.0,
+    "non_printing_base_diameter": 6.0,
+    "printing_mode": "classic",
+    "retraction_amount": 2.11,
+    "retraction_enable": true,
+    "retraction_speed": 20.0,
+    "speed_print": 50.0,
+    "support_angle": 50.0,
+    "support_bottom_distance": 0.1,
+    "support_bottom_enable": false,
+    "support_enable": true,
+    "support_interface_enable": false,
+    "support_line_width": 0.4,
+    "support_roof_enable": false,
+    "support_top_distance": 0.1,
+    "support_type": "everywhere",
+    "support_xy_distance": 0.7,
+    "top_layers": 12,
+    "wall_line_count": 4,
+    "wall_thickness": 0.8
+  },
+  "evidence_level": "document",
+  "explanation": [
+    "Статус: needs_calibration; уровень доказательности: document.",
+    "Материал: Enduse PA6 — выбран из 16 допустимых; отклонено 4 (обязательное требование не выполнено).",
+    "Режим: classic. mode requested by the user",
+    "  printing_mode = classic (было classic): route selected by documented policy",
+    "  bottom_layers = 12 (было 8): skin_layers, policy:skin",
+    "  infill_sparse_density = 100.0 (было 20.0): no calibrated relation load -> infill exists; policy by load class structural",
+    "  layer_height = 0.1 (было 0.1): choose_layer_height, policy:layer",
+    "  top_layers = 12 (было 8): skin_layers, policy:skin",
+    "  wall_line_count = 4 (было 2): shell 1.60 mm -> 4 walls (1.60 mm)",
+    "  material_bed_temperature = 95.0 (было 95.0): material profile value; explicit because STE takes max() over extruders",
+    "  speed_print = 50.0 (было 60.0): material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+    "  support_enable = True (было False): overhang 100 mm2, support volume bound 2026 mm3 (thresholds 25 mm2, 200 mm3)",
+    "Не подтверждено расчётом/данными (нужны испытания): alkali_resistance, dimensional_tolerance, low_friction_vs_pom, short_contact_temperature, non_toxic",
+    "Double ML: оценка отсутствует или часть изменений не подтверждена; нужны измеренные испытания в тех же условиях."
+  ],
+  "functional_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "functional_orientation",
+    "status": "needs_input",
+    "trace": [
+      {
+        "missing": [
+          "functional_spec"
+        ],
+        "model_id": "functional_orientation",
+        "reason": "purpose, service loads and scoped printed properties required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "materials_considered": 16,
+  "materials_rejected": 4,
+  "missing_inputs": [],
+  "part_name": "копирный вал (ось вращения) передающей звезды формовщика коробов",
+  "part_type": "shaft_cam",
+  "prototype_only": false,
+  "qualification_plan": [
+    {
+      "conditions": "изменение массы, размеров, прочности",
+      "mandatory": true,
+      "property": "alkali_resistance",
+      "reason": "unverified",
+      "requirement_id": "R06",
+      "test": "Выдержка в рабочей среде при рабочей температуре"
+    },
+    {
+      "conditions": "bias и интервал по ориентации",
+      "mandatory": true,
+      "property": "dimensional_tolerance",
+      "reason": "unverified",
+      "requirement_id": "R07",
+      "test": "Калибровка размеров: контрольные контуры и отверстия"
+    },
+    {
+      "conditions": "μ и износ обеих сторон",
+      "mandatory": true,
+      "property": "low_friction_vs_pom",
+      "reason": "unverified",
+      "requirement_id": "R08",
+      "test": "Трибометр: пара с POM-роликом без смазки"
+    },
+    {
+      "conditions": "допуск сырья не квалифицирует процесс",
+      "mandatory": true,
+      "property": "non_toxic",
+      "reason": "unverified",
+      "requirement_id": "R13",
+      "test": "Оценка пищевого контакта процесса печати"
+    }
+  ],
+  "requirement_issues": [],
+  "requirements": [
+    {
+      "comparator": "==",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R01",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "rotation_speed",
+      "provenance": {
+        "file": null,
+        "fragment": "Скорость вращения звезды: 65 об/мин (цикличность линии ~40 коробов/мин)."
+      },
+      "region": null,
+      "unit": "rad/s",
+      "value": 6.8067840827778845
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R02",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": "peak",
+      "mandatory": true,
+      "note": null,
+      "property": "radial_load",
+      "provenance": {
+        "file": null,
+        "fragment": "Радиальная нагрузка от пружин захватов на профиль до 35 Н на каждый ролик (в пике при закрытии захвата)."
+      },
+      "region": null,
+      "unit": "N",
+      "value": 35.0
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R03",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": "peak",
+      "mandatory": true,
+      "note": null,
+      "property": "torque",
+      "provenance": {
+        "file": null,
+        "fragment": "Реактивный крутящий момент на ось (на скручивание) до 18 Н·м."
+      },
+      "region": "shaft",
+      "unit": "N*mm",
+      "value": 18000.0
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R04",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "service_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Температура и среда +15°C...+35°C."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": [
+        15.0,
+        35.0
+      ]
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R05",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "chemical_ph",
+      "provenance": {
+        "file": null,
+        "fragment": "Еженедельная мойка оборудования щелочными пенными средствами (pH 10-11) для удаления клеевых остатков."
+      },
+      "region": null,
+      "unit": "pH",
+      "value": [
+        10.0,
+        11.0
+      ]
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R06",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна стойкость к среде при рабочей температуре",
+      "property": "alkali_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Еженедельная мойка оборудования щелочными пенными средствами (pH 10-11) для удаления клеевых остатков."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "abs_dev_le",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R07",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "dimensional_tolerance",
+      "provenance": {
+        "file": null,
+        "fragment": "Отклонение от теоретического контура не должно превышать ±0.15 мм."
+      },
+      "region": "cam_profile",
+      "unit": "mm",
+      "value": 0.15
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R08",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "μ определяется парой материалов; нужен трибологический тест по POM",
+      "property": "low_friction_vs_pom",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал должен иметь низкий коэффициент трения скольжения по POM-пластику без применения внешних смазок."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R09",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужен тест износа в среде",
+      "property": "abrasion_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Высокая стойкость к абразивному износу (целлюлозная пыль)."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R11",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "chemical_ph",
+      "provenance": {
+        "file": null,
+        "fragment": "Устойчивость к щелочным моющим средствам (pH 11) и возможным попаданиям горячего клея (расплава EVA), используемого на формовщике (температура капания клея до 160°C, материал не должен плавиться или размягчаться при кратковременном контакте)."
+      },
+      "region": null,
+      "unit": "pH",
+      "value": 11.0
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R12",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "short_contact_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Устойчивость к щелочным моющим средствам (pH 11) и возможным попаданиям горячего клея (расплава EVA), используемого на формовщике (температура капания клея до 160°C, материал не должен плавиться или размягчаться при кратковременном контакте)."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": 160.0
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R13",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Допуск сырья не квалифицирует процесс печати",
+      "property": "non_toxic",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал не должен выделять токсичных веществ (оборудование может использоваться для упаковки пищевой продукции, например, тетрапакетов с соком)."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    }
+  ],
+  "robustness_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "process_stability",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "noise_bounds",
+          "first_layer_gap_limits",
+          "process_response_calibration"
+        ],
+        "model_id": "process_stability",
+        "reason": "measured noise bounds and quality tolerances required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "route": {
+    "mode": "classic",
+    "note": "mode requested by the user",
+    "parameters": {}
+  },
+  "scene_operations": [
+    {
+      "coordinates": "printer (Z up); the adapter converts to the Uranium scene (Y up)",
+      "op": "load_mesh",
+      "path": "C:\\Users\\Ilya\\Working projects\\3d5d_hack\\data\\examples\\7. Ось вращения передающих звёзд формовщика коробов Krones - 5D\\Ось вращения передающих звёзд.STL",
+      "units": "mm"
+    },
+    {
+      "note": "minimum J_R among stable orientations",
+      "op": "set_transform",
+      "rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      ],
+      "translation": [
+        -30.8500005,
+        23.0797855,
+        40.5
+      ]
+    },
+    {
+      "op": "arrange"
+    }
+  ],
+  "setting_patch": {
+    "errors": [],
+    "items": [
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "printing_mode",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": "classic",
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "configuration",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": "classic"
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "bottom_layers",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 12
+      },
+      {
+        "decision_unit": "fraction",
+        "enabled_after_patch": true,
+        "key": "infill_sparse_density",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 20.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "%",
+        "validation": "valid",
+        "value": 100.0
+      },
+      {
+        "decision_unit": "mm",
+        "enabled_after_patch": true,
+        "key": "layer_height",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 0.1,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "geometry",
+        "target": "global",
+        "unit": "mm",
+        "validation": "valid",
+        "value": 0.1
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "top_layers",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 12
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "wall_line_count",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 2,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 4
+      },
+      {
+        "decision_unit": "degC",
+        "enabled_after_patch": true,
+        "key": "material_bed_temperature",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 95.0,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "thermal_flow",
+        "target": "global",
+        "unit": "°C",
+        "validation": "valid",
+        "value": 95.0
+      },
+      {
+        "decision_unit": "mm/s",
+        "enabled_after_patch": true,
+        "key": "speed_print",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 60.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "motion",
+        "target": "extruder_0",
+        "unit": "mm/s",
+        "validation": "valid",
+        "value": 50.0
+      },
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "support_enable",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": false,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "support_adhesion",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": true
+      }
+    ],
+    "ok": true,
+    "payload": {
+      "extruders": {
+        "0": {
+          "bottom_layers": 12,
+          "infill_sparse_density": 100.0,
+          "speed_print": 50.0,
+          "top_layers": 12,
+          "wall_line_count": 4
+        }
+      },
+      "global": {
+        "layer_height": 0.1,
+        "material_bed_temperature": 95.0,
+        "printing_mode": "classic",
+        "support_enable": true
+      }
+    },
+    "warnings": []
+  },
+  "status": "needs_calibration",
+  "structural_checks": [],
+  "trace": [
+    {
+      "count": 12,
+      "issues": [],
+      "part_type": "shaft_cam",
+      "step": "parse_requirements"
+    },
+    {
+      "errors": [],
+      "rotational": {
+        "axial_length": 44.778890317915824,
+        "axis": [
+          0.008993844374648164,
+          -0.24440027512926957,
+          0.969632722364557
+        ],
+        "bore_radius": null,
+        "is_rotational_candidate": false,
+        "moment_mismatch": 0.30620379580446677,
+        "r_max": 31.74541336449258,
+        "sector_cv": 0.38332193835919176
+      },
+      "size": [
+        61.700001,
+        23.496320999999995,
+        40.5
+      ],
+      "status": "ok",
+      "step": "analyze_mesh",
+      "volume_mm3": 15229.289921280268,
+      "warnings": []
+    },
+    {
+      "build_volume": {
+        "classic": [
+          351.0,
+          300.3,
+          300.0
+        ],
+        "cylindrical": [
+          351.0,
+          300.3,
+          231.1
+        ],
+        "cylindrical_full": [
+          351.0,
+          300.3,
+          231.1
+        ]
+      },
+      "chain": [
+        "fdmprinter",
+        "steprinter_v5",
+        "steprinter530_v5.2.4",
+        "hte530v5.2.4"
+      ],
+      "machine": "hte530v5.2.4",
+      "note": "offline schema from the slicer resources; installed runtime confirmed by read-back",
+      "nozzles": [
+        0.4
+      ],
+      "step": "inspect_machine"
+    },
+    {
+      "chosen": "enduse_pa6",
+      "policy": "hard constraints first (any mandatory fail rejects); ranking by support = passes + 0.5*hinted unknowns + 1*manufacturer application match + 0.25*optional passes, then fewer unknowns, printability, print difficulty (Stereotech memo)",
+      "prototype_only": false,
+      "ranked": [
+        "enduse_pa6",
+        "fiberpart_pa12_g12",
+        "sealant_tpu_A95",
+        "enduse_pp",
+        "sealant_tpu",
+        "enduse_tpu_d70",
+        "fiberpart_tpu_g30",
+        "enduse_sbs"
+      ],
+      "rejected": 36,
+      "step": "screen_materials"
+    },
+    {
+      "chosen": "classic",
+      "routes": [
+        {
+          "feasible": true,
+          "mode": "classic",
+          "reasons": [
+            "flat layers, heated platform"
+          ],
+          "score": 0.0
+        },
+        {
+          "feasible": false,
+          "mode": "cylindrical",
+          "reasons": [
+            "axis: coaxial cylindrical surfaces (29% of area)",
+            "working profile must have no layer steps; 5D layers follow the profile",
+            "no axial bore for a mandrel: 5D Spiral would cut the part"
+          ],
+          "score": 2.0
+        },
+        {
+          "feasible": true,
+          "mode": "cylindrical_full",
+          "reasons": [
+            "axis: coaxial cylindrical surfaces (29% of area)",
+            "working profile must have no layer steps; 5D layers follow the profile",
+            "core 6.2 mm inside min section radius 4.12 mm (80% / 1 mm margin policy)"
+          ],
+          "score": 2.0
+        }
+      ],
+      "step": "enumerate_routes"
+    },
+    {
+      "candidates": [
+        {
+          "height": 40.5,
+          "score": 0.42098193600978817,
+          "support_volume": 2026.3269956190934,
+          "up": [
+            -0.0,
+            -0.0,
+            -1.0
+          ]
+        },
+        {
+          "height": 23.496320999999995,
+          "score": 0.7502198738932893,
+          "support_volume": 1437.4514236360365,
+          "up": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        {
+          "height": 23.496320999999995,
+          "score": 0.929164201815659,
+          "support_volume": 4814.285793281044,
+          "up": [
+            -0.0,
+            -1.0,
+            -0.0
+          ]
+        },
+        {
+          "height": 40.5,
+          "score": 1.3136033433131817,
+          "support_volume": 18870.865642134006,
+          "up": [
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ],
+      "chosen_up": [
+        -0.0,
+        -0.0,
+        -1.0
+      ],
+      "step": "orientation"
+    },
+    {
+      "chosen": "enduse_pa6",
+      "rejected_by_structure": [],
+      "step": "solve_structure"
+    },
+    {
+      "errors": [],
+      "items": 9,
+      "process_notes": [
+        {
+          "item": "load_class",
+          "model": "P",
+          "value": "structural"
+        },
+        {
+          "item": "layer_height",
+          "model": "P",
+          "note": "h/d = 0.50 functional seed",
+          "value": 0.2
+        },
+        {
+          "item": "tolerance_layer_budget",
+          "model": "A",
+          "note": "required h 0.075 mm is below the allowed 0.10 mm: the tolerance needs compensation or post-machining (no silent clamping)",
+          "requirement_id": "R07",
+          "status": "infeasible"
+        },
+        {
+          "item": "nozzle_temperature",
+          "model": "S",
+          "note": "material profile value inside data-sheet window 250..270 C",
+          "value": 260.0
+        }
+      ],
+      "step": "compile_patch",
+      "warnings": []
+    },
+    {
+      "applied": false,
+      "note": "simulation estimates; no qualification promotion",
+      "status": "needs_input",
+      "step": "functional_orientation"
+    },
+    {
+      "note": "independent single-setting comparisons; deterministic patch and qualification unchanged",
+      "status": "needs_calibration",
+      "step": "assess_double_ml"
+    }
+  ],
+  "verification": [
+    {
+      "evidence_level": null,
+      "fragment": "Скорость вращения звезды: 65 об/мин (цикличность линии ~40 коробов/мин).",
+      "mandatory": true,
+      "notes": [],
+      "property": "rotation_speed",
+      "requirement_id": "R01",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Радиальная нагрузка от пружин захватов на профиль до 35 Н на каждый ролик (в пике при закрытии захвата).",
+      "mandatory": true,
+      "notes": [],
+      "property": "radial_load",
+      "requirement_id": "R02",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Реактивный крутящий момент на ось (на скручивание) до 18 Н·м.",
+      "mandatory": true,
+      "notes": [],
+      "property": "torque",
+      "requirement_id": "R03",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Температура и среда +15°C...+35°C.",
+      "mandatory": true,
+      "notes": [
+        "manufacturer operating range -60..110 C"
+      ],
+      "property": "service_temperature",
+      "requirement_id": "R04",
+      "sources": [
+        "material:enduse_pa6"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Еженедельная мойка оборудования щелочными пенными средствами (pH 10-11) для удаления клеевых остатков.",
+      "mandatory": true,
+      "notes": [],
+      "property": "chemical_ph",
+      "requirement_id": "R05",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Еженедельная мойка оборудования щелочными пенными средствами (pH 10-11) для удаления клеевых остатков.",
+      "mandatory": true,
+      "notes": [
+        "resistant at room temperature only; service up to 35 C needs a test"
+      ],
+      "property": "alkali_resistance",
+      "requirement_id": "R06",
+      "sources": [
+        "material:enduse_pa6"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Отклонение от теоретического контура не должно превышать ±0.15 мм.",
+      "mandatory": true,
+      "notes": [
+        "required h 0.075 mm is below the allowed 0.10 mm: the tolerance needs compensation or post-machining (no silent clamping)"
+      ],
+      "property": "dimensional_tolerance",
+      "requirement_id": "R07",
+      "sources": [
+        "layer_budget"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Материал должен иметь низкий коэффициент трения скольжения по POM-пластику без применения внешних смазок.",
+      "mandatory": true,
+      "notes": [
+        "μ определяется парой материалов; нужен трибологический тест по POM"
+      ],
+      "property": "low_friction_vs_pom",
+      "requirement_id": "R08",
+      "sources": [
+        "material:enduse_pa6"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Высокая стойкость к абразивному износу (целлюлозная пыль).",
+      "mandatory": true,
+      "notes": [
+        "abrasion class: high (memo); wear in the real pair needs a test"
+      ],
+      "property": "abrasion_resistance",
+      "requirement_id": "R09",
+      "sources": [
+        "material:enduse_pa6"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Устойчивость к щелочным моющим средствам (pH 11) и возможным попаданиям горячего клея (расплава EVA), используемого на формовщике (температура капания клея до 160°C, материал не должен плавиться или размягчаться при кратковременном контакте).",
+      "mandatory": true,
+      "notes": [],
+      "property": "chemical_ph",
+      "requirement_id": "R11",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Устойчивость к щелочным моющим средствам (pH 11) и возможным попаданиям горячего клея (расплава EVA), используемого на формовщике (температура капания клея до 160°C, материал не должен плавиться или размягчаться при кратковременном контакте).",
+      "mandatory": true,
+      "notes": [
+        "short contact 160 C: Vicat/short-term limit None C is only an indicator; drop test required"
+      ],
+      "property": "short_contact_temperature",
+      "requirement_id": "R12",
+      "sources": [
+        "material:enduse_pa6"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Материал не должен выделять токсичных веществ (оборудование может использоваться для упаковки пищевой продукции, например, тетрапакетов с соком).",
+      "mandatory": true,
+      "notes": [
+        "Допуск сырья не квалифицирует процесс печати"
+      ],
+      "property": "non_toxic",
+      "requirement_id": "R13",
+      "sources": [
+        "material:enduse_pa6"
+      ],
+      "status": "unknown"
+    }
+  ]
+}

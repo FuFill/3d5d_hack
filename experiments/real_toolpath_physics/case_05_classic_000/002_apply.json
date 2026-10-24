@@ -1,0 +1,105 @@
+{
+  "readback": {
+    "material_id": "fiberpart_pp_g30",
+    "differences": [],
+    "status": "pass",
+    "actual": {
+      "infill_sparse_density": 100.0,
+      "top_layers": 4,
+      "speed_print": 40.0,
+      "support_enable": true,
+      "machine_height": 300,
+      "support_bottom_enable": false,
+      "retraction_speed": 25,
+      "machine_heated_bed": true,
+      "non_printing_base_diameter": 6,
+      "retraction_enable": true,
+      "line_width": 0.6,
+      "wall_thickness": 0.8,
+      "support_line_width": 0.6,
+      "support_interface_enable": false,
+      "support_xy_distance": 0.7,
+      "wall_line_count": 3,
+      "support_angle": 50,
+      "bottom_layers": 4,
+      "cool_fan_enabled": true,
+      "retraction_amount": 3,
+      "infill_pattern": "lines",
+      "machine_width": 351,
+      "support_type": "everywhere",
+      "support_top_distance": 0.1,
+      "adhesion_type": "brim",
+      "cylindrical_mode_overlap": 0,
+      "machine_nozzle_size": 0.6,
+      "layer_height_0": 0.3,
+      "machine_center_is_zero": false,
+      "cylindrical_mode_base_diameter": 6,
+      "support_bottom_distance": 0.1,
+      "material_print_temperature": 270.0,
+      "machine_depth": 300.3,
+      "material_flow": 100,
+      "printing_mode": "classic",
+      "layer_height": 0.3,
+      "cool_fan_speed": 0.0,
+      "support_roof_enable": false,
+      "material_bed_temperature": 110.0
+    },
+    "quality_id": "ste_planner_quality_64bd32307f814d57bf901afecf58c544",
+    "machine_definition": "hte530v5.2.4"
+  },
+  "nodes": [
+    {
+      "modifier": {
+        "anti_overhang_mesh": false,
+        "support_mesh": false,
+        "support_mesh_drop_down": true
+      },
+      "parent": "Root",
+      "mesh_sha256": "573c572fec4ad25929af21a305fe4f06879ac06d53040ba700302875bb042c13",
+      "name": "Рабочее_колесо насоса Wilo IPL 80140-42. 2063106.STL",
+      "world_bounds": [
+        [
+          -67.31989288330078,
+          -1.4901161193847656e-08,
+          -67.32283020019531
+        ],
+        [
+          67.31989288330078,
+          50.735069274902344,
+          67.32282257080078
+        ]
+      ],
+      "vertices": 36788,
+      "matrix": [
+        [
+          1.0,
+          4.720580371042615e-09,
+          -4.720583923756294e-09,
+          102.70386505126953
+        ],
+        [
+          -4.720580371042615e-09,
+          -7.125590855139308e-07,
+          -1.0,
+          0.18407592177391052
+        ],
+        [
+          -4.720583923756294e-09,
+          1.0,
+          -7.125590855139308e-07,
+          -76.3112564086914
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ],
+  "decision_sha256": "88de491b561fb045d291fdeee3f556b8ae04f98644da3391d7ec3ad5e166d2da",
+  "status": "analysis_scene",
+  "physical_print_approval": false,
+  "qt_thread": true
+}

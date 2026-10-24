@@ -95,6 +95,9 @@ def plan_case(tz_text, mesh_path, resources_dir=None, machine_id=DEFAULT_MACHINE
     route_list = routes.enumerate_routes(mesh, analysis, rot, reqset, caps, ptype)
     if forced_mode:
         chosen_route = next((r for r in route_list if r["mode"] == forced_mode), None)
+        if chosen_route is None or not chosen_route["feasible"]:
+            raise ValueError("requested route %s is infeasible: %s" %
+                             (forced_mode, (chosen_route or {}).get("reasons", ["unsupported mode"])))
         route_note = "mode requested by the user"
         mode = forced_mode
     else:

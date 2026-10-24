@@ -1,0 +1,10 @@
+{
+  "status": "error",
+  "backend_state": 2,
+  "error": "ValueError",
+  "message": "native Boolean preprocessing failed; backend fallback geometry is not a verified slice",
+  "native_geometry_errors": [
+    "2026-10-24 10:24:30,768 - ERROR - [Thread-4] plugins.CLIParserBackend.StartSliceJob._buildObjectFiles [837]: Exception while differece model! Command '['openscad.exe', 'C:\\\\Users\\\\Ilya\\\\AppData\\\\Local\\\\Temp\\\\tmprp7jps8d', '-o', 'C:\\\\Users\\\\Ilya\\\\AppData\\\\Local\\\\Temp\\\\tmp1u9gzwso.stl']' returned non-zero exit status 1"
+  ],
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\Ilya\\Working projects\\3d5d_hack\\.runtime\\ste\\run_0730058616\\appdata\\steslicer\\7.10\\plugins\\STEPlannerRuntime\\RuntimeExtension.py\", line 377, in poll_once\n    result = self.wait_pending()\n  File \"C:\\Users\\Ilya\\Working projects\\3d5d_hack\\.runtime\\ste\\run_0730058616\\appdata\\steslicer\\7.10\\plugins\\STEPlannerRuntime\\RuntimeExtension.py\", line 281, in wait_pending\n    raise ValueError(\"native Boolean preprocessing failed; backend fallback geometry is not a verified slice\")\nValueError: native Boolean preprocessing failed; backend fallback geometry is not a verified slice\n"
+}

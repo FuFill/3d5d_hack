@@ -1,0 +1,1103 @@
+{
+  "assumptions": [
+    "material properties are manufacturer typical values (Stereotech wiki), not batch data",
+    "process settings start from the Stereotech material profile; volumetric flow limit uncalibrated"
+  ],
+  "calibration_context": {
+    "geometry_sha256": "70663df1130d2d969063537c506b9ca767e36f3949bfe5c7d5dc0217d58ca467",
+    "machine_id": "hte530v5.2.4",
+    "material_id": "sealant_tpu_A95",
+    "printing_mode": "classic",
+    "rotation": [
+      [
+        9.40080864042514e-07,
+        -5.372637602642432e-05,
+        -0.9999999985562964
+      ],
+      [
+        -5.372637602642432e-05,
+        0.9999999971134738,
+        -5.372642645604476e-05
+      ],
+      [
+        0.9999999985562964,
+        5.372642645604476e-05,
+        9.371943378022607e-07
+      ]
+    ],
+    "settings": {
+      "adhesion_type": "brim",
+      "bottom_layers": 5,
+      "cool_fan_enabled": true,
+      "cool_fan_speed": 20.0,
+      "cylindrical_mode_base_diameter": 6.0,
+      "cylindrical_mode_overlap": 0.0,
+      "infill_pattern": "lines",
+      "infill_sparse_density": 100.0,
+      "layer_height": 0.2,
+      "layer_height_0": 0.3,
+      "line_width": 0.4,
+      "machine_center_is_zero": false,
+      "machine_depth": 300.3,
+      "machine_heated_bed": true,
+      "machine_height": 300.0,
+      "machine_nozzle_size": 0.4,
+      "machine_width": 351.0,
+      "material_bed_temperature": 45.0,
+      "material_flow": 100.0,
+      "material_print_temperature": 215.0,
+      "non_printing_base_diameter": 6.0,
+      "printing_mode": "classic",
+      "retraction_amount": 5.7,
+      "retraction_enable": true,
+      "retraction_speed": 37.0,
+      "speed_print": 30.0,
+      "support_angle": 50.0,
+      "support_bottom_distance": 0.1,
+      "support_bottom_enable": false,
+      "support_enable": true,
+      "support_interface_enable": false,
+      "support_line_width": 0.4,
+      "support_roof_enable": false,
+      "support_top_distance": 0.1,
+      "support_type": "everywhere",
+      "support_xy_distance": 0.7,
+      "top_layers": 5,
+      "wall_line_count": 3,
+      "wall_thickness": 0.8
+    }
+  },
+  "candidate_geometry": {
+    "base_area": 654.0825439723095,
+    "critical_support_contact": null,
+    "fits_build_volume": true,
+    "height": 111.00337117300901,
+    "overhang_area": 10568.297187441201,
+    "rotation": [
+      [
+        9.40080864042514e-07,
+        -5.372637602642432e-05,
+        -0.9999999985562964
+      ],
+      [
+        -5.372637602642432e-05,
+        0.9999999971134738,
+        -5.372642645604476e-05
+      ],
+      [
+        0.9999999985562964,
+        5.372642645604476e-05,
+        9.371943378022607e-07
+      ]
+    ],
+    "size": [
+      102.98438035594984,
+      102.98782070272296,
+      111.00337117300901
+    ],
+    "staircase_mean_mm": 0.122551560711308,
+    "support_angle_deg": 50.0,
+    "support_volume_upper": 541954.3976504215,
+    "up": [
+      0.9999999985562964,
+      5.372642645604476e-05,
+      9.371943378022607e-07
+    ]
+  },
+  "candidates": {
+    "materials": [
+      {
+        "id": "sealant_tpu_A95",
+        "summary": {
+          "hinted_unknown": [
+            "R01",
+            "R06"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R05",
+            "R07",
+            "R09"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R06",
+            "R08"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 5.0
+      },
+      {
+        "id": "sealant_tpu",
+        "summary": {
+          "hinted_unknown": [
+            "R01",
+            "R06"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R05",
+            "R07",
+            "R09"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R06",
+            "R08"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 5.0
+      },
+      {
+        "id": "sealant_tpu93",
+        "summary": {
+          "hinted_unknown": [
+            "R01",
+            "R06"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R05",
+            "R07",
+            "R09"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R06",
+            "R08"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 5.0
+      }
+    ],
+    "routes": [
+      {
+        "feasible": true,
+        "mode": "classic",
+        "score": 0.0
+      },
+      {
+        "feasible": true,
+        "mode": "cylindrical",
+        "score": -1.5
+      },
+      {
+        "feasible": false,
+        "mode": "cylindrical_full",
+        "score": -2.0
+      }
+    ]
+  },
+  "causal_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "assess_double_ml",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "calibration_data"
+        ],
+        "model_id": "assess_double_ml",
+        "reason": "no measured print experiments supplied"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "chosen_material": {
+    "base_polymer": "TPU",
+    "excluded": null,
+    "filler": null,
+    "id": "sealant_tpu_A95",
+    "label": "Sealant TPU A95",
+    "selectable": true,
+    "series": "Sealant",
+    "slicer_file": "sealant_tpu_A95.xml.fdm_material",
+    "wiki_url": "https://wiki.stereotech.org/ru/fdm-materials/sealant/tpu"
+  },
+  "effective_settings": {
+    "adhesion_type": "brim",
+    "bottom_layers": 5,
+    "cool_fan_enabled": true,
+    "cool_fan_speed": 20.0,
+    "cylindrical_mode_base_diameter": 6.0,
+    "cylindrical_mode_overlap": 0.0,
+    "infill_pattern": "lines",
+    "infill_sparse_density": 100.0,
+    "layer_height": 0.2,
+    "layer_height_0": 0.3,
+    "line_width": 0.4,
+    "machine_center_is_zero": false,
+    "machine_depth": 300.3,
+    "machine_heated_bed": true,
+    "machine_height": 300.0,
+    "machine_nozzle_size": 0.4,
+    "machine_width": 351.0,
+    "material_bed_temperature": 45.0,
+    "material_flow": 100.0,
+    "material_print_temperature": 215.0,
+    "non_printing_base_diameter": 6.0,
+    "printing_mode": "classic",
+    "retraction_amount": 5.7,
+    "retraction_enable": true,
+    "retraction_speed": 37.0,
+    "speed_print": 30.0,
+    "support_angle": 50.0,
+    "support_bottom_distance": 0.1,
+    "support_bottom_enable": false,
+    "support_enable": true,
+    "support_interface_enable": false,
+    "support_line_width": 0.4,
+    "support_roof_enable": false,
+    "support_top_distance": 0.1,
+    "support_type": "everywhere",
+    "support_xy_distance": 0.7,
+    "top_layers": 5,
+    "wall_line_count": 3,
+    "wall_thickness": 0.8
+  },
+  "evidence_level": "document",
+  "explanation": [
+    "Статус: needs_input; уровень доказательности: document.",
+    "Материал: Sealant TPU A95 — выбран из 3 допустимых; отклонено 17 (обязательное требование не выполнено).",
+    "Режим: classic. mode requested by the user",
+    "  printing_mode = classic (было classic): route selected by documented policy",
+    "  bottom_layers = 5 (было 8): skin_layers, policy:skin",
+    "  infill_sparse_density = 100.0 (было 20.0): no calibrated relation load -> infill exists; policy by load class elastic",
+    "  layer_height = 0.2 (было 0.1): choose_layer_height, policy:layer",
+    "  top_layers = 5 (было 8): skin_layers, policy:skin",
+    "  wall_line_count = 3 (было 2): shell 1.20 mm -> 3 walls (1.20 mm)",
+    "  material_bed_temperature = 45.0 (было 60.0): material profile value; explicit because STE takes max() over extruders",
+    "  speed_print = 30.0 (было 60.0): material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+    "  support_enable = True (было False): overhang 10568 mm2, support volume bound 541954 mm3 (thresholds 25 mm2, 200 mm3)",
+    "Не подтверждено расчётом/данными (нужны испытания): acid_salt_resistance, oil_fuel_resistance, sealing",
+    "Double ML: оценка отсутствует или часть изменений не подтверждена; нужны измеренные испытания в тех же условиях."
+  ],
+  "functional_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "functional_orientation",
+    "status": "needs_input",
+    "trace": [
+      {
+        "missing": [
+          "functional_spec"
+        ],
+        "model_id": "functional_orientation",
+        "reason": "purpose, service loads and scoped printed properties required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "materials_considered": 3,
+  "materials_rejected": 17,
+  "missing_inputs": [
+    {
+      "field": "pressure",
+      "requirement_type": "sealing"
+    },
+    {
+      "field": "medium",
+      "requirement_type": "sealing"
+    },
+    {
+      "field": "max_leak_rate",
+      "requirement_type": "sealing"
+    },
+    {
+      "field": "time",
+      "requirement_type": "sealing"
+    },
+    {
+      "field": "resistance_force",
+      "requirement_type": "elastic_boot"
+    },
+    {
+      "field": "bellows_geometry",
+      "requirement_type": "elastic_boot"
+    },
+    {
+      "field": "allowed_strain",
+      "requirement_type": "elastic_boot"
+    },
+    {
+      "field": "lifetime",
+      "requirement_type": "elastic_boot"
+    }
+  ],
+  "part_name": "Эластичный защитный чехол (пыльник) наружного ШРУСа",
+  "part_type": "boot_seal",
+  "prototype_only": false,
+  "qualification_plan": [
+    {
+      "conditions": "изменение массы и прочности",
+      "mandatory": true,
+      "property": "acid_salt_resistance",
+      "reason": "unverified",
+      "requirement_id": "R01",
+      "test": "Выдержка в растворах кислот/солей"
+    },
+    {
+      "conditions": "изменение массы, твёрдости, прочности",
+      "mandatory": true,
+      "property": "oil_fuel_resistance",
+      "reason": "unverified",
+      "requirement_id": "R06",
+      "test": "Выдержка в маслах/топливе/СОЖ"
+    },
+    {
+      "conditions": "среда, давление, время, допустимая утечка",
+      "mandatory": true,
+      "property": "sealing",
+      "reason": "unverified",
+      "requirement_id": "R08",
+      "test": "Испытание герметичности давлением/вакуумом"
+    }
+  ],
+  "requirement_issues": [],
+  "requirements": [
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R01",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна стойкость к среде при рабочей температуре",
+      "property": "acid_salt_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Штатные резиновые пыльники (из хлоропренового каучука / неопрена) изнашиваются под воздействием агрессивных солевых растворов и деформирующей нагрузке."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R02",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "bend_angle",
+      "provenance": {
+        "file": null,
+        "fragment": "Угол поворота колеса (изгиб пыльника): до 42 градусов."
+      },
+      "region": null,
+      "unit": "deg",
+      "value": 42.0
+    },
+    {
+      "comparator": "abs_dev_le",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R03",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "axial_travel",
+      "provenance": {
+        "file": null,
+        "fragment": "Осевой ход подвески (растяжение/сжатие пыльника): ± 30 мм."
+      },
+      "region": null,
+      "unit": "mm",
+      "value": 30.0
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R04",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "rotation_speed",
+      "provenance": {
+        "file": null,
+        "fragment": "Частота деформаций: Постоянная, при вращении колеса до 1000 об/мин."
+      },
+      "region": null,
+      "unit": "rad/s",
+      "value": 104.71975511965977
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R05",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "service_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Рабочий диапазон: от 0°C до +75°C (нагрев от тормозных механизмов и трения в ШРУСе при длительном буксовании)."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": [
+        0.0,
+        75.0
+      ]
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R06",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужны данные химстойкости SKU к конкретной среде",
+      "property": "oil_fuel_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Снаружи: Дорожные реагенты (хлорид натрия, хлорид кальция), тормозная пыль, брызги бензина/дизеля, удары мелких камней и крошки."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R07",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна ударная вязкость в рабочих условиях",
+      "property": "impact_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Снаружи: Дорожные реагенты (хлорид натрия, хлорид кальция), тормозная пыль, брызги бензина/дизеля, удары мелких камней и крошки."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R08",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужны давление, среда, температура, допустимая утечка и время",
+      "property": "sealing",
+      "provenance": {
+        "file": null,
+        "fragment": "Герметичность: Узел должен быть абсолютно герметичен."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R09",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна допустимая жёсткость/усилие при крайних температурах",
+      "property": "elasticity_over_range",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал должен сохранять эластичность при всём диапазоне рабочих температур."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    }
+  ],
+  "robustness_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "process_stability",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "noise_bounds",
+          "first_layer_gap_limits",
+          "process_response_calibration"
+        ],
+        "model_id": "process_stability",
+        "reason": "measured noise bounds and quality tolerances required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "route": {
+    "mode": "classic",
+    "note": "mode requested by the user",
+    "parameters": {}
+  },
+  "scene_operations": [
+    {
+      "coordinates": "printer (Z up); the adapter converts to the Uranium scene (Y up)",
+      "op": "load_mesh",
+      "path": "C:\\Users\\Ilya\\Working projects\\3d5d_hack\\data\\examples\\3. Пыльник Шруса - 3D\\Пыльник шруса.STL",
+      "units": "mm"
+    },
+    {
+      "note": "minimum J_R among stable orientations",
+      "op": "set_transform",
+      "rotation": [
+        [
+          9.40080864042514e-07,
+          -5.372637602642432e-05,
+          -0.9999999985562964
+        ],
+        [
+          -5.372637602642432e-05,
+          0.9999999971134738,
+          -5.372642645604476e-05
+        ],
+        [
+          0.9999999985562964,
+          5.372642645604476e-05,
+          9.371943378022607e-07
+        ]
+      ],
+      "translation": [
+        51.49498651602616,
+        -51.49186082246682,
+        -0.00033009402973077553
+      ]
+    },
+    {
+      "op": "arrange"
+    }
+  ],
+  "setting_patch": {
+    "errors": [],
+    "items": [
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "printing_mode",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": "classic",
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "configuration",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": "classic"
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "bottom_layers",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 5
+      },
+      {
+        "decision_unit": "fraction",
+        "enabled_after_patch": true,
+        "key": "infill_sparse_density",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 20.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "%",
+        "validation": "valid",
+        "value": 100.0
+      },
+      {
+        "decision_unit": "mm",
+        "enabled_after_patch": true,
+        "key": "layer_height",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 0.1,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "geometry",
+        "target": "global",
+        "unit": "mm",
+        "validation": "valid",
+        "value": 0.2
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "top_layers",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 5
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "wall_line_count",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 2,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 3
+      },
+      {
+        "decision_unit": "degC",
+        "enabled_after_patch": true,
+        "key": "material_bed_temperature",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 60.0,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "thermal_flow",
+        "target": "global",
+        "unit": "°C",
+        "validation": "valid",
+        "value": 45.0
+      },
+      {
+        "decision_unit": "mm/s",
+        "enabled_after_patch": true,
+        "key": "speed_print",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 60.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "motion",
+        "target": "extruder_0",
+        "unit": "mm/s",
+        "validation": "valid",
+        "value": 30.0
+      },
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "support_enable",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": false,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "support_adhesion",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": true
+      }
+    ],
+    "ok": true,
+    "payload": {
+      "extruders": {
+        "0": {
+          "bottom_layers": 5,
+          "infill_sparse_density": 100.0,
+          "speed_print": 30.0,
+          "top_layers": 5,
+          "wall_line_count": 3
+        }
+      },
+      "global": {
+        "layer_height": 0.2,
+        "material_bed_temperature": 45.0,
+        "printing_mode": "classic",
+        "support_enable": true
+      }
+    },
+    "warnings": []
+  },
+  "status": "needs_input",
+  "structural_checks": [],
+  "trace": [
+    {
+      "count": 9,
+      "issues": [],
+      "part_type": "boot_seal",
+      "step": "parse_requirements"
+    },
+    {
+      "errors": [],
+      "rotational": {
+        "axial_length": 111.00337117300901,
+        "axis": [
+          0.9999999985562964,
+          5.372642645604476e-05,
+          9.371943379672927e-07
+        ],
+        "bore_radius": 12.497166598409544,
+        "is_rotational_candidate": true,
+        "moment_mismatch": 5.7508029315868064e-06,
+        "r_max": 51.49719546421903,
+        "sector_cv": 2.1133701924240397e-05
+      },
+      "size": [
+        111.0,
+        102.987821,
+        102.98433499999999
+      ],
+      "status": "ok",
+      "step": "analyze_mesh",
+      "volume_mm3": 71422.00182284246,
+      "warnings": []
+    },
+    {
+      "build_volume": {
+        "classic": [
+          351.0,
+          300.3,
+          300.0
+        ],
+        "cylindrical": [
+          351.0,
+          300.3,
+          231.1
+        ],
+        "cylindrical_full": [
+          351.0,
+          300.3,
+          231.1
+        ]
+      },
+      "chain": [
+        "fdmprinter",
+        "steprinter_v5",
+        "steprinter530_v5.2.4",
+        "hte530v5.2.4"
+      ],
+      "machine": "hte530v5.2.4",
+      "note": "offline schema from the slicer resources; installed runtime confirmed by read-back",
+      "nozzles": [
+        0.4
+      ],
+      "step": "inspect_machine"
+    },
+    {
+      "chosen": "sealant_tpu_A95",
+      "policy": "hard constraints first (any mandatory fail rejects); ranking by support = passes + 0.5*hinted unknowns + 1*manufacturer application match + 0.25*optional passes, then fewer unknowns, printability, print difficulty (Stereotech memo)",
+      "prototype_only": false,
+      "ranked": [
+        "sealant_tpu_A95",
+        "sealant_tpu",
+        "sealant_tpu93"
+      ],
+      "rejected": 49,
+      "step": "screen_materials"
+    },
+    {
+      "chosen": "classic",
+      "routes": [
+        {
+          "feasible": true,
+          "mode": "classic",
+          "reasons": [
+            "flat layers, heated platform"
+          ],
+          "score": 0.0
+        },
+        {
+          "feasible": true,
+          "mode": "cylindrical",
+          "reasons": [
+            "axis: rotational symmetry (inertia + sector radii)",
+            "against: thin elastomer bellows: flat layers keep continuous walls",
+            "through bore 24.99 mm: mandrel defines the bore, base cylinder removes no material"
+          ],
+          "score": -1.5
+        },
+        {
+          "feasible": false,
+          "mode": "cylindrical_full",
+          "reasons": [
+            "axis: rotational symmetry (inertia + sector radii)",
+            "against: thin elastomer bellows: flat layers keep continuous walls",
+            "part has a bore: Spiral is the matching 5D route"
+          ],
+          "score": -2.0
+        }
+      ],
+      "step": "enumerate_routes"
+    },
+    {
+      "candidates": [
+        {
+          "height": 111.00337117300901,
+          "score": 1.4704796067040045,
+          "support_volume": 541954.3976504215,
+          "up": [
+            0.9999999985562964,
+            5.372642645604476e-05,
+            9.371943379672927e-07
+          ]
+        },
+        {
+          "height": 111.00337117300901,
+          "score": 1.8,
+          "support_volume": 808308.5484353551,
+          "up": [
+            -0.9999999985562964,
+            -5.372642645604476e-05,
+            -9.371943379672927e-07
+          ]
+        }
+      ],
+      "chosen_up": [
+        0.9999999985562964,
+        5.372642645604476e-05,
+        9.371943379672927e-07
+      ],
+      "step": "orientation"
+    },
+    {
+      "chosen": "sealant_tpu_A95",
+      "rejected_by_structure": [],
+      "step": "solve_structure"
+    },
+    {
+      "errors": [],
+      "items": 9,
+      "process_notes": [
+        {
+          "item": "load_class",
+          "model": "P",
+          "value": "elastic"
+        },
+        {
+          "item": "layer_height",
+          "model": "P",
+          "note": "h/d = 0.50 functional seed",
+          "value": 0.2
+        },
+        {
+          "item": "nozzle_temperature",
+          "model": "S",
+          "note": "material profile value inside data-sheet window 190..235 C",
+          "value": 215.0
+        }
+      ],
+      "step": "compile_patch",
+      "warnings": []
+    },
+    {
+      "applied": false,
+      "note": "simulation estimates; no qualification promotion",
+      "status": "needs_input",
+      "step": "functional_orientation"
+    },
+    {
+      "note": "independent single-setting comparisons; deterministic patch and qualification unchanged",
+      "status": "needs_calibration",
+      "step": "assess_double_ml"
+    }
+  ],
+  "verification": [
+    {
+      "evidence_level": "document",
+      "fragment": "Штатные резиновые пыльники (из хлоропренового каучука / неопрена) изнашиваются под воздействием агрессивных солевых растворов и деформирующей нагрузке.",
+      "mandatory": true,
+      "notes": [
+        "resistant at room temperature only; service up to 75 C needs a test"
+      ],
+      "property": "acid_salt_resistance",
+      "requirement_id": "R01",
+      "sources": [
+        "material:sealant_tpu_A95"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Угол поворота колеса (изгиб пыльника): до 42 градусов.",
+      "mandatory": true,
+      "notes": [],
+      "property": "bend_angle",
+      "requirement_id": "R02",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Осевой ход подвески (растяжение/сжатие пыльника): ± 30 мм.",
+      "mandatory": true,
+      "notes": [],
+      "property": "axial_travel",
+      "requirement_id": "R03",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Частота деформаций: Постоянная, при вращении колеса до 1000 об/мин.",
+      "mandatory": true,
+      "notes": [],
+      "property": "rotation_speed",
+      "requirement_id": "R04",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Рабочий диапазон: от 0°C до +75°C (нагрев от тормозных механизмов и трения в ШРУСе при длительном буксовании).",
+      "mandatory": true,
+      "notes": [
+        "manufacturer operating range -35..100 C"
+      ],
+      "property": "service_temperature",
+      "requirement_id": "R05",
+      "sources": [
+        "material:sealant_tpu_A95"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Снаружи: Дорожные реагенты (хлорид натрия, хлорид кальция), тормозная пыль, брызги бензина/дизеля, удары мелких камней и крошки.",
+      "mandatory": true,
+      "notes": [
+        "resistant at room temperature only; service up to 75 C needs a test"
+      ],
+      "property": "oil_fuel_resistance",
+      "requirement_id": "R06",
+      "sources": [
+        "material:sealant_tpu_A95"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Снаружи: Дорожные реагенты (хлорид натрия, хлорид кальция), тормозная пыль, брызги бензина/дизеля, удары мелких камней и крошки.",
+      "mandatory": true,
+      "notes": [
+        "elongation 3.43 vs policy 0.05"
+      ],
+      "property": "impact_resistance",
+      "requirement_id": "R07",
+      "sources": [
+        "material:sealant_tpu_A95"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Герметичность: Узел должен быть абсолютно герметичен.",
+      "mandatory": true,
+      "notes": [
+        "leak tightness needs pressure/medium criteria and a test"
+      ],
+      "property": "sealing",
+      "requirement_id": "R08",
+      "sources": [
+        "material:sealant_tpu_A95"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Материал должен сохранять эластичность при всём диапазоне рабочих температур.",
+      "mandatory": true,
+      "notes": [
+        "stiffness class: soft_elastic"
+      ],
+      "property": "elasticity_over_range",
+      "requirement_id": "R09",
+      "sources": [
+        "material:sealant_tpu_A95"
+      ],
+      "status": "pass"
+    }
+  ]
+}

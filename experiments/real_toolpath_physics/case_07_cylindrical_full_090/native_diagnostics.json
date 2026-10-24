@@ -1,0 +1,24 @@
+{
+  "log_sha256": "7ff28b35bdbd9ed387e1ff106ca22522920bc61da5adc4fcf92ff275e2ca33fc",
+  "error_lines": [
+    "2026-10-24 10:47:21,612 - ERROR - [MainThread] CylindricalBackend.CylindricalBackend.initialize [149]: Error occurred while checking global stack: 'NoneType' object has no attribute 'userChanges'",
+    "2026-10-24 10:47:21,995 - ERROR - [MainThread] UM.Logger.logException [84]: Exception: Exception occurred while loading post processing plugin: No module named 'statistics'",
+    "2026-10-24 10:47:21,997 - ERROR - [MainThread] UM.Logger.logException [88]: Traceback (most recent call last):",
+    "2026-10-24 10:47:21,999 - ERROR - [MainThread] UM.Logger.logException [88]:   File \"C:\\Program Files\\Stereotech STE Slicer 7.10\\plugins\\PostProcessingPlugin\\PostProcessingPlugin.py\", line 175, in loadScripts",
+    "2026-10-24 10:47:22,001 - ERROR - [MainThread] UM.Logger.logException [88]:     spec.loader.exec_module(loaded_script)",
+    "2026-10-24 10:47:22,003 - ERROR - [MainThread] UM.Logger.logException [88]:   File \"<frozen importlib._bootstrap_external>\", line 697, in exec_module",
+    "2026-10-24 10:47:22,004 - ERROR - [MainThread] UM.Logger.logException [88]:   File \"<frozen importlib._bootstrap>\", line 222, in _call_with_frames_removed",
+    "2026-10-24 10:47:22,006 - ERROR - [MainThread] UM.Logger.logException [88]:   File \"C:\\Program Files\\Stereotech STE Slicer 7.10\\plugins\\PostProcessingPlugin\\scripts\\ExcludeObject.py\", line 8, in <module>",
+    "2026-10-24 10:47:22,007 - ERROR - [MainThread] UM.Logger.logException [88]:     import statistics",
+    "2026-10-24 10:47:22,009 - ERROR - [MainThread] UM.Logger.logException [88]: ImportError: No module named 'statistics'",
+    "2026-10-24 10:47:42,713 - ERROR - [Thread-5] UM.Qt.QtApplication.getTheme [394]: The theme cannot be accessed before the engine is initialised",
+    "2026-10-24 10:47:42,715 - ERROR - [Thread-5] UM.Logger.logException [84]: Exception: Job <steslicer.Utils.GenerateBasementJob.GenerateBasementJob object at 0x0000020941A6F0F0> caused an exception",
+    "2026-10-24 10:47:42,716 - ERROR - [Thread-5] UM.Logger.logException [88]: Traceback (most recent call last):",
+    "2026-10-24 10:47:42,718 - ERROR - [Thread-5] UM.Logger.logException [88]:   File \"C:\\temp\\steslicer-build\\src\\inst\\lib\\python3.5\\site-packages\\UM\\JobQueue.py\", line 121, in run",
+    "2026-10-24 10:47:42,719 - ERROR - [Thread-5] UM.Logger.logException [88]:   File \"C:\\temp\\steslicer-build\\src\\inst\\lib\\python3.5\\site-packages\\steslicer\\Utils\\GenerateBasementJob.py\", line 188, in run",
+    "2026-10-24 10:47:42,721 - ERROR - [Thread-5] UM.Logger.logException [88]:   File \"C:\\temp\\steslicer-build\\src\\inst\\lib\\python3.5\\site-packages\\steslicer\\Utils\\GenerateBasementJob.py\", line 584, in _createPolygon",
+    "2026-10-24 10:47:42,722 - ERROR - [Thread-5] UM.Logger.logException [88]:   File \"C:\\temp\\steslicer-build\\src\\inst\\lib\\python3.5\\site-packages\\steslicer\\LayerPolygon.py\", line 57, in __init__",
+    "2026-10-24 10:47:42,724 - ERROR - [Thread-5] UM.Logger.logException [88]:   File \"C:\\temp\\steslicer-build\\src\\inst\\lib\\python3.5\\site-packages\\steslicer\\LayerPolygon.py\", line 249, in getColorMap",
+    "2026-10-24 10:47:42,725 - ERROR - [Thread-5] UM.Logger.logException [88]: AttributeError: 'NoneType' object has no attribute 'getColor'"
+  ]
+}

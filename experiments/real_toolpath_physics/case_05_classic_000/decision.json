@@ -1,0 +1,1846 @@
+{
+  "assumptions": [
+    "blades and hub not covered",
+    "material properties are manufacturer typical values (Stereotech wiki), not batch data",
+    "process settings start from the Stereotech material profile; volumetric flow limit uncalibrated",
+    "thin ring rho*v^2 bounds disc hoop stress"
+  ],
+  "calibration_context": {
+    "geometry_sha256": "c78061849c43078ea5dda6e21e9f0614735d36f57880441b829ed529ffe89510",
+    "machine_id": "hte530v5.2.4",
+    "material_id": "fiberpart_pp_g30",
+    "printing_mode": "classic",
+    "rotation": [
+      [
+        1.0,
+        4.720583796923524e-09,
+        4.720580433229752e-09
+      ],
+      [
+        4.720583796923524e-09,
+        -7.125591059420344e-07,
+        -0.9999999999997462
+      ],
+      [
+        -4.720580433229752e-09,
+        0.9999999999997462,
+        -7.125591059420344e-07
+      ]
+    ],
+    "settings": {
+      "adhesion_type": "brim",
+      "bottom_layers": 4,
+      "cool_fan_enabled": true,
+      "cool_fan_speed": 0.0,
+      "cylindrical_mode_base_diameter": 6.0,
+      "cylindrical_mode_overlap": 0.0,
+      "infill_pattern": "lines",
+      "infill_sparse_density": 100.0,
+      "layer_height": 0.3,
+      "layer_height_0": 0.3,
+      "line_width": 0.6,
+      "machine_center_is_zero": false,
+      "machine_depth": 300.3,
+      "machine_heated_bed": true,
+      "machine_height": 300.0,
+      "machine_nozzle_size": 0.6,
+      "machine_width": 351.0,
+      "material_bed_temperature": 110.0,
+      "material_flow": 100.0,
+      "material_print_temperature": 270.0,
+      "non_printing_base_diameter": 6.0,
+      "printing_mode": "classic",
+      "retraction_amount": 3.0,
+      "retraction_enable": true,
+      "retraction_speed": 25.0,
+      "speed_print": 40.0,
+      "support_angle": 50.0,
+      "support_bottom_distance": 0.1,
+      "support_bottom_enable": false,
+      "support_enable": true,
+      "support_interface_enable": false,
+      "support_line_width": 0.6,
+      "support_roof_enable": false,
+      "support_top_distance": 0.1,
+      "support_type": "everywhere",
+      "support_xy_distance": 0.7,
+      "top_layers": 4,
+      "wall_line_count": 3,
+      "wall_thickness": 0.8
+    }
+  },
+  "candidate_geometry": {
+    "base_area": 515.0117143420914,
+    "critical_support_contact": null,
+    "fits_build_volume": true,
+    "height": 50.735072016801155,
+    "overhang_area": 14759.668228084316,
+    "rotation": [
+      [
+        1.0,
+        4.720583796923524e-09,
+        4.720580433229752e-09
+      ],
+      [
+        4.720583796923524e-09,
+        -7.125591059420344e-07,
+        -0.9999999999997462
+      ],
+      [
+        -4.720580433229752e-09,
+        0.9999999999997462,
+        -7.125591059420344e-07
+      ]
+    ],
+    "size": [
+      134.63978600447703,
+      134.64566100215777,
+      50.735072016801155
+    ],
+    "staircase_mean_mm": 0.16485777955436007,
+    "support_angle_deg": 50.0,
+    "support_volume_upper": 171850.48389212548,
+    "up": [
+      -4.720580433229752e-09,
+      0.9999999999997462,
+      -7.125591059420344e-07
+    ]
+  },
+  "candidates": {
+    "materials": [
+      {
+        "id": "fiberpart_pp_g30",
+        "summary": {
+          "hinted_unknown": [
+            "R01",
+            "R11"
+          ],
+          "mandatory_fail": [],
+          "mandatory_pass": [
+            "R02",
+            "R09",
+            "R21",
+            "R23",
+            "R24",
+            "R25",
+            "R27",
+            "R29",
+            "R30"
+          ],
+          "mandatory_unknown": [
+            "R01",
+            "R03",
+            "R11",
+            "R15",
+            "R16",
+            "R22",
+            "R26",
+            "R28"
+          ],
+          "optional_fail": [],
+          "optional_pass": []
+        },
+        "support": 11.0
+      }
+    ],
+    "routes": [
+      {
+        "feasible": true,
+        "mode": "classic",
+        "score": 0.0
+      },
+      {
+        "feasible": true,
+        "mode": "cylindrical",
+        "score": 2.5
+      },
+      {
+        "feasible": false,
+        "mode": "cylindrical_full",
+        "score": 2.0
+      }
+    ]
+  },
+  "causal_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "assess_double_ml",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "calibration_data"
+        ],
+        "model_id": "assess_double_ml",
+        "reason": "no measured print experiments supplied"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "chosen_material": {
+    "base_polymer": "PP",
+    "excluded": null,
+    "filler": {
+      "mass_percent": 30.0,
+      "type": "glass"
+    },
+    "id": "fiberpart_pp_g30",
+    "label": "Fiberpart PP G30",
+    "selectable": true,
+    "series": "Fiberpart",
+    "slicer_file": "fiberpart_pp_g30.xml.fdm_material",
+    "wiki_url": "https://wiki.stereotech.org/ru/fdm-materials/fiberpart/pp-g30"
+  },
+  "effective_settings": {
+    "adhesion_type": "brim",
+    "bottom_layers": 4,
+    "cool_fan_enabled": true,
+    "cool_fan_speed": 0.0,
+    "cylindrical_mode_base_diameter": 6.0,
+    "cylindrical_mode_overlap": 0.0,
+    "infill_pattern": "lines",
+    "infill_sparse_density": 100.0,
+    "layer_height": 0.3,
+    "layer_height_0": 0.3,
+    "line_width": 0.6,
+    "machine_center_is_zero": false,
+    "machine_depth": 300.3,
+    "machine_heated_bed": true,
+    "machine_height": 300.0,
+    "machine_nozzle_size": 0.6,
+    "machine_width": 351.0,
+    "material_bed_temperature": 110.0,
+    "material_flow": 100.0,
+    "material_print_temperature": 270.0,
+    "non_printing_base_diameter": 6.0,
+    "printing_mode": "classic",
+    "retraction_amount": 3.0,
+    "retraction_enable": true,
+    "retraction_speed": 25.0,
+    "speed_print": 40.0,
+    "support_angle": 50.0,
+    "support_bottom_distance": 0.1,
+    "support_bottom_enable": false,
+    "support_enable": true,
+    "support_interface_enable": false,
+    "support_line_width": 0.6,
+    "support_roof_enable": false,
+    "support_top_distance": 0.1,
+    "support_type": "everywhere",
+    "support_xy_distance": 0.7,
+    "top_layers": 4,
+    "wall_line_count": 3,
+    "wall_thickness": 0.8
+  },
+  "evidence_level": "analytical_screen",
+  "explanation": [
+    "Статус: needs_input; уровень доказательности: analytical_screen.",
+    "Материал: Fiberpart PP G30 — выбран из 1 допустимых; отклонено 19 (обязательное требование не выполнено).",
+    "Режим: classic. mode requested by the user",
+    "  machine_nozzle_size = 0.6 (было 0.4): material requires nozzle >= 0.6 mm: install it before printing",
+    "  printing_mode = classic (было classic): route selected by documented policy",
+    "  bottom_layers = 4 (было 8): skin_layers, policy:skin",
+    "  infill_sparse_density = 100.0 (было 20.0): no calibrated relation load -> infill exists; policy by load class structural",
+    "  layer_height = 0.3 (было 0.1): choose_layer_height, policy:layer",
+    "  top_layers = 4 (было 8): skin_layers, policy:skin",
+    "  wall_line_count = 3 (было 2): shell 1.60 mm -> 3 walls (1.80 mm)",
+    "  material_bed_temperature = 110.0 (было 110.0): material profile value; explicit because STE takes max() over extruders",
+    "  speed_print = 40.0 (было 60.0): material profile/data-sheet speed; Q_limit uncalibrated (needs_calibration)",
+    "  support_enable = True (было False): overhang 14760 mm2, support volume bound 171850 mm3 (thresholds 25 mm2, 200 mm3)",
+    "Не подтверждено расчётом/данными (нужны испытания): alkali_resistance, cavitation_resistance, acid_salt_resistance, operating_hours, creep_resistance, fatigue_resistance, balance_grade, residual_unbalance, blade_thickness_variation, water_absorption_24h, ductile_failure, vicat_softening_temperature",
+    "Double ML: оценка отсутствует или часть изменений не подтверждена; нужны измеренные испытания в тех же условиях."
+  ],
+  "functional_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "functional_orientation",
+    "status": "needs_input",
+    "trace": [
+      {
+        "missing": [
+          "functional_spec"
+        ],
+        "model_id": "functional_orientation",
+        "reason": "purpose, service loads and scoped printed properties required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "materials_considered": 1,
+  "materials_rejected": 19,
+  "missing_inputs": [
+    {
+      "field": "load_history",
+      "requirement_type": "lifetime"
+    },
+    {
+      "field": "environment",
+      "requirement_type": "lifetime"
+    },
+    {
+      "field": "allowed_failure_probability",
+      "requirement_type": "lifetime"
+    },
+    {
+      "field": "balancing",
+      "requirement_type": "safe_rotation"
+    },
+    {
+      "field": "max_acceleration",
+      "requirement_type": "safe_rotation"
+    }
+  ],
+  "part_name": "Рабочее колесо центробежного циркуляционного насоса (аналог серии Wilo)",
+  "part_type": "pump_impeller",
+  "prototype_only": false,
+  "qualification_plan": [
+    {
+      "conditions": "изменение массы, размеров, прочности",
+      "mandatory": true,
+      "property": "alkali_resistance",
+      "reason": "unverified",
+      "requirement_id": "R01",
+      "test": "Выдержка в рабочей среде при рабочей температуре"
+    },
+    {
+      "conditions": "по режиму насоса",
+      "mandatory": true,
+      "property": "cavitation_resistance",
+      "reason": "unverified",
+      "requirement_id": "R03",
+      "test": "Кавитационный износ (стенд)"
+    },
+    {
+      "conditions": "изменение массы и прочности",
+      "mandatory": true,
+      "property": "acid_salt_resistance",
+      "reason": "unverified",
+      "requirement_id": "R11",
+      "test": "Выдержка в растворах кислот/солей"
+    },
+    {
+      "conditions": "в среде",
+      "mandatory": true,
+      "property": "creep_resistance",
+      "reason": "unverified",
+      "requirement_id": "R15",
+      "test": "Ползучесть при +85 °C под нагрузкой"
+    },
+    {
+      "conditions": "та же ориентация слоёв и режим печати",
+      "mandatory": true,
+      "property": "fatigue_resistance",
+      "reason": "unverified",
+      "requirement_id": "R16",
+      "test": "S–N испытания образцов/деталей"
+    },
+    {
+      "conditions": "U_per из класса G, массы и частоты",
+      "mandatory": true,
+      "property": "balance_grade",
+      "reason": "unverified",
+      "requirement_id": "R17",
+      "test": "Балансировка на станке"
+    },
+    {
+      "conditions": "по допуску ТЗ и классу G",
+      "mandatory": true,
+      "property": "residual_unbalance",
+      "reason": "unverified",
+      "requirement_id": "R18",
+      "test": "Балансировка на станке"
+    },
+    {
+      "conditions": "КИМ/3D сканирование",
+      "mandatory": true,
+      "property": "blade_thickness_variation",
+      "reason": "unverified",
+      "requirement_id": "R19",
+      "test": "Измерение толщины лопастей"
+    },
+    {
+      "conditions": "24 h погружения, на напечатанных образцах",
+      "mandatory": true,
+      "property": "water_absorption_24h",
+      "reason": "unverified",
+      "requirement_id": "R22",
+      "test": "Водопоглощение по ISO 62"
+    },
+    {
+      "conditions": "характер разрушения: изгиб/отрыв лопасти",
+      "mandatory": true,
+      "property": "ductile_failure",
+      "reason": "unverified",
+      "requirement_id": "R26",
+      "test": "Ударное нагружение детали/кожуха"
+    },
+    {
+      "conditions": "на образцах из напечатанного материала",
+      "mandatory": true,
+      "property": "vicat_softening_temperature",
+      "reason": "unverified",
+      "requirement_id": "R28",
+      "test": "Vicat B50 по ISO 306"
+    }
+  ],
+  "requirement_issues": [],
+  "requirements": [
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R01",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна стойкость к среде при рабочей температуре",
+      "property": "alkali_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Перекачиваемая среда — теплоноситель на основе воды и гликоля с щелочными ингибиторами коррозии."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R02",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Исключить токопроводящие наполнители",
+      "property": "galvanic_inert",
+      "provenance": {
+        "file": null,
+        "fragment": "Проблема: Оригинальные латунные колеса подвергаются гальванической коррозии при контакте с алюминиевым корпусом насоса и ингибиторами."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R03",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужно испытание кавитационного износа",
+      "property": "cavitation_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Латунь выкрашивается, появляется кавитационная эрозия, падает КПД, растут энергозатраты."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "==",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R04",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "rotation_speed",
+      "provenance": {
+        "file": null,
+        "fragment": "Скорость вращения вала: 2900 об/мин (синхронная частота 2-полюсного электродвигателя)."
+      },
+      "region": null,
+      "unit": "rad/s",
+      "value": 303.68728984701335
+    },
+    {
+      "comparator": "==",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R05",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "peripheral_speed",
+      "provenance": {
+        "file": null,
+        "fragment": "Окружная скорость на периферии колеса: ~24 м/с."
+      },
+      "region": null,
+      "unit": "mm/s",
+      "value": 24000.0
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R06",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "pressure",
+      "provenance": {
+        "file": null,
+        "fragment": "Гидродинамика: производительность 25 м³/ч, напор до 32 м (рабочее давление в корпусе до 16 бар)."
+      },
+      "region": null,
+      "unit": "MPa",
+      "value": 1.6
+    },
+    {
+      "comparator": "==",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R07",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "flow_rate",
+      "provenance": {
+        "file": null,
+        "fragment": "Гидродинамика: производительность 25 м³/ч, напор до 32 м (рабочее давление в корпусе до 16 бар)."
+      },
+      "region": null,
+      "unit": "mm3/s",
+      "value": 6944444.444444444
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R08",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "pump_head",
+      "provenance": {
+        "file": null,
+        "fragment": "Гидродинамика: производительность 25 м³/ч, напор до 32 м (рабочее давление в корпусе до 16 бар)."
+      },
+      "region": null,
+      "unit": "mm",
+      "value": 32000.0
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R09",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "service_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Температурный режим среды: +75°C...+85°C (постоянно)."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": [
+        75.0,
+        85.0
+      ]
+    },
+    {
+      "comparator": "in",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R10",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "chemical_ph",
+      "provenance": {
+        "file": null,
+        "fragment": "Уровень pH: 9.5–10.5 (слабощелочная среда)."
+      },
+      "region": null,
+      "unit": "pH",
+      "value": [
+        9.5,
+        10.5
+      ]
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R11",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна стойкость к среде при рабочей температуре",
+      "property": "acid_salt_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Ингибиторы коррозии на основе солей органических кислот."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R12",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "abrasive_particle_size",
+      "provenance": {
+        "file": null,
+        "fragment": "Микрочастицы окалины (до 50 мкм) из сварных швов трубопровода."
+      },
+      "region": null,
+      "unit": "mm",
+      "value": 0.05
+    },
+    {
+      "comparator": "==",
+      "conditions": {},
+      "cycles": null,
+      "duration": 28800000.0,
+      "environment": null,
+      "id": "R13",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "operating_hours",
+      "provenance": {
+        "file": null,
+        "fragment": "Режим работы: Непрерывный (S1), 8000 часов в год."
+      },
+      "region": null,
+      "unit": "s",
+      "value": 28800000.0
+    },
+    {
+      "comparator": "==",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R14",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "torque",
+      "provenance": {
+        "file": null,
+        "fragment": "Шпоночный паз передает крутящий момент 12 Н·м."
+      },
+      "region": "keyway",
+      "unit": "N*mm",
+      "value": 12000.0
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R15",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна модель ползучести при рабочей температуре",
+      "property": "creep_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал в зоне паза не должен разбиваться под циклической нагрузкой и «ползти» при нагреве."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R16",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна S–N зависимость материала/процесса",
+      "property": "fatigue_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал в зоне паза не должен разбиваться под циклической нагрузкой и «ползти» при нагреве."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R17",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Класс G без массы и частоты не эквивалентен g·mm",
+      "property": "balance_grade",
+      "provenance": {
+        "file": null,
+        "fragment": "Остаточный дисбаланс не должен превышать 6.3 г·мм (класс точности G2.5 по ISO 1940)."
+      },
+      "region": null,
+      "unit": "mm/s",
+      "value": 2.5
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R18",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "residual_unbalance",
+      "provenance": {
+        "file": null,
+        "fragment": "Остаточный дисбаланс не должен превышать 6.3 г·мм (класс точности G2.5 по ISO 1940)."
+      },
+      "region": null,
+      "unit": "g*mm",
+      "value": 6.3
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R19",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "blade_thickness_variation",
+      "provenance": {
+        "file": null,
+        "fragment": "Разностенность лопастей более 0.3 мм приведет к биению и разрушению торцевого уплотнения."
+      },
+      "region": null,
+      "unit": "mm",
+      "value": 0.3
+    },
+    {
+      "comparator": ">=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R21",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "no_softening_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал не должен разбухать, размягчаться или терять прочность при постоянном контакте со средой с pH 9.5–10.5 при температуре +85°C."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": 85.0
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R22",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "water_absorption_24h",
+      "provenance": {
+        "file": null,
+        "fragment": "Водопоглощение за 24 часа погружения должно составлять не более 0.05%."
+      },
+      "region": null,
+      "unit": "fraction",
+      "value": 0.0005
+    },
+    {
+      "comparator": ">=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R23",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "tensile_modulus",
+      "provenance": {
+        "file": null,
+        "fragment": "Модуль упругости при растяжении: не менее 4500 МПа (для сохранения геометрии лопастей под центробежной нагрузкой)."
+      },
+      "region": null,
+      "unit": "MPa",
+      "value": 4500.0
+    },
+    {
+      "comparator": ">=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R24",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "tensile_strength",
+      "provenance": {
+        "file": null,
+        "fragment": "Предел прочности при растяжении: не менее 50 МПа."
+      },
+      "region": null,
+      "unit": "MPa",
+      "value": 50.0
+    },
+    {
+      "comparator": ">=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R25",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "elongation_at_break",
+      "provenance": {
+        "file": null,
+        "fragment": "Относительное удлинение при разрыве: не менее 2.5% (чтобы избежать хрупкого разрушения при гидроударе)."
+      },
+      "region": null,
+      "unit": "fraction",
+      "value": 0.025
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R26",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужны ударная вязкость/характер разрушения по испытанию",
+      "property": "ductile_failure",
+      "provenance": {
+        "file": null,
+        "fragment": "Относительное удлинение при разрыве: не менее 2.5% (чтобы избежать хрупкого разрушения при гидроударе)."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": "qual",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R27",
+      "interpretation_status": "unknown",
+      "kind": "qualitative",
+      "load_case": null,
+      "mandatory": true,
+      "note": "Нужна ударная вязкость в рабочих условиях",
+      "property": "impact_resistance",
+      "provenance": {
+        "file": null,
+        "fragment": "Относительное удлинение при разрыве: не менее 2.5% (чтобы избежать хрупкого разрушения при гидроударе)."
+      },
+      "region": null,
+      "unit": null,
+      "value": true
+    },
+    {
+      "comparator": ">=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R28",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "vicat_softening_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Температура размягчения по Вика (метод B, 50 Н): не ниже +130°C."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": 130.0
+    },
+    {
+      "comparator": "==",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R29",
+      "interpretation_status": "explicit",
+      "kind": "condition",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "service_temperature",
+      "provenance": {
+        "file": null,
+        "fragment": "Материал не должен «ползти» (проявлять ползучесть) под постоянной нагрузкой при +85°C."
+      },
+      "region": null,
+      "unit": "degC",
+      "value": 85.0
+    },
+    {
+      "comparator": "<=",
+      "conditions": {},
+      "cycles": null,
+      "duration": null,
+      "environment": null,
+      "id": "R30",
+      "interpretation_status": "explicit",
+      "kind": "constraint",
+      "load_case": null,
+      "mandatory": true,
+      "note": null,
+      "property": "density",
+      "provenance": {
+        "file": null,
+        "fragment": "Плотность: Не более 1.2 г/см³."
+      },
+      "region": null,
+      "unit": "g/mm3",
+      "value": 0.0012
+    }
+  ],
+  "robustness_analysis": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "process_stability",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "missing": [
+          "noise_bounds",
+          "first_layer_gap_limits",
+          "process_response_calibration"
+        ],
+        "model_id": "process_stability",
+        "reason": "measured noise bounds and quality tolerances required"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "route": {
+    "mode": "classic",
+    "note": "mode requested by the user",
+    "parameters": {}
+  },
+  "scene_operations": [
+    {
+      "coordinates": "printer (Z up); the adapter converts to the Uranium scene (Y up)",
+      "op": "load_mesh",
+      "path": "C:\\Users\\Ilya\\Working projects\\3d5d_hack\\data\\examples\\5. Рабочее колесо насоса Wilo - 5D\\Рабочее_колесо насоса Wilo IPL 80140-42. 2063106.STL",
+      "units": "mm"
+    },
+    {
+      "note": "minimum J_R among stable orientations",
+      "op": "set_transform",
+      "rotation": [
+        [
+          1.0,
+          4.720583796923524e-09,
+          4.720580433229752e-09
+        ],
+        [
+          4.720583796923524e-09,
+          -7.125591059420344e-07,
+          -0.9999999999997462
+        ],
+        [
+          -4.720580433229752e-09,
+          0.9999999999997462,
+          -7.125591059420344e-07
+        ]
+      ],
+      "translation": [
+        102.70386450225975,
+        76.31125507901076,
+        0.18407592400691541
+      ]
+    },
+    {
+      "op": "arrange"
+    }
+  ],
+  "setting_patch": {
+    "errors": [],
+    "items": [
+      {
+        "decision_unit": "mm",
+        "enabled_after_patch": true,
+        "key": "machine_nozzle_size",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 0.4,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "configuration",
+        "target": "extruder_0",
+        "unit": "mm",
+        "validation": "valid",
+        "value": 0.6
+      },
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "printing_mode",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": "classic",
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "configuration",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": "classic"
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "bottom_layers",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 4
+      },
+      {
+        "decision_unit": "fraction",
+        "enabled_after_patch": true,
+        "key": "infill_sparse_density",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 20.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "%",
+        "validation": "valid",
+        "value": 100.0
+      },
+      {
+        "decision_unit": "mm",
+        "enabled_after_patch": true,
+        "key": "layer_height",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 0.1,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "geometry",
+        "target": "global",
+        "unit": "mm",
+        "validation": "valid",
+        "value": 0.3
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "top_layers",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 8,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 4
+      },
+      {
+        "decision_unit": "count",
+        "enabled_after_patch": true,
+        "key": "wall_line_count",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 2,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "geometry",
+        "target": "extruder_0",
+        "unit": "count",
+        "validation": "valid",
+        "value": 3
+      },
+      {
+        "decision_unit": "degC",
+        "enabled_after_patch": true,
+        "key": "material_bed_temperature",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 110.0,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "thermal_flow",
+        "target": "global",
+        "unit": "°C",
+        "validation": "valid",
+        "value": 110.0
+      },
+      {
+        "decision_unit": "mm/s",
+        "enabled_after_patch": true,
+        "key": "speed_print",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": 60.0,
+        "reason_requirement_ids": [],
+        "scope": "extruder",
+        "stage": "motion",
+        "target": "extruder_0",
+        "unit": "mm/s",
+        "validation": "valid",
+        "value": 40.0
+      },
+      {
+        "decision_unit": null,
+        "enabled_after_patch": true,
+        "key": "support_enable",
+        "model_ids": [
+          "functional_orientation"
+        ],
+        "note": "scoped functional process profile",
+        "old_effective_value": false,
+        "reason_requirement_ids": [],
+        "scope": "global",
+        "stage": "support_adhesion",
+        "target": "global",
+        "unit": null,
+        "validation": "valid",
+        "value": true
+      }
+    ],
+    "ok": true,
+    "payload": {
+      "extruders": {
+        "0": {
+          "bottom_layers": 4,
+          "infill_sparse_density": 100.0,
+          "machine_nozzle_size": 0.6,
+          "speed_print": 40.0,
+          "top_layers": 4,
+          "wall_line_count": 3
+        }
+      },
+      "global": {
+        "layer_height": 0.3,
+        "material_bed_temperature": 110.0,
+        "printing_mode": "classic",
+        "support_enable": true
+      }
+    },
+    "warnings": []
+  },
+  "status": "needs_input",
+  "structural_checks": [
+    {
+      "assumptions": [
+        "thin ring rho*v^2 bounds disc hoop stress",
+        "blades and hub not covered"
+      ],
+      "check": "rotating_rim",
+      "evidence": "analytical_screen",
+      "note": "rim stress 0.68 MPa, SF 4 against 75.0 MPa",
+      "peripheral_speed_mm_s": 24000.0,
+      "policy_safety_factor": 4.0,
+      "sigma_MPa": 0.67968,
+      "status": "pass"
+    },
+    {
+      "U_per_gmm": 1.4825666873382368,
+      "check": "balance_grade_vs_limit",
+      "e_per_mm": 0.008232152228891138,
+      "evidence": "analytical_screen",
+      "governing_limit_gmm": 1.4825666873382368,
+      "mass_kg_upper": 0.1800946637180854,
+      "note": "G2.5 at 2900 rpm and 0.180 kg gives U_per = 1.48 g*mm; TZ states 6.30 g*mm: the stricter value governs balancing; residual unbalance of the printed part must be measured",
+      "speed_rpm": 2900.0,
+      "status": "unknown"
+    },
+    {
+      "check": "fatigue_cycles",
+      "cycles": 1392000000.0,
+      "evidence": "analytical_screen",
+      "note": "1.39e+09 revolutions; S-N data of the printed material required",
+      "requirement_id": "R13",
+      "status": "unknown"
+    }
+  ],
+  "trace": [
+    {
+      "count": 29,
+      "issues": [],
+      "part_type": "pump_impeller",
+      "step": "parse_requirements"
+    },
+    {
+      "errors": [],
+      "rotational": {
+        "axial_length": 50.73507201680115,
+        "axis": [
+          -4.720580433229751e-09,
+          0.9999999999997461,
+          -7.125591060530566e-07
+        ],
+        "bore_radius": 3.992041323063569,
+        "is_rotational_candidate": true,
+        "moment_mismatch": 0.0001790093795585179,
+        "r_max": 67.32337118853894,
+        "sector_cv": 1.4229413428624091e-06
+      },
+      "size": [
+        134.639786,
+        50.73502,
+        134.645661
+      ],
+      "status": "ok",
+      "step": "analyze_mesh",
+      "volume_mm3": 152622.5963712588,
+      "warnings": []
+    },
+    {
+      "build_volume": {
+        "classic": [
+          351.0,
+          300.3,
+          300.0
+        ],
+        "cylindrical": [
+          351.0,
+          300.3,
+          231.1
+        ],
+        "cylindrical_full": [
+          351.0,
+          300.3,
+          231.1
+        ]
+      },
+      "chain": [
+        "fdmprinter",
+        "steprinter_v5",
+        "steprinter530_v5.2.4",
+        "hte530v5.2.4"
+      ],
+      "machine": "hte530v5.2.4",
+      "note": "offline schema from the slicer resources; installed runtime confirmed by read-back",
+      "nozzles": [
+        0.4
+      ],
+      "step": "inspect_machine"
+    },
+    {
+      "chosen": "fiberpart_pp_g30",
+      "policy": "hard constraints first (any mandatory fail rejects); ranking by support = passes + 0.5*hinted unknowns + 1*manufacturer application match + 0.25*optional passes, then fewer unknowns, printability, print difficulty (Stereotech memo)",
+      "prototype_only": false,
+      "ranked": [
+        "fiberpart_pp_g30"
+      ],
+      "rejected": 51,
+      "step": "screen_materials"
+    },
+    {
+      "chosen": "classic",
+      "routes": [
+        {
+          "feasible": true,
+          "mode": "classic",
+          "reasons": [
+            "flat layers, heated platform"
+          ],
+          "score": 0.0
+        },
+        {
+          "feasible": true,
+          "mode": "cylindrical",
+          "reasons": [
+            "axis: rotational symmetry (inertia + sector radii)",
+            "Stereotech prints pump impellers in 5D without supports (5dtech.pro/printers/solutions/pumpwheels)",
+            "through bore 7.98 mm: mandrel defines the bore, base cylinder removes no material"
+          ],
+          "score": 2.5
+        },
+        {
+          "feasible": false,
+          "mode": "cylindrical_full",
+          "reasons": [
+            "axis: rotational symmetry (inertia + sector radii)",
+            "Stereotech prints pump impellers in 5D without supports (5dtech.pro/printers/solutions/pumpwheels)",
+            "part has a bore: Spiral is the matching 5D route"
+          ],
+          "score": 2.0
+        }
+      ],
+      "step": "enumerate_routes"
+    },
+    {
+      "candidates": [
+        {
+          "height": 50.735072016801155,
+          "score": 1.1860124792522388,
+          "support_volume": 171850.48389212548,
+          "up": [
+            -4.720580433229752e-09,
+            0.9999999999997462,
+            -7.125591060530567e-07
+          ]
+        },
+        {
+          "height": 50.735072016801155,
+          "score": 1.8,
+          "support_volume": 445194.1145141843,
+          "up": [
+            4.720580433229752e-09,
+            -0.9999999999997462,
+            7.125591060530567e-07
+          ]
+        }
+      ],
+      "chosen_up": [
+        -4.720580433229752e-09,
+        0.9999999999997462,
+        -7.125591060530567e-07
+      ],
+      "step": "orientation"
+    },
+    {
+      "chosen": "fiberpart_pp_g30",
+      "rejected_by_structure": [],
+      "step": "solve_structure"
+    },
+    {
+      "errors": [],
+      "items": 10,
+      "process_notes": [
+        {
+          "item": "load_class",
+          "model": "P",
+          "value": "structural"
+        },
+        {
+          "item": "layer_height",
+          "model": "P",
+          "note": "h/d = 0.50 functional seed",
+          "value": 0.3
+        },
+        {
+          "item": "nozzle_temperature",
+          "model": "S",
+          "note": "material profile value inside data-sheet window 260..280 C",
+          "value": 270.0
+        }
+      ],
+      "step": "compile_patch",
+      "warnings": []
+    },
+    {
+      "applied": false,
+      "note": "simulation estimates; no qualification promotion",
+      "status": "needs_input",
+      "step": "functional_orientation"
+    },
+    {
+      "note": "independent single-setting comparisons; deterministic patch and qualification unchanged",
+      "status": "needs_calibration",
+      "step": "assess_double_ml"
+    }
+  ],
+  "verification": [
+    {
+      "evidence_level": "document",
+      "fragment": "Перекачиваемая среда — теплоноситель на основе воды и гликоля с щелочными ингибиторами коррозии.",
+      "mandatory": true,
+      "notes": [
+        "resistant at room temperature only; service up to 85 C needs a test"
+      ],
+      "property": "alkali_resistance",
+      "requirement_id": "R01",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Проблема: Оригинальные латунные колеса подвергаются гальванической коррозии при контакте с алюминиевым корпусом насоса и ингибиторами.",
+      "mandatory": true,
+      "notes": [
+        "polymer without conductive filler"
+      ],
+      "property": "galvanic_inert",
+      "requirement_id": "R02",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Латунь выкрашивается, появляется кавитационная эрозия, падает КПД, растут энергозатраты.",
+      "mandatory": true,
+      "notes": [
+        "Нужно испытание кавитационного износа"
+      ],
+      "property": "cavitation_resistance",
+      "requirement_id": "R03",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Скорость вращения вала: 2900 об/мин (синхронная частота 2-полюсного электродвигателя).",
+      "mandatory": true,
+      "notes": [],
+      "property": "rotation_speed",
+      "requirement_id": "R04",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Окружная скорость на периферии колеса: ~24 м/с.",
+      "mandatory": true,
+      "notes": [],
+      "property": "peripheral_speed",
+      "requirement_id": "R05",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Гидродинамика: производительность 25 м³/ч, напор до 32 м (рабочее давление в корпусе до 16 бар).",
+      "mandatory": true,
+      "notes": [],
+      "property": "pressure",
+      "requirement_id": "R06",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Гидродинамика: производительность 25 м³/ч, напор до 32 м (рабочее давление в корпусе до 16 бар).",
+      "mandatory": true,
+      "notes": [],
+      "property": "flow_rate",
+      "requirement_id": "R07",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Гидродинамика: производительность 25 м³/ч, напор до 32 м (рабочее давление в корпусе до 16 бар).",
+      "mandatory": true,
+      "notes": [],
+      "property": "pump_head",
+      "requirement_id": "R08",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Температурный режим среды: +75°C...+85°C (постоянно).",
+      "mandatory": true,
+      "notes": [
+        "manufacturer operating range -20..120 C"
+      ],
+      "property": "service_temperature",
+      "requirement_id": "R09",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Уровень pH: 9.5–10.5 (слабощелочная среда).",
+      "mandatory": true,
+      "notes": [],
+      "property": "chemical_ph",
+      "requirement_id": "R10",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Ингибиторы коррозии на основе солей органических кислот.",
+      "mandatory": true,
+      "notes": [
+        "resistant at room temperature only; service up to 85 C needs a test"
+      ],
+      "property": "acid_salt_resistance",
+      "requirement_id": "R11",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Микрочастицы окалины (до 50 мкм) из сварных швов трубопровода.",
+      "mandatory": true,
+      "notes": [],
+      "property": "abrasive_particle_size",
+      "requirement_id": "R12",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": "analytical_screen",
+      "fragment": "Режим работы: Непрерывный (S1), 8000 часов в год.",
+      "mandatory": true,
+      "notes": [
+        "1.39e+09 revolutions; S-N data of the printed material required"
+      ],
+      "property": "operating_hours",
+      "requirement_id": "R13",
+      "sources": [
+        "fatigue_cycles"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Шпоночный паз передает крутящий момент 12 Н·м.",
+      "mandatory": true,
+      "notes": [],
+      "property": "torque",
+      "requirement_id": "R14",
+      "sources": [],
+      "status": "input"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Материал в зоне паза не должен разбиваться под циклической нагрузкой и «ползти» при нагреве.",
+      "mandatory": true,
+      "notes": [
+        "Нужна модель ползучести при рабочей температуре"
+      ],
+      "property": "creep_resistance",
+      "requirement_id": "R15",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Материал в зоне паза не должен разбиваться под циклической нагрузкой и «ползти» при нагреве.",
+      "mandatory": true,
+      "notes": [
+        "Нужна S–N зависимость материала/процесса"
+      ],
+      "property": "fatigue_resistance",
+      "requirement_id": "R16",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Остаточный дисбаланс не должен превышать 6.3 г·мм (класс точности G2.5 по ISO 1940).",
+      "mandatory": true,
+      "notes": [],
+      "property": "balance_grade",
+      "requirement_id": "R17",
+      "sources": [],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Остаточный дисбаланс не должен превышать 6.3 г·мм (класс точности G2.5 по ISO 1940).",
+      "mandatory": true,
+      "notes": [],
+      "property": "residual_unbalance",
+      "requirement_id": "R18",
+      "sources": [],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Разностенность лопастей более 0.3 мм приведет к биению и разрушению торцевого уплотнения.",
+      "mandatory": true,
+      "notes": [],
+      "property": "blade_thickness_variation",
+      "requirement_id": "R19",
+      "sources": [],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Материал не должен разбухать, размягчаться или терять прочность при постоянном контакте со средой с pH 9.5–10.5 при температуре +85°C.",
+      "mandatory": true,
+      "notes": [
+        "operating max 120 C"
+      ],
+      "property": "no_softening_temperature",
+      "requirement_id": "R21",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Водопоглощение за 24 часа погружения должно составлять не более 0.05%.",
+      "mandatory": true,
+      "notes": [
+        "no data for water_absorption"
+      ],
+      "property": "water_absorption_24h",
+      "requirement_id": "R22",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Модуль упругости при растяжении: не менее 4500 МПа (для сохранения геометрии лопастей под центробежной нагрузкой).",
+      "mandatory": true,
+      "notes": [
+        "typical manufacturer value(s) 6200 MPa (XY direction)"
+      ],
+      "property": "tensile_modulus",
+      "requirement_id": "R23",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Предел прочности при растяжении: не менее 50 МПа.",
+      "mandatory": true,
+      "notes": [
+        "typical manufacturer value(s) 75 MPa (XY direction)"
+      ],
+      "property": "tensile_strength",
+      "requirement_id": "R24",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Относительное удлинение при разрыве: не менее 2.5% (чтобы избежать хрупкого разрушения при гидроударе).",
+      "mandatory": true,
+      "notes": [
+        "typical manufacturer value(s) 0.04 fraction (XY direction)"
+      ],
+      "property": "elongation_at_break",
+      "requirement_id": "R25",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Относительное удлинение при разрыве: не менее 2.5% (чтобы избежать хрупкого разрушения при гидроударе).",
+      "mandatory": true,
+      "notes": [
+        "Charpy notched 46 kJ/m2 vs policy 10; fracture mode needs a test"
+      ],
+      "property": "ductile_failure",
+      "requirement_id": "R26",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Относительное удлинение при разрыве: не менее 2.5% (чтобы избежать хрупкого разрушения при гидроударе).",
+      "mandatory": true,
+      "notes": [
+        "Charpy notched 46 kJ/m2 vs policy 10"
+      ],
+      "property": "impact_resistance",
+      "requirement_id": "R27",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": null,
+      "fragment": "Температура размягчения по Вика (метод B, 50 Н): не ниже +130°C.",
+      "mandatory": true,
+      "notes": [
+        "no data for vicat_softening_temperature"
+      ],
+      "property": "vicat_softening_temperature",
+      "requirement_id": "R28",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "unknown"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Материал не должен «ползти» (проявлять ползучесть) под постоянной нагрузкой при +85°C.",
+      "mandatory": true,
+      "notes": [
+        "manufacturer operating range -20..120 C"
+      ],
+      "property": "service_temperature",
+      "requirement_id": "R29",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "pass"
+    },
+    {
+      "evidence_level": "document",
+      "fragment": "Плотность: Не более 1.2 г/см³.",
+      "mandatory": true,
+      "notes": [
+        "typical manufacturer value(s) 0.00115..0.00118 g/mm3; sources disagree, conservative bound used"
+      ],
+      "property": "density",
+      "requirement_id": "R30",
+      "sources": [
+        "material:fiberpart_pp_g30"
+      ],
+      "status": "pass"
+    }
+  ]
+}

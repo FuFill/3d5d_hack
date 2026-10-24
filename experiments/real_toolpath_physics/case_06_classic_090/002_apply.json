@@ -1,0 +1,105 @@
+{
+  "readback": {
+    "machine_definition": "hte530v5.2.4",
+    "differences": [],
+    "material_id": "enduse_pp",
+    "quality_id": "ste_planner_quality_633e5e000ac945c1b27a306db922105b",
+    "status": "pass",
+    "actual": {
+      "wall_thickness": 0.8,
+      "cylindrical_mode_base_diameter": 6,
+      "support_interface_enable": false,
+      "adhesion_type": "brim",
+      "printing_mode": "classic",
+      "speed_print": 30.0,
+      "machine_center_is_zero": false,
+      "infill_sparse_density": 100.0,
+      "retraction_speed": 30,
+      "infill_pattern": "lines",
+      "layer_height": 0.2,
+      "machine_heated_bed": true,
+      "material_print_temperature": 240.0,
+      "non_printing_base_diameter": 6,
+      "top_layers": 6,
+      "support_roof_enable": false,
+      "support_enable": true,
+      "retraction_enable": true,
+      "material_bed_temperature": 78.0,
+      "cylindrical_mode_overlap": 0,
+      "cool_fan_enabled": true,
+      "line_width": 0.4,
+      "bottom_layers": 6,
+      "support_xy_distance": 0.7,
+      "layer_height_0": 0.3,
+      "support_line_width": 0.4,
+      "support_type": "everywhere",
+      "cool_fan_speed": 0.0,
+      "support_angle": 50,
+      "support_bottom_distance": 0.1,
+      "support_bottom_enable": false,
+      "retraction_amount": 3.55,
+      "machine_depth": 300.3,
+      "wall_line_count": 4,
+      "support_top_distance": 0.1,
+      "material_flow": 100,
+      "machine_nozzle_size": 0.4,
+      "machine_width": 351,
+      "machine_height": 300
+    }
+  },
+  "physical_print_approval": false,
+  "decision_sha256": "6fb3c001e9ca313e8c79696a8cfac56ad295c353bf28d8069eb05d2bae89e068",
+  "status": "analysis_scene",
+  "nodes": [
+    {
+      "matrix": [
+        [
+          1.0,
+          6.590757717361839e-09,
+          6.590757717361839e-09,
+          -84.5
+        ],
+        [
+          -6.590757717361839e-09,
+          1.0,
+          1.0915479187190158e-08,
+          7.970868978190992e-07
+        ],
+        [
+          -6.590757717361839e-09,
+          -1.0915479187190158e-08,
+          1.0,
+          11.00250244140625
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "modifier": {
+        "support_mesh": false,
+        "anti_overhang_mesh": false,
+        "support_mesh_drop_down": true
+      },
+      "parent": "Root",
+      "world_bounds": [
+        [
+          -84.5,
+          5.684341886080802e-14,
+          -11.0
+        ],
+        [
+          84.5,
+          169.0,
+          11.000001907348633
+        ]
+      ],
+      "vertices": 5626,
+      "mesh_sha256": "30c878e3817a3116a569de9bf138c415d7d29b43c8fe051e595760cdfe67ce97",
+      "name": "Крыльчатка охлаждения электродвигателя.STL"
+    }
+  ],
+  "qt_thread": true
+}

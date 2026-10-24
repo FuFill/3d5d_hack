@@ -1,0 +1,163 @@
+{
+  "archive": {
+    "path": "part.gcode.gz",
+    "sha256": "5d2391d0315521b2e1f759e7a8b180e2d7a16ea660fdb9dd3e0afc4d17aed60e",
+    "uncompressed_bytes": 32348972,
+    "uncompressed_sha256": "aea45ecc302136896ab057d3f6427fb5fca1b64cd0874bcf7781a56d0e66f6bf"
+  },
+  "conditional_nominal_pose": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "toolpath_deposition",
+    "status": "needs_input",
+    "trace": [
+      {
+        "missing": [
+          "spatial_reset_transform"
+        ],
+        "model_id": "toolpath_deposition",
+        "reason": "spatial G92 requires explicit logical-to-physical reset tracking"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  },
+  "diameter_source": "native effective stack",
+  "filament_diameter_mm": 1.75,
+  "id": "case_07_cylindrical_full_000",
+  "input": {
+    "analysis_only": true,
+    "id": "case_07_cylindrical_full_000",
+    "mode": "cylindrical_full",
+    "organizer_case": "7. Ось вращения передающих звёзд формовщика коробов Krones - 5D",
+    "orientation_parameter": "phase about retained tooling axis",
+    "orientation_phase_deg": 0,
+    "physical_print_approval": false,
+    "planner_status": "needs_calibration",
+    "specimens_per_slice": 1,
+    "stl": "data\\examples\\7. Ось вращения передающих звёзд формовщика коробов Krones - 5D\\Ось вращения передающих звёзд.STL",
+    "stl_sha256": "9fa137ba0d1f8b0a7b3736e4094e412dd90c5ee38f5b9eb226bcead4c8066690",
+    "tz": "data\\examples\\7. Ось вращения передающих звёзд формовщика коробов Krones - 5D\\Ось вращения передающих звёзд.docx"
+  },
+  "nominal_pose_assumption": {
+    "angle_unit": "degree",
+    "interpolation": "linear_unwrapped_joints",
+    "nozzle_axis_machine": [
+      0,
+      0,
+      1
+    ],
+    "source": "analysis_assumption",
+    "table_pivot_mm": [
+      0,
+      0,
+      0
+    ],
+    "type": "table_AC",
+    "work_offsets": {
+      "G54": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "G55": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "G56": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  },
+  "physical_print_approval": false,
+  "strict": {
+    "domain": {},
+    "evidence": null,
+    "model_class": null,
+    "model_id": "toolpath_deposition",
+    "status": "needs_input",
+    "trace": [
+      {
+        "missing": [
+          "forward_kinematics",
+          "work_offsets",
+          "TCP_and_table_pivot",
+          "controller_interpolation"
+        ],
+        "model_id": "toolpath_deposition",
+        "reason": "rotary coordinate letters do not determine physical deposition directions"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": null
+  }
+}

@@ -485,10 +485,15 @@ def optimize(mesh, spec, context, initial_rotation, mode, route, caps, base_patc
                 convergence["refined_limit_failures"] = refined_failures
                 if refined_failures:
                     convergence["status"] = "fail"
-        applied = applied and convergence["status"] == "pass"
+        # This FE field is a pre-slice screening approximation. A measured
+        # profile alone does not make it the tensor field of the actual roads.
+        # Native slicing and toolpath physics must evaluate every final candidate.
+        applied = False
         value = {"purpose": spec["purpose"], "selected": selected, "baseline": baseline,
                  "candidates": candidates, "candidate_count": len(candidates), "feasible_count": len(feasible),
                  "applied": applied, "maps": maps, "mesh_convergence": convergence,
+                 "evaluation_basis": "pre_slice_screening_not_actual_toolpath",
+                 "requires_actual_slice_evaluation": True,
                  "proposed_patch": ({"items": patch["items"], "errors": patch["errors"],
                                       "warnings": patch["warnings"], "payload": compiler.patch_to_slicer_payload(patch)}
                                      if patch else None),
@@ -511,7 +516,7 @@ def optimize(mesh, spec, context, initial_rotation, mode, route, caps, base_patc
             result.status = "infeasible"
         elif selected["source"] != "physical_test":
             result.status = "needs_calibration"
-        elif mode != "classic" or convergence["status"] != "pass":
+        elif mode != "classic" or convergence["status"] != "pass" or not applied:
             result.status = "needs_input"
         return result, patch if applied else None
     except (ValueError, TypeError, KeyError, IndexError, np.linalg.LinAlgError, OverflowError) as exc:

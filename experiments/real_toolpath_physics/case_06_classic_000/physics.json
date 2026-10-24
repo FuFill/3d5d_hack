@@ -1,0 +1,106 @@
+{
+  "archive": {
+    "path": "part.gcode.gz",
+    "sha256": "f26607fdc32721cc5c23a92cdaa799c2135e8fe3375c4cdaf2e8f118cb9f06ec",
+    "uncompressed_bytes": 13431901,
+    "uncompressed_sha256": "e9e3b3e79321a9366cb6775e1fb21a3c3fe6a601a46c879cb4128cddc3f8d476"
+  },
+  "diameter_source": "nominal selected STE material profile, not measured filament",
+  "filament_diameter_mm": 1.75,
+  "id": "case_06_classic_000",
+  "input": {
+    "analysis_only": true,
+    "id": "case_06_classic_000",
+    "mode": "classic",
+    "organizer_case": "6. Крыльчатка охлаждения электродвигателя - 3D",
+    "orientation_parameter": "build tilt about X",
+    "orientation_phase_deg": 0,
+    "physical_print_approval": false,
+    "planner_status": "needs_input",
+    "specimens_per_slice": 1,
+    "stl": "data\\examples\\6. Крыльчатка охлаждения электродвигателя - 3D\\Крыльчатка охлаждения электродвигателя.STL",
+    "stl_sha256": "32f253b238959eae223c0df27e012eb4722c536ed7e3a3ecd078d94b769bfc4d",
+    "tz": "data\\examples\\6. Крыльчатка охлаждения электродвигателя - 3D\\Техническое задание для крыльчатки охлаждения электродвигателя.docx"
+  },
+  "physical_print_approval": false,
+  "strict": {
+    "domain": {},
+    "evidence": "simulation",
+    "model_class": "A",
+    "model_id": "sliced_physics",
+    "status": "needs_calibration",
+    "trace": [
+      {
+        "inputs": {},
+        "model_id": "sliced_physics",
+        "note": "actual slices; no measured constants or service boundary conditions invented"
+      }
+    ],
+    "uncertainty": null,
+    "unit": null,
+    "value": {
+      "deposition": {
+        "chord_tolerance_mm": 0.01,
+        "excluded_volume_mm3": {
+          "SKIRT": 1330.8584808386922,
+          "SUPPORT": 11421.562259833649
+        },
+        "normal_structure_tensor": [
+          [
+            4.3438088133361287e-17,
+            6.590757781420987e-09,
+            7.194127646402792e-17
+          ],
+          [
+            6.590757781420987e-09,
+            1.0,
+            1.0915478743100946e-08
+          ],
+          [
+            7.194127646402792e-17,
+            1.0915478743100946e-08,
+            1.1914767619108863e-16
+          ]
+        ],
+        "normalized_gcode_sha256": "c62a5e970afbbb3d92e2427e7a1ea67aa633c070f6f9faef04f9919df0550a94",
+        "opaque_macros": [
+          "START",
+          "END"
+        ],
+        "part_path_length_mm": 713209.146587595,
+        "part_volume_mm3": 54008.767983289064,
+        "physical_print_approval": false,
+        "pose_source": "native_planar_layers_and_registration",
+        "road_count": 308379,
+        "rotary_subdivisions": 0,
+        "tangent_structure_tensor": [
+          [
+            0.5000007245185973,
+            -3.344710521168043e-09,
+            0.0045189822907076875
+          ],
+          [
+            -3.3447105211680435e-09,
+            8.194303049457837e-17,
+            -5.4875150024987225e-09
+          ],
+          [
+            0.0045189822907076875,
+            -5.4875150024987225e-09,
+            0.49999927548140244
+          ]
+        ]
+      },
+      "failure_capacity": null,
+      "gcode_bytes_sha256": "e9e3b3e79321a9366cb6775e1fb21a3c3fe6a601a46c879cb4128cddc3f8d476",
+      "missing": [
+        "measured road/interface constitutive properties and protocol",
+        "volume mesh for toolpath-to-FE transfer"
+      ],
+      "native_failed_checks": [],
+      "physical_print_approval": false,
+      "source_geometry_sha256": "32f253b238959eae223c0df27e012eb4722c536ed7e3a3ecd078d94b769bfc4d",
+      "stiffness": null
+    }
+  }
+}

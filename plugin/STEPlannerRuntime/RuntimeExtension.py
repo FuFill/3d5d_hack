@@ -35,6 +35,10 @@ class RuntimeExtension(QObject, Extension):
         self.operation = None
         self.decision = None
         self.last_backend_state = None
+        self.native_geometry_errors = []
+        self.native_boolean_diagnostics = []
+        self.boolean_capture_installed = False
+        self.native_log_offset = 0
         self.last_change = time.monotonic()
         self.addMenuItem("Apply planner decision…", self.apply_dialog)
         self.addMenuItem("Runtime diagnostics", self.diagnostics)
@@ -88,15 +92,16 @@ class RuntimeExtension(QObject, Extension):
         return bool(expected and os.path.commonpath([os.path.realpath(expected),
                     os.path.realpath(Resources.getConfigStoragePath())]) == os.path.realpath(expected))
 
-    def apply(self, decision, mesh, demo):
+    def apply(self, decision, mesh, demo, analysis_only=False):
         from ste_planner.runtime_adapter import create_operation
-        if demo and not self.isolated():
+        if (demo or analysis_only) and not self.isolated():
             raise ValueError("software demonstration requires an isolated profile")
-        operation = create_operation(self.app, decision, mesh, demonstration=demo)
+        operation = create_operation(self.app, decision, mesh, demonstration=demo, analysis_only=analysis_only)
         operation.redo()  # Failed redo rolls back and is never pushed into undo history.
         operation.push()
         self.operation, self.decision = operation, decision
-        return {"status": "applied_demo" if demo else "applied", "readback": operation.readback,
+        return {"status": "analysis_scene" if analysis_only else ("applied_demo" if demo else "applied"),
+                "physical_print_approval": False, "readback": operation.readback,
                 "decision_sha256": hashlib.sha256(json.dumps(decision, sort_keys=True, allow_nan=False).encode("utf-8")).hexdigest(),
                 "nodes": self.nodes(), "qt_thread": QThread.currentThread() == self.app.thread()}
 
@@ -121,6 +126,25 @@ class RuntimeExtension(QObject, Extension):
     def _backend_state(self, state):
         self.last_backend_state = int(state)
 
+    def capture_boolean_diagnostics(self):
+        if not self.isolated() or self.boolean_capture_installed:
+            return
+        import subprocess
+        from trimesh.interfaces import generic
+        original = generic.check_call
+        def checked(command, *args, **kwargs):
+            if not isinstance(command, (list, tuple)) or os.path.basename(command[0]).lower() != "openscad.exe":
+                return original(command, *args, **kwargs)
+            kwargs["stdout"], kwargs["stderr"] = subprocess.PIPE, subprocess.STDOUT
+            result = subprocess.run(command, *args, timeout=90, **kwargs)
+            diagnostic = {"returncode": result.returncode, "output": result.stdout.decode("utf-8", errors="replace")[-8000:]}
+            self.native_boolean_diagnostics.append(diagnostic)
+            if result.returncode:
+                raise subprocess.CalledProcessError(result.returncode, command)
+            return 0
+        generic.check_call = checked
+        self.boolean_capture_installed = True
+
     def export(self, command, project_ready=False):
         from ste_planner import gcode
         from ste_planner.runtime_adapter import file_sha256, readback
@@ -138,6 +162,8 @@ class RuntimeExtension(QObject, Extension):
                     "layer_height": ext.getProperty("layer_height", "value"),
                     "xy_centered": bool(stack.getProperty("machine_center_is_zero", "value")),
                     "build_volume": [stack.getProperty(k, "value") for k in ("machine_width", "machine_depth", "machine_height")]}
+        if not ext.getProperty("machine_heated_bed", "value"):
+            expected["bed_temperature"] = None
         import numpy as np
         model_nodes = self.operation.nodes if self.operation else [n for n in scene.getRoot().getChildren() if n.getMeshData()]
         tops = []
@@ -176,9 +202,17 @@ class RuntimeExtension(QObject, Extension):
             return None
         inspection = gcode.inspect_toolpath(text, expected)
         rb = readback(self.app, self.decision) if self.decision else None
+        mode_settings = {}
+        for key in sorted(stack.getAllKeys()):
+            if key.startswith("cylindrical_") or key.endswith("_cylindrical"):
+                value = ext.getProperty(key, "value")
+                if value is not None:
+                    mode_settings[key] = value
         return {"status": "slice_completed", "backend": type(self.app.getBackend()).__name__,
                 "backend_state": self.last_backend_state, "inspection": inspection, "expected": expected,
                 "readback": rb, "nodes": self.nodes(),
+                "physics_context": {"filament_diameter_mm": ext.getProperty("material_diameter", "value"),
+                                    "mode_specific_settings": mode_settings, "source": "native_effective_stack"},
                 "gcode": {"path": os.path.basename(output + ".gcode"), "bytes": len(text.encode("utf-8")),
                           "sha256": file_sha256(output + ".gcode")},
                 "project": {"path": os.path.basename(output + ".3mf"), "sha256": file_sha256(output + ".3mf")}}
@@ -199,7 +233,7 @@ class RuntimeExtension(QObject, Extension):
         if name == "apply":
             with open(command["decision"], encoding="utf-8") as handle:
                 decision = json.load(handle)
-            return self.apply(decision, command["mesh"], command.get("demo", False))
+            return self.apply(decision, command["mesh"], command.get("demo", False), command.get("analysis_only", False))
         if name == "readback":
             from ste_planner.runtime_adapter import readback
             return readback(self.app, self.decision)
@@ -241,6 +275,8 @@ class RuntimeExtension(QObject, Extension):
             self.app.getController().getScene().sceneChanged.emit(root)
             return {"status": "computed", "nodes": self.nodes()}
         if name == "slice":
+            self.capture_boolean_diagnostics()
+            self.native_boolean_diagnostics = []
             if self.decision:
                 from ste_planner.runtime_adapter import readback
                 rb = readback(self.app, self.decision)
@@ -250,6 +286,9 @@ class RuntimeExtension(QObject, Extension):
             # Settings changes propagate asynchronously and invalidate slicing.
             # Wait for quiescence before starting the single requested job.
             self.last_change = time.monotonic()
+            self.native_geometry_errors = []
+            log = os.path.join(os.environ.get("STE_PLANNER_ISOLATED_ROOT", ""), "appdata", "steslicer", "7.10", "steslicer.log")
+            self.native_log_offset = os.path.getsize(log) if self.isolated() and os.path.exists(log) else 0
             self.pending = {"kind": "settle", "command": command, "started": time.monotonic()}
             return None
         if name == "quit":
@@ -259,6 +298,18 @@ class RuntimeExtension(QObject, Extension):
 
     def wait_pending(self):
         pending = self.pending
+        if self.isolated() and pending["kind"] in ("slice", "project"):
+            log = os.path.join(os.environ["STE_PLANNER_ISOLATED_ROOT"], "appdata", "steslicer", "7.10", "steslicer.log")
+            if os.path.exists(log):
+                with open(log, "rb") as handle:
+                    handle.seek(self.native_log_offset)
+                    tail = handle.read()
+                    self.native_log_offset = handle.tell()
+                for line in tail.decode("utf-8", errors="replace").splitlines():
+                    if "Exception while differece model!" in line:
+                        self.native_geometry_errors.append(line)
+            if self.native_geometry_errors:
+                raise ValueError("native Boolean preprocessing failed; backend fallback geometry is not a verified slice")
         if pending["kind"] == "settle" and time.monotonic() - self.last_change > 2.5:
             if self.decision:
                 from ste_planner.runtime_adapter import readback
@@ -266,6 +317,13 @@ class RuntimeExtension(QObject, Extension):
                     self.operation.undo()
                     raise ValueError("settled readback differs; application rolled back")
             backend = self.app.getBackend()
+            # Installed 7.10's composite backend initialization may omit the
+            # registered CLIParser stage. Bind it via its public addBackend API
+            # only in isolated offline analysis; never replace engine binaries.
+            if self.isolated() and hasattr(backend, "addBackend"):
+                parser = self.app.getBackendManager().getBackendById("CLIParserBackend")
+                if parser is not None:
+                    backend.addBackend(parser)
             self.last_backend_state = None
             backend.backendStateChange.connect(self._backend_state)
             self.pending["kind"] = "slice"
@@ -361,7 +419,9 @@ class RuntimeExtension(QObject, Extension):
                     return
         except Exception as exc:
             result = {"status": "error", "error": type(exc).__name__, "message": str(exc),
-                      "traceback": traceback.format_exc()}
+                      "traceback": traceback.format_exc(), "backend_state": self.last_backend_state,
+                      "native_geometry_errors": self.native_geometry_errors,
+                      "native_boolean_diagnostics": self.native_boolean_diagnostics}
             self.pending = None
             if job.get("abort_on_error", True):
                 self.halted = True
