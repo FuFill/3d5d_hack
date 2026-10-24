@@ -45,7 +45,7 @@ class LLMClient:
         self.model = (model or "").strip()
         self.timeout = timeout
 
-    def _request(self, body):
+    def _request(self, body, timeout=None):
         if not self.base_url or not self.api_key or not self.model:
             raise LLMError("not_configured")
         url = self.base_url + "/chat/completions"
@@ -56,7 +56,7 @@ class LLMClient:
             "Authorization": "Bearer " + self.api_key,
         })
         try:
-            return urllib.request.urlopen(request, timeout=self.timeout, context=_ssl_context())
+            return urllib.request.urlopen(request, timeout=timeout or self.timeout, context=_ssl_context())
         except urllib.error.HTTPError as e:
             detail = ""
             try:
@@ -111,6 +111,8 @@ class LLMClient:
                             slot["name"] += function["name"]
                         if function.get("arguments"):
                             slot["arguments"] += function["arguments"]
+        except OSError as e:  # timeout or dropped connection while streaming
+            raise LLMError(str(e) or type(e).__name__)
         finally:
             response.close()
         tool_calls = []
@@ -123,14 +125,16 @@ class LLMClient:
             })
         return {"content": "".join(content), "reasoning": "".join(reasoning), "tool_calls": tool_calls}
 
-    def text(self, messages, max_tokens=None, temperature=0):
+    def text(self, messages, max_tokens=None, temperature=0, timeout=None):
         """One short non-streamed completion without tools (classification, proofreading)."""
         body = {"model": self.model, "messages": messages, "temperature": temperature, "enable_thinking": False}
         if max_tokens:
             body["max_tokens"] = max_tokens
-        response = self._request(body)
+        response = self._request(body, timeout)
         try:
             data = json.loads(response.read().decode("utf-8"))
+        except (OSError, ValueError) as e:  # timeout, dropped connection, not JSON
+            raise LLMError(str(e) or type(e).__name__)
         finally:
             response.close()
         if data.get("error"):

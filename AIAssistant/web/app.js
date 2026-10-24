@@ -357,7 +357,7 @@
     }
     empty.hidden = items.length > 0;
     question = null;
-    order.forEach(function (s) { var e = events[s]; if (e && e.type === "question" && e.status === "pending") question = e; });
+    if (busy) order.forEach(function (s) { var e = events[s]; if (e && e.type === "question" && e.status === "pending") question = e; });
     updateComposer();
     if (stick) feed.scrollTop = feed.scrollHeight;
   }
@@ -784,6 +784,7 @@
     // Keys go to the card unless the user is typing: an empty main field does not count as typing.
     if ((focus === input && input.value.trim()) || (focus && focus.classList && focus.classList.contains("ask-custom"))) return;
     if (focus === input && ev.key === "Enter") return;  // handled by send(): picks the highlighted option
+    if (ev.key === "Enter" && focus && focus.tagName === "BUTTON" && w.node.contains(focus)) return;
     var items = questionsOf(w.event);
     var review = items.length > 1 && w.index >= items.length;
     var q = items[w.index];
@@ -847,9 +848,10 @@
 
   function updateComposer() {
     var answering = !!question;
+    var stop = busy && (!answering || !input.value.trim());  // with open questions: typed text answers, empty stops
     var sendButton = $("send");
-    sendButton.classList.toggle("busy", busy && !answering);
-    sendButton.title = busy && !answering ? t("stop") : t("send");
+    sendButton.classList.toggle("busy", stop);
+    sendButton.title = stop ? t("stop") : t("send");
     input.placeholder = answering ? t("answerQuestions") : t("placeholder");
   }
 
@@ -940,7 +942,7 @@
     if (question) {
       // Text typed in the main field answers the current question of the card; an empty Enter picks the
       // highlighted option. It never cancels the task.
-      if (w && text) { input.value = ""; autosize(); choose(w, {text: text, choice: null}); }
+      if (w && text) { input.value = ""; autosize(); updateComposer(); choose(w, {text: text, choice: null}); }
       else if (w) { keyEnter(w); }
       return;
     }
@@ -957,7 +959,7 @@
     });
   }
 
-  input.addEventListener("input", autosize);
+  input.addEventListener("input", function () { autosize(); updateComposer(); });
   input.addEventListener("keydown", function (ev) {
     if (ev.key === "Enter" && !ev.shiftKey && !ev.isComposing) { ev.preventDefault(); send(); }
   });
@@ -965,7 +967,10 @@
     var files = ev.clipboardData && ev.clipboardData.files;
     if (files && files.length) { ev.preventDefault(); upload(files); }
   });
-  $("send").addEventListener("click", send);
+  $("send").addEventListener("click", function () {
+    if (question && !input.value.trim()) { api("/api/cancel", {method: "POST", json: {}}); return; }
+    send();
+  });
   $("attach").addEventListener("click", function () { $("file").click(); });
   $("file").addEventListener("change", function () { upload(this.files); this.value = ""; });
   $("newChat").addEventListener("click", function () {

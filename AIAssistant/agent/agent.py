@@ -24,6 +24,9 @@ CAPTION_MAX_CHARS = 280
 CONTEXT_TOOLS = ("get_state", "list_model_sources", "list_profiles")
 OLD_TOOL_RESULT_CHARS = 3000
 RETRY_DELAYS = (2, 6)
+# The routing and proofreading calls are optional: a slow reply falls back instead of holding the turn.
+ROUTER_TIMEOUT = 20
+PROOFREAD_TIMEOUT = 45
 
 SYSTEM_PROMPT = """You are the AI assistant built into STE Slicer (Stereotech slicer, a fork of Cura 3.6).
 You prepare 3D and 5D FDM prints through tools that change the real slicer state.
@@ -204,8 +207,12 @@ class Agent:
         return list(self._messages)
 
     def load(self, messages):
-        """History of a saved chat; the chat feed itself is restored by the service."""
+        """History of a saved chat; the chat feed itself is restored by the service.
+
+        A chat saved while the slicer closed mid-turn may end with tool calls that have no result;
+        they are closed so the next request is accepted."""
         self._messages = list(messages)
+        self._close_dangling_calls()
 
     def reset(self):
         self.cancel()
@@ -309,7 +316,8 @@ class Agent:
             return "act"
         history = _text_history(self._messages)[-6:]
         try:
-            word = client.text([{"role": "system", "content": ROUTER_PROMPT}] + history, max_tokens=5)
+            word = client.text([{"role": "system", "content": ROUTER_PROMPT}] + history, max_tokens=5,
+                               timeout=ROUTER_TIMEOUT)
         except LLMError:
             return "act"
         return "answer" if word.lower().startswith("answer") else "act"
@@ -333,7 +341,8 @@ class Agent:
         language = "Russian" if settings.get("language", "ru") == "ru" else "English"
         try:
             fixed = client.text([{"role": "system", "content": PROOFREAD_PROMPT.replace("{language}", language)},
-                                 {"role": "user", "content": text}], max_tokens=min(4000, len(text) * 2 + 64))
+                                 {"role": "user", "content": text}], max_tokens=min(4000, len(text) * 2 + 64),
+                                timeout=PROOFREAD_TIMEOUT)
         except LLMError:
             return None
         fixed = (fixed or "").strip()

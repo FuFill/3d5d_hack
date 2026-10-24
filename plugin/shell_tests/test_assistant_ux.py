@@ -428,7 +428,7 @@ class FakeClient:
         self.replies, self.requests, self.texts = list(replies), [], []
         self.route, self.proofread = route, proofread
 
-    def text(self, messages, max_tokens=None, temperature=0):
+    def text(self, messages, max_tokens=None, temperature=0, timeout=None):
         self.texts.append(messages)
         return self.route if "route messages" in messages[0]["content"] else self.proofread
 
@@ -576,3 +576,60 @@ def test_chats_are_saved_listed_and_continued(tmp_path, monkeypatch):
     assert [m["role"] for m in agent.messages()] == ["user", "assistant"]
     assert service.delete_chat(first) and first not in [c["id"] for c in service.chats()]
     service.stop()
+
+
+def test_a_chat_saved_mid_turn_reopens_without_hanging_parts(tmp_path):
+    from agent.chats import ChatStore
+    store = ChatStore(str(tmp_path))
+    call = {"id": "c1", "type": "function", "function": {"name": "ask_user", "arguments": "{}"}}
+    events = [{"type": "user", "seq": 1, "text": "Сделай прочнее"},
+              {"type": "message", "seq": 2, "text": "Уточню", "streaming": True},
+              {"type": "tool", "seq": 3, "name": "ask_user", "status": "running"},
+              {"type": "question", "seq": 4, "questions": [{"text": "Какой пластик?", "options": ["PLA", "PETG"]}],
+               "status": "pending", "answers": None}]
+    messages = [{"role": "user", "content": "Сделай прочнее"},
+                {"role": "assistant", "content": None, "tool_calls": [call]}]
+    store.save("20260101-000000-abcdef", events, messages)   # the slicer closed while the card was open
+    bus = EventBus()
+    value = registry(bus=bus)[0]
+    agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
+    service = ChatService(bus, agent, MCPServer(value), value, None, store=store)
+    assert service.open_chat("20260101-000000-abcdef")
+    loaded = {e["type"]: e for e in bus.snapshot()[0]}
+    assert loaded["question"]["status"] == "cancelled"
+    assert loaded["tool"]["status"] == "error" and "interrupted" in loaded["tool"]["result"]["error"]
+    assert loaded["message"]["streaming"] is False
+    history = agent.messages()
+    assert history[-1]["role"] == "tool" and history[-1]["tool_call_id"] == "c1"   # the next request is valid
+    service.stop()
+
+
+def test_network_failures_of_short_calls_are_llm_errors(monkeypatch):
+    from agent import llm
+
+    class Broken:
+        def read(self):
+            import socket
+            raise socket.timeout("timed out")
+
+        def close(self):
+            pass
+
+    client = llm.LLMClient("http://x", "k", "m")
+    monkeypatch.setattr(client, "_request", lambda body, timeout=None: Broken())
+    with pytest.raises(LLMError):
+        client.text([{"role": "user", "content": "hi"}], timeout=1)
+
+
+def test_a_slow_router_falls_back_to_work(monkeypatch):
+    bus = EventBus()
+    value = registry(bus=bus)[0]
+
+    class Slow:
+        def text(self, *a, **k):
+            assert k.get("timeout") == agent_module.ROUTER_TIMEOUT
+            raise LLMError("timed out")
+
+    agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
+    agent._messages = [{"role": "user", "content": "Какой пресет?"}]
+    assert agent._route(Slow()) == "act"

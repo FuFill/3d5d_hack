@@ -59,18 +59,26 @@ class EventBus:
             return [e for e in self._events if e["type"] != "patch"], self._seq
 
     def load(self, events):
-        """Replace the feed with a saved chat: a reset, then its events with fresh sequence numbers."""
+        """Replace the feed with a saved chat: a reset, then its events with fresh sequence numbers.
+
+        Nothing of a saved chat is still running: a chat saved mid-turn has its open question
+        cancelled, its running calls marked as interrupted and its streams closed."""
         with self._cond:
             self._seq += 1
             self._events = [{"type": "reset", "seq": self._seq, "ts": time.time()}]
-            mapping = {}
             for event in events:
                 if event.get("type") in ("patch", "reset"):
                     continue
                 self._seq += 1
                 copy = dict(event)
-                mapping[event.get("seq")] = self._seq
                 copy["seq"] = self._seq
+                if copy.get("streaming"):
+                    copy["streaming"] = False
+                if copy.get("type") == "question" and copy.get("status") == "pending":
+                    copy["status"] = "cancelled"
+                elif copy.get("type") == "tool" and copy.get("status") == "running":
+                    copy["status"] = "error"
+                    copy["result"] = {"error": "interrupted: the slicer was closed"}
                 self._events.append(copy)
             self._cond.notify_all()
 
