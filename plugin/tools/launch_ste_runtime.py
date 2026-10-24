@@ -60,7 +60,8 @@ def main():
     profile = isolated / "appdata" / "steslicer" / "7.10"
     if not profile.exists():
         original = Path(os.environ["APPDATA"]) / "steslicer" / "7.10"
-        shutil.copytree(original, profile, ignore=shutil.ignore_patterns("plugins", "cache", "*.log", "*.3mf", "*.gcode"))
+        shutil.copytree(original, profile, ignore=shutil.ignore_patterns("plugins", "cache", "ai_assistant_browser",
+                                                                      "*.log", "*.3mf", "*.gcode"))
     plugins = profile / "plugins"
     plugins.mkdir(exist_ok=True)
     target = plugins / "STEPlannerRuntime"

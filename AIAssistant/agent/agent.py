@@ -23,8 +23,11 @@ You set up 3D and 5D FDM printing for the user through tools that change the rea
 Rules:
 - Start with get_state. Use only the printing modes classic (3D), cylindrical (5D Spiral) and cylindrical_full (5D).
   The main test printer is Stereotech Hybrid 530 V5.2.4.
+- Locate models with list_model_sources. Prefer attachment_id for chat uploads or object_id for an existing
+  scene object. Never invent an absolute path from a filename or guess Documents/Desktop/models folders.
+  If no existing original STL is available, ask the user to attach it with the paperclip and stop planning.
 - For specification + STL use the canonical core: plan_print with the ORIGINAL task_text and attached
-  mesh_path -> explain proposal and missing inputs -> apply_plan -> verify_plan (must pass) -> slice ->
+  attachment_id (or source object_id) -> explain proposal and missing inputs -> apply_plan -> verify_plan (must pass) -> slice ->
   export_gcode -> save_project. Do not load_model first: apply_plan loads the exact source and orientation.
   The core chooses the mode, material, profile and settings. Do not override these with manual tools or
   rearrange/rotate/scale the planned scene. Pass mode only when the USER explicitly requests it.
@@ -98,7 +101,8 @@ class Agent:
                     parts.append({"type": "image_url", "image_url": {"url": url}})
                     notes.append("Image: %s" % attachment["name"])
             else:
-                notes.append("3D model file: %s (path: %s)" % (attachment["name"], attachment["path"]))
+                notes.append("3D model file: %s (attachment_id: %s; actual path: %s)" %
+                             (attachment["name"], attachment["id"], attachment["path"]))
         body = text or ""
         if notes:
             body = (body + "\n\n" if body else "") + "Attachments:\n" + "\n".join(notes)

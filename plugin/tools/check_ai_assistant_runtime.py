@@ -12,6 +12,7 @@ import sys
 import time
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
+from urllib.parse import quote
 import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -81,7 +82,15 @@ def main():
         stl = next(p for p in case.iterdir() if p.suffix.lower() == ".stl")
         docx = next(case.glob("*.docx"))
         text = read_docx_text(str(docx))
-        plan = call("plan_print", {"task_text": text, "mesh_path": str(stl)})
+        upload_request = Request(base + "/api/upload?name=" + quote(stl.name), data=stl.read_bytes(),
+                                 headers={"X-Token": session["token"], "Content-Type": "application/octet-stream"})
+        with urlopen(upload_request, timeout=30) as response:
+            upload = json.load(response)
+        sources = call("list_model_sources", {})
+        assert any(item["attachment_id"] == upload["id"] and item["can_plan_original_stl"]
+                   for item in sources["attachments"])
+        plan = call("plan_print", {"task_text": text, "attachment_id": upload["id"]})
+        report["checks"]["chat_upload_id_to_original_stl"] = "pass"
         report.update(organizer_case=case.name, geometry_sha256=hashlib.sha256(stl.read_bytes()).hexdigest(),
                       planner_status=plan["status"], route=plan["route"], decision_sha256=plan["decision_sha256"])
         assert plan["geometry_sha256"] == report["geometry_sha256"]
@@ -103,6 +112,12 @@ def main():
         assert zipfile.is_zipfile(folder / "project.3mf")
         assert (folder / "result.gcode").stat().st_size > 1000
         report["checks"]["native_gcode_and_3mf"] = "pass"
+        sources = call("list_model_sources", {})
+        source = next(item for item in sources["scene_models"] if item["can_plan_original_stl"])
+        scene_plan = call("plan_print", {"task_text": text, "object_id": source["object_id"]})
+        assert scene_plan["effective_settings"] == plan["effective_settings"]
+        assert scene_plan["geometry_sha256"] == plan["geometry_sha256"]
+        report["checks"]["scene_object_id_to_original_stl"] = "pass"
         # Original source validation: a made-up plan id cannot mutate a project.
         call("apply_plan", {"plan_id": "not-an-application-owned-id"}, expect_ok=False)
         report["checks"]["rejects_foreign_plan"] = "pass"

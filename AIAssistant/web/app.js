@@ -37,6 +37,7 @@
   };
 
   var TOOLS = {
+    list_model_sources: ["Исходные файлы моделей", "Actual model sources"],
     plan_print: ["Расчёт ядром по ТЗ", "Core specification planning"],
     get_plan: ["План и ограничения", "Plan and limitations"],
     apply_plan: ["Применение плана", "Apply core plan"],

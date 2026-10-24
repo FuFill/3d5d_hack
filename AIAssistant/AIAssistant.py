@@ -147,6 +147,7 @@ class AIAssistant(Extension):
         mcp = MCPServer(registry)
         agent = Agent(mcp, registry, bus, settings.values)
         self._service = ChatService(bus, agent, mcp, registry, settings)
+        registry.upload_sources = self._service.model_uploads
         port = self._service.start()
         profile = os.path.join(Resources.getDataStoragePath(), "ai_assistant_browser")
         self._window = DockedWindow(self._app, profile)

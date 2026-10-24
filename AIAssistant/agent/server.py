@@ -73,6 +73,10 @@ class ChatService:
     def mcp_url(self):
         return "http://127.0.0.1:%d/mcp" % self.port
 
+    def model_uploads(self):
+        with self._lock:
+            return [dict(item) for item in self.uploads.values() if item["kind"] == "model"]
+
     def add_upload(self, name, stream, length):
         base = os.path.basename(name.replace("\\", "/")) or "file"
         ext = os.path.splitext(base)[1].lower()

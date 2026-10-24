@@ -21,7 +21,10 @@
 и допуски задаются приложением, LLM их не придумывает:
 [методика](../data/research/06_robust_process_validation.md).
 
-Сетевой адаптер Qwen/Timeweb и цикл вызовов инструментов реализованы отдельно от UI. Они вызывают расчётное ядро и не применяют настройки в слайсере. Контракт подключения причинного DoubleML: [QWEN_INTEGRATION.md](QWEN_INTEGRATION.md).
+Сетевой CLI-адаптер Qwen/Timeweb вызывает ядро без изменения сцены. Интегрированная
+оболочка Lenaz использует отдельный диалоговый цикл и применяет plan_id через тот же
+Qt runtime. Источники выбираются по attachment/object ID; полные пути не угадываются.
+Контракт DoubleML и различия CLI/UI: [QWEN_INTEGRATION.md](QWEN_INTEGRATION.md).
 
 ## Qwen через Timeweb
 
@@ -89,7 +92,16 @@ decision["status"], decision["setting_patch"]["payload"], decision["scene_operat
 | `qwen_client`, `qwen_assistant` | сетевой адаптер и цикл инструментов | Timeweb Chat Completions, ограничение числа вызовов, ошибки API, детерминированный fallback |
 | `causal_bridge` | адаптер причинного DoubleML | сводки и контрасты калибровки ядра для Qwen; дополнительный импорт внешней PLR-модели; не абсолютный прогноз |
 
-Не реализованы в ядре (требуют рантайма слайсера или внешних данных): apply_patch_transaction, dry_slice, export_project (следующий этап, плагин), check_kinematics и check_collisions (нет модели головки и оснастки — статус unknown), FEA, seam_plan, адаптивный слой.
+Применение транзакции, настоящий slice и экспорт реализованы в runtime/оболочке,
+вне детерминированного `plan_case`. FE реализован в современном worker (`elasticity`,
+`functional`, `toolpath_physics`), но требует физических входов и проверки сходимости.
+Полная кинематика/коллизии 5D, автоматический seam plan и квалифицированный
+адаптивный слой не реализованы. Последний полный набор ядра: 186 pass, 1 skip;
+проверки оболочки после исправления источников: 24 pass.
+
+Схема принтера и профильные данные материала уже используются. Выбор полной
+native-базы printer/variant/material/quality и минимального override пока является
+заданием в [presets_creation.md](../presets_creation.md), без реализации.
 
 ## Double ML в планировщике
 

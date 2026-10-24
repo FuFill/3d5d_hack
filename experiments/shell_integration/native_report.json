@@ -4,10 +4,12 @@
     "http_authentication": "pass",
     "api_key_not_exposed": "pass",
     "native_timeweb_qwen_connection": "pass",
+    "chat_upload_id_to_original_stl": "pass",
     "original_source_binding": "pass",
     "settled_readback": "pass",
     "native_engine_slice": "pass",
     "native_gcode_and_3mf": "pass",
+    "scene_object_id_to_original_stl": "pass",
     "rejects_foreign_plan": "pass",
     "single_operation_undo_redo": "pass",
     "no_local_key_in_exported_artifacts": "pass",
@@ -18,61 +20,63 @@
   "geometry_sha256": "70663df1130d2d969063537c506b9ca767e36f3949bfe5c7d5dc0217d58ca467",
   "planner_status": "needs_input",
   "route": {
-    "parameters": {},
     "mode": "classic",
+    "parameters": {},
     "note": "no documented 5D benefit above threshold; classic is simpler"
   },
-  "decision_sha256": "e3169430e4e5fd24de68f042aa46f57d75344a1c3e4ff505277ee337c6e0c6dd",
+  "decision_sha256": "6829d9c6ab0bafb8ff465b63914d9c2ff299114de89ef99fa430104f0e1756e2",
   "slice": {
+    "print_time_s": 86618,
+    "print_time": "1 day 0 hours 3 minutes",
+    "material_g": 156.8,
     "material_cost": null,
     "printing_mode": {
-      "name": "3D",
-      "mode": "classic"
+      "mode": "classic",
+      "name": "3D"
     },
-    "print_time": "1 day 0 hours 3 minutes",
+    "job_name": "STEH530V524_Пыльник шруса",
     "material_m": 56.68,
     "materials": [
       "Sealant TPU A95",
       "Sealant TPU A95"
-    ],
-    "print_time_s": 86618,
-    "material_g": 156.8,
-    "job_name": "STEH530V524_Пыльник шруса"
+    ]
   },
   "status": "pass",
   "core_tests": {
     "passed": 186,
-    "skipped": 1
+    "skipped": 1,
+    "scope": "last full unchanged-core run"
   },
   "shell_tests": {
-    "passed": 15,
-    "details": "13 end-to-end/bridge/bundle tests plus 2 input/expired-Qt regressions"
+    "passed": 24,
+    "details": "complete shell suite after ID-based source fix"
   },
   "canonical_core_changed": false,
   "lenaz_commit": "3b6c9ce3e7cad4cd86e7f32c401fe7095ff1e576",
+  "presets_feature": "future prompt only, not implemented",
   "artifacts": {
     "result.gcode": {
-      "sha256": "e19de8c49626259c6a138083642279b67944826945e5ac6a8ce8e9d572f1c11a",
+      "sha256": "d6b6f2b6d4806ccb37b42b857dec080e6a419fd09d937bb44520913adf0fabd8",
       "bytes": 38764017
     },
     "project.3mf": {
-      "sha256": "2f7118593fd182ebbf37998d5b12332fc5047b34bbe1f7a8018914f697c6444c",
-      "bytes": 3931046
+      "sha256": "2b8c9ff32a2cb3c7e39366abc95559d6e2e97f026c21e93ea89889a515aeb68e",
+      "bytes": 3932677
     },
     "readback.json": {
-      "sha256": "541be134927533c2869e82529f16912d6dd261a59babb78739b23392d73caa70",
+      "sha256": "9f47252bc00c10df37f8444142301b84aba69b737e644ce29c7270233aaecb15",
       "bytes": 1505
     },
     "002_state.json": {
-      "sha256": "effa738610934b8d2f38e9c340cee18577bfd1d16af776fb08cb53f7fde8c12c",
+      "sha256": "517c73fdff2fab08d2d9831dd8fd74c40caca5b921b0797d386fbc52082bdae3",
       "bytes": 3305
     },
     "004_state.json": {
-      "sha256": "ea82903c7a5875f9b676993e4ead693f78671c14a460e87f6f131924706f09e4",
-      "bytes": 2181
+      "sha256": "91e3283e1355759504f7beb53f27a569e0418be1384f184e267d56fb28cd0d33",
+      "bytes": 2182
     },
     "006_state.json": {
-      "sha256": "eea31a8f74347c457688bfe381c1aab4fb84cc30bdecfceeb2ff2b376eef5d0a",
+      "sha256": "915a3959b5d36fa520e01840a8448f3038dd2668db1e70e92d6b0d35bfa2a6ae",
       "bytes": 3443
     }
   }

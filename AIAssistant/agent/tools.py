@@ -40,6 +40,7 @@ class ToolRegistry:
         self._slices = slice_monitor
         self._output_dir = output_dir
         self.core = core
+        self.upload_sources = lambda: []
         self._catalog = None
         self._nodes = {}
         self._node_ids = {}
@@ -91,15 +92,23 @@ class ToolRegistry:
 
         if self.core is not None:
             plan_id = {"type": "string", "description": "Application-owned id returned by plan_print."}
+            self._add("list_model_sources", "List actual uploaded files and original files of scene objects. "
+                      "Use attachment_id or object_id from here in plan_print. Never guess filesystem paths.",
+                      {}, self._list_model_sources, on_main=False)
             self._add("plan_print", "Translate the original specification and STL into a plan using the existing "
                       "deterministic core (materials, orientation, settings, DML and uncertainty checks). "
-                      "Call BEFORE loading a model. Does not change the project. Do not paraphrase the specification.",
-                      {"task_text": {"type": "string"}, "mesh_path": {"type": "string"},
+                      "Does not change the project. Select exactly one source: attachment_id, object_id or an actual "
+                      "absolute mesh_path. Object input reads the ORIGINAL STL, not its current scene transform. "
+                      "Do not paraphrase the specification. Apply still requires a new empty project.",
+                      {"task_text": {"type": "string"},
+                       "attachment_id": {"type": "string", "description": "Id from the message attachment or list_model_sources."},
+                       "object_id": {"type": "integer", "description": "Scene object id from list_objects/list_model_sources."},
+                       "mesh_path": {"type": "string", "description": "Existing absolute path returned by a tool; never just a filename."},
                        "mode": {"type": "string", "enum": list(ALLOWED_MODES)},
                        "llm_items": {"type": "array", "description": "Optional cited requirement proposals; the core "
                                      "validates fragment, value, unit and comparator against task_text. Never invent facts.",
                                      "items": {"type": "object"}}},
-                      self.core.plan, required=("task_text", "mesh_path"), on_main=False)
+                      self._plan_print, required=("task_text",), on_main=False)
             self._add("get_plan", "Read the current core proposal, limitations and explanations.",
                       {"plan_id": plan_id}, lambda a, c: self.core.summary(a["plan_id"]), required=("plan_id",), on_main=False)
             self._add("apply_plan", "Apply exactly the core plan as one Undo operation. Requires an empty project. "
@@ -208,6 +217,52 @@ class ToolRegistry:
                   {"path": {"type": "string"}}, self._save_project, on_main=False)
 
     # ------------------------------------------------------------------ helpers
+
+    @staticmethod
+    def _source_info(path):
+        absolute = isinstance(path, str) and bool(path) and os.path.isabs(path)
+        exists = bool(absolute and os.path.isfile(path))
+        extension = os.path.splitext(path)[1].lower() if isinstance(path, str) else ""
+        return {"source_path": os.path.normpath(path) if absolute else None,
+                "source_exists": exists, "source_format": extension.lstrip("."),
+                "can_plan_original_stl": bool(exists and extension == ".stl")}
+
+    def _node_source(self, node):
+        mesh = node.getMeshData()
+        return self._source_info(mesh.getFileName() if mesh is not None else None)
+
+    def _list_model_sources(self, args, ctx):
+        attachments = [dict(self._source_info(item["path"]), attachment_id=item["id"], name=item["name"])
+                       for item in self.upload_sources()]
+        def scene_sources():
+            return [dict(self._node_source(node), object_id=self._node_id(node), name=node.getName())
+                    for node in self._scene_nodes()]
+        return {"attachments": attachments, "scene_models": run_on_main(self._app, scene_sources),
+                "note": "Use a source id. The core reads the original STL; apply requires an empty project."}
+
+    def _plan_print(self, args, ctx):
+        selectors = [key for key in ("attachment_id", "object_id", "mesh_path") if args.get(key) is not None]
+        if len(selectors) != 1:
+            raise ToolError("Choose exactly one attachment_id, object_id or mesh_path from list_model_sources")
+        key = selectors[0]
+        if key == "attachment_id":
+            item = next((item for item in self.upload_sources() if item["id"] == args[key]), None)
+            if item is None:
+                raise ToolError("Attachment not found in this session; use list_model_sources or attach the STL again")
+            source = self._source_info(item["path"])
+        elif key == "object_id":
+            source = run_on_main(self._app, lambda: self._node_source(self._node(args[key])))
+        else:
+            source = self._source_info(args[key])
+        if not source["can_plan_original_stl"]:
+            raise ToolError("An existing original STL is required. Use list_model_sources and its attachment_id/object_id, "
+                            "or attach the STL with the chat paperclip. Do not guess folders or use only a filename. "
+                            "OBJ/3MF remain available through manual tools.")
+        request = {k: v for k, v in args.items() if k not in ("attachment_id", "object_id")}
+        request["mesh_path"] = source["source_path"]
+        result = self.core.plan(request, ctx)
+        result["input_source"] = source
+        return result
 
     def _global(self):
         stack = self._app.getGlobalContainerStack()
@@ -597,7 +652,7 @@ class ToolRegistry:
     def _object_info(self, node):
         box = node.getBoundingBox()
         scale = node.getScale()
-        info = {"id": self._node_id(node), "name": node.getName()}
+        info = dict(self._node_source(node), id=self._node_id(node), name=node.getName())
         if box is not None:
             info["position"] = {"x": _r(box.center.x), "y": _r(-box.center.z), "z": _r(box.bottom)}
             info["size"] = {"x": _r(box.width), "y": _r(box.depth), "z": _r(box.height)}

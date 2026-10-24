@@ -56,6 +56,9 @@ agent/tools.py → runtime_adapter.create_operation / readback в Qt
 ```
 
 Обычный маршрут: `plan_print → apply_plan → verify_plan → slice → export_gcode → save_project`.
+Перед ним `list_model_sources` показывает прикреплённые модели и исходные файлы
+объектов сцены. В `plan_print` указывайте ровно один источник: `attachment_id`,
+`object_id` либо существующий абсолютный `mesh_path`. Qwen не должна угадывать путь.
 Модель сначала не загружается вручную: Qt-operation загружает исходный STL и применяет
 всю сцену/профиль одной операцией Undo. Требуется пустой новый проект; существующие
 детали автоматически не удаляются. При смене файла, проекта или входных измерений
@@ -80,7 +83,7 @@ agent/tools.py → runtime_adapter.create_operation / readback в Qt
 
 | Группа | Инструменты |
 |---|---|
-| Исходное ядро | `plan_print`, `get_plan`, `apply_plan`, `verify_plan` |
+| Источники и исходное ядро | `list_model_sources`, `plan_print`, `get_plan`, `apply_plan`, `verify_plan` |
 | Настройки и профили | `get_state`, `find_settings`, `get_settings`, `set_settings`, `set_print_mode`, `list_profiles`, `select_profile`, `create_profile`, `save_profile`, `list_materials`, `set_material` |
 | Модели | `load_model`, `list_objects` (в т. ч. габариты), `move_object`, `rotate_object`, `scale_object`, `arrange_all`, `delete_object` |
 | Слайсинг | `slice`, `get_slice_status`, `get_slice_result`, `export_gcode`, `save_project` |
@@ -97,9 +100,36 @@ agent/tools.py → runtime_adapter.create_operation / readback в Qt
 `stderr.log` и `steslicer.log` в папке конфигурации (строки `AI Assistant`).
 
 Проверки: `python -m pytest plugin/shell_tests -q` (все семь исходных STL/ТЗ, совпадение с ядром,
-отмена, устаревание, целостность сборки); `python plugin/tools/check_ai_assistant_runtime.py`
+отмена, устаревание, целостность сборки, выбор источника; всего 24 теста);
+`python plugin/tools/check_ai_assistant_runtime.py`
 (изолированный настоящий STE: HTTP/MCP, worker, apply/readback, нарезка пыльника, экспорт,
 единый Undo/Redo; при наличии локального ключа — пробный запрос Timeweb).
+
+## Ошибка пути к STL
+
+`Select an existing absolute STL path` означает, что в расчёт передан несуществующий
+или относительный путь либо неподдерживаемый формат. Например, имя `Шестерня.stl`
+на столе слайсера ещё не является абсолютным путём. В старой оболочке список объектов
+не отдавал исходный файл и Qwen пыталась угадывать папку; это исправлено.
+
+Прикрепите STL скрепкой в чате и используйте `attachment_id`. Для существующего
+объекта `list_model_sources`/`list_objects` показывают его ID, `source_path`,
+`source_exists`, `source_format`, `can_plan_original_stl`; `object_id` разрешается
+приложением в фактический исходный STL. Если файл удалён/перемещён или объект
+получен из OBJ/3MF без оригинального STL, прикрепите исходный STL. Никакого поиска
+одноимённого файла по диску и автоматического выбора среди неоднозначных источников нет.
+
+Расчёт по объекту использует оригинальный файл, а не текущий transform сцены.
+Применение рассчитанного процесса по-прежнему требует пустого проекта и нового
+расчёта после его изменения. Существующие детали плагин не удаляет.
+
+## Пресеты: текущая база и следующий этап
+
+Ядро уже использует схему принтера и значения профиля материала; применение создаёт
+`Planner process profile`. Автоматический выбор полной совместимой native-базы
+printer/variant/material/quality пока не реализован. Задание для будущего этапа:
+[presets_creation.md](../presets_creation.md). Этот документ является промптом,
+а не подтверждением готовности новой функции.
 
 Существующие ограничения не снимаются: 5D можно рассчитать как предложение, но обычное
 применение блокируется до проверки кинематики/коллизий. `infeasible` не применяется.
