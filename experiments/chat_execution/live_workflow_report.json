@@ -1,0 +1,38 @@
+{
+  "status": "pass",
+  "model": "dashscope/qwen3.8-flash",
+  "scope": "Live Qwen + real Agent/MCP/QuestionBox; simulated slicer operations, not physical metrics",
+  "question_cards": 1,
+  "execution_approvals": 1,
+  "duplicate_confirmation": false,
+  "calculations": 2,
+  "injected_stale_plan_error": true,
+  "completed_operations": [
+    "apply_plan",
+    "verify_plan",
+    "slice",
+    "export_gcode",
+    "save_project"
+  ],
+  "calls": [
+    "get_state",
+    "list_model_sources",
+    "list_profiles",
+    "plan_print",
+    "get_plan",
+    "get_plan",
+    "apply_plan",
+    "plan_print",
+    "get_plan",
+    "apply_plan",
+    "verify_plan",
+    "slice",
+    "export_gcode",
+    "save_project"
+  ],
+  "errors": [],
+  "final_answer": "Готово — деталь подготовлена и нарезана в 5D.\n\n- **Пресет и материал:** базовый STE-пресет Fine (normal), Enduse PA6, сопло 0,6 мм — как вы подтвердили; режим **5D Spiral (полный)**, материал и режим не менялись.\n- **Изменения поверх пресета:** отсутствуют — условия процесса заданы спецификацией, дополнительных правок не потребовалось.\n- **Ориентация:** деталь сохранена на месте, её ось совмещена с осью инструмента (в 5D позиция задаётся расчётом, вручную не поворачивается). Первая попытка применения была отклонена как устаревшая, расчёт пересчитан и применён заново; проверка настроек прошла без расхождений.\n- **Нарезка:** ~2 ч (7200 с), примерно 25 г материала.\n- **Файлы:** G-code `C:/software-check/result.gcode`, проект `C:/software-check/project.3mf`.\n\nВажно: статус расчёта — **требует калибровки**. Кинематика 5D и столкновения не верифицированы (вы согласились на непроверенный процесс), физическая прочность детали не подтверждена — это подготовка задания, а не одобрение печати.",
+  "private_documents_sent": false,
+  "native_slicer_modified": false,
+  "files_exported_by_real_slicer": false
+}

@@ -41,16 +41,24 @@ assert "не проверены" in registry.questions.calls[0][0]["text"]
 gate.before("slice", {}, lambda: False)
 assert len(registry.questions.calls) == 1
 registry.plan["decision_sha256"] = "decision2"
+registry.plan["plan_id"] = "p2"
 registry.questions.choice = 1
+gate.before("apply_plan", {"plan_id": "p2"}, lambda: False)
+assert len(registry.questions.calls) == 1
+assert gate.executing
+assert '"current_plan_id": "p2"' in gate.continuation()
+gate.begin_turn()
+gate.observe("plan_print", copy.deepcopy(registry.plan))
 try:
-    gate.before("apply_plan", {"plan_id": "p1"}, lambda: False)
+    gate.before("apply_plan", {"plan_id": "p2"}, lambda: False)
 except ExecutionDeferred:
     pass
 else:
-    raise AssertionError("A changed plan executed without a new affirmative answer")
+    raise AssertionError("A new task executed without an affirmative answer")
 assert len(registry.questions.calls) == 2
 report = {"status": "pass", "python": sys.version.split()[0], "agent_import": True,
-          "approval_required": True, "one_card_per_plan": True, "five_d_warning_before_flag": True,
-          "changed_decision_requires_new_consent": True, "refusal_defers_execution": True}
+          "approval_required": True, "one_card_per_task": True, "five_d_warning_before_flag": True,
+          "recalculation_preserves_consent": True, "new_task_requires_new_consent": True,
+          "refusal_defers_execution": True}
 with open(sys.argv[1], "w", encoding="utf-8") as stream:
     json.dump(report, stream, indent=2)

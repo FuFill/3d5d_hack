@@ -14,7 +14,7 @@ import time
 
 from .llm import Cancelled, LLMClient, LLMError
 from .intent import clear_intent
-from .execution import ExecutionDeferred, PlanExecution
+from .execution import ExecutionConflict, ExecutionDeferred, PlanExecution
 
 MAX_ROUNDS = 40
 MAX_TOOL_RESULT_CHARS = 12000
@@ -57,7 +57,10 @@ Presets come first
 
 Choose the workflow
 - Planning and execution are separate. First calculate and explain the proposal. The APPLICATION always asks
-  the user whether to move to execution before any changes after a core plan. Do not ask this question yourself
+  the user ONCE whether to move to execution before any changes after a core plan. That answer authorizes the
+  whole current task: applying, verification, slicing, saving and recovery within the same task. Recalculating
+  the same task or switching to settings-only application does NOT require another confirmation. Read an existing
+  plan with get_plan and its plan_id; never plan_print just to read it. Do not ask this question yourself
   and never claim to have applied anything before a successful tool result. The application also includes the
   5D warning and a warning about global project settings in that confirmation when relevant. If the user stays
   in planning, the turn ends without the remaining actions; revise the plan only on a new request.
@@ -305,7 +308,7 @@ class Agent:
 
     def _system(self, settings):
         language = "Russian" if settings.get("language", "ru") == "ru" else "English"
-        return {"role": "system", "content": SYSTEM_PROMPT.replace("{language}", language)}
+        return {"role": "system", "content": SYSTEM_PROMPT.replace("{language}", language) + self._execution.continuation()}
 
     # ------------------------------------------------------------------ loop
 
@@ -319,7 +322,7 @@ class Agent:
                 self._answer(client, settings)
                 self._proofread(client, settings)
                 raise _Finished()
-            tools = self._registry.openai_tools()
+            available_tools = self._registry.openai_tools()
             if self.before_work is not None:
                 try:
                     self.before_work()
@@ -327,7 +330,7 @@ class Agent:
                     _log("before_work", e)
             self._read_context(settings)
             for _ in range(MAX_ROUNDS):
-                reply = self._complete(client, tools, settings)
+                reply = self._complete(client, self._execution.tools(available_tools), settings)
                 message = {"role": "assistant", "content": reply["content"] or None}
                 if reply["tool_calls"]:
                     message["tool_calls"] = reply["tool_calls"]
@@ -337,7 +340,9 @@ class Agent:
                         self._execution.confirm("apply_plan", lambda: self._stop)
                         self._messages.append({"role": "user", "content":
                             "Application: the user explicitly chose to move from planning to execution in the confirmation card. "
-                            "Continue with the approved plan."})
+                            "Use the approved plan_id=%s; apply, verify, slice and save without any further confirmation. "
+                            "Read it with get_plan if needed; do not recalculate just to retrieve it." %
+                            self._execution.plan["plan_id"]})
                         continue
                     self._proofread(client, settings)
                     break
@@ -607,17 +612,24 @@ class Agent:
             arguments = json.loads(raw) if raw.strip() else {}
         except ValueError:
             arguments = None
-        if name == "ask_user" and isinstance(arguments, dict):
+        blocked = None
+        if isinstance(arguments, dict) and self._registry.has(name):
+            try:
+                self._execution.before(name, arguments, lambda: self._stop)
+            except ExecutionConflict as e:
+                blocked = {"ok": False, "result": {"error": str(e),
+                                                  "execution_authorized": self._execution.executing}}
+            if self._stop:
+                raise Cancelled()
+        if name == "ask_user" and isinstance(arguments, dict) and blocked is None:
             settings = self._settings()
             self._clean_questions(LLMClient(settings.get("base_url"), settings.get("api_key"), settings.get("model")),
                                   settings, arguments)
-        if isinstance(arguments, dict) and self._registry.has(name):
-            self._execution.before(name, arguments, lambda: self._stop)
-            if self._stop:
-                raise Cancelled()
         seq = self._bus.emit("tool", call_id=call["id"], name=name, args=arguments if arguments is not None else raw,
                              status="running", source="agent")
-        if arguments is None or not isinstance(arguments, dict):
+        if blocked is not None:
+            outcome = blocked
+        elif arguments is None or not isinstance(arguments, dict):
             outcome = {"ok": False, "result": {"error": "Arguments are not a valid JSON object"}}
         elif not self._registry.has(name):
             outcome = {"ok": False, "result": {"error": "Unknown tool %s" % name}}

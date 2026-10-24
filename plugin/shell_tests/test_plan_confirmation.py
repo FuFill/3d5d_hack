@@ -44,7 +44,7 @@ def start(monkeypatch, replies, plans=None, language="ru"):
 
     registry._add("plan_print", "Calculate", {}, calculate, on_main=False)
     registry._add("get_plan", "Read", {}, get_plan, on_main=False)
-    for name in ("apply_plan", "apply_plan_to_project"):
+    for name in ("apply_plan", "apply_plan_to_project", "verify_plan"):
         registry._add(name, "Apply", {}, None, on_main=False)
     for tool in registry._tools:
         if tool.name in ("plan_print", "get_plan", "ask_user"):
@@ -121,25 +121,25 @@ def test_approval_runs_the_plan_once_and_5d_flag_follows_the_warning(monkeypatch
     assert len([e for e in bus.snapshot()[0] if e["type"] == "question"]) == 1
 
 
-def test_new_plan_requires_its_own_consent(monkeypatch):
+def test_recalculation_within_the_approved_task_keeps_consent(monkeypatch):
     agent, registry, bus, mutations, _ = start(monkeypatch, [
         {"calls": [call("plan_print"), call("apply_plan", '{"plan_id":"p1"}', "a")]},
-        {"calls": [call("plan_print", call_id="p2"), call("apply_plan", '{"plan_id":"p2"}', "b")]}],
+        {"calls": [call("plan_print", call_id="p2"), call("apply_plan", '{"plan_id":"p2"}', "b")]},
+        {"stream": ["Готово."]}],
         plans=[proposal(), proposal("p2")])
     first = pending(agent, registry, bus)
     answer(registry, first, 0)
-    second = pending(agent, registry, bus, after=first["seq"])
-    assert second["seq"] != first["seq"]
-    answer(registry, second, 1)
     finish(agent, bus)
-    assert mutations == [("apply_plan", {"plan_id": "p1"})]
+    assert mutations == [("apply_plan", {"plan_id": "p1"}), ("apply_plan", {"plan_id": "p2"})]
+    assert len([e for e in bus.snapshot()[0] if e["type"] == "question"]) == 1
 
 
-def test_extending_consent_to_all_models_requires_a_scope_warning(monkeypatch):
+def test_settings_only_fallback_uses_the_original_project_consent(monkeypatch):
     agent, registry, bus, mutations, _ = start(monkeypatch, [
         {"calls": [call("plan_print"), call("apply_plan", '{"plan_id":"p1"}', "a"),
-                   call("apply_plan_to_project", '{"plan_id":"p1"}', "b")]}])
+                   call("apply_plan_to_project", '{"plan_id":"p1"}', "b")]}, {"stream": ["Готово."]}])
     first = pending(agent, registry, bus)
+    assert "всех моделей" in first["questions"][0]["text"]
     original = registry._by_name["get_plan"].func
     def read_applied(args, ctx):
         result = original(args, ctx)
@@ -147,11 +147,91 @@ def test_extending_consent_to_all_models_requires_a_scope_warning(monkeypatch):
         return result
     registry._by_name["get_plan"].func = read_applied
     answer(registry, first, 0)
-    second = pending(agent, registry, bus, after=first["seq"])
-    assert "всех моделей" in second["questions"][0]["text"]
-    answer(registry, second, 1)
+    finish(agent, bus)
+    assert [m[0] for m in mutations] == ["apply_plan", "apply_plan_to_project"]
+    assert len([e for e in bus.snapshot()[0] if e["type"] == "question"]) == 1
+
+
+def test_reported_5d_recalculation_loop_finishes_through_export(monkeypatch):
+    plans = [proposal("p1", mode="cylindrical_full", status="needs_calibration"),
+             proposal("p2", mode="cylindrical_full", status="needs_calibration")]
+    for plan in plans:
+        plan["chosen_material"] = {"id": "enduse_pa6", "label": "Enduse PA6"}
+        plan["geometry_sha256"] = "same-original-stl"
+    agent, registry, bus, mutations, client = start(monkeypatch, [
+        {"calls": [call("plan_print")]}, {"stream": ["План готов: Fine, Enduse PA6, 5D."]},
+        {"stream": ["Подтверждение получено — беру актуальный план."],
+         "calls": [call("plan_print", call_id="recalculate")]},
+        {"calls": [call("apply_plan", '{"plan_id":"p2"}', "apply"), call("verify_plan", '{"plan_id":"p2"}', "verify")]},
+        {"calls": [call("slice", call_id="slice")]},
+        {"calls": [call("export_gcode", call_id="gcode"), call("save_project", call_id="project")]},
+        {"stream": ["План применён, слайсинг завершён, G-code и проект сохранены."]}], plans=plans)
+    card = pending(agent, registry, bus)
+    answer(registry, card, 0)
+    finish(agent, bus)
+    assert [m[0] for m in mutations] == ["apply_plan", "verify_plan", "slice", "export_gcode", "save_project"]
+    assert mutations[0][1] == {"plan_id": "p2", "confirm_unverified_5d": True}
+    assert len([e for e in bus.snapshot()[0] if e["type"] == "question"]) == 1
+    assert '"phase": "executing"' in client.requests[2][0]["content"]
+    assert '"current_plan_id": "p1"' in client.requests[2][0]["content"]
+    assert '"current_plan_id": "p2"' in client.requests[3][0]["content"]
+    assert any("approved plan_id=p1" in str(m.get("content")) for m in client.requests[2])
+    assert all(tool["function"]["name"] != "ask_user" for tools in client.toolsets[2:] for tool in tools)
+
+
+def test_even_a_stale_model_question_call_cannot_reopen_consent(monkeypatch):
+    agent, registry, bus, mutations, client = start(monkeypatch, [
+        {"calls": [call("plan_print"), call("apply_plan", '{"plan_id":"p1"}', "apply")]},
+        {"calls": [call("ask_user", json.dumps({"questions": [{"question": "Нарезать и сохранить?",
+                    "options": ["Да", "Нет"]}]}, ensure_ascii=False), "repeat")]},
+        {"calls": [call("slice", call_id="slice"), call("export_gcode", call_id="export"),
+                   call("save_project", call_id="save")]}, {"stream": ["Готово."]}])
+    card = pending(agent, registry, bus)
+    answer(registry, card, 0)
+    finish(agent, bus)
+    assert [m[0] for m in mutations] == ["apply_plan", "slice", "export_gcode", "save_project"]
+    assert len([e for e in bus.snapshot()[0] if e["type"] == "question"]) == 1
+    blocked = next(e for e in bus.snapshot()[0] if e["type"] == "tool" and e.get("call_id") == "repeat")
+    assert blocked["status"] == "error" and blocked["result"]["execution_authorized"] is True
+    assert all(tool["function"]["name"] != "ask_user" for tools in client.toolsets[1:] for tool in tools)
+
+
+@pytest.mark.parametrize("changed", ["mode", "material", "geometry"])
+def test_reusing_consent_cannot_silently_change_the_physical_task(monkeypatch, changed):
+    revised = proposal("p2")
+    if changed == "mode":
+        revised["route"]["mode"] = "cylindrical_full"
+    elif changed == "material":
+        revised["chosen_material"]["label"] = "PA6"
+    else:
+        revised["geometry_sha256"] = "another-model"
+    agent, registry, bus, mutations, _ = start(monkeypatch, [
+        {"calls": [call("plan_print"), call("apply_plan", '{"plan_id":"p1"}', "apply")]},
+        {"calls": [call("plan_print", call_id="recalculate"),
+                   call("apply_plan", '{"plan_id":"p2","confirm_unverified_5d":true}', "changed")]},
+        {"stream": ["Нельзя подменить исходные условия задачи."]}], plans=[proposal(), revised])
+    card = pending(agent, registry, bus)
+    answer(registry, card, 0)
     finish(agent, bus)
     assert [m[0] for m in mutations] == ["apply_plan"]
+    assert len([e for e in bus.snapshot()[0] if e["type"] == "question"]) == 1
+    assert any(e.get("call_id") == "changed" and e["status"] == "error" for e in bus.snapshot()[0])
+
+
+def test_a_new_user_task_starts_a_new_planning_transition(monkeypatch):
+    agent, registry, bus, mutations, client = start(monkeypatch, [
+        {"calls": [call("plan_print"), call("apply_plan", '{"plan_id":"p1"}', "apply")]}, {"stream": ["Готово."]}],
+        plans=[proposal(), proposal("p2")])
+    first = pending(agent, registry, bus)
+    answer(registry, first, 0)
+    finish(agent, bus)
+    client.replies[:] = [{"calls": [call("plan_print"), call("apply_plan", '{"plan_id":"p2"}', "next")]},
+                        {"stream": ["Готово."]}]
+    assert agent.submit("Подбери новый вариант", [])
+    second = pending(agent, registry, bus, after=first["seq"])
+    answer(registry, second, 0)
+    finish(agent, bus)
+    assert len([e for e in bus.snapshot()[0] if e["type"] == "question"]) == 2
 
 
 def test_ready_plan_without_tool_calls_still_offers_execution(monkeypatch):

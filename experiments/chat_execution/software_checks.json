@@ -1,29 +1,30 @@
 {
   "status": "pass",
-  "checked_at_utc": "2026-10-24T19:10:21.535834+00:00",
-  "scope": "Chat UX and execution consent; no physical model or material-policy changes",
+  "checked_at_utc": "2026-10-24T19:53:13.675309+00:00",
+  "scope": "Chat execution consent and recovery; unchanged physical and material-selection algorithms",
   "tests": {
-    "passed": 155,
+    "passed": 168,
     "failed": 0,
     "skipped": 0,
-    "shell": 136,
+    "shell": 149,
     "native_presets": 19,
-    "new_execution_contracts": 23,
-    "junit_sha256": "ad6f4213439fee351f5e776f8bea16e54edcea337fc761fa912402ed37837b93"
+    "execution_contracts": 29,
+    "junit_sha256": "119e4cfef64c8471499f0d9825fce44241cca8464dbbc0880c6a2fc4af1553c1"
   },
   "python35_ast": {
     "status": "pass",
-    "files": 19
+    "files": 20
   },
   "native_python35": {
-    "one_card_per_plan": true,
-    "changed_decision_requires_new_consent": true,
     "five_d_warning_before_flag": true,
-    "approval_required": true,
     "status": "pass",
-    "agent_import": true,
+    "new_task_requires_new_consent": true,
     "refusal_defers_execution": true,
-    "python": "3.5.7"
+    "recalculation_preserves_consent": true,
+    "approval_required": true,
+    "agent_import": true,
+    "python": "3.5.7",
+    "one_card_per_task": true
   },
   "browser": {
     "status": "pass",
@@ -42,32 +43,50 @@
     "confirmation_submission_verified": true,
     "browser_errors": []
   },
-  "live_qwen_request_performed": false,
+  "live_qwen": {
+    "status": "pass",
+    "model": "dashscope/qwen3.8-flash",
+    "question_cards": 1,
+    "execution_approvals": 1,
+    "calculations": 2,
+    "completed_operations": [
+      "apply_plan",
+      "verify_plan",
+      "slice",
+      "export_gcode",
+      "save_project"
+    ],
+    "scope": "Live Qwen + real Agent/MCP/QuestionBox; simulated slicer operations, not physical metrics",
+    "report_sha256": "1bec5b00aa85fedd34f18396c9bed12def9da9c77eb3d33209fdbd0bc8dbec9f"
+  },
+  "live_qwen_request_performed": true,
   "native_slicer_scene_modified": false,
   "source_sha256": {
     "AIAssistant/__init__.py": "5ddc8626df9925252408e111a95673c3829be48f525bd2872075046b0a40693a",
     "AIAssistant/agent/__init__.py": "e04a082b1387a3a1c83852529fe85b96bcd70b277089c6a639484647bd4939a3",
-    "AIAssistant/agent/agent.py": "ac80095869e80e4d0055ac1207c1ab376ca1f9aa034ff1318fab7b1852bc2e33",
-    "AIAssistant/agent/chats.py": "5b4d7d105aadd9d7a28f961ab8b629945953488160fa92c0f3d18b52a32737bf",
-    "AIAssistant/agent/core_bridge.py": "c449449f45ca3f94a8038cf7e5a06e6d8794ce7672bc32085b16968ba7715150",
+    "AIAssistant/agent/agent.py": "1bf6e4d9acfb5a6c58c92bb658b422a3f62bb0f75f0400d304a10e3c0003815a",
+    "AIAssistant/agent/chats.py": "3a4e5194e57c6ec1750626f6d02c63514f4958569b6aa4e0c236a49f607c9ed5",
+    "AIAssistant/agent/core_bridge.py": "9d9cf2e87a1141e640784104c4353b6d4a9a46e81f304548400a6184888adf4f",
     "AIAssistant/agent/core_worker.py": "94f7f94994b6e6eec5863d06b3b2767346196707ad8f717294dcfec5d96218c9",
     "AIAssistant/agent/documents.py": "17df873b628a4cc638bf9a2986c21c00a6b757a7a037aa7fe93fbfeff47430ba",
     "AIAssistant/agent/events.py": "35ba55ed46d5e4b2a401f725ff49f9a52fd67276d6ab4fefecdc32a14bee0708",
-    "AIAssistant/agent/execution.py": "adc2a6f3e4972033522ba65f69aa04cbcf6d2c70dd5873b951f7e9625d6c05f5",
+    "AIAssistant/agent/execution.py": "dfc35854c44d305b43026e8533d3dd57e26885d4593ff5180d47a980f6846ccc",
     "AIAssistant/agent/intent.py": "a3026ec4d194b2a90cf6269ebc5b483ca499ce69cf69b5efc165e6c2b4e2b693",
     "AIAssistant/agent/llm.py": "1f63ba683030b89e2562eb61f4cf41bdb73c61c6c4c8c5b205cefb1da1f08a72",
     "AIAssistant/agent/mainthread.py": "6695d5047f65a504d3011349307554dd077067b2e4681f931bc76bf631cc910c",
     "AIAssistant/agent/mcp.py": "04f65c87a3300581a92b7e508b142dd1ecc2193e24c23d2961701e37d5efff05",
     "AIAssistant/agent/project_apply.py": "186770def345e6cbe9d253ad48316107a4d58a765174e534631edb212a427207",
     "AIAssistant/agent/questions.py": "95e89847d2d43f13124096314d378fe6fe7c1304fd0a309d612f66f7cc1484ce",
-    "AIAssistant/agent/server.py": "e2a42705b1fcff9b4c0af279e825df3d2f69dff31f21f2565679537bb62b4739",
-    "AIAssistant/agent/tools.py": "c37eac44d9184bcc58d653249b96a95b9fa2c6694e5db69e98499f83d4e80dfa",
-    "AIAssistant/agent/window.py": "39f34a04fbbc4dae07f43c8cfd3867d4a50bc9de04d72bef66ee3d28bd250cc1",
-    "AIAssistant/AIAssistant.py": "cd88cafa27dc083e0eeab5e9478ecb4e92951841164bf29f962dc7c119a00e55",
+    "AIAssistant/agent/server.py": "79ee65909e3ea038e71855a54d561a8490e052d7737f7807c1b730abb8b7fd27",
+    "AIAssistant/agent/tools.py": "ea18b4417222cfc1723f8f2cdd7da9150abb606040d032ae3612151496d1cc42",
+    "AIAssistant/agent/versions.py": "e412334b909e95c79c90395acf2adff0a54ae560f2ae8b763d34928321f8125b",
+    "AIAssistant/agent/window.py": "35d9428cca6df765b868a08b6ed0b63af1353d62e4a08e6fd5c6fed0a0f62940",
+    "AIAssistant/AIAssistant.py": "ecc01850ebc5e5c649151d6f7e3459220a7c8316d8edbd1ca3fea0226233bbdb",
     "AIAssistant/qml/ChatPanel.qml": "0e1f56360670c95725250f6c9ef1f6a6e6af31bc5f62e00271981f667dd986da",
-    "AIAssistant/web/app.js": "cdbecf3945d47db6bf5aac0fecad23e3daa339d21ebcb4e2d7d79300595f99fd",
-    "AIAssistant/web/index.html": "9238bca3fdab6df244b31f8390e867ebd1f55c534e4fdcb1816d1aaffa417faa",
+    "AIAssistant/qml/ModelCard.qml": "2ec07a4276fc0296a414441330d0bb622da2556538acdb57c984a8a1d1a8b633",
+    "AIAssistant/web/app.js": "3026a7d4f61397fca3aa50b55a0386f1b74e1386d5373a82b85ce03980d05932",
+    "AIAssistant/web/index.html": "f94a06b43fce2e975e4f2f8e8668c3e6fe4d2e11d7d837027aa3a38572592ee6",
     "AIAssistant/web/presets.js": "d8a84f4c0c5c0bcb52a1108bbb97f0105037adbbdd81333fc672821cc8c1282a",
-    "AIAssistant/web/style.css": "310b9c7b34742b6f129542a767b7fcc619fa721b2822dc18a81ba7a159160db6"
+    "AIAssistant/web/style.css": "79df19bf908c49bae8b6d574f1687d457abe6826ba7423ebba9531c49fe1d300"
   }
 }
