@@ -254,9 +254,12 @@ class HoverCard:
         rows = []
         for row in view.get("changes") or []:
             old = _html(row.get("old"))
-            rows.append("%s&nbsp;&nbsp;%s<b>%s</b>" % (
+            tag = _html(row.get("tag"))
+            rows.append("%s&nbsp;&nbsp;%s<b>%s</b>%s" % (
                 _html(row.get("label")), ('<span style="color:#80868b"><s>%s</s></span> → ' % old) if old else "→ ",
-                _html(row.get("new"))))
+                _html(row.get("new")), ('&nbsp;&nbsp;<span style="color:#9aa0a6">%s</span>' % tag) if tag else ""))
+        if view.get("more"):
+            rows.append('<span style="color:#80868b">%s</span>' % _html(view["more"]))
         empty = "" if rows else view.get("empty") or ""
         card.setProperty("title", view.get("name") or "")
         card.setProperty("stats", view.get("stats") or "")

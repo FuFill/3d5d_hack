@@ -15,16 +15,24 @@ import uuid
 from .mainthread import run_on_main
 from .tools import MODE_NAMES, ToolError, _plain
 
-# What a node card compares first; the rest of the user's changes follow in key order.
+# What a node card shows first: the mode, preset, material, nozzle and placement, then the settings
+# changed explicitly (user values), then what moved with the preset, most significant first.
 PRIORITY = ("printing_mode", "preset", "material", "nozzle", "objects")
-EFFECTIVE_KEYS = ("layer_height", "infill_sparse_density", "wall_line_count", "speed_print", "support_enable",
-                  "support_type", "adhesion_type", "top_layers", "bottom_layers", "infill_pattern",
-                  "material_print_temperature", "material_bed_temperature", "line_width", "cool_fan_speed",
-                  "retraction_enable")
-MAX_CHANGES = 5
+IMPORTANT = ("layer_height", "infill_sparse_density", "wall_line_count", "speed_print", "support_enable",
+             "support_type", "adhesion_type", "top_layers", "bottom_layers", "infill_pattern",
+             "material_print_temperature", "material_bed_temperature", "line_width", "cool_fan_speed",
+             "retraction_enable", "layer_height_0", "wall_thickness", "top_bottom_thickness", "speed_wall_0",
+             "speed_wall_x", "speed_infill", "speed_topbottom", "speed_travel", "support_angle", "support_infill_rate",
+             "brim_width", "retraction_amount", "retraction_speed", "cool_fan_enabled", "infill_overlap",
+             "material_flow", "magic_spiralize")
+EFFECTIVE_KEYS = IMPORTANT[:15]  # read even by snapshots of older versions
+MAX_CHANGES = 10
+VALUE_CHARS = 40
 NAMES = {"printing_mode": ("Режим печати", "Printing mode"), "preset": ("Пресет", "Preset"),
          "material": ("Материал", "Material"), "nozzle": ("Сопло", "Nozzle"),
          "objects": ("Положение деталей", "Part placement"), "count": ("Деталей на столе", "Parts on the plate")}
+TAGS = {True: ("явно", "set"), False: ("пресет", "preset")}
+MORE = ("и ещё %d", "and %d more")
 START_NAME = ("Исходная", "Start")
 START_NOTE = ("Исходное состояние проекта", "The project before the first change")
 SAME_NOTE = ("Без изменений настроек", "No setting changes")
@@ -55,7 +63,8 @@ def duration_text(seconds, language="ru"):
 def _number(value):
     if isinstance(value, float):
         return ("%.3f" % value).rstrip("0").rstrip(".")
-    return str(value)
+    text = str(value)
+    return text if len(text) <= VALUE_CHARS else text[:VALUE_CHARS - 1] + "…"
 
 
 def _value_text(value, info, language):
@@ -76,6 +85,10 @@ def _poses(snapshot):
             for o in snapshot.get("objects") or []]
 
 
+def _user_keys(snapshot):
+    return set(k for x in snapshot.get("stacks") or [] for k in (x.get("user") or {}))
+
+
 def same_state(a, b):
     """True when two snapshots describe the same setup (containers, values, mode, poses)."""
     if not a or not b:
@@ -86,45 +99,70 @@ def same_state(a, b):
     return key(a) == key(b) and a.get("mode") == b.get("mode") and _poses(a) == _poses(b)
 
 
-def changes(old, new, language="ru"):
-    """The most significant differences of `new` against `old`, at most MAX_CHANGES, for the node card."""
-    index = 0 if language == "ru" else 1
-    rows = []
+def diff(old, new):
+    """Every difference of `new` against `old`, most significant first (raw values, no labels).
 
-    def add(key, before, after, label=None):
-        rows.append({"key": key, "label": label or NAMES[key][index], "old": before, "new": after})
-
+    Settings are compared on their effective values; a setting read on one side only was
+    switched on or off by another one and is shown through that one.
+    """
     if old is None:
         return []
+    rows = []
     if old.get("mode") != new.get("mode"):
-        add("printing_mode", MODE_NAMES.get(old.get("mode"), old.get("mode") or "—"),
-            MODE_NAMES.get(new.get("mode"), new.get("mode") or "—"))
+        rows.append({"kind": "printing_mode", "old": old.get("mode"), "new": new.get("mode")})
     if old.get("preset") != new.get("preset"):
-        add("preset", old.get("preset") or "—", new.get("preset") or "—")
-    for key in ("material", "nozzle"):
-        before, after = old.get(key + "s") or {}, new.get(key + "s") or {}
-        for position in sorted(set(before) | set(after)):
+        rows.append({"kind": "preset", "old": old.get("preset"), "new": new.get("preset")})
+    for kind in ("material", "nozzle"):
+        before, after = old.get(kind + "s") or {}, new.get(kind + "s") or {}
+        for position in sorted(set(before) | set(after), key=str):
             if before.get(position) != after.get(position):
-                add(key, before.get(position) or "—", after.get(position) or "—")
-    if len(_poses(old)) != len(_poses(new)):
-        add("count", str(len(_poses(old))), str(len(_poses(new))))
-    elif _poses(old) != _poses(new):
-        rotated = any(a[2][:3] and b[2][:3] and [r[:3] for r in a[2][:3]] != [r[:3] for r in b[2][:3]]
-                      for a, b in zip(_poses(old), _poses(new)))
-        word = ("повёрнута" if rotated else "сдвинута") if index == 0 else ("rotated" if rotated else "moved")
-        add("objects", "", word)
-    labels = dict(old.get("labels") or {}, **(new.get("labels") or {}))
+                rows.append({"kind": kind, "old": before.get(position), "new": after.get(position)})
+    poses_old, poses_new = _poses(old), _poses(new)
+    if len(poses_old) != len(poses_new):
+        rows.append({"kind": "count", "old": len(poses_old), "new": len(poses_new)})
+    elif poses_old != poses_new:
+        rotated = any([r[:3] for r in a[2][:3]] != [r[:3] for r in b[2][:3]] for a, b in zip(poses_old, poses_new))
+        rows.append({"kind": "objects", "old": None, "new": "rotated" if rotated else "moved"})
     before, after = old.get("effective") or {}, new.get("effective") or {}
-    keys = [k for k in EFFECTIVE_KEYS if k in before or k in after]
-    keys += sorted(k for k in set(before) | set(after) if k not in keys)
-    for key in keys:
-        # A key read for one side only (a user value of that node) is not a change by itself.
-        if key in before and key in after and before[key] != after[key]:
-            info = labels.get(key) or {}
-            label = (info.get("label_local") if index == 0 else info.get("label")) or info.get("label") or key
-            rows.append({"key": key, "label": label, "old": _value_text(before.get(key), info, language),
-                         "new": _value_text(after.get(key), info, language)})
-    return rows[:MAX_CHANGES]
+    explicit = _user_keys(old) | _user_keys(new)
+    rank = dict((k, i) for i, k in enumerate(IMPORTANT))
+    changed = [k for k in set(before) & set(after) if before[k] != after[k] and k != "printing_mode"]
+    changed.sort(key=lambda k: (k not in explicit, rank.get(k, len(rank)), k))
+    rows.extend({"kind": "setting", "key": k, "old": before[k], "new": after[k], "explicit": k in explicit}
+                for k in changed)
+    return rows
+
+
+def describe(rows, labels, language="ru", limit=MAX_CHANGES):
+    """Card lines of a diff in the window language: at most `limit`, then how many more there are."""
+    index = 0 if language == "ru" else 1
+    out = []
+    for row in rows[:limit]:
+        kind = row["kind"]
+        if kind == "setting":
+            info = (labels or {}).get(row["key"]) or {}
+            label = (info.get("label_local") if index == 0 else info.get("label")) or info.get("label") or row["key"]
+            out.append({"key": row["key"], "label": label, "old": _value_text(row["old"], info, language),
+                        "new": _value_text(row["new"], info, language), "tag": TAGS[bool(row.get("explicit"))][index]})
+        elif kind == "printing_mode":
+            out.append({"key": kind, "label": NAMES[kind][index], "old": MODE_NAMES.get(row["old"], row["old"] or "—"),
+                        "new": MODE_NAMES.get(row["new"], row["new"] or "—"), "tag": ""})
+        elif kind == "objects":
+            word = {"rotated": ("повёрнута", "rotated"), "moved": ("сдвинута", "moved")}[row["new"]][index]
+            out.append({"key": kind, "label": NAMES[kind][index], "old": "", "new": word, "tag": ""})
+        else:
+            out.append({"key": kind, "label": NAMES[kind][index], "old": _number(row["old"]) if row["old"] is not None
+                        else "—", "new": _number(row["new"]) if row["new"] is not None else "—", "tag": ""})
+    more = max(0, len(rows) - limit)
+    return out, (MORE[index] % more if more else "")
+
+
+def changes(old, new, language="ru"):
+    """Card lines of `new` against `old` from the snapshots alone (labels saved in them, if any)."""
+    if old is None:
+        return []
+    labels = dict(old.get("labels") or {}, **(new.get("labels") or {}))
+    return describe(diff(old, new), labels, language)[0]
 
 
 class ModelTree:
@@ -145,10 +183,13 @@ class ModelTree:
     def current(self):
         return self.node(self.selected)
 
-    def add(self, snapshot, name, stats=None, kind="model"):
-        """A new node under the selected one; it becomes the selected node."""
+    def add(self, snapshot, name, stats=None, kind="model", rows=None, labels=None):
+        """A new node under the selected one; it becomes the selected node.
+
+        rows/labels: its differences to the parent with setting labels, read when it is made."""
         node = {"id": uuid.uuid4().hex[:10], "parent": self.selected, "kind": kind, "name": name,
-                "short": abbreviation(name), "created": time.time(), "snapshot": snapshot, "stats": stats or {}}
+                "short": abbreviation(name), "created": time.time(), "snapshot": snapshot, "stats": stats or {},
+                "diff": rows if rows is not None else [], "labels": labels or {}}
         self.nodes.append(node)
         self.selected = node["id"]
         return node
@@ -167,12 +208,18 @@ class ModelTree:
             if infill is not None:
                 parts.append(("заполнение %s %%" if language == "ru" else "infill %s %%") % _number(infill))
             empty = (START_NOTE if node.get("kind") == "start" else SAME_NOTE)[0 if language == "ru" else 1]
+            if "diff" in node:
+                rows, more = describe(node["diff"], node.get("labels"), language)
+            elif parent is not None:  # a node of an earlier version: compared from the snapshots
+                old, new = parent.get("snapshot") or {}, node.get("snapshot") or {}
+                rows, more = describe(diff(old, new), dict(old.get("labels") or {}, **(new.get("labels") or {})),
+                                      language)
+            else:
+                rows, more = [], ""
             out.append({"id": node["id"], "parent": node.get("parent"), "kind": node.get("kind", "model"), "empty": empty,
                         "name": node.get("name") or "", "short": node.get("short") or abbreviation(node.get("name")),
                         "created": node.get("created", 0), "stats": " · ".join(p for p in parts if p),
-                        "changes": changes(parent.get("snapshot") if parent else None, node.get("snapshot") or {},
-                                           language),
-                        "selected": node["id"] == self.selected})
+                        "changes": rows, "more": more, "selected": node["id"] == self.selected})
         return {"nodes": out, "selected": self.selected}
 
 
@@ -212,6 +259,21 @@ class StateIO:
     def _sliceable(self):
         return bool(run_on_main(self._app, self._registry._scene_nodes))
 
+    def labels(self, keys):
+        """Names, units and options of settings, for the card lines of a new node."""
+        def read():
+            out = {}
+            for key in keys:
+                try:
+                    target, _scope = self._registry._stack_for(key, 0)
+                    described = self._registry._describe(key, target)
+                except Exception:
+                    continue
+                out[key] = {"label": described["label"], "label_local": described["label_local"],
+                            "unit": described["unit"], "options": described.get("options")}
+            return out
+        return run_on_main(self._app, read)
+
     def needs_slice(self):
         slices = self._registry._slices
         return (slices is None or slices.status()[0] != 3) and self._sliceable()
@@ -242,18 +304,17 @@ class StateIO:
                 user[key] = _stored(s.userChanges.getProperty(key, "value"))
             saved.append({"position": None if s is stack else s.getMetaDataEntry("position"),
                           "containers": [c.getId() for c in s.getContainers()[1:6]], "user": user})
-        effective, labels = {}, {}
-        keys = list(EFFECTIVE_KEYS) + sorted(set(k for x in saved for k in x["user"]) - set(EFFECTIVE_KEYS)
-                                             - {"printing_mode"})
-        for key in keys:
+        effective = {}
+        for key in registry._all_keys():
+            if key.startswith("machine_") or key == "printing_mode":
+                continue
             try:
                 target, _scope = registry._stack_for(key, 0)
-                described = registry._describe(key, target)
+                if not target.getProperty(key, "enabled"):
+                    continue
+                effective[key] = _plain(target.getProperty(key, "value"))
             except Exception:
                 continue
-            effective[key] = described["value"]
-            labels[key] = {"label": described["label"], "label_local": described["label_local"],
-                           "unit": described["unit"], "options": described.get("options")}
         manager = self._app.getMachineManager()
         objects = []
         for node in registry._scene_nodes():
@@ -265,7 +326,7 @@ class StateIO:
                 "preset": manager.activeQualityOrQualityChangesName,
                 "materials": dict((s.getMetaDataEntry("position"), s.material.getName()) for s in stacks[1:]),
                 "nozzles": dict((s.getMetaDataEntry("position"), s.variant.getName()) for s in stacks[1:]),
-                "effective": effective, "labels": labels, "objects": objects}
+                "effective": effective, "objects": objects}
 
     def _restore(self, snapshot):
         """Containers, values and poses of a node as one Undo step; returns how many parts were not found."""

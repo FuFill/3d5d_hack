@@ -1077,7 +1077,7 @@
   }
   // ---------------------------------------------------------------- model tree
 
-  // Every finished result of the agent is a node; newest on top, branches split symmetrically
+  // Every finished result of the agent is a node; time runs down (newest at the bottom), branches split symmetrically
   // around their parent. The card of a hovered node is drawn by the slicer left of the chat
   // (outside this window, so it never covers other nodes); without it the page shows its own.
   var tree = {nodes: [], selected: null};
@@ -1102,7 +1102,7 @@
     }
     roots.forEach(place);
     var row = {};
-    nodes.slice().sort(function (a, b) { return b.created - a.created; }).forEach(function (n, i) { row[n.id] = i; });
+    nodes.slice().sort(function (a, b) { return a.created - b.created; }).forEach(function (n, i) { row[n.id] = i; });
     return {x: x, row: row, lanes: Math.max(1, next)};
   }
 
@@ -1168,8 +1168,10 @@
       if (c.old) { line.appendChild(el("span", "old", c.old)); line.appendChild(document.createTextNode(" → ")); }
       else line.appendChild(document.createTextNode("→ "));
       line.appendChild(el("span", "new", c["new"]));
+      if (c.tag) line.appendChild(el("span", "tag", "  " + c.tag));
       card.appendChild(line);
     });
+    if (n.more) card.appendChild(el("div", "muted", n.more));
     card.hidden = false;
     card.style.top = Math.max(48, Math.min(window.innerHeight - card.offsetHeight - 8, r.top - 8)) + "px";
   }

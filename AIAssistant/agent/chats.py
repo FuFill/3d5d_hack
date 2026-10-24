@@ -90,7 +90,12 @@ class ChatStore:
                             "size": os.path.getsize(path)})
         return out
 
-    def save(self, chat_id, events, messages, files=None, tree=None):
+    def save(self, chat_id, events, messages, files=None, tree=None, turns=None, head=None):
+        """turns/head: the chat as a tree of turns (each with its feed events and model messages)
+        and the last turn of the branch on screen; events/messages are then not stored twice."""
+        if turns is not None:
+            ordered = sorted(turns, key=lambda t: t.get("created", 0))
+            events = [e for t in ordered for e in t.get("events") or []]
         title = title_of(events)
         if not title:
             return False  # an empty chat is not worth keeping
@@ -99,8 +104,12 @@ class ChatStore:
             kept = self._keep_files(chat_id, files)
         except OSError:
             kept = []  # the chat itself is still saved
-        data = {"id": chat_id, "title": title, "updated": time.time(), "files": kept, "tree": tree or {},
-                "events": [e for e in events if e.get("type") != "reset"], "messages": _without_images(messages)}
+        data = {"id": chat_id, "title": title, "updated": time.time(), "files": kept, "tree": tree or {}}
+        if turns is not None:
+            data.update(turns=[dict(t, messages=_without_images(t.get("messages") or [])) for t in turns],
+                        head=head, events=[], messages=[])
+        else:
+            data.update(events=[e for e in events if e.get("type") != "reset"], messages=_without_images(messages))
         with self._lock:
             with open(path + ".tmp", "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False)

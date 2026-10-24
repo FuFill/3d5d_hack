@@ -22,7 +22,7 @@ Item
     Rectangle
     {
         id: box
-        width: 270
+        width: 300
         height: column.height + 24
         x: card.width - card.rightInset - width - 12
         y: Math.max(8, Math.min(card.height - height - 8, card.cardY * card.height - 24))

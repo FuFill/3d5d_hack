@@ -11,6 +11,7 @@ import os
 import re
 import threading
 import time
+import uuid
 
 from .llm import Cancelled, LLMClient, LLMError
 from .intent import clear_intent
@@ -201,6 +202,7 @@ raft none classic cylindrical full ste cura fdm usb wifi api mcp docx txt json""
 
 
 class Agent:
+    on_turn_start = None  # set by the chat service: a turn begins (before its user message is recorded)
     on_turn_done = None  # set by the chat service: saves the chat after every turn
     before_work = None   # set by the chat service: called before the agent works on the project
     after_work = None    # set by the chat service: (namer, language, should_stop) after finished work
@@ -235,6 +237,8 @@ class Agent:
             self._kinds = [a["kind"] for a in attachments]
             self._turn_text = text or ""
             self._execution.begin_turn()
+            if self.on_turn_start is not None:
+                self.on_turn_start()
             self._bus.emit("user", text=text, attachments=[{"name": a["name"], "kind": a["kind"], "id": a.get("id")}
                                                            for a in attachments])
             content = self._user_content(text, attachments)
@@ -544,7 +548,8 @@ class Agent:
         caption = "Читаю проект, пресеты и вложения" if settings.get("language", "ru") == "ru" else \
             "Reading the project, presets and attachments"
         self._bus.emit("message", text=caption, streaming=False, note=True, auto=True)
-        calls = [{"id": "context_%d_%s" % (self._turn, name), "type": "function",
+        # Unique ids: the history of a branch is put together from turns of different times.
+        calls = [{"id": "context_%s_%s" % (uuid.uuid4().hex[:8], name), "type": "function",
                   "function": {"name": name, "arguments": "{}"}} for name in names]
         self._messages.append({"role": "assistant", "content": None, "tool_calls": calls})
         for call in calls:

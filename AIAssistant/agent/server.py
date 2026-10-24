@@ -6,18 +6,20 @@ X-Token header; that also stops other web pages from calling the API (custom hea
 need a CORS preflight, which this server never grants).
 """
 
+import copy
 import json
 import os
 import shutil
 import tempfile
 import threading
+import time
 import uuid
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 from urllib.parse import parse_qs, urlparse
 
 from .documents import extract_text
-from .versions import START_NAME, ModelTree, changes, same_state
+from .versions import START_NAME, ModelTree, describe, diff, same_state
 
 WEB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "web")
 STATIC = {"/": ("index.html", "text/html; charset=utf-8"),
@@ -51,11 +53,18 @@ class ChatService:
         self.tree = ModelTree()
         self.state_io = None  # versions.StateIO: reads and restores the print setup (set by the extension)
         self.on_hover = None  # shows a node card next to the chat in the slicer window: (node view or None, y)
+        # The chat is a tree of turns, like the model tree: each turn keeps its feed events and model
+        # messages; the feed and the model's history are the path from the first turn to `head`.
+        self.turns = []
+        self.head = None
+        self._turn = None  # the running turn
+        self._mark = 0     # bus seq after which the next turn's events begin
         if store is not None and agent is not None:
             from .chats import new_id
             self.chat_id = new_id()
-            agent.on_turn_done = self.save_chat
         if agent is not None:
+            agent.on_turn_start = self._turn_started
+            agent.on_turn_done = self._turn_finished
             agent.before_work = self.before_work
             agent.after_work = self.after_work
         self.mcp = mcp
@@ -70,12 +79,89 @@ class ChatService:
 
     # ------------------------------------------------------------------ saved chats
 
+    # ------------------------------------------------------------------ turns (branches of the chat)
+
+    def _absorb_loose_events(self):
+        """Feed events between turns (e.g. calls of external MCP clients) belong to the last turn shown."""
+        events, seq = self.bus.snapshot()
+        loose = [copy.deepcopy(e) for e in events if e["seq"] > self._mark and e.get("type") != "reset"]
+        if loose:
+            turn = next((t for t in self.turns if t["id"] == self.head), None)
+            if turn is None:
+                turn = {"id": uuid.uuid4().hex[:10], "parent": None, "base": self.tree.selected, "created": time.time(),
+                        "node": None, "events": [], "messages": []}
+                self.turns.append(turn)
+                self.head = turn["id"]
+            turn["events"].extend(loose)
+        self._mark = seq
+
+    def _turn_started(self):
+        self._absorb_loose_events()
+        self._turn = {"id": uuid.uuid4().hex[:10], "parent": self.head, "base": self.tree.selected,
+                      "created": time.time(), "node": None, "messages_from": len(self.agent.messages()),
+                      "seq_from": self._mark}
+
+    def _turn_record(self, turn):
+        """Events and messages of a turn so far (the running one is saved this way when the slicer closes)."""
+        events = [copy.deepcopy(e) for e in self.bus.snapshot()[0]
+                  if e["seq"] > turn["seq_from"] and e.get("type") != "reset"]
+        return {"id": turn["id"], "parent": turn["parent"], "base": turn["base"], "created": turn["created"],
+                "node": turn["node"], "events": events,
+                "messages": copy.deepcopy(self.agent.messages()[turn["messages_from"]:])}
+
+    def _turn_finished(self):
+        if self._turn is not None:
+            self.turns.append(self._turn_record(self._turn))
+            self.head = self._turn["id"]
+            self._turn = None
+            self._mark = self.bus.snapshot()[1]
+        self.save_chat()
+
+    def _path(self, head):
+        by_id = dict((t["id"], t) for t in self.turns)
+        path = []
+        while head is not None and head in by_id and len(path) <= len(by_id):
+            path.append(by_id[head])
+            head = by_id[head]["parent"]
+        return path[::-1]
+
+    def _branch_end(self, anchor):
+        """Last turn shown with a node: its own turn and the later turns of that branch that made no model."""
+        children = {}
+        for turn in self.turns:
+            children.setdefault(turn["parent"], []).append(turn)
+        best, stack = None, [anchor]
+        while stack:
+            for turn in children.get(stack.pop(), []):
+                if turn.get("node") is None:
+                    if best is None or turn["created"] > best["created"]:
+                        best = turn
+                    stack.append(turn["id"])
+        return best["id"] if best is not None else anchor
+
+    def _show_branch(self, head):
+        """Feed and model history become the path to `head` (other branches stay saved)."""
+        path = self._path(head)
+        self.agent.load([m for t in path for m in t.get("messages") or []])
+        self.bus.load([e for t in path for e in t.get("events") or []])
+        self.head = head
+        self._mark = self.bus.snapshot()[1]
+
+    def _all_events(self):
+        events = [e for t in self.turns for e in t.get("events") or []]
+        return events + self.bus.snapshot()[0]
+
     def save_chat(self):
         if self.store is None:
             return False
-        events, _seq = self.bus.snapshot()
-        files = self._chat_uploads(("model", "spec"), events)
-        return self.store.save(self.chat_id, events, self.agent.messages(), files, self.tree.to_dict())
+        if self._turn is None:
+            self._absorb_loose_events()
+        turns = list(self.turns)
+        if self._turn is not None:  # saved in the middle of a turn: keep what it did so far
+            turns.append(self._turn_record(self._turn))
+        files = self._chat_uploads(("model", "spec"), self._all_events())
+        head = self._turn["id"] if self._turn is not None else self.head
+        return self.store.save(self.chat_id, [], [], files, self.tree.to_dict(), turns=turns, head=head)
 
     def chats(self):
         if self.store is None:
@@ -96,6 +182,8 @@ class ChatService:
             from .chats import new_id
             self.chat_id = new_id()
         self.tree = ModelTree()
+        self.turns, self.head, self._turn = [], None, None
+        self._mark = self.bus.snapshot()[1]
         return True
 
     def open_chat(self, chat_id):
@@ -107,8 +195,13 @@ class ChatService:
             return False
         self.chat_id = data["id"]
         self._restore_files(self.store.files(data["id"], data.get("files")))
-        self.agent.load(data.get("messages") or [])
-        self.bus.load(data.get("events") or [])
+        self.turns, self._turn = list(data.get("turns") or []), None
+        if not self.turns and (data.get("events") or data.get("messages")):
+            # A chat of an earlier version: one turn with everything; its models keep the chat as it is.
+            self.turns = [{"id": "legacy", "parent": None, "base": None, "created": data.get("updated", 0),
+                           "node": None, "events": data.get("events") or [], "messages": data.get("messages") or []}]
+            data["head"] = "legacy"
+        self._show_branch(data.get("head") if self.turns else None)
         self.tree = ModelTree(data.get("tree"))
         self.restored = self._restore_selected()
         return True
@@ -150,14 +243,23 @@ class ChatService:
         base = current["snapshot"] if current else (self.tree.start or {}).get("snapshot")
         if base is not None and same_state(base, snapshot):
             return None
+        turn = self._turn or {}
         if not self.tree.nodes and base is not None:
-            self.tree.add(base, START_NAME[0 if language == "ru" else 1], kind="start")
+            start = self.tree.add(base, START_NAME[0 if language == "ru" else 1], kind="start")
+            start["turn"] = turn.get("parent")  # the chat as it was before this work
         self.tree.start = None
         if self.bus is not None and self.state_io.needs_slice():
             self.bus.emit("message", text="Нарезаю, чтобы сохранить модель" if language == "ru" else
                           "Slicing to save the model", streaming=False, note=True, auto=True)
         stats = self.state_io.stats(should_stop)
-        node = self.tree.add(snapshot, namer(changes(base, snapshot, language)), stats)
+        rows = diff(base, snapshot)
+        keys = [r["key"] for r in rows if r["kind"] == "setting"]
+        labels = self.state_io.labels(keys) if keys and hasattr(self.state_io, "labels") else {}
+        name = namer(describe(rows, labels, language)[0])
+        node = self.tree.add(snapshot, name, stats, rows=rows, labels=labels)
+        if self._turn is not None:
+            node["turn"] = self._turn["id"]
+            self._turn["node"] = node["id"]
         return node
 
     def select_node(self, node_id):
@@ -169,6 +271,8 @@ class ChatService:
             raise ValueError("node")
         result = self.state_io.restore(node["snapshot"]) if self.state_io is not None else {}
         self.tree.selected = node_id
+        if "turn" in node:  # the chat goes back to the branch of this model (models of old chats keep it)
+            self._show_branch(self._branch_end(node["turn"]))
         self.agent.note("[Model tree: the user switched the slicer to the saved variant \"%s\" (%s). The slicer now has "
                         "exactly that setup; continue from it.]" % (node.get("name"), node.get("short")))
         self.save_chat()

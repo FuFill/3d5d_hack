@@ -276,6 +276,7 @@ form input:focus { border-bottom-color: var(--fg); }
 .tree-card hr { border: 0; border-top: 1px solid var(--line); margin: 7px 0; }
 .tree-card .old { color: var(--muted); text-decoration: line-through; }
 .tree-card .new { font-weight: 600; }
+.tree-card .tag { color: var(--muted); font-size: 11px; white-space: pre; }
 
 .chat-list { padding: 6px; }
 .chat-row { display: flex; align-items: center; border-radius: 7px; }
