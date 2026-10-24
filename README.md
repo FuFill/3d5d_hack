@@ -89,8 +89,10 @@ Undo ([PRESETS.md](plugin/PRESETS.md), задание — [presets_creation.md](
 
 ## Проверки
 
-Последний полный прогон ядра и оболочки: **260 pass, 1 skip**, из них 54 теста
-оболочки. В настоящем STE проверены загрузка STL и DOCX через
+Последняя проверка ядра и оболочки: **286 pass, 1 skip**, из них 57 тестов
+оболочки (основной прогон и дополнительные проверки полей давления, без повторного
+подсчёта одинаковых тестов). [Отчёт](experiments/pressure_validation/software_checks.json).
+В настоящем STE ранее проверены загрузка STL и DOCX через
 HTTP, выбор по attachment/object ID, worker, apply/readback, CuraEngine,
 G-code/3MF, единый Undo/Redo и соединение с Timeweb.
 
@@ -102,6 +104,8 @@ python plugin/tools/check_ai_assistant_runtime.py --existing-project
 ```
 
 Сводка и ограничения доказательности: [отчёт оболочки](experiments/shell_integration/REPORT.md).
+Распределение напряжений и давления, проверки на точных решениях и ограничения
+прогноза реальной 5D-печати: [проверка физики](experiments/pressure_validation/README.md).
 Ключи, пользовательские профили, временные сессии и окружения в Git не публикуются.
 
 ## Документация

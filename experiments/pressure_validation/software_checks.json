@@ -1,0 +1,73 @@
+{
+  "scope": "software verification; no physical print tests",
+  "unique_test_counts": {
+    "passed": 286,
+    "skipped": 1,
+    "failed": 0
+  },
+  "shell_test_cases": 57,
+  "deduplication": "testcase classname + name; latest targeted run supersedes identical cases in full run",
+  "test_runs": [
+    {
+      "file": "pressure_validation_tests.xml",
+      "test_cases": 283,
+      "sha256": "9beb45f93156ebcb3b7511736dde2cf144ce63bf8a60715832ee10cc4e9649fe"
+    },
+    {
+      "file": "pressure_fields_final.xml",
+      "test_cases": 37,
+      "sha256": "7e3cd2509286e19d5f91df73dd82aafaa065ea705fbf75b47c2229f9f50cfca7"
+    }
+  ],
+  "python35_syntax_files": 48,
+  "embedded_runtime": {
+    "python": "3.5.7",
+    "numpy": "1.15.4",
+    "counts": {
+      "pass": 10,
+      "skip": 3
+    },
+    "skip_reason": "three SciPy FE tests belong to the modern worker, where they passed"
+  },
+  "analytical_pressure_checks": [
+    {
+      "order": 1,
+      "elements": 24,
+      "exact_stress_xx_MPa": -10.0,
+      "exact_bulk_pressure_MPa": 3.3333333333333335,
+      "exact_loaded_face_pressure_MPa": 10.0,
+      "exact_max_displacement_mm": 0.05,
+      "stress_max_absolute_error_MPa": 9.059419880941277e-14,
+      "bulk_pressure_max_absolute_error_MPa": 2.930988785010413e-14,
+      "surface_pressure_max_absolute_error_MPa": 4.973799150320701e-14,
+      "displacement_absolute_error_mm": 2.636779683484747e-16,
+      "equilibrium_relative_residual": 5.8915337639368275e-15,
+      "energy_relative_error": 4.218847493575579e-15,
+      "reaction_force_absolute_error_N": 1.8474111129762605e-13,
+      "status": "pass"
+    },
+    {
+      "order": 2,
+      "elements": 24,
+      "exact_stress_xx_MPa": -10.0,
+      "exact_bulk_pressure_MPa": 3.3333333333333335,
+      "exact_loaded_face_pressure_MPa": 10.0,
+      "exact_max_displacement_mm": 0.05,
+      "stress_max_absolute_error_MPa": 2.0961010704922955e-13,
+      "bulk_pressure_max_absolute_error_MPa": 7.061018436615996e-14,
+      "surface_pressure_max_absolute_error_MPa": 1.3322676295501878e-13,
+      "displacement_absolute_error_mm": 1.0547118733938987e-15,
+      "equilibrium_relative_residual": 1.3283039235668125e-14,
+      "energy_relative_error": 1.6653345369377384e-15,
+      "reaction_force_absolute_error_N": 9.947598300641403e-14,
+      "status": "pass"
+    }
+  ],
+  "source_sha256": {
+    "plugin/ste_planner/elasticity.py": "39fc6462f753d6678fc65bfe38d9288164364442909ce3ebf925cf3af9328295",
+    "plugin/ste_planner/functional.py": "a37725d5564d393da404b0b0e64fddba200a5d493b1379d2a253021d546506be",
+    "plugin/ste_planner/toolpath_physics.py": "9b11a120230a5a8f39cd56b1dc1dbe21a8a1bdb90a7a03ad25bd046f0bdd08df",
+    "plugin/tests/test_pressure_fields.py": "11b1cde832d0e6823481168705291c462783e77f03eb51ee9bd4ee461fa7ac2f"
+  },
+  "physical_print_approval": false
+}

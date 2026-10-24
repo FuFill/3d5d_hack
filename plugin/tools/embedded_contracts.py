@@ -8,7 +8,7 @@ import numpy
 import mini_runner
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-EXCLUDED = {"test_assistant.py", "test_elasticity.py", "test_functional.py"}
+EXCLUDED = {"test_assistant.py", "test_elasticity.py", "test_functional.py", "test_pressure_fields.py"}
 tests = os.path.join(ROOT, "plugin", "tests")
 scratch = os.path.join(ROOT, ".runtime", "embedded_contracts")
 os.makedirs(scratch, exist_ok=True)
