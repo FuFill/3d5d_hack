@@ -1,12 +1,24 @@
 # Copyright (c) 2026. Released under the terms of the LGPLv3 or higher.
-"""Chat window docked to the right edge of the slicer window.
+"""Chat panel inside the slicer window, with a docked window as fallback.
 
-The SPA runs in the system browser as required. When Edge or Chrome is available it is
-started in app mode (no tabs or address bar) with a separate profile; on Windows the
-window is then found by title and kept attached to the slicer: it follows moves and
-resizes, minimizes and restores with it. If there is no room on the right, the slicer
-window is narrowed and restored when the chat closes. Without such a browser the SPA
-opens as a normal tab.
+The SPA runs in the system browser: STE's PyQt has no QtWebEngine, and it could not be
+initialised from a plugin anyway (it must be set up before the QGuiApplication exists).
+When Edge or Chrome is available it is started in app mode (no tabs or address bar)
+with a separate profile and the window is found by title.
+
+EmbeddedChat (Windows) shows that window inside the slicer window: a strip on the right
+edge is reserved in the slicer's QML layout (the UI gets a right margin, the 3D viewport
+is narrowed to the rest, so nothing is covered) and the browser window is placed exactly
+over it, cropped to its page (no title bar or frame). The window is owned by the slicer
+window: it stays above it, minimizes and restores with it and has no taskbar button.
+It is deliberately not a WS_CHILD window: Chromium drops all keyboard input in a child
+window (verified with Edge: even posted WM_CHAR is ignored). DirectComposition is
+disabled for this browser profile because its output ignores the window region, which
+would leave the browser's own title bar visible over the slicer's title bar. The strip has a resize
+handle; the width is kept in the preferences. If this is not possible the chat falls
+back to DockedWindow: a separate window attached to the right edge of the slicer (the
+slicer window is narrowed when there is no room). Without such a browser the SPA opens
+as a normal tab.
 """
 
 import os
@@ -17,6 +29,11 @@ import webbrowser
 
 WINDOW_TITLE = "STE AI Assistant"
 PANEL_WIDTH = 400
+PANEL_MIN_WIDTH = 300
+PANEL_MAX_WIDTH = 900
+MIN_SLICER_WIDTH = 600   # slicer area kept left of the panel, logical pixels
+WIDTH_PREFERENCE = "ai_assistant/panel_width"
+QML_PANEL = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "qml", "ChatPanel.qml")
 
 
 def _candidates():
@@ -196,6 +213,293 @@ class DockedWindow:
             self._saved_placement = None
 
 
+class EmbeddedChat:
+    """The chat as a panel inside the slicer window (see the module docstring)."""
+
+    def __init__(self, app, profile_dir):
+        self._app = app
+        self._profile_dir = profile_dir
+        self._fallback = DockedWindow(app, profile_dir)
+        self._win = _Win32() if sys.platform == "win32" else None
+        self._process = None
+        self._hwnd = None
+        self._placed = None        # last browser window rect we set, physical pixels
+        self._crop = None          # visible page rectangle in window coordinates
+        self._panel = None
+        self._content = None
+        self._visible = False
+        self._embedded = None      # None: not tried yet; False: use the docked fallback
+        self._timer = None
+        self._search_ticks = 0
+        self._connected = False
+        self._insets = (0, 0)      # browser frame left/top before the page, physical pixels
+        self._width = self._stored_width()
+
+    # ------------------------------------------------------------------ public
+
+    def open(self, url):
+        if self._embedded is False:
+            self._fallback.open(url)
+            return
+        if self._hwnd and self._win.is_window(self._hwnd):
+            self._show()
+            return
+        if self._timer is not None and self._timer.isActive() and self._process is not None:
+            self._show(status="Загрузка чата…")   # the browser is still starting
+            return
+        browser = find_app_browser()
+        if self._win is None or browser is None or not self._prepare():
+            self._use_fallback(url)
+            return
+        self._show(status="Загрузка чата…")
+        x, y, width, height = self._fallback._initial_geometry()
+        args = [browser, "--app=" + url, "--user-data-dir=" + self._profile_dir,
+                "--no-first-run", "--no-default-browser-check", "--disable-features=Translate,CalculateNativeWinOcclusion",
+                "--disable-direct-composition",
+                "--window-size=%d,%d" % (width, height), "--window-position=%d,%d" % (x, y)]
+        try:
+            self._process = subprocess.Popen(args, close_fds=True)
+        except OSError:
+            self._use_fallback(url)
+            return
+        self._hwnd = None
+        self._search_ticks = 0
+        self._start_timer()
+
+    def hide(self):
+        if self._embedded is False:
+            self._fallback.close()
+            return
+        self._visible = False
+        if self._hwnd and self._win.is_window(self._hwnd):
+            self._win.hide(self._hwnd)
+        if self._panel is not None:
+            self._panel.setProperty("visible", False)
+        self._release_space()
+
+    def close(self):
+        if self._timer is not None:
+            self._timer.stop()
+        self._fallback.close()
+        self._visible = False
+        self._release_space()
+        if self._hwnd and self._win and self._win.is_window(self._hwnd):
+            self._win.close(self._hwnd)
+        self._hwnd = None
+        if self._process is not None and self._process.poll() is None:
+            try:
+                self._process.terminate()
+            except OSError:
+                pass
+        self._process = None
+
+    # ------------------------------------------------------------------ setup
+
+    def _main_window(self):
+        try:
+            return self._app.getMainWindow()
+        except Exception:
+            return None
+
+    def _prepare(self):
+        """Find the slicer's root UI item and create the panel; False if the layout is unknown."""
+        window = self._main_window()
+        if window is None:
+            return False
+        if self._panel is not None:
+            return True
+        root = window.contentItem()
+        self._content = self._root_item(root)
+        if self._content is None:
+            return False
+        self._panel = self._app.createQmlComponent(QML_PANEL, {})
+        if self._panel is None:
+            self._content = None
+            return False
+        self._panel.setParentItem(root)
+        self._panel.setProperty("visible", False)
+        for name, value in (("minimumWidth", PANEL_MIN_WIDTH), ("maximumWidth", PANEL_MAX_WIDTH)):
+            self._panel.setProperty(name, value)
+        self._panel.resized.connect(self._on_resized)
+        self._panel.resizeFinished.connect(self._on_resize_finished)
+        if not self._connected:
+            for name in ("xChanged", "yChanged", "widthChanged", "heightChanged"):
+                getattr(window, name).connect(self._layout)
+            if hasattr(window, "viewportRectChanged"):
+                window.viewportRectChanged.connect(self._on_viewport_changed)
+            self._connected = True
+        return True
+
+    @staticmethod
+    def _root_item(root):
+        # SteSlicer.qml: the whole UI is one Item with "anchors.fill: parent" under the window.
+        # Grouped "anchors.*" properties are reachable through QQmlProperty only.
+        from PyQt5.QtQml import QQmlProperty
+        for item in root.childItems():
+            fill = QQmlProperty(item, "anchors.fill").read()
+            if fill is not None and abs(item.width() - root.width()) < 1 and abs(item.height() - root.height()) < 1:
+                return item
+        return None
+
+    def _set_margin(self, value):
+        if self._content is not None:
+            from PyQt5.QtQml import QQmlProperty
+            QQmlProperty(self._content, "anchors.rightMargin").write(value)
+
+    def _use_fallback(self, url):
+        self._embedded = False
+        self._release_space()
+        if self._panel is not None:
+            self._panel.setProperty("visible", False)
+        self._fallback.open(url)
+
+    def _start_timer(self):
+        from PyQt5.QtCore import QTimer
+        if self._timer is None:
+            self._timer = QTimer()
+            self._timer.setInterval(100)
+            self._timer.timeout.connect(self._tick)
+        self._timer.start()
+
+    def _tick(self):
+        # Tracked by handle: the browser may pass the window to a running instance and exit.
+        if self._hwnd is None:
+            self._search_ticks += 1
+            hwnd = self._win.find(WINDOW_TITLE)
+            if hwnd:
+                self._embed(hwnd)
+            elif self._search_ticks > 300:   # 30 s
+                self._timer.stop()
+                self._panel.setProperty("statusText", "Окно чата не открылось. Скройте панель и откройте "
+                                                      "снова: Расширения → AI Assistant.")
+            return
+        if not self._win.is_window(self._hwnd):
+            # The page closed itself or the browser exited.
+            self._hwnd = None
+            self._timer.stop()
+            self.hide()
+            return
+        # Edge/Chrome draw the app title bar themselves: measure where the page starts.
+        insets = self._win.content_insets(self._hwnd)
+        if insets is not None and insets != self._insets:
+            self._insets = insets
+            self._layout()
+        elif self._visible and self._placed and self._win.window_rect(self._hwnd) != self._placed:
+            self._layout()   # moved by the system or the user (Alt+Space), or a missed move
+        elif self._visible and self._crop and self._win.region_box(self._hwnd) != self._crop_box():
+            # Chromium resets the window region when it repaints its frame; crop again.
+            self._win.crop(self._hwnd, *self._crop)
+
+    def _embed(self, hwnd):
+        window = self._main_window()
+        try:
+            self._win.own(hwnd, int(window.winId()))
+        except Exception:
+            # Keep the chat usable as a docked window next to the slicer.
+            self._embedded = False
+            self._release_space()
+            self._panel.setProperty("visible", False)
+            self._fallback._hwnd = hwnd
+            self._fallback._process = self._process
+            self._fallback._make_room()
+            self._fallback._layout()
+            self._fallback._start_timer()
+            self._timer.stop()
+            return
+        self._hwnd, self._embedded = hwnd, True
+        if self._visible:
+            self._show()
+        else:
+            self._win.hide(hwnd)   # hidden by the user while the browser was starting
+
+    # ------------------------------------------------------------------ layout
+
+    def _show(self, status=""):
+        self._visible = True
+        self._panel.setProperty("statusText", status)
+        self._panel.setProperty("visible", True)
+        self._layout()
+        main = self._main_window()
+        if self._hwnd and main is not None and not self._win.is_minimized(int(main.winId())):
+            self._win.show_no_activate(self._hwnd)
+
+    def _panel_width(self, window_width):
+        room = max(PANEL_MIN_WIDTH, window_width - MIN_SLICER_WIDTH)
+        return int(max(PANEL_MIN_WIDTH, min(self._width, PANEL_MAX_WIDTH, room)))
+
+    def _layout(self, *args):
+        window = self._main_window()
+        if not self._visible or window is None or self._panel is None:
+            return
+        width, height = window.width(), window.height()
+        panel = self._panel_width(width)
+        handle = int(self._panel.property("handleWidth") or 0)
+        self._panel.setProperty("panelWidth", panel)
+        self._reserve(window, panel + handle)
+        if self._hwnd:
+            # Physical pixels: the page area of the browser window covers the strip right of
+            # the handle; the title bar and frame around it are cut off by the window region.
+            ratio = window.devicePixelRatio() or 1.0
+            origin_x, origin_y = self._win.client_origin(int(window.winId()))
+            page_w, page_h = int(round(panel * ratio)), int(round(height * ratio))
+            left, top = self._insets
+            x = origin_x + int(round((width - panel) * ratio))
+            self._placed = (x - left, origin_y - top, x + page_w + left, origin_y + page_h + left)
+            self._win.place_rect(self._hwnd, self._placed)
+            self._crop = (left, top, page_w, page_h)
+            self._win.crop(self._hwnd, *self._crop)
+
+    def _crop_box(self):
+        left, top, width, height = self._crop
+        return left, top, left + width, top + height
+
+    def _reserve(self, window, strip):
+        self._set_margin(strip)
+        self._set_viewport(window, strip)
+
+    def _release_space(self):
+        window = self._main_window()
+        self._set_margin(0)
+        if window is not None and self._content is not None:
+            self._set_viewport(window, 0)
+
+    @staticmethod
+    def _set_viewport(window, strip):
+        # MainWindow.viewportRect is the 3D view's fraction of the window (left-aligned).
+        if not hasattr(window, "setViewportRect"):
+            return
+        from PyQt5.QtCore import QRectF
+        width = window.width()
+        fraction = 1.0 if not strip or width <= strip else (width - strip) / float(width)
+        current = window.viewportRect   # pyqtProperty of UM MainWindow
+        if abs(current.width() - fraction) > 1e-4 or current.x() or current.y() or current.height() != 1.0:
+            window.setViewportRect(QRectF(0, 0, fraction, 1.0))
+
+    def _on_viewport_changed(self):
+        # SteSlicer.qml resets viewportRect when the settings sidebar collapses or expands.
+        if self._visible:
+            self._layout()
+
+    def _on_resized(self, width):
+        self._width = int(width)
+        self._layout()
+
+    def _on_resize_finished(self, width):
+        self._width = int(width)
+        try:
+            self._app.getPreferences().setValue(WIDTH_PREFERENCE, self._width)
+        except Exception:
+            pass
+
+    def _stored_width(self):
+        try:
+            preferences = self._app.getPreferences()
+            preferences.addPreference(WIDTH_PREFERENCE, PANEL_WIDTH)
+            return int(preferences.getValue(WIDTH_PREFERENCE) or PANEL_WIDTH)
+        except Exception:
+            return PANEL_WIDTH
+
+
 class _Win32:
     """The few user32/dwmapi calls needed for docking; all coordinates in physical pixels."""
 
@@ -224,6 +528,70 @@ class _Win32:
         self.enum_proc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
         self.user32.SetWindowPos.argtypes = [wintypes.HWND, wintypes.HWND, ctypes.c_int, ctypes.c_int,
                                              ctypes.c_int, ctypes.c_int, wintypes.UINT]
+        self.user32.SetWindowRgn.argtypes = [wintypes.HWND, ctypes.c_void_p, wintypes.BOOL]
+        ctypes.windll.gdi32.CreateRectRgn.restype = ctypes.c_void_p
+        ctypes.windll.gdi32.DeleteObject.argtypes = [ctypes.c_void_p]
+        # 64-bit user32 exports the *Ptr variants; 32-bit only the plain ones.
+        self.get_long = getattr(self.user32, "GetWindowLongPtrW", self.user32.GetWindowLongW)
+        self.set_long = getattr(self.user32, "SetWindowLongPtrW", self.user32.SetWindowLongW)
+        self.get_long.argtypes = [wintypes.HWND, ctypes.c_int]
+        self.get_long.restype = ctypes.c_ssize_t
+        self.set_long.argtypes = [wintypes.HWND, ctypes.c_int, ctypes.c_ssize_t]
+        self.set_long.restype = ctypes.c_ssize_t
+
+    def own(self, hwnd, owner):
+        """Make owner the window's owner (z-order, minimize) and drop its taskbar button."""
+        self.set_long(hwnd, -8, owner)                                   # GWLP_HWNDPARENT
+        ex = self.get_long(hwnd, -20) & 0xFFFFFFFF & ~0x00040000          # -WS_EX_APPWINDOW
+        self.set_long(hwnd, -20, ex - (1 << 32) if ex & 0x80000000 else ex)
+        self.user32.SetWindowPos(hwnd, None, 0, 0, 0, 0, 0x0001 | 0x0002 | 0x0004 | 0x0010 | 0x0020)  # FRAMECHANGED
+
+    def client_origin(self, hwnd):
+        point = self.wt.POINT(0, 0)
+        self.user32.ClientToScreen(hwnd, self.ct.byref(point))
+        return point.x, point.y
+
+    def window_rect(self, hwnd):
+        return self._rect(hwnd)
+
+    def place_rect(self, hwnd, rect):
+        left, top, right, bottom = rect
+        self.user32.SetWindowPos(hwnd, None, left, top, right - left, bottom - top, 0x0004 | 0x0010)  # NOZORDER|NOACTIVATE
+
+    def hide(self, hwnd):
+        self.user32.ShowWindow(hwnd, 0)  # SW_HIDE
+
+    def region_box(self, hwnd):
+        """Bounding box of the window region, or None when the window has no region."""
+        rect = self.wt.RECT()
+        kind = self.user32.GetWindowRgnBox(hwnd, self.ct.byref(rect))
+        if kind not in (2, 3):  # SIMPLEREGION, COMPLEXREGION
+            return None
+        return rect.left, rect.top, rect.right, rect.bottom
+
+    def content_insets(self, hwnd):
+        """Offset of the page (Chromium's Chrome_RenderWidgetHostHWND) inside the browser window."""
+        found = []
+
+        def callback(child, lparam):
+            buffer = self.ct.create_unicode_buffer(64)
+            self.user32.GetClassNameW(child, buffer, 64)
+            if buffer.value == "Chrome_RenderWidgetHostHWND" and self.user32.IsWindowVisible(child):
+                found.append(child)
+                return False
+            return True
+
+        self.user32.EnumChildWindows(hwnd, self.enum_proc(callback), 0)
+        if not found:
+            return None
+        frame, page = self._rect(hwnd), self._rect(found[0])
+        return page[0] - frame[0], page[1] - frame[1]
+
+    def crop(self, hwnd, left, top, width, height):
+        """Show only this rectangle of the window (window coordinates, physical pixels)."""
+        region = self.ct.windll.gdi32.CreateRectRgn(left, top, left + width, top + height)
+        if region and not self.user32.SetWindowRgn(hwnd, region, True):
+            self.ct.windll.gdi32.DeleteObject(region)  # the system owns it only on success
 
     def find(self, title):
         found = []
