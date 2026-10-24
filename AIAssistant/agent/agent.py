@@ -175,12 +175,19 @@ PROOFREAD_PROMPT = """You check a chat reply written in {language} for SEVERE er
 Style, punctuation and wording choices are NOT errors. If there is no severe error reply exactly: OK
 Otherwise reply with the full corrected text only, keeping markdown, line breaks, numbers, units, paths and meaning."""
 
+NAME_PROMPT = """Name the print variant the assistant has just prepared, so the user can tell it apart in a list of
+variants: 1-3 words in {language}, for example "Быстрая печать", "Качество подольше", "Прочная PETG" (English: "Fast draft",
+"Fine quality"). Base it on what the user asked and on the changes. Reply with the name only, without quotes."""
+NAME_MAX_CHARS = 40
+
 FOREIGN_SCRIPT = re.compile(u"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
 GLUED_WORDS = re.compile(u"[а-яё][a-z]|[a-z][а-яё]", re.IGNORECASE)
 
 
 class Agent:
     on_turn_done = None  # set by the chat service: saves the chat after every turn
+    before_work = None   # set by the chat service: called before the agent works on the project
+    after_work = None    # set by the chat service: (namer, language, should_stop) after finished work
 
     def __init__(self, mcp, registry, bus, settings):
         self._mcp = mcp
@@ -197,6 +204,7 @@ class Agent:
         self._kinds = []
         self._turn_text = None  # Original message, without appended attachment contents.
         self._final = None  # (event seq, text) of the last streamed answer
+        self._note = None  # told to the model with the next message (e.g. another model chosen in the tree)
 
     def busy(self):
         return self._running
@@ -211,7 +219,14 @@ class Agent:
             self._turn_text = text or ""
             self._bus.emit("user", text=text, attachments=[{"name": a["name"], "kind": a["kind"], "id": a.get("id")}
                                                            for a in attachments])
-            self._messages.append({"role": "user", "content": self._user_content(text, attachments)})
+            content = self._user_content(text, attachments)
+            if self._note:
+                if isinstance(content, list):
+                    content[0]["text"] += "\n\n" + self._note
+                else:
+                    content += "\n\n" + self._note
+                self._note = None
+            self._messages.append({"role": "user", "content": content})
             self._thread = threading.Thread(target=self._run, name="AIAssistantAgent", daemon=True)
             self._thread.start()
             return True
@@ -225,6 +240,10 @@ class Agent:
 
     def messages(self):
         return list(self._messages)
+
+    def note(self, text):
+        """Context for the model, sent with the user's next message (the history is not rewritten)."""
+        self._note = text
 
     def load(self, messages):
         """History of a saved chat; the chat feed itself is restored by the service.
@@ -289,6 +308,11 @@ class Agent:
                 self._proofread(client, settings)
                 raise _Finished()
             tools = self._registry.openai_tools()
+            if self.before_work is not None:
+                try:
+                    self.before_work()
+                except Exception as e:
+                    _log("before_work", e)
             self._read_context(settings)
             for _ in range(MAX_ROUNDS):
                 reply = self._complete(client, tools, settings)
@@ -306,6 +330,15 @@ class Agent:
             else:
                 self._bus.emit("error", code="too_many_steps", text="")
                 status = "error"
+            if status == "done" and self.after_work is not None:
+                # The finished result becomes a node of the chat's model tree.
+                try:
+                    self.after_work(lambda rows: self._name_model(client, settings, rows),
+                                    settings.get("language", "ru"), lambda: self._stop)
+                except Exception as e:
+                    _log("after_work", e)
+                if self._stop:
+                    raise Cancelled()
         except _Finished:
             pass
         except Cancelled:
@@ -371,6 +404,26 @@ class Agent:
         reply = self._complete(client, None, settings,
                                messages=[{"role": "system", "content": system}] + _text_history(self._messages))
         self._messages.append({"role": "assistant", "content": reply["content"] or ""})
+
+    # ------------------------------------------------------------------ model tree
+
+    def _name_model(self, client, settings, rows):
+        """Short name of a finished variant; the first words of the request if the model gives none."""
+        language = "Russian" if settings.get("language", "ru") == "ru" else "English"
+        request = (self._turn_text or "").strip()
+        summary = "; ".join("%s %s → %s" % (r["label"], r.get("old") or "", r["new"]) for r in rows) or "-"
+        name = ""
+        try:
+            name = client.text([{"role": "system", "content": NAME_PROMPT.replace("{language}", language)},
+                                {"role": "user", "content": "Request: %s\nChanges: %s" % (request[:600], summary)}],
+                               max_tokens=16, timeout=ROUTER_TIMEOUT)
+        except LLMError:
+            pass
+        name = " ".join((name or "").strip().strip("\"'«»“”.").split())
+        if not name or len(name) > NAME_MAX_CHARS or FOREIGN_SCRIPT.search(name):
+            words = re.findall(r"[^\W_]+", request, re.UNICODE)[:3]
+            name = " ".join(words).capitalize() or ("Модель" if language == "Russian" else "Model")
+        return name[:NAME_MAX_CHARS]
 
     # ------------------------------------------------------------------ proofreading
 
@@ -568,6 +621,14 @@ class Agent:
                 continue
             self._messages.append({"role": "tool", "tool_call_id": call["id"],
                                    "content": json.dumps({"error": "cancelled by the user"})})
+
+
+def _log(where, error):
+    try:
+        from UM.Logger import Logger
+        Logger.log("w", "AI Assistant: %s failed: %s: %s", where, type(error).__name__, error)
+    except Exception:
+        pass
 
 
 class _Finished(Exception):

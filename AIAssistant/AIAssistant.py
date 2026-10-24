@@ -18,7 +18,8 @@ from .agent.mainthread import run_on_main
 from .agent.mcp import MCPServer
 from .agent.server import ChatService
 from .agent.tools import SliceMonitor, ToolRegistry
-from .agent.window import EmbeddedChat
+from .agent.versions import StateIO
+from .agent.window import EmbeddedChat, HoverCard
 from .agent.core_bridge import CoreBridge, default_python
 from .agent.core_worker import core_path
 
@@ -164,11 +165,16 @@ class AIAssistant(Extension):
         except OSError:
             Logger.logException("w", "AI Assistant: chats will not be saved")
         self._service = ChatService(bus, agent, mcp, registry, settings, store=store)
+        self._service.state_io = StateIO(self._app, registry)
         registry.upload_sources = self._service.model_uploads
         registry.spec_sources = self._service.spec_uploads
         port = self._service.start()
         profile = os.path.join(Resources.getDataStoragePath(), "ai_assistant_browser")
         self._window = EmbeddedChat(self._app, profile)
+        try:
+            self._service.on_hover = HoverCard(self._app, self._window).show
+        except Exception:
+            Logger.logException("w", "AI Assistant: model cards are shown inside the chat")
         Logger.log("i", "AI Assistant: chat on http://127.0.0.1:%d/, MCP endpoint %s (token in the chat settings)",
                    port, self._service.mcp_url())
 

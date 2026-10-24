@@ -22,6 +22,9 @@
       custom: "Свой вариант…", keys: "↑↓ выбор · Enter ответ · ← → вопросы", review: "Проверьте ответы",
       submit: "Отправить", edit: "Изменить", answerQuestions: "Ответьте на вопросы выше или напишите свой вариант",
       history: "Чаты", noChats: "Сохранённых чатов пока нет", today: "сегодня", yesterday: "вчера",
+      models: "Модели", noModels: "Моделей пока нет: модель сохраняется, когда агент заканчивает работу",
+      missingParts: "Деталей этой модели нет на столе: ", startState: "Исходное состояние проекта",
+      sameSettings: "Без изменений настроек",
       deleteChat: "Удалить чат", untitled: "Без названия",
       upEmpty: "файл пустой", upLarge: "больше 300 МБ", upUnreadable: "не удалось прочитать файл",
       upNetwork: "нет связи со слайсером", upUnsupported: "формат не поддерживается: STL, OBJ, 3MF, JPG, PNG, DOCX, TXT",
@@ -54,6 +57,9 @@
       custom: "Your own answer…", keys: "↑↓ choose · Enter answer · ← → questions", review: "Check your answers",
       submit: "Send", edit: "Edit", answerQuestions: "Answer the questions above or type your own answer",
       history: "Chats", noChats: "No saved chats yet", today: "today", yesterday: "yesterday",
+      models: "Models", noModels: "No models yet: a model is saved when the assistant finishes its work",
+      missingParts: "Parts of this model are not on the plate: ", startState: "The project before the first change",
+      sameSettings: "No setting changes",
       deleteChat: "Delete chat", untitled: "Untitled",
       upEmpty: "the file is empty", upLarge: "larger than 300 MB", upUnreadable: "could not read the file",
       upNetwork: "slicer is not reachable", upUnsupported: "unsupported format: STL, OBJ, 3MF, JPG, PNG, DOCX, TXT",
@@ -814,7 +820,7 @@
 
   document.addEventListener("keydown", function (ev) {
     var w = activeWizard();
-    if (!w || !w.node || $("sheet").hidden === false || $("chats").hidden === false) return;
+    if (!w || !w.node || $("sheet").hidden === false || $("chats").hidden === false || $("tree").hidden === false) return;
     var focus = document.activeElement;
     // Keys go to the card unless the user is typing: an empty main field does not count as typing.
     if ((focus === input && input.value.trim()) || (focus && focus.classList && focus.classList.contains("ask-custom"))) return;
@@ -854,6 +860,9 @@
   function nearBottom() { return feed.scrollHeight - feed.scrollTop - feed.clientHeight < 80; }
 
   function apply(list) {
+    if (list.some(function (e) { return e.type === "done" || e.type === "reset"; }) && !$("models").hidden) {
+      setTimeout(loadTree, 0);  // a finished turn may have saved a model; another chat has another tree
+    }
     list.forEach(function (e) {
       if (e.type === "reset") {
         events = {}; order = []; cache = {}; openDetails = {}; openCalls = {};
@@ -910,6 +919,9 @@
       applySettings(data.settings);
       $("mcpUrl").textContent = data.mcp_url || "";
       $("history").hidden = data.history === false;
+      $("models").hidden = !data.tree;
+      nativeCard = !!data.native_card;
+      if (data.tree) loadTree();
       $("mcpToken").textContent = "Authorization: Bearer " + token;
       apply(data.events || []);
       seq = data.seq;
@@ -1050,7 +1062,135 @@
       });
     }).catch(function () { list.appendChild(el("p", "muted chat-empty", t("offline"))); });
   }
-  $("history").addEventListener("click", showChats);
+  // ---------------------------------------------------------------- model tree
+
+  // Every finished result of the agent is a node; newest on top, branches split symmetrically
+  // around their parent. The card of a hovered node is drawn by the slicer left of the chat
+  // (outside this window, so it never covers other nodes); without it the page shows its own.
+  var tree = {nodes: [], selected: null};
+  var nativeCard = false;
+  var X_STEP = 46, Y_STEP = 46, PAD = 26;
+
+  function loadTree() {
+    return api("/api/tree").then(function (data) { tree = data; if (!$("tree").hidden) drawTree(); })
+      .catch(function () {});
+  }
+
+  function layoutTree(nodes) {
+    var byId = {}, kids = {}, roots = [];
+    nodes.forEach(function (n) { byId[n.id] = n; kids[n.id] = []; });
+    nodes.forEach(function (n) { if (n.parent && byId[n.parent]) kids[n.parent].push(n); else roots.push(n); });
+    var x = {}, next = 0;
+    function place(n) {
+      var children = kids[n.id].sort(function (a, b) { return a.created - b.created; });
+      if (!children.length) { x[n.id] = next++; return; }
+      children.forEach(place);
+      x[n.id] = (x[children[0].id] + x[children[children.length - 1].id]) / 2;
+    }
+    roots.forEach(place);
+    var row = {};
+    nodes.slice().sort(function (a, b) { return b.created - a.created; }).forEach(function (n, i) { row[n.id] = i; });
+    return {x: x, row: row, lanes: Math.max(1, next)};
+  }
+
+  function drawTree() {
+    var body = $("treeBody");
+    body.textContent = "";
+    if (!tree.nodes.length) { body.appendChild(el("p", "muted tree-empty", t("noModels"))); return; }
+    var pos = layoutTree(tree.nodes);
+    var span = (pos.lanes - 1) * X_STEP;
+    var width = Math.max(body.clientWidth, span + PAD * 2), height = (tree.nodes.length - 1) * Y_STEP + PAD * 2;
+    var left = (width - span) / 2;
+    var canvas = el("div", "tree-canvas");
+    canvas.style.width = width + "px"; canvas.style.height = height + "px";
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    var at = function (n) { return {x: left + pos.x[n.id] * X_STEP, y: PAD + pos.row[n.id] * Y_STEP}; };
+    var byId = {};
+    tree.nodes.forEach(function (n) { byId[n.id] = n; });
+    tree.nodes.forEach(function (n) {
+      if (!n.parent || !byId[n.parent]) return;
+      var a = at(byId[n.parent]), b = at(n), mid = (a.y + b.y) / 2;
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", "M" + a.x + " " + a.y + " C" + a.x + " " + mid + " " + b.x + " " + mid + " " + b.x + " " + b.y);
+      svg.appendChild(path);
+    });
+    canvas.appendChild(svg);
+    var selected = null;
+    tree.nodes.forEach(function (n) {
+      var p = at(n);
+      var b = el("button", "tnode" + (n.selected ? " on" : ""), n.short);
+      b.style.left = p.x + "px"; b.style.top = p.y + "px";
+      b.addEventListener("mouseenter", function () { showCard(n, b); });
+      b.addEventListener("mouseleave", hideCard);
+      b.addEventListener("click", function () { selectNode(n); });
+      canvas.appendChild(b);
+      if (n.selected) selected = b;
+    });
+    body.appendChild(canvas);
+    if (selected) selected.scrollIntoView({block: "nearest", inline: "center"});
+  }
+
+  function showCard(n, button) {
+    var r = button.getBoundingClientRect();
+    var y = (r.top + r.height / 2) / window.innerHeight;
+    if (nativeCard) {
+      api("/api/hover", {method: "POST", json: {id: n.id, y: y}}).then(function (data) {
+        if (!data.native) { nativeCard = false; showPageCard(n, r); }
+      }).catch(function () {});
+    } else {
+      showPageCard(n, r);
+    }
+  }
+
+  function showPageCard(n, r) {
+    var card = $("treeCard");
+    card.textContent = "";
+    card.appendChild(el("b", "", n.name));
+    if (n.stats) card.appendChild(el("div", "stats", n.stats));
+    card.appendChild(el("hr"));
+    if (!n.changes.length) card.appendChild(el("div", "muted", n.kind === "start" ? t("startState") : t("sameSettings")));
+    n.changes.forEach(function (c) {
+      var line = el("div");
+      line.appendChild(document.createTextNode(c.label + "  "));
+      if (c.old) { line.appendChild(el("span", "old", c.old)); line.appendChild(document.createTextNode(" → ")); }
+      else line.appendChild(document.createTextNode("→ "));
+      line.appendChild(el("span", "new", c["new"]));
+      card.appendChild(line);
+    });
+    card.hidden = false;
+    card.style.top = Math.max(48, Math.min(window.innerHeight - card.offsetHeight - 8, r.top - 8)) + "px";
+  }
+
+  function hideCard() {
+    $("treeCard").hidden = true;
+    if (nativeCard) api("/api/hover", {method: "POST", json: {id: null}}).catch(function () {});
+  }
+
+  function selectNode(n) {
+    hideCard();
+    if (n.selected) return;
+    api("/api/tree/select", {method: "POST", json: {id: n.id}}).then(function (data) {
+      tree = data;
+      drawTree();
+      var missing = (data.restored || {}).missing_objects;
+      $("link").textContent = missing ? t("missingParts") + missing : "";
+    }).catch(function (e) {
+      $("link").textContent = e.status === 409 ? t("busy") : (e.code || t("failed"));
+    });
+  }
+
+  function showTree(open) {
+    $("tree").hidden = !open;
+    $("treeDim").hidden = !open;
+    $("models").classList.toggle("on", open);
+    if (open) { drawTree(); loadTree(); } else hideCard();
+  }
+
+  $("models").addEventListener("click", function () { showTree($("tree").hidden); });
+  $("treeDim").addEventListener("click", function () { showTree(false); });
+  document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !$("tree").hidden) showTree(false); });
+
+  $("history").addEventListener("click", function () { showTree(false); showChats(); });
   $("chatsClose").addEventListener("click", function () { $("chats").hidden = true; });
 
   var dragDepth = 0;
@@ -1124,7 +1264,7 @@
       $("formNote").textContent = data.ok ? t("testOk") : t("llmError") + data.error;
     }).catch(function (e) { $("formNote").textContent = t("internalError") + e.message; });
   });
-  $("menu").addEventListener("click", openSheet);
+  $("menu").addEventListener("click", function () { showTree(false); openSheet(); });
   $("sheetClose").addEventListener("click", function () {
     $("sheet").hidden = true;
     applySettings(settings);

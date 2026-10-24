@@ -10,6 +10,9 @@
 <header class="bar">
   <span class="title" data-i18n="title"></span>
   <span class="link" id="link"></span>
+  <button class="icon" id="models" data-i18n-title="models" hidden>
+    <svg viewBox="0 0 24 24"><circle cx="7" cy="5.5" r="2"/><circle cx="7" cy="18.5" r="2"/><circle cx="17" cy="9" r="2"/><path d="M7 7.5v9M17 11c0 3.5-10 2.5-10 5.5"/></svg>
+  </button>
   <button class="icon" id="history" data-i18n-title="history">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/></svg>
   </button>
@@ -42,6 +45,13 @@
   </div>
   <input type="file" id="file" multiple accept=".stl,.obj,.3mf,.png,.jpg,.jpeg,.docx,.txt,.md" hidden>
 </footer>
+
+<div class="tree-dim" id="treeDim" hidden></div>
+<section class="tree" id="tree" hidden>
+  <div class="tree-head" data-i18n="models"></div>
+  <div class="tree-body" id="treeBody"></div>
+</section>
+<div class="tree-card" id="treeCard" hidden></div>
 
 <section class="sheet" id="chats" hidden>
   <div class="sheet-head">

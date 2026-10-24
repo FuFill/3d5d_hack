@@ -1064,7 +1064,7 @@ class ToolRegistry:
         generation = run_on_main(self._app, start)
         self._slices.watch((ctx or {}).get("event_seq"))
         try:
-            state = self._slices.wait_finished(generation, timeout=1800)
+            state = self._slices.wait_finished(generation, timeout=1800, should_stop=(ctx or {}).get("cancelled"))
         finally:
             self._slices.watch(None)
         if state != 3:
@@ -1229,7 +1229,7 @@ class SliceMonitor:
         with self._cond:
             return self._state, round(self._progress, 3)
 
-    def wait_finished(self, generation, timeout):
+    def wait_finished(self, generation, timeout, should_stop=None):
         """Wait for Done/Error/Disabled after `generation`.
 
         NotStarted that lasts for a few seconds means the slice was cancelled or refused
@@ -1252,7 +1252,7 @@ class SliceMonitor:
                         idle_since = None
                 elif now - start > 30:
                     return None
-                if now >= deadline:
+                if now >= deadline or (should_stop is not None and should_stop()):
                     return None
                 self._cond.wait(min(deadline - now, 1.0))
 

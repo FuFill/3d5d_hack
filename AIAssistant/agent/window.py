@@ -34,6 +34,7 @@ PANEL_MAX_WIDTH = 900
 MIN_SLICER_WIDTH = 600   # slicer area kept left of the panel, logical pixels
 WIDTH_PREFERENCE = "ai_assistant/panel_width"
 QML_PANEL = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "qml", "ChatPanel.qml")
+QML_CARD = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "qml", "ModelCard.qml")
 
 
 def _candidates():
@@ -213,6 +214,61 @@ class DockedWindow:
             self._saved_placement = None
 
 
+class HoverCard:
+    """Card of a model-tree node in the slicer window, left of the chat (ModelCard.qml).
+
+    The chat page cannot draw outside its window, so the card is shown by the slicer: the
+    page reports the hovered node and its height, the card appears over the build plate
+    view at that height, without covering the other nodes of the tree.
+    """
+
+    def __init__(self, app, chat):
+        self._app = app
+        self._chat = chat
+        self._card = None
+        try:
+            window = app.getMainWindow()
+            if window is not None:
+                self._card = app.createQmlComponent(QML_CARD, {})
+                if self._card is not None:
+                    self._card.setParentItem(window.contentItem())
+        except Exception:
+            self._card = None
+
+    def show(self, view, y):
+        """From any thread; False when the slicer window cannot show the card (the page shows its own)."""
+        if self._card is None:
+            return False
+        self._app.callLater(self._update, view, y)
+        return True
+
+    def _update(self, view, y):
+        card = self._card
+        if not view:
+            card.setProperty("visible", False)
+            return
+        rows = []
+        for row in view.get("changes") or []:
+            old = _html(row.get("old"))
+            rows.append("%s&nbsp;&nbsp;%s<b>%s</b>" % (
+                _html(row.get("label")), ('<span style="color:#80868b"><s>%s</s></span> → ' % old) if old else "→ ",
+                _html(row.get("new"))))
+        empty = ""
+        if not rows:
+            empty = "Исходное состояние проекта" if view.get("kind") == "start" else "Без изменений настроек"
+        card.setProperty("title", view.get("name") or "")
+        card.setProperty("stats", view.get("stats") or "")
+        card.setProperty("rows", rows)
+        card.setProperty("emptyText", empty)
+        card.setProperty("rightInset", self._chat.reserved_width() if self._chat is not None else 0)
+        card.setProperty("cardY", max(0.0, min(1.0, float(y))))
+        card.setProperty("visible", True)
+
+
+def _html(text):
+    return (str(text) if text is not None else "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
 class EmbeddedChat:
     """The chat as a panel inside the slicer window (see the module docstring)."""
 
@@ -292,6 +348,12 @@ class EmbeddedChat:
             except OSError:
                 pass
         self._process = None
+
+    def reserved_width(self):
+        """Width of the chat strip at the right edge of the slicer window (0 when the chat is outside it)."""
+        if self._embedded and self._visible and self._panel is not None:
+            return int(self._panel.property("width") or 0)
+        return 0
 
     # ------------------------------------------------------------------ setup
 

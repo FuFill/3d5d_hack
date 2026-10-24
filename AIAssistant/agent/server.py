@@ -17,6 +17,7 @@ from socketserver import ThreadingMixIn
 from urllib.parse import parse_qs, urlparse
 
 from .documents import extract_text
+from .versions import START_NAME, ModelTree, changes, same_state
 
 WEB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "web")
 STATIC = {"/": ("index.html", "text/html; charset=utf-8"),
@@ -46,14 +47,21 @@ class ChatService:
         self.agent = agent
         self.store = store  # ChatStore or None (no saved chats)
         self.chat_id = None
+        self.tree = ModelTree()
+        self.state_io = None  # versions.StateIO: reads and restores the print setup (set by the extension)
+        self.on_hover = None  # shows a node card next to the chat in the slicer window: (node view or None, y)
         if store is not None and agent is not None:
             from .chats import new_id
             self.chat_id = new_id()
             agent.on_turn_done = self.save_chat
+        if agent is not None:
+            agent.before_work = self.before_work
+            agent.after_work = self.after_work
         self.mcp = mcp
         self.registry = registry
         self.settings = settings  # object with public(), update(dict), test()
         self.token = uuid.uuid4().hex
+        self.restored = None
         self.upload_dir = tempfile.mkdtemp(prefix="ste_ai_assistant_")
         self.uploads = {}
         self._lock = threading.Lock()
@@ -66,7 +74,7 @@ class ChatService:
             return False
         events, _seq = self.bus.snapshot()
         files = self._chat_uploads(("model", "spec"), events)
-        return self.store.save(self.chat_id, events, self.agent.messages(), files)
+        return self.store.save(self.chat_id, events, self.agent.messages(), files, self.tree.to_dict())
 
     def chats(self):
         if self.store is None:
@@ -86,6 +94,7 @@ class ChatService:
         if self.store is not None:
             from .chats import new_id
             self.chat_id = new_id()
+        self.tree = ModelTree()
         return True
 
     def open_chat(self, chat_id):
@@ -99,7 +108,80 @@ class ChatService:
         self._restore_files(self.store.files(data["id"], data.get("files")))
         self.agent.load(data.get("messages") or [])
         self.bus.load(data.get("events") or [])
+        self.tree = ModelTree(data.get("tree"))
+        self.restored = self._restore_selected()
         return True
+
+    # ------------------------------------------------------------------ model tree
+
+    def _language(self):
+        try:
+            return self.settings.public().get("language", "ru")
+        except Exception:
+            return "ru"
+
+    def _restore_selected(self):
+        """The slicer goes to the model last chosen in this chat; returns what happened for the window."""
+        node = self.tree.current()
+        if node is None or self.state_io is None:
+            return None
+        try:
+            result = self.state_io.restore(node["snapshot"])
+        except Exception as e:
+            return {"error": str(e)}
+        return dict(result, node=node["id"])
+
+    def tree_view(self):
+        return dict(self.tree.view(self._language()), busy=bool(self.agent and self.agent.busy()))
+
+    def before_work(self):
+        """The project as it was before the first work of the chat: the root of its tree."""
+        if self.state_io is None or self.tree.nodes or self.tree.start is not None:
+            return
+        self.tree.start = {"snapshot": self.state_io.capture()}
+
+    def after_work(self, namer, language="ru", should_stop=None):
+        """A finished result becomes a node under the selected one, unless nothing changed."""
+        if self.state_io is None:
+            return None
+        snapshot = self.state_io.capture()
+        current = self.tree.current()
+        base = current["snapshot"] if current else (self.tree.start or {}).get("snapshot")
+        if base is not None and same_state(base, snapshot):
+            return None
+        if not self.tree.nodes and base is not None:
+            self.tree.add(base, START_NAME[0 if language == "ru" else 1], kind="start")
+        self.tree.start = None
+        if self.bus is not None and self.state_io.needs_slice():
+            self.bus.emit("message", text="Нарезаю, чтобы сохранить модель" if language == "ru" else
+                          "Slicing to save the model", streaming=False, note=True, auto=True)
+        stats = self.state_io.stats(should_stop)
+        node = self.tree.add(snapshot, namer(changes(base, snapshot, language)), stats)
+        return node
+
+    def select_node(self, node_id):
+        """Click on a node: the slicer is switched to it; the model hears about it with the next message."""
+        if self.agent.busy():
+            return None
+        node = self.tree.node(node_id)
+        if node is None:
+            raise ValueError("node")
+        result = self.state_io.restore(node["snapshot"]) if self.state_io is not None else {}
+        self.tree.selected = node_id
+        self.agent.note("[Model tree: the user switched the slicer to the saved variant \"%s\" (%s). The slicer now has "
+                        "exactly that setup; continue from it.]" % (node.get("name"), node.get("short")))
+        self.save_chat()
+        return dict(result or {}, node=node_id)
+
+    def hover(self, node_id, y):
+        """Node card in the slicer window next to the chat; False when only the page can show it."""
+        if self.on_hover is None:
+            return False
+        view = next((n for n in self.tree.view(self._language())["nodes"] if n["id"] == node_id), None)
+        try:
+            return bool(self.on_hover(view, y))
+        except Exception:
+            return False
 
     def _restore_files(self, items):
         """Attachments of a reopened chat are available again under their old ids."""
@@ -284,9 +366,12 @@ class Handler(BaseHTTPRequestHandler):
             events, seq = service.bus.snapshot()
             return self._send(200, {"events": events, "seq": seq, "busy": service.agent.busy(),
                                     "settings": service.settings.public(), "mcp_url": service.mcp_url(),
-                                    "chat_id": service.chat_id, "history": service.store is not None})
+                                    "chat_id": service.chat_id, "history": service.store is not None,
+                                    "tree": service.state_io is not None, "native_card": service.on_hover is not None})
         if url.path == "/api/chats":
             return self._send(200, {"chats": service.chats(), "current": service.chat_id})
+        if url.path == "/api/tree":
+            return self._send(200, service.tree_view())
         if url.path == "/api/events":
             query = parse_qs(url.query)
             since = int((query.get("since") or ["0"])[0])
@@ -349,7 +434,21 @@ class Handler(BaseHTTPRequestHandler):
                     return self._send(404, {"error": "chat"})
                 if not opened:
                     return self._send(409, {"error": "busy"})
-                return self._send(200, {"ok": True, "chat_id": service.chat_id})
+                return self._send(200, {"ok": True, "chat_id": service.chat_id, "restored": service.restored})
+            if url.path == "/api/tree/select":
+                try:
+                    result = service.select_node(str(data.get("id") or ""))
+                except ValueError:
+                    return self._send(404, {"error": "node"})
+                except Exception as e:
+                    return self._send(422, {"error": str(e)})
+                if result is None:
+                    return self._send(409, {"error": "busy"})
+                return self._send(200, dict(service.tree_view(), restored=result))
+            if url.path == "/api/hover":
+                y = data.get("y")
+                shown = service.hover(data.get("id"), float(y) if isinstance(y, (int, float)) else 0.5)
+                return self._send(200, {"native": shown})
             if url.path == "/api/chats/delete":
                 if not service.delete_chat(str(data.get("id") or "")):
                     return self._send(409, {"error": "busy"})

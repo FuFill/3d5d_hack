@@ -192,7 +192,7 @@ svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width:
 .stopped { margin: 0 0 12px; color: var(--muted); font-size: 12px; }
 
 /* composer */
-.composer { flex: none; padding: 8px 10px 10px; border-top: 1px solid var(--line); }
+.composer { flex: none; position: relative; z-index: 4; background: var(--bg); padding: 8px 10px 10px; border-top: 1px solid var(--line); }
 .row { display: flex; align-items: flex-end; gap: 4px; }
 textarea {
   flex: 1;
@@ -244,6 +244,30 @@ form input:focus { border-bottom-color: var(--fg); }
 @keyframes flash { from { background: var(--soft); } to { background: transparent; } }
 
 /* saved chats */
+/* model tree: a sheet under the bar, newest model on top */
+.tree { position: fixed; left: 0; right: 0; top: 40px; height: 50vh; display: flex; flex-direction: column;
+  background: var(--bg); border-bottom: 1px solid var(--line); box-shadow: 0 10px 24px rgba(0, 0, 0, .06); z-index: 4;
+  animation: tree-in .14s ease-out; }
+@keyframes tree-in { from { transform: translateY(-10px); opacity: 0; } }
+.tree-dim { position: fixed; left: 0; right: 0; top: 40px; bottom: 0; background: var(--bg); opacity: .65; z-index: 3; }
+.tree-head { padding: 8px 14px 0; color: var(--muted); font-size: 12px; }
+.tree-body { flex: 1; overflow: auto; }
+.tree-canvas { position: relative; margin: 0 auto; }
+.tree-canvas svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; stroke: var(--line); stroke-width: 1.5; }
+.tnode { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; padding: 0; border: 1.5px solid var(--fg);
+  border-radius: 50%; background: var(--bg); font-size: 11px; font-weight: 600; line-height: 1; letter-spacing: .02em; }
+.tnode:hover { background: var(--soft); }
+.tnode.on { background: var(--fg); color: var(--bg); }
+.tree-empty { padding: 14px; }
+#models.on { background: var(--soft); }
+.tree-card { position: fixed; right: 10px; width: 250px; padding: 11px 12px; background: var(--bg); border: 1px solid #dadce0;
+  border-radius: 10px; z-index: 6; pointer-events: none; font-size: 12px; }
+.tree-card b { display: block; font-size: 13px; }
+.tree-card .stats { color: var(--muted); margin-top: 2px; }
+.tree-card hr { border: 0; border-top: 1px solid var(--line); margin: 7px 0; }
+.tree-card .old { color: var(--muted); text-decoration: line-through; }
+.tree-card .new { font-weight: 600; }
+
 .chat-list { padding: 6px; }
 .chat-row { display: flex; align-items: center; border-radius: 7px; }
 .chat-row:hover, .chat-row.on { background: var(--soft); }

@@ -90,7 +90,7 @@ class ChatStore:
                             "size": os.path.getsize(path)})
         return out
 
-    def save(self, chat_id, events, messages, files=None):
+    def save(self, chat_id, events, messages, files=None, tree=None):
         title = title_of(events)
         if not title:
             return False  # an empty chat is not worth keeping
@@ -99,7 +99,7 @@ class ChatStore:
             kept = self._keep_files(chat_id, files)
         except OSError:
             kept = []  # the chat itself is still saved
-        data = {"id": chat_id, "title": title, "updated": time.time(), "files": kept,
+        data = {"id": chat_id, "title": title, "updated": time.time(), "files": kept, "tree": tree or {},
                 "events": [e for e in events if e.get("type") != "reset"], "messages": _without_images(messages)}
         with self._lock:
             with open(path + ".tmp", "w", encoding="utf-8") as f:
