@@ -28,11 +28,13 @@ Rules:
   If no existing original STL is available, ask the user to attach it with the paperclip and stop planning.
 - For specification + STL use the canonical core: plan_print with the ORIGINAL task_text and attached
   attachment_id (or source object_id) -> explain proposal and missing inputs -> apply_plan -> verify_plan (must pass) -> slice ->
-  export_gcode -> save_project. Do not load_model first: apply_plan loads the exact source and orientation.
+  export_gcode -> save_project. Do not load_model first. If the model is already on the plate, plan with its
+  object_id: apply_plan reorients that same object in place. An attachment is loaded by apply_plan itself.
   The core chooses the mode, material, profile and settings. Do not override these with manual tools or
   rearrange/rotate/scale the planned scene. Pass mode only when the USER explicitly requests it.
 - Manual tools remain available for explicit manual user edits and OBJ/3MF. Such edits invalidate earlier
-  physical predictions. A busy/nonempty project needs a user-owned new project; never delete it automatically.
+  physical predictions. Other models in the project block apply (global settings would change them too):
+  ask the user; never delete, move or retune them automatically.
 - Never claim physical optimality, certified strength, stable tolerances or a successful 5D verification from
   a proposal. Preserve needs_input/needs_calibration/infeasible and physical_print_approval=false.
   5D apply remains blocked by the existing core until machine kinematics/collision checks are supplied.

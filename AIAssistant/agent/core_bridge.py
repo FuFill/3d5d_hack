@@ -42,6 +42,8 @@ class CoreBridge:
         self._generation = 0
         self._plans = {}
         self._process = None
+        # Set by the shell: scene object id -> live node (Qt thread), for in-place apply.
+        self.resolve_node = None
 
     def _inputs(self):
         path = self.settings().get("planning_inputs_file") or ""
@@ -117,6 +119,9 @@ class CoreBridge:
         mode = args.get("mode")
         if mode is not None and mode not in ("classic", "cylindrical", "cylindrical_full"):
             raise ValueError("Unsupported printing mode")
+        target = args.get("target_object_id")
+        if target is not None and (isinstance(target, bool) or not isinstance(target, int)):
+            raise ValueError("target_object_id must be a scene object id")
         snapshot = run_on_main(self.app, self._snapshot)
         options, inputs = self._inputs()
         request_id = uuid.uuid4().hex
@@ -125,7 +130,8 @@ class CoreBridge:
             raise ValueError("allowed_quality_changes must be a list of custom profile names")
         request = dict(snapshot, request_id=request_id, task_text=text, mesh_path=path,
                        geometry_sha256=digest(path), mode=mode, llm_items=args.get("llm_items"),
-                       planner_options=options, inputs=inputs, allowed_quality_changes=allowed)
+                       planner_options=options, inputs=inputs, allowed_quality_changes=allowed,
+                       target_object_id=target)
         with self._lock:
             if self._process is not None:
                 raise ValueError("Planning is already running; cancel it first")
@@ -207,6 +213,10 @@ class CoreBridge:
                                          for c in (decision.get("setting_patch") or {}).get("changes") or []],
                         geometry_sha256=record["request"]["geometry_sha256"],
                         decision_sha256=_hash(decision),
+                        # The loaded model is reoriented in place; otherwise apply loads the source.
+                        apply_target=({"object_id": record["request"]["target_object_id"], "in_place": True}
+                                      if record["request"].get("target_object_id") is not None else
+                                      {"in_place": False, "requires_empty_project": True}),
                         assessments={k: {"status": decision.get(k, {}).get("status")}
                                      for k in ("causal_analysis", "functional_analysis", "robustness_analysis")},
                         next_step="apply_plan, verify_plan, slice; keep unresolved qualification requirements visible")
@@ -223,8 +233,14 @@ class CoreBridge:
                 raise ValueError("Project changed since planning; calculate a new plan")
             if self._inputs()[1] != record["request"].get("inputs"):
                 raise ValueError("Calibration/functional/noise inputs changed; calculate a new plan")
+            target = None
+            if record["request"].get("target_object_id") is not None:
+                if self.resolve_node is None:
+                    raise ValueError("Scene objects cannot be resolved in this shell; plan from an attachment")
+                target = self.resolve_node(record["request"]["target_object_id"])
             from ste_planner.runtime_adapter import create_operation
-            operation = create_operation(self.app, record["decision"], record["request"]["mesh_path"])
+            operation = create_operation(self.app, record["decision"], record["request"]["mesh_path"],
+                                         target_node=target)
             operation.redo()
             operation.push()
             record["operation"], record["applied"] = operation, True

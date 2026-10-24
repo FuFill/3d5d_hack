@@ -64,7 +64,9 @@ def test_scene_object_id_resolves_actual_original_stl():
     assert info["can_plan_original_stl"]
     outcome = value.call("plan_print", {"task_text": "Original specification", "object_id": sources[0]["object_id"]})
     assert outcome["ok"]
-    assert core.calls[0] == {"task_text": "Original specification", "mesh_path": stl}
+    # The loaded object itself becomes the apply target; no second copy is loaded.
+    assert core.calls[0] == {"task_text": "Original specification", "mesh_path": stl,
+                             "target_object_id": sources[0]["object_id"]}
 
 
 def test_chat_upload_id_resolves_without_llm_path_retyping():

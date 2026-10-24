@@ -171,6 +171,59 @@ def sequential_triangles(vertices, faces):
     return v[f].reshape(-1, 3), np.arange(f.size, dtype=np.int32).reshape(-1, 3)
 
 
+def source_mesh_matches(vertices, indices, source):
+    """Whether a loaded node's local mesh is the planned source STL.
+
+    Uranium's STLReader stores every facet, in file order, as three vertices in
+    scene axes (x, z, -y), without centring; position, rotation and auto-scale
+    live only in the node transformation. A repaired, decimated, reordered or
+    other mesh does not match, and apply refuses rather than guessing.
+    """
+    v = np.asarray(vertices, dtype=float)
+    if indices is None:
+        if v.ndim != 2 or v.shape[1] != 3 or len(v) % 3:
+            return False
+        triangles = v.reshape(-1, 3, 3)
+    else:
+        f = np.asarray(indices, dtype=int)
+        if f.ndim != 2 or f.shape[1] != 3 or (f.size and (f.min() < 0 or f.max() >= len(v))):
+            return False
+        triangles = v[f]
+    expected = source.triangles.dot(PRINTER_TO_SCENE.T)
+    if triangles.shape != expected.shape:
+        return False
+    tolerance = 1e-4 * max(1.0, float(np.abs(expected).max()) if expected.size else 1.0)
+    return bool(np.allclose(triangles, expected, rtol=0.0, atol=tolerance))
+
+
+def check_target_node(target, scene_root, mesh_path, source):
+    """The loaded object may replace the empty project only when the plan alone governs it.
+
+    Global settings affect every model on every plate, so the scene must hold only
+    this object; its own modifier meshes or per-object settings were not planned.
+    """
+    sliceable = [n for n in scene_root.getAllChildren() if n.callDecoration("isSliceable")]
+    if target not in sliceable or target.getParent() is not scene_root or target.callDecoration("isGroup"):
+        raise ApplyError("the planned object is no longer a top-level model in the scene; plan again")
+    own = [n for n in target.getAllChildren() if n.getMeshData() is not None]
+    if own:
+        raise ApplyError("the object has its own modifier/support meshes; remove them or plan a new project")
+    others = [n for n in sliceable if n is not target]
+    if others:
+        raise ApplyError("the project contains other models (%d); the plan writes global settings for every "
+                         "model, so keep only the planned object or open a new project" % len(others))
+    stack = target.callDecoration("getStack")
+    if stack is not None and stack.getTop() is not None and stack.getTop().getAllKeys():
+        raise ApplyError("the object has per-object settings that the plan did not consider; "
+                         "reset them or plan a new project")
+    mesh = target.getMeshData()
+    if mesh is None or os.path.normcase(os.path.abspath(mesh.getFileName() or "")) != \
+            os.path.normcase(os.path.abspath(mesh_path)):
+        raise ApplyError("the object was not loaded from the planned STL")
+    if not source_mesh_matches(mesh.getVertices(), mesh.getIndices(), source):
+        raise ApplyError("the object's mesh differs from the planned STL (edited, repaired or reloaded)")
+
+
 def file_sha256(path):
     digest = hashlib.sha256()
     with open(path, "rb") as handle:
@@ -303,8 +356,13 @@ def readback(app, decision):
             "material_id": extruder.material.getId(), "quality_id": extruder.quality.getId()}
 
 
-def create_operation(app, decision, mesh_path, demonstration=False, analysis_only=False):
+def create_operation(app, decision, mesh_path, demonstration=False, analysis_only=False, target_node=None):
     """Stage an operation without touching the existing scene or stack contents.
+
+    target_node: the loaded scene object of the planned STL. It is reoriented in
+    place (its old transform, extruder, plate and mesh are restored by undo)
+    instead of loading a second copy; batch copies and modifiers are added to it.
+    Without it the project must be empty and the source is loaded.
 
     Caller must redo/check before pushing to the Uranium undo stack: push()
     itself records an operation before invoking redo(), including failed ones.
@@ -331,11 +389,14 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
     stack = app.getGlobalContainerStack()
     preflight(decision, mesh_path, stack.definition.getId(), demonstration, analysis_only)
     scene = app.getController().getScene()
-    # Global settings affect all plates. Require a clean project instead of
-    # silently modifying settings for pre-existing models on another plate.
-    if any(n.callDecoration("isSliceable") for n in scene.getRoot().getAllChildren()):
-        raise ApplyError("open a new project before applying a complete process plan")
     source = geometry.load_stl(mesh_path)
+    if target_node is not None:
+        # The model already on the plate becomes the planned part in place.
+        check_target_node(target_node, scene.getRoot(), mesh_path, source)
+    elif any(n.callDecoration("isSliceable") for n in scene.getRoot().getAllChildren()):
+        # Global settings affect all plates: never retune models the plan did not consider.
+        raise ApplyError("the project already contains models; plan with the object_id of the loaded model "
+                         "(list_model_sources) or open a new project")
     transform = next(op for op in decision["scene_operations"] if op["op"] == "set_transform")
     matrix = scene_transform(transform["rotation"], transform["translation"])
     modifiers = [op for op in decision["scene_operations"] if op["op"] == "add_modifier_mesh"]
@@ -361,6 +422,8 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
             raise ApplyError("unique installed material container required: " + material_id)
         material = materials[0]
     plate = app.getMultiBuildPlateModel().activeBuildPlate
+    if target_node is not None and (target_node.callDecoration("getBuildPlateNumber") or 0) >= 0:
+        plate = target_node.callDecoration("getBuildPlateNumber") or 0
     if plate < 0:
         plate = 0
     count = next((int(op["count"]) for op in decision["scene_operations"] if op["op"] == "multiply"), 1)
@@ -387,9 +450,10 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
         node.callDecoration("setActiveExtruder", stack.extruders["0"].getId())
         return node
 
+    target = None       # (node, planned Matrix, old state) of the reused scene object
+    target_children = []  # modifiers of the reused object: attached on redo, detached on undo
     for i in range(count):
         label = os.path.basename(mesh_path) + (" #" + str(i + 1) if count > 1 else "")
-        node = node_from_mesh(source.vertices.dot(PRINTER_TO_SCENE.T), source.faces, label)
         local_matrix = matrix.copy()
         if count > 1:
             columns = min(nx, count)
@@ -397,14 +461,32 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
             offset = np.array([(i % columns - (columns - 1) / 2.) * (size[0] + 10),
                                (i // columns - (rows - 1) / 2.) * (size[1] + 10), 0.])
             local_matrix[:3, 3] += PRINTER_TO_SCENE.dot(offset)
-        node.setTransformation(Matrix(local_matrix))
+        if i == 0 and target_node is not None:
+            node = target_node
+            old_mesh = node.getMeshData()
+            new_mesh = None
+            if decision["route"]["mode"] != "classic":
+                # Same geometry, indexed like node_from_mesh for 7.10 CLIParser.
+                vertices, faces = sequential_triangles(source.vertices.dot(PRINTER_TO_SCENE.T), source.faces)
+                new_mesh = MeshData(vertices=np.asarray(vertices, dtype=np.float32),
+                                    indices=np.asarray(faces, dtype=np.int32), file_name=mesh_path)
+            target = (node, Matrix(local_matrix), {
+                "matrix": Matrix(np.array(node.getLocalTransformation().getData(), dtype=float)),
+                "extruder": node.callDecoration("getActiveExtruder"),
+                "plate": node.callDecoration("getBuildPlateNumber"), "mesh": old_mesh, "new_mesh": new_mesh})
+        else:
+            node = node_from_mesh(source.vertices.dot(PRINTER_TO_SCENE.T), source.faces, label)
+            node.setTransformation(Matrix(local_matrix))
+            nodes.append(node)
         for op, (vertices, faces) in modifier_meshes:
             child = node_from_mesh(vertices, faces, op["role"] + (" #" + str(i + 1) if count > 1 else ""))
-            child.setParent(node)
+            if node is target_node:
+                target_children.append(child)
+            else:
+                child.setParent(node)
             child.callDecoration("getStack").getTop().setDefinition(stack.definition.getId())
             for key, setting in op["settings"].items():
                 child.callDecoration("getStack").getTop().setProperty(key, "value", setting)
-        nodes.append(node)
 
     class PlanOperation(Operation):
         def __init__(self):
@@ -487,8 +569,19 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
                 app.getMultiBuildPlateModel().setActiveBuildPlate(plate)
                 if self.old_gravity is not None:
                     app.getPreferences().setValue("physics/automatic_drop_down", False)
+                self.target_changed = target is not None
+                if target is not None:
+                    node, planned, old = target
+                    if old["new_mesh"] is not None:
+                        node.setMeshData(old["new_mesh"])
+                    node.setTransformation(planned)
+                    node.callDecoration("setActiveExtruder", stack.extruders["0"].getId())
+                    node.callDecoration("setBuildPlateNumber", plate)
+                    for child in target_children:
+                        child.setParent(node)
                 for node in self.nodes:
                     node.setParent(scene.getRoot())
+                for node in ([target[0]] if target is not None else []) + self.nodes:
                     app.getBuildVolume().checkBoundsAndUpdate(node)
                     if node.isOutsideBuildArea():
                         raise ApplyError("transformed model/batch is outside the actual build area")
@@ -496,7 +589,7 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
                 self.readback = readback(app, decision)
                 if self.readback["status"] != "pass":
                     raise ApplyError("effective setting readback differs: " + str(self.readback["differences"]))
-                scene.sceneChanged.emit(self.nodes[0])
+                scene.sceneChanged.emit(target[0] if target is not None else self.nodes[0])
             except Exception:
                 self.undo()
                 raise
@@ -504,6 +597,20 @@ def create_operation(app, decision, mesh_path, demonstration=False, analysis_onl
         def undo(self):
             for node in self.nodes:
                 node.setParent(None)
+            if target is not None and getattr(self, "target_changed", False):
+                # Restore the user's object exactly: transform, extruder, plate, mesh.
+                node, _, old = target
+                for child in target_children:
+                    child.setParent(None)
+                if old["new_mesh"] is not None:
+                    node.setMeshData(old["mesh"])
+                node.setTransformation(old["matrix"])
+                if old["extruder"] is not None:
+                    node.callDecoration("setActiveExtruder", old["extruder"])
+                if old["plate"] is not None:
+                    node.callDecoration("setBuildPlateNumber", old["plate"])
+                app.getBuildVolume().checkBoundsAndUpdate(node)
+                self.target_changed = False
             self._containers(self.before)
             app.getMultiBuildPlateModel().setActiveBuildPlate(self.old_plate)
             if self.old_gravity is not None:

@@ -99,7 +99,9 @@ class ToolRegistry:
                       "deterministic core (materials, orientation, settings, DML and uncertainty checks). "
                       "Does not change the project. Select exactly one source: attachment_id, object_id or an actual "
                       "absolute mesh_path. Object input reads the ORIGINAL STL, not its current scene transform. "
-                      "Do not paraphrase the specification. Apply still requires a new empty project.",
+                      "Do not paraphrase the specification. If the model is already on the plate, use its object_id: "
+                      "apply then reorients that object in place (only it may be in the project); an attachment "
+                      "is loaded by apply into an empty project.",
                       {"task_text": {"type": "string"},
                        "attachment_id": {"type": "string", "description": "Id from the message attachment or list_model_sources."},
                        "object_id": {"type": "integer", "description": "Scene object id from list_objects/list_model_sources."},
@@ -111,7 +113,8 @@ class ToolRegistry:
                       self._plan_print, required=("task_text",), on_main=False)
             self._add("get_plan", "Read the current core proposal, limitations and explanations.",
                       {"plan_id": plan_id}, lambda a, c: self.core.summary(a["plan_id"]), required=("plan_id",), on_main=False)
-            self._add("apply_plan", "Apply exactly the core plan as one Undo operation. Requires an empty project. "
+            self._add("apply_plan", "Apply exactly the core plan as one Undo operation. A plan by object_id reorients "
+                      "that loaded object in place and needs no other models; a plan by attachment needs an empty project. "
                       "Rejects stale source/project, infeasible and unqualified 5D plans. Never delete user objects to bypass it.",
                       {"plan_id": plan_id}, self.core.apply, required=("plan_id",))
             self._add("verify_plan", "Read back actual STE settings, source and scene; status must pass before slicing.",
@@ -238,7 +241,8 @@ class ToolRegistry:
             return [dict(self._node_source(node), object_id=self._node_id(node), name=node.getName())
                     for node in self._scene_nodes()]
         return {"attachments": attachments, "scene_models": run_on_main(self._app, scene_sources),
-                "note": "Use a source id. The core reads the original STL; apply requires an empty project."}
+                "note": "Use a source id. The core reads the original STL. A model already on the plate: plan with "
+                        "its object_id and apply reorients it in place; other models must not be in the project."}
 
     def _plan_print(self, args, ctx):
         selectors = [key for key in ("attachment_id", "object_id", "mesh_path") if args.get(key) is not None]
@@ -258,8 +262,11 @@ class ToolRegistry:
             raise ToolError("An existing original STL is required. Use list_model_sources and its attachment_id/object_id, "
                             "or attach the STL with the chat paperclip. Do not guess folders or use only a filename. "
                             "OBJ/3MF remain available through manual tools.")
-        request = {k: v for k, v in args.items() if k not in ("attachment_id", "object_id")}
+        request = {k: v for k, v in args.items() if k not in ("attachment_id", "object_id", "target_object_id")}
         request["mesh_path"] = source["source_path"]
+        if key == "object_id":
+            # Apply then reorients this loaded object instead of loading a second copy.
+            request["target_object_id"] = int(args[key])
         result = self.core.plan(request, ctx)
         result["input_source"] = source
         return result

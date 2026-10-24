@@ -153,6 +153,7 @@ class AIAssistant(Extension):
         monitor.connect()
         core = CoreBridge(self._app, settings.values)
         registry = ToolRegistry(self._app, monitor, lambda: settings.get("output_dir"), core=core)
+        core.resolve_node = registry._node
         mcp = MCPServer(registry)
         agent = Agent(mcp, registry, bus, settings.values)
         self._service = ChatService(bus, agent, mcp, registry, settings)
