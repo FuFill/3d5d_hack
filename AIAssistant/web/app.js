@@ -630,6 +630,36 @@
   // ← → between questions, an own answer in the grey field; several questions end with a review step.
   var wizards = {};  // question event seq -> {index, answers, highlight, draw, node}
 
+  // Progress of an open card survives a reload of the window: answers and drafts per question event.
+  function wizardKey(seq) { return "ask:" + token + ":" + seq; }
+
+  function loadWizard(seq, size) {
+    try {
+      var saved = JSON.parse(localStorage.getItem(wizardKey(seq)) || "null");
+      if (saved && saved.answers && saved.answers.length === size) return saved;
+    } catch (err) { /* storage unavailable */ }
+    return null;
+  }
+
+  function saveWizard(w) {
+    try {
+      localStorage.setItem(wizardKey(w.event.seq), JSON.stringify({index: w.index, answers: w.answers, drafts: w.drafts}));
+    } catch (err) { /* storage unavailable */ }
+  }
+
+  function forgetWizard(seq) {
+    try { localStorage.removeItem(wizardKey(seq)); } catch (err) { /* storage unavailable */ }
+  }
+
+  (function forgetOldRuns() {  // cards of earlier slicer sessions can no longer be answered
+    try {
+      for (var i = localStorage.length - 1; i >= 0; i--) {
+        var key = localStorage.key(i);
+        if (key && key.indexOf("ask:") === 0 && key.indexOf("ask:" + token + ":") !== 0) localStorage.removeItem(key);
+      }
+    } catch (err) { /* storage unavailable */ }
+  })();
+
   function questionsOf(e) {
     if (e.questions) return e.questions;
     return [{text: e.text || "", options: e.options || [], allow_custom: e.allow_custom !== false}];  // older chats
@@ -648,11 +678,14 @@
       });
       if (e.status === "cancelled") node.appendChild(el("div", "ask-hint", t("askCancelled")));
       delete wizards[e.seq];
+      forgetWizard(e.seq);
       return node;
     }
     var fresh = !wizards[e.seq];
-    var w = wizards[e.seq] || (wizards[e.seq] = {index: 0, answers: items.map(function () { return null; }), highlight: 0,
-                                                 drafts: {}});
+    var saved = fresh ? loadWizard(e.seq, items.length) : null;
+    var w = wizards[e.seq] || (wizards[e.seq] = {index: saved ? Math.min(saved.index, items.length) : 0,
+                                                 answers: saved ? saved.answers : items.map(function () { return null; }),
+                                                 highlight: 0, drafts: saved && saved.drafts || {}});
     w.node = node;
     w.event = e;
     node.tabIndex = 0;
@@ -706,7 +739,7 @@
         custom.placeholder = t("custom");
         custom.value = w.drafts[w.index] !== undefined ? w.drafts[w.index] :
           (chosen && chosen.choice === null ? chosen.text : "");
-        custom.addEventListener("input", function () { w.drafts[w.index] = custom.value; });
+        custom.addEventListener("input", function () { w.drafts[w.index] = custom.value; saveWizard(w); });
         custom.addEventListener("keydown", function (ev) {
           if (ev.key === "Enter" && !ev.isComposing && custom.value.trim()) {
             ev.preventDefault(); ev.stopPropagation();
@@ -744,6 +777,7 @@
     if (step > 0 && !w.answers[w.index]) return;  // forward only past answered questions
     w.index = target;
     w.highlight = 0;
+    saveWizard(w);
     w.draw();
     w.node.focus();
   }
@@ -755,6 +789,7 @@
     var next = w.answers.indexOf(null);
     w.index = next >= 0 && next > w.index ? next : (next >= 0 ? next : items.length);
     w.highlight = 0;
+    saveWizard(w);
     w.draw();
     w.node.focus();
   }

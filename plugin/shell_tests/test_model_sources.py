@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "AIAssistant"))
 sys.path.insert(0, str(ROOT / "plugin/tests"))
 from agent.agent import Agent
+from agent.events import EventBus
 from agent.server import ChatService
 from agent.tools import ToolRegistry
 from testutil import example_cases
@@ -71,13 +72,17 @@ def test_scene_object_id_resolves_actual_original_stl():
 
 def test_chat_upload_id_resolves_without_llm_path_retyping():
     value, core = registry()
-    service = ChatService(None, None, None, value, None)
+    bus = EventBus()
+    service = ChatService(bus, None, None, value, None)
     try:
         # Exact bytes of an original organizer STL; Unicode filename is owned by the server.
         path = Path(example_cases()[0][2])
         data = path.read_bytes()
         upload = service.add_upload(path.name, io.BytesIO(data), len(data))
         value.upload_sources = service.model_uploads
+        assert value.call("list_model_sources", {})["result"]["attachments"] == []  # not sent in this chat yet
+        bus.emit("user", text="Original specification", attachments=[{"name": path.name, "kind": "model",
+                                                                       "id": upload["id"]}])
         outcome = value.call("plan_print", {"task_text": "Original specification", "attachment_id": upload["id"]})
         assert outcome["ok"]
         assert core.calls[0]["mesh_path"] == upload["path"]

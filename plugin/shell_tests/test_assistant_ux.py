@@ -156,10 +156,12 @@ def test_text_specification_encodings_and_errors(tmp_path):
 
 
 def test_upload_accepts_specs_and_names_the_rejection_reason(tmp_path):
-    service = ChatService(EventBus(), None, None, None, None)
+    bus = EventBus()
+    service = ChatService(bus, None, None, None, None)
     data = "Ось вращения, PA6".encode("utf-8")
     item = service.add_upload("ТЗ%20оси.txt", io.BytesIO(data), len(data))
     assert item["kind"] == "spec" and item["text"] == "Ось вращения, PA6" and item["name"] == "ТЗ%20оси.txt"
+    bus.emit("user", text="", attachments=[{"name": item["name"], "kind": "spec", "id": item["id"]}])
     assert service.spec_uploads()[0]["id"] == item["id"]
     with pytest.raises(ValueError, match="unsupported"):
         service.add_upload("model.step", io.BytesIO(b"x"), 1)
@@ -633,3 +635,36 @@ def test_a_slow_router_falls_back_to_work(monkeypatch):
     agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
     agent._messages = [{"role": "user", "content": "Какой пресет?"}]
     assert agent._route(Slow()) == "act"
+
+
+def test_attachments_of_a_chat_stay_after_restart_and_only_in_that_chat(tmp_path, monkeypatch):
+    from agent.chats import ChatStore
+    folder = str(tmp_path / "chats")
+
+    def started():
+        bus = EventBus()
+        value = registry(bus=bus)[0]
+        agent = agent_module.Agent(MCPServer(value), value, bus, lambda: {"language": "ru"})
+        return ChatService(bus, agent, MCPServer(value), value, None, store=ChatStore(folder)), agent
+
+    client = FakeClient([{"stream": ["Ок."]}, {"stream": ["Ок."]}], route="act", proofread="OK")
+    monkeypatch.setattr(agent_module, "LLMClient", lambda *a, **k: client)
+    service, agent = started()
+    model = service.add_upload("Шестерня.stl", io.BytesIO(b"solid g\nendsolid g\n"), 19)
+    spec = service.add_upload("ТЗ.txt", io.BytesIO("момент 2 Н·м".encode("utf-8")), len("момент 2 Н·м".encode("utf-8")))
+    agent.submit("Сделай по ТЗ", [model, spec])
+    agent._thread.join(5)
+    chat = service.chat_id
+    assert [i["id"] for i in service.model_uploads()] == [model["id"]]
+    assert service.new_chat()
+    assert service.model_uploads() == [] and service.spec_uploads() == []   # another chat sees none of them
+    service.stop()                                                           # the temporary uploads are gone
+
+    service, agent = started()                                               # the slicer was restarted
+    assert service.open_chat(chat)
+    restored = service.model_uploads()
+    assert [i["id"] for i in restored] == [model["id"]] and Path(restored[0]["path"]).read_bytes().startswith(b"solid")
+    assert service.spec_uploads()[0]["text"] == "момент 2 Н·м"
+    assert service.delete_chat(chat)
+    assert not (tmp_path / "chats" / (chat + ".files")).exists()
+    service.stop()

@@ -65,7 +65,8 @@ class ChatService:
         if self.store is None:
             return False
         events, _seq = self.bus.snapshot()
-        return self.store.save(self.chat_id, events, self.agent.messages())
+        files = self._chat_uploads(("model", "spec"), events)
+        return self.store.save(self.chat_id, events, self.agent.messages(), files)
 
     def chats(self):
         if self.store is None:
@@ -95,9 +96,23 @@ class ChatService:
         if not self.agent.reset():
             return False
         self.chat_id = data["id"]
+        self._restore_files(self.store.files(data["id"], data.get("files")))
         self.agent.load(data.get("messages") or [])
         self.bus.load(data.get("events") or [])
         return True
+
+    def _restore_files(self, items):
+        """Attachments of a reopened chat are available again under their old ids."""
+        for item in items:
+            if item["kind"] == "spec":
+                try:
+                    item["text"] = extract_text(item["path"])
+                except ValueError:
+                    continue
+            elif item["kind"] != "model":
+                continue
+            with self._lock:
+                self.uploads.setdefault(item["id"], item)
 
     def delete_chat(self, chat_id):
         if self.store is None:
@@ -130,13 +145,19 @@ class ChatService:
     def mcp_url(self):
         return "http://127.0.0.1:%d/mcp" % self.port
 
-    def model_uploads(self):
+    def _chat_uploads(self, kinds, events=None):
+        """Uploads sent in the current chat: files of other chats are not offered to the model."""
+        if events is None:
+            events = self.bus.snapshot()[0]
+        ids = set(a.get("id") for e in events if e.get("type") == "user" for a in e.get("attachments") or [])
         with self._lock:
-            return [dict(item) for item in self.uploads.values() if item["kind"] == "model"]
+            return [dict(item) for key, item in self.uploads.items() if key in ids and item["kind"] in kinds]
+
+    def model_uploads(self):
+        return self._chat_uploads(("model",))
 
     def spec_uploads(self):
-        with self._lock:
-            return [dict(item) for item in self.uploads.values() if item["kind"] == "spec"]
+        return self._chat_uploads(("spec",))
 
     def add_upload(self, name, stream, length):
         base = os.path.basename(name.replace("\\", "/")) or "file"

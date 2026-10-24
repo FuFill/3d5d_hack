@@ -2,12 +2,15 @@
 """Saved chats: the chat feed (events) and the model history (messages) as one JSON file per chat.
 
 Images are not stored (only a note that one was shown); everything else is kept so an
-old chat can be reopened and continued after restarting the slicer.
+old chat can be reopened and continued after restarting the slicer. Model and specification
+files attached in the chat are kept next to it (<id>.files/<attachment id>/<name>), so the
+model can still plan from them after a restart.
 """
 
 import json
 import os
 import re
+import shutil
 import threading
 import time
 import uuid
@@ -53,13 +56,51 @@ class ChatStore:
             raise ValueError("chat id")
         return os.path.join(self.folder, chat_id + ".json")
 
-    def save(self, chat_id, events, messages):
+    def _files(self, chat_id):
+        return self._path(chat_id)[:-len(".json")] + ".files"
+
+    def _keep_files(self, chat_id, files):
+        """Copies (hard links where possible) of the chat's attachments; returns their records."""
+        kept = []
+        for item in files or []:
+            if not re.match(r"^[0-9A-Za-z_-]{1,64}$", str(item.get("id"))) or not os.path.isfile(item.get("path") or ""):
+                continue
+            name = os.path.basename(item["name"]) or "file"
+            folder = os.path.join(self._files(chat_id), item["id"])
+            target = os.path.join(folder, name)
+            if os.path.abspath(target) != os.path.abspath(item["path"]) and not os.path.isfile(target):
+                if not os.path.isdir(folder):
+                    os.makedirs(folder)
+                try:
+                    os.link(item["path"], target)
+                except (OSError, AttributeError, NotImplementedError):
+                    shutil.copyfile(item["path"], target)
+            kept.append({"id": item["id"], "name": name, "kind": item["kind"]})
+        return kept
+
+    def files(self, chat_id, records):
+        """Attachment records of a loaded chat whose files still exist, with their paths."""
+        out = []
+        for record in records or []:
+            if not re.match(r"^[0-9A-Za-z_-]{1,64}$", str(record.get("id"))):
+                continue
+            path = os.path.join(self._files(chat_id), record["id"], os.path.basename(record.get("name") or ""))
+            if os.path.isfile(path):
+                out.append({"id": record["id"], "name": record["name"], "kind": record.get("kind"), "path": path,
+                            "size": os.path.getsize(path)})
+        return out
+
+    def save(self, chat_id, events, messages, files=None):
         title = title_of(events)
         if not title:
             return False  # an empty chat is not worth keeping
-        data = {"id": chat_id, "title": title, "updated": time.time(),
-                "events": [e for e in events if e.get("type") != "reset"], "messages": _without_images(messages)}
         path = self._path(chat_id)
+        try:
+            kept = self._keep_files(chat_id, files)
+        except OSError:
+            kept = []  # the chat itself is still saved
+        data = {"id": chat_id, "title": title, "updated": time.time(), "files": kept,
+                "events": [e for e in events if e.get("type") != "reset"], "messages": _without_images(messages)}
         with self._lock:
             with open(path + ".tmp", "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False)
@@ -75,6 +116,7 @@ class ChatStore:
             path = self._path(chat_id)
             if os.path.isfile(path):
                 os.remove(path)
+            shutil.rmtree(self._files(chat_id), ignore_errors=True)
 
     def list(self, limit=100):
         items = []

@@ -91,7 +91,7 @@ Orientation and strength
 
 Ask when unsure
 - Call ask_user when the answer changes the result and tools cannot tell you: material not given and several
-  fit, 3D vs 5D unclear, priority strength vs speed vs quality, a preset that needs input, rotating an existing
+  fit, 3D vs 5D unclear before any core calculation, priority strength vs speed vs quality, a preset that needs input, rotating an existing
   part the user did not ask to rotate or strengthen, applying unverified 5D.
 - A preset provides process defaults, not the physically available spool, service load/direction/fixture,
   operating temperature/environment or required critical tolerances. Read these from the specification and
@@ -106,6 +106,11 @@ Ask when unsure
   "Ответы пользователя: ..." when they change the task, then apply. Ask again later only if a new problem appears.
 - Never ask what the specification, the attachments or the slicer state already answer, and never ask to
   confirm choices the core made from the specification (material, preset, settings): explain them instead.
+- Never ask about what plan_print has already decided: its printing mode (3D/5D) and every entry of
+  setting_changes (justification explicit = required by the core, requirement = from the specification,
+  constraint, load class). These follow from the part, the specification and the core rules; only the user's
+  own new demand changes them. Ask only about the physical conditions the core cannot know (the spool in the
+  printer, load, temperature, environment, critical sizes) and about its needs_input items.
   Never offer to delete or move the user's other models; offer applying only the preset and settings to the
   project, or that the user clears the scene himself.
 
@@ -190,7 +195,8 @@ class Agent:
             self._stop = False
             self._running = True
             self._kinds = [a["kind"] for a in attachments]
-            self._bus.emit("user", text=text, attachments=[{"name": a["name"], "kind": a["kind"]} for a in attachments])
+            self._bus.emit("user", text=text, attachments=[{"name": a["name"], "kind": a["kind"], "id": a.get("id")}
+                                                           for a in attachments])
             self._messages.append({"role": "user", "content": self._user_content(text, attachments)})
             self._thread = threading.Thread(target=self._run, name="AIAssistantAgent", daemon=True)
             self._thread.start()
