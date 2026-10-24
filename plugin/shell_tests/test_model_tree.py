@@ -98,7 +98,7 @@ def test_finished_work_becomes_a_node_under_the_start():
     assert [n["name"] for n in view["nodes"]] == ["Исходная", "Быстрая печать"]
     start, node = view["nodes"]
     assert start["kind"] == "start" and node["parent"] == start["id"] and node["selected"]
-    assert node["short"] == "БП" and node["stats"] == "2 ч 40 мин · 31 г · заполнение 10 %"
+    assert node["short"] == "БП" and node["stats"] == "3D · 2 ч 40 мин · 31 г · заполнение 10 %"
     rows = [(r["label"], r["old"], r["new"]) for r in node["changes"]]
     assert rows[0] == ("Пресет", "Normal", "Fast")
     assert ("Высота слоя", "0.2 mm", "0.28 mm") in rows and ("Заполнение", "20%", "10%") in rows

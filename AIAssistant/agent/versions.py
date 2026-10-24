@@ -200,9 +200,12 @@ class ModelTree:
         for node in self.nodes:
             parent = self.node(node.get("parent"))
             stats = node.get("stats") or {}
-            effective = (node.get("snapshot") or {}).get("effective") or {}
+            snapshot = node.get("snapshot") or {}
+            effective = snapshot.get("effective") or {}
             infill = stats.get("infill", effective.get("infill_sparse_density"))
-            parts = [duration_text(stats.get("print_time_s"), language)]
+            printing_format = {"classic": "3D", "cylindrical": "5D", "cylindrical_full": "5D"}.get(
+                snapshot.get("mode") or effective.get("printing_mode"))
+            parts = [printing_format, duration_text(stats.get("print_time_s"), language)]
             if stats.get("material_g"):
                 parts.append(("%s г" if language == "ru" else "%s g") % _number(stats["material_g"]))
             if infill is not None:
