@@ -22,7 +22,7 @@
 - [Шум, робастность и отсутствие утечек](research/06_robust_process_validation.md): физические входы, группировка, устойчивость и независимая проверка.
 - [Физика фактических 3D/5D траекторий](research/07_toolpath_physics_math.md): базисы дорожек, ортотропия, coarse FE, кинематика и первичные источники.
 - [Результаты оболочки и исправления источников STL](../experiments/shell_integration/REPORT.md): 24 проверки оболочки, native upload/object ID, Qt, слайсинг и Undo/Redo.
-- [Будущий выбор native-пресетов](../presets_creation.md): промпт реализации; новая функция пока не реализована.
+- [Выбор native-пресетов](../presets_creation.md): исходное задание; реализация — [PRESETS.md](../plugin/PRESETS.md).
 
 ## Источники исходных материалов
 
