@@ -8,8 +8,11 @@ build plate); the Uranium scene is Y-up and is converted here. Every change retu
 
 import contextlib
 import difflib
+import hashlib
+import json
 import math
 import os
+import tempfile
 import threading
 import time
 
@@ -307,6 +310,11 @@ class ToolRegistry:
         self._add("get_slice_result",
                   "Print time and material usage of the last finished slice.",
                   {}, self._get_slice_result)
+        self._add("validate_5d_trajectory",
+                  "Validate the current finished 5D G-code, including travel moves. Returns per-check "
+                  "pass/fail/unknown, source-line violations and missing machine/fixture data. "
+                  "Uses application-owned trajectory_validation inputs; never invent machine calibration.",
+                  {}, self._validate_5d_trajectory, on_main=False)
         self._add("export_gcode",
                   "Write the sliced G-code to a file. Default: <output folder>/<job name>/result.gcode.",
                   {"path": {"type": "string"}}, self._export_gcode, on_main=False)
@@ -1121,7 +1129,18 @@ class ToolRegistry:
                 break
             time.sleep(0.2)
         result["printing_mode"] = run_on_main(self._app, self._mode)
+        if self._mode_key(result["printing_mode"]) in ("cylindrical", "cylindrical_full"):
+            result["trajectory_validation"] = self._validate_5d_trajectory({}, ctx)
+            result["physical_print_approval"] = False
         return result
+
+    def _validate_5d_trajectory(self, args, ctx):
+        from .trajectory import validate_slice
+        return validate_slice(self, ctx)
+
+    @staticmethod
+    def _mode_key(value):
+        return value.get("mode") if isinstance(value, dict) else value
 
     def _wait_settled(self, should_stop=None, timeout=15.0):
         """Wait until STE has finished checking the settings after a change, then a short calm moment."""
@@ -1162,7 +1181,14 @@ class ToolRegistry:
         state, _progress = self._slices.status()
         if state != 3:
             raise ToolError("No finished slice (state: %s). Call slice first." % STATE_NAMES.get(state, state))
-        return self._print_info()
+        result = self._print_info()
+        if self._mode_key(self._mode()) in ("cylindrical", "cylindrical_full"):
+            from .trajectory import cached_validation
+            result["trajectory_validation"] = cached_validation(self) or {
+                "status": "not_checked", "physical_print_approval": False,
+                "note": "Run validate_5d_trajectory for the current G-code and machine contract"}
+            result["physical_print_approval"] = False
+        return result
 
     def _target(self, path, file_name):
         if path:
@@ -1178,21 +1204,66 @@ class ToolRegistry:
 
     def _export_gcode(self, args, ctx):
         from UM.Mesh.MeshWriter import MeshWriter
+        validation = None
+        if self._mode_key(run_on_main(self._app, self._mode)) in ("cylindrical", "cylindrical_full"):
+            validation = self._validate_5d_trajectory({}, ctx)
+            if validation.get("validation_available") is False:
+                detail = "; ".join(i.get("message", "") for i in validation.get("issues", [])[:2])
+                raise ToolError("5D trajectory checker is unavailable; cannot validate this export. " + detail)
+            if validation.get("status") == "fail":
+                issues = [i for i in validation.get("issues", []) if i.get("severity") == "error"]
+                detail = "; ".join("line %s: %s" % (i.get("line", "?"), i.get("message", i.get("code", "")))
+                                   for i in issues[:3])
+                raise ToolError("5D trajectory validation failed; G-code export blocked. " + detail)
         def prepare():
             state, _progress = self._slices.status()
             if state != 3:
                 raise ToolError("Slice first: there is no G-code yet")
+            expected_body = None
+            if validation is not None:
+                from .trajectory import _snapshot
+                snapshot = _snapshot(self)
+                if snapshot.get("gcode_sha256") != validation.get("gcode_sha256"):
+                    raise ToolError("G-code changed before export; validate the current slice again")
+                expected_body = snapshot["gcode_text"]
             return (self._app.getMeshFileHandler().getWriter("GCodeWriter"),
                     self._target(args.get("path"), "result.gcode"),
-                    [self._app.getController().getScene().getRoot()])
-        writer, path, nodes = run_on_main(self._app, prepare)
+                    [self._app.getController().getScene().getRoot()], expected_body)
+        writer, path, nodes, expected_body = run_on_main(self._app, prepare)
         if writer is None:
             raise ToolError("GCodeWriter plugin is not available")
-        with open(path, "w", encoding="utf-8", newline="") as stream:
-            ok = writer.write(stream, nodes, MeshWriter.OutputMode.TextMode)
-        if not ok:
-            raise ToolError(writer.getInformation() or "G-code was not written")
-        return {"path": path, "size_kb": _r(os.path.getsize(path) / 1024.0, 1)}
+        # Keep any previous exported file intact if the scene changes while STE writes.
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", newline="", delete=False,
+                                             dir=os.path.dirname(path), suffix=".gcode.tmp") as stream:
+                temporary = stream.name
+                ok = writer.write(stream, nodes, MeshWriter.OutputMode.TextMode)
+            if not ok:
+                raise ToolError(writer.getInformation() or "G-code was not written")
+            if validation is not None:
+                from .trajectory import cached_validation
+                current = cached_validation(self)
+                if current is None or current.get("gcode_sha256") != validation.get("gcode_sha256"):
+                    raise ToolError("Scene or G-code changed during export; validate the current slice again")
+                with open(temporary, "rb") as handle:
+                    exported = handle.read()
+                if expected_body.encode("utf-8") not in exported:
+                    raise ToolError("Exported G-code does not contain the validated trajectory; export cancelled")
+                validation = dict(validation, exported_file_sha256=hashlib.sha256(exported).hexdigest())
+            os.replace(temporary, path)
+            temporary = None
+        finally:
+            if temporary is not None and os.path.isfile(temporary):
+                os.remove(temporary)
+        result = {"path": path, "size_kb": _r(os.path.getsize(path) / 1024.0, 1)}
+        if validation is not None:
+            report_path = path + ".validation.json"
+            with open(report_path, "w", encoding="utf-8") as handle:
+                json.dump(validation, handle, ensure_ascii=False, allow_nan=False, indent=2)
+            result.update(trajectory_validation=validation, validation_report_path=report_path,
+                          physical_print_approval=False)
+        return result
 
     def _save_project(self, args, ctx):
         from UM.Workspace.WorkspaceWriter import WorkspaceWriter

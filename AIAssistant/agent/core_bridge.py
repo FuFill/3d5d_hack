@@ -55,9 +55,12 @@ class CoreBridge:
         before = digest(path)
         with open(path, encoding="utf-8-sig") as handle:
             values = json.load(handle)
-        allowed = {"calibration_data", "functional_spec", "noise_spec", "robustness_limits"}
+        allowed = {"calibration_data", "functional_spec", "noise_spec", "robustness_limits", "trajectory_validation"}
         if not isinstance(values, dict) or set(values) - allowed:
-            raise ValueError("Planning inputs allow only calibration_data, functional_spec, noise_spec, robustness_limits")
+            raise ValueError("Planning inputs allow only calibration_data, functional_spec, noise_spec, "
+                             "robustness_limits, trajectory_validation")
+        if "trajectory_validation" in values and not isinstance(values["trajectory_validation"], dict):
+            raise ValueError("trajectory_validation must be a machine/pose/collision contract object")
         if digest(path) != before:
             raise ValueError("Planning inputs changed while reading")
         return values, {"path": path, "sha256": before}
@@ -134,6 +137,8 @@ class CoreBridge:
             raise ValueError("orientation must be balanced, strength or the current pose of the model")
         snapshot = run_on_main(self.app, self._snapshot)
         options, inputs = self._inputs()
+        options = dict(options)
+        options.pop("trajectory_validation", None)  # Used after slicing; never a plan_case argument.
         request_id = uuid.uuid4().hex
         allowed = self.settings().get("allowed_quality_changes") or []
         if not isinstance(allowed, list) or not all(isinstance(n, str) for n in allowed):

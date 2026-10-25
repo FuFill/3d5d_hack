@@ -153,6 +153,12 @@ Execution
 - Call each tool once per need: no repeated reads, no second export.
 - If a tool fails, read the error, fix the cause and retry once; if it still fails, tell the user plainly.
 - After a successful slice: export_gcode and save_project once each, unless the user asked otherwise.
+- For 5D, slice automatically returns trajectory_validation for the actual G-code (including travel).
+  Report its individual checks and missing inputs. A failed check blocks export; fix the reported line/cause.
+  Unknown checks allow an analysis export with a validation JSON report; call it unverified for those checks.
+  validate_5d_trajectory can refresh the report after machine contract inputs change without re-slicing.
+  Do not say no kinematic analysis was done when this result exists: distinguish completed checks from missing
+  calibration, controller macros, full head/fixture/printed-volume collision coverage and physical qualification.
 - Core results are proposals: never claim physical optimality, certified strength or verified 5D; keep
   needs_input/needs_calibration/infeasible visible; physical_print_approval stays false.
 

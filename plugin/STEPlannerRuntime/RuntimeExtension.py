@@ -220,6 +220,13 @@ class RuntimeExtension(QObject, Extension):
 
     def execute(self, command):
         name = command["command"]
+        if name == "trajectory_check":
+            if not self.isolated():
+                raise ValueError("trajectory validation test requires an isolated profile")
+            from trajectory_runtime_check import TrajectoryCheck
+            self.pending = {"kind": "trajectory_check", "command": command,
+                            "started": time.monotonic(), "check": TrajectoryCheck(self.app, command)}
+            return None
         if name == "tree_pose_check":
             if not self.isolated():
                 raise ValueError("model tree validation requires an isolated profile")
@@ -346,6 +353,11 @@ class RuntimeExtension(QObject, Extension):
 
     def wait_pending(self):
         pending = self.pending
+        if pending["kind"] == "trajectory_check":
+            result = pending["check"].advance()
+            if result is not None:
+                self.pending = None
+            return result
         if pending["kind"] == "tree_pose":
             result = pending["check"].advance()
             if result is not None:

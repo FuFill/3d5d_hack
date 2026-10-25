@@ -45,14 +45,44 @@ def calculate(request):
     return {"request_id": request["request_id"], "decision": decision}
 
 
+def calculate_trajectory(request):
+    """Validate the exact native G-code without changing the scene or planning settings."""
+    sys.path.insert(0, core_path())
+    from ste_planner.trajectory_validation import validate_trajectory
+    text = request["gcode_text"]
+    checksum = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if checksum != request.get("gcode_sha256"):
+        raise ValueError("Trajectory G-code hash mismatch")
+    result = validate_trajectory(text, machine_contract=request.get("machine_contract"),
+                                 pose_contract=request.get("pose_contract"),
+                                 collision_geometry=request.get("collision_geometry"))
+    result["gcode_sha256"] = checksum
+    result["printing_mode"] = request.get("printing_mode")
+    result["profile_observations"] = request.get("profile_observations") or {}
+    decision = request.get("deposition_decision")
+    if decision and request.get("pose_contract") and request.get("filament_diameter_mm"):
+        from ste_planner.toolpath_physics import deposition
+        roads = deposition(text, decision, request["filament_diameter_mm"],
+                           pose_contract=request["pose_contract"], retain_roads=False)
+        result["existing_deposition"] = roads.to_dict()
+    else:
+        result["existing_deposition"] = {"status": "needs_input",
+            "missing": ["matched applied plan, explicit pose contract and filament diameter"]}
+    result["physical_print_approval"] = False
+    return {"request_id": request["request_id"], "result": result}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--request", required=True)
+    requests = parser.add_mutually_exclusive_group(required=True)
+    requests.add_argument("--request")
+    requests.add_argument("--trajectory-request")
     parser.add_argument("--response", required=True)
     args = parser.parse_args()
     try:
-        with open(args.request, encoding="utf-8") as handle:
-            result = calculate(json.load(handle))
+        with open(args.request or args.trajectory_request, encoding="utf-8") as handle:
+            request = json.load(handle)
+        result = calculate(request) if args.request else calculate_trajectory(request)
     except Exception as exc:
         result = {"error": "%s: %s" % (type(exc).__name__, exc)}
     temporary = args.response + ".tmp"

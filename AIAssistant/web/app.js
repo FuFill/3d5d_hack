@@ -10,7 +10,7 @@
       send: "Отправить", stop: "Остановить", drop: "Отпустите файлы",
       baseUrl: "URL API", apiKey: "Ключ API", model: "Модель", outputDir: "Папка для G-code и проектов",
       workerPython: "Python ядра (путь к python.exe)",
-      planningInputs: "JSON измерений, нагрузок и шума (необязательно)",
+      planningInputs: "JSON измерений, нагрузок и 5D-проверки (необязательно)",
       language: "Язык", theme: "Тема", light: "Светлая", dark: "Тёмная", save: "Сохранить", test: "Проверить",
       saved: "Сохранено", testing: "Проверка…", testOk: "Связь с моделью есть", keyKept: "Ключ сохранён",
       thinking: "Думает", thought: "Ход мыслей", offline: "нет связи со слайсером",
@@ -45,7 +45,7 @@
       send: "Send", stop: "Stop", drop: "Drop files here",
       baseUrl: "API URL", apiKey: "API key", model: "Model", outputDir: "Folder for G-code and projects",
       workerPython: "Core Python (path to python.exe)",
-      planningInputs: "Measurements, loads and noise JSON (optional)",
+      planningInputs: "Measurements, loads and 5D validation JSON (optional)",
       language: "Language", theme: "Theme", light: "Light", dark: "Dark", save: "Save", test: "Test",
       saved: "Saved", testing: "Testing…", testOk: "Model is reachable", keyKept: "Key is stored",
       thinking: "Thinking", thought: "Reasoning", offline: "slicer is not reachable",
@@ -107,6 +107,7 @@
     slice: ["Слайсинг", "Slice", "slice"],
     get_slice_status: ["Статус слайсинга", "Slice status", "read"],
     get_slice_result: ["Результат слайсинга", "Slice result", "read"],
+    validate_5d_trajectory: ["Проверка 5D-траектории", "5D trajectory checks", "read"],
     export_gcode: ["Экспорт G-code", "Export G-code", "files"],
     save_project: ["Сохранение проекта 3MF", "Save 3MF project", "files"]
   };
@@ -530,6 +531,8 @@
         node.appendChild(el("div", "summary", parts.join(" · ") || t("done")));
       }
       if (r.path && (e.name === "export_gcode" || e.name === "save_project")) node.appendChild(el("div", "note path", r.path));
+      var validation = r.trajectory_validation || (e.name === "validate_5d_trajectory" ? r : null);
+      if (validation) node.appendChild(renderTrajectory(validation));
       (r.warnings || []).forEach(function (w) { node.appendChild(el("div", "note", "! " + w)); });
     });
     unrecovered(item).forEach(function (e) {
@@ -538,6 +541,62 @@
 
     if (openDetails[item.key]) node.appendChild(renderDetails(item));
     return node;
+  }
+
+  function renderTrajectory(report) {
+    var box = el("details", "preset-rejections"), ru = lang === "ru";
+    var states = {pass: ru ? "пройдено" : "passed", fail: ru ? "нарушение" : "failed",
+      unknown: ru ? "неполная проверка" : "incomplete", not_checked: ru ? "не проверено" : "not checked"};
+    box.appendChild(el("summary", "", (ru ? "Проверка 5D: " : "5D checks: ") + (states[report.status] || report.status)));
+    var labels = {contract: "Формат входных данных", syntax: "Команды G-code", axis_limits: "Пределы осей", feed_limits: "Подача",
+      kinematics: "Кинематика A/C", collisions: "Коллизии", dynamics: "Скорости и ускорения"};
+    var coverage = report.coverage || {};
+    if (coverage.moves !== undefined) box.appendChild(el("div", "note", ru ?
+      "Проверено команд движения: " + coverage.moves + "; холостых: " + coverage.travel_moves + "." :
+      "Motion commands scanned: " + coverage.moves + "; travel: " + coverage.travel_moves + "."));
+    Object.keys(report.checks || {}).forEach(function (key) {
+      var check = report.checks[key], status = typeof check === "string" ? check : check.status;
+      box.appendChild(el("div", "note", (ru ? labels[key] || key : key) + ": " + (states[status] || status)));
+    });
+    (report.issues || []).slice(0, 8).forEach(function (issue) {
+      box.appendChild(el("div", "note" + (issue.severity === "error" ? " error" : ""),
+        (issue.line ? (ru ? "Строка " : "Line ") + issue.line + ": " : "") + trajectoryIssue(issue, ru)));
+    });
+    box.appendChild(el("div", "note", ru ? "Физическое одобрение печати не выдано." : "No physical print qualification issued."));
+    return box;
+  }
+
+  function trajectoryIssue(issue, ru) {
+    if (!ru) return issue.message || issue.code;
+    var messages = {
+      missing_axis_limits: "Не заданы подтверждённые пределы осей",
+      missing_axis_limit: "Нет предела для оси", missing_axis_limit_frame: "Не задана система координат пределов осей",
+      missing_feed_limits: "Не заданы пределы подачи и скоростей осей",
+      missing_pose_contract: "Нужны центр вращения, рабочие смещения и модель осей A/C",
+      missing_collision_geometry: "Не заданы габариты головы и препятствий",
+      dynamics_not_modelled: "Ускорения, рывок и динамика контроллера не проверены",
+      unmodelled_controller_motion: "Траектория или изменение состояния этой команды не раскрыты",
+      unknown_initial_or_modal_state: "Начальное положение движения неизвестно",
+      unknown_move_start: "Начало перемещения не удалось проверить на столкновения",
+      unknown_joint_position: "Не удалось восстановить физическое положение оси",
+      unverified_pose_source: "Кинематика рассчитана по условной модели без подтверждённой калибровки",
+      unresolved_feed_semantics: "Не задано, как контроллер определяет время этого движения",
+      axis_limit_exceeded: "Выход за заданный предел оси", feed_limit_exceeded: "Превышение заданной подачи",
+      axis_speed_exceeded: "Превышение заданной скорости оси",
+      collision: "Обнаружено пересечение геометрических оболочек",
+      insufficient_clearance: "Недостаточный зазор между головой и препятствием",
+      incomplete_trajectory_coverage: "Часть траектории осталась вне геометрической проверки",
+      pose_budget_exhausted: "Исчерпан бюджет подробного расчёта поз",
+      collision_budget_exhausted: "Исчерпан бюджет проверки зазоров",
+      validation_unavailable: "Проверяющий модуль недоступен: " + (issue.message || "")
+    };
+    var text = messages[issue.code] || issue.message || issue.code;
+    if (issue.axis) text += " · " + issue.axis;
+    if (issue.command) text += " · " + issue.command;
+    if (issue.value !== undefined) text += " = " + issue.value;
+    if (issue.limits) text += " [" + issue.limits.join(", ") + "]";
+    if (issue.obstacle) text += " · " + issue.obstacle;
+    return text;
   }
 
   function justification(j) {
