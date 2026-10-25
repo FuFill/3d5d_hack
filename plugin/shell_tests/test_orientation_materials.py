@@ -270,6 +270,18 @@ def test_a_free_answer_goes_back_to_the_model(monkeypatch):
     assert [n for n, _a in r.calls].count("apply_plan") == 0            # nothing was applied
 
 
+def test_a_single_material_is_applied_only_after_the_user_agrees(monkeypatch):
+    estimates(monkeypatch)
+    args = {"attachment_id": "a1", "task_text": "x", "exclude": ["PETG", "ABS", "PP"]}
+    r = Materials(choice=1)
+    result = MaterialComparison(r).run(dict(args), {})
+    assert r.questions.asked[0][0]["options"][-1] == "Не применять"
+    assert result["status"] == "declined" and [n for n, _a in r.calls].count("apply_plan") == 0
+    r = Materials(choice=0)
+    result = MaterialComparison(r).run(dict(args), {})
+    assert result["status"] == "applied" and result["chosen"]["material_id"] == "generic_pla"
+
+
 def test_the_choice_is_the_consent_to_execute():
     gate = PlanExecution(SimpleNamespace(questions=None), lambda: {"language": "ru"})
     gate.approve({"plan_id": "p4", "route": {"mode": "classic"}, "chosen_material": {"id": "generic_pla"}})

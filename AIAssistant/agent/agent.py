@@ -165,6 +165,8 @@ Talking to the user
   preset with one-line reasons, orientation, then print time and material, then the saved files. Name settings
   in words ("стенки 2 → 4", "заполнение 20 → 100 %"), never by keys. No internal names (plan_print,
   attachment_id, canonical core): say "расчёт ядра" / "core calculation".
+- Nothing is printed here: the result is a sliced G-code and a saved project. Say "подготовлена к печати" /
+  "ready to print", never "напечатана" / "printed".
 - Reply in {language}; do not mix languages."""
 
 
@@ -662,7 +664,8 @@ class Agent:
                 if text:
                     self._bus.append(streams["message"], "text", text)
                 self._bus.update(streams["message"], streaming=False, note=calls)
-            elif text.strip():
+            elif text.strip() and not (calls and FOREIGN_SCRIPT.search(text)):
+                # A step caption in another script ("Планирую最强的…") is not shown; the step has its own name.
                 streams["message"] = self._bus.emit("message", text=text.strip(), streaming=False, note=calls)
             if reply is not None and not calls and streams["message"] is not None:
                 self._final = (streams["message"], reply["content"].strip())

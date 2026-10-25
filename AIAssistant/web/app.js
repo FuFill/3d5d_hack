@@ -1187,7 +1187,7 @@
   function selectNode(n) {
     hideCard();
     if (selectingNode) { queuedNode = n; return; }
-    if (tree.selected === n.id) return;
+    // The selected node too: after a stopped or failed turn the slicer may differ from it.
     selectingNode = true;
     api("/api/tree/select", {method: "POST", json: {id: n.id}}).then(function (data) {
       tree = data;
@@ -1195,7 +1195,8 @@
       var missing = (data.restored || {}).missing_objects;
       $("link").textContent = missing ? t("missingParts") + missing : "";
     }).catch(function (e) {
-      $("link").textContent = e.status === 409 ? t("busy") : (e.code || t("failed"));
+      $("link").textContent = e.status === 409 ? t("busy") :
+        t("failed") + (e.status === 422 && e.code ? ": " + e.code : "");
     }).then(function () {
       selectingNode = false;
       var next = queuedNode;

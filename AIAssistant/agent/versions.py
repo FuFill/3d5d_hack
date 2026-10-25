@@ -88,11 +88,22 @@ def _value_text(value, info, language):
     return text + ("%" if unit == "%" else " " + unit if unit else "")
 
 
+def _pose(item):
+    """World pose of the part's mesh centre: the same for the centred and the raw STL of one placement."""
+    matrix = [[float(v) for v in row] for row in item.get("world_matrix", item.get("matrix")) or []]
+    box = item.get("mesh_box")
+    if box and len(matrix) == 4:
+        centre = [(float(a) + float(b)) / 2.0 for a, b in zip(box[0], box[1])]
+        for row in matrix[:3]:
+            row[3] += sum(row[i] * centre[i] for i in range(3))
+    return [[round(v, 3) for v in row] for row in matrix]
+
+
 def _poses(snapshot):
-    return [(o.get("name"), o.get("source"),
-             [[round(float(v), 3) for v in row] for row in o.get("world_matrix", o.get("matrix")) or []],
-             o.get("z_offset"))
-            for o in snapshot.get("objects") or []]
+    """Poses by part: the order of the scene changes when parts come back to the plate."""
+    objects = sorted(snapshot.get("objects") or [], key=lambda o: (str(o.get("id") or ""), str(o.get("name") or ""),
+                                                                   str(o.get("source") or "")))
+    return [(o.get("name"), o.get("source"), _pose(o), o.get("z_offset")) for o in objects]
 
 
 def _user_keys(snapshot):
@@ -103,8 +114,10 @@ def same_state(a, b):
     """True when two snapshots describe the same setup (containers, values, mode, poses)."""
     if not a or not b:
         return False
-    key = lambda s: sorted(((str(x.get("position")), x.get("containers"), sorted((x.get("user") or {}).items(),
-                                                                              key=lambda i: i[0]))
+    # A restored node always has printing_mode among the user values; the mode is compared on its own.
+    key = lambda s: sorted(((str(x.get("position")), x.get("containers"),
+                             sorted(((k, v) for k, v in (x.get("user") or {}).items() if k != "printing_mode"),
+                                    key=lambda i: i[0]))
                             for x in s.get("stacks") or []), key=lambda i: i[0])
     return (key(a) == key(b) and a.get("mode") == b.get("mode") and _poses(a) == _poses(b)
             and a.get("physics") == b.get("physics"))

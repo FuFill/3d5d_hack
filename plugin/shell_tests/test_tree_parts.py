@@ -14,7 +14,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "AIAssistant"))
 from agent import versions
-from agent.versions import ModelTree, StateIO
+from agent.versions import ModelTree, StateIO, same_state
 
 P = np.array([[1., 0., 0.], [0., 0., 1.], [0., -1., 0.]])
 
@@ -401,6 +401,7 @@ def test_switching_between_prepared_branches_restores_each_model(scene):
         assert result["node"] == node["id"] and result["missing_objects"] == 0 and service.tree.selected == node["id"]
         assert (plate(registry), registry.stack.getProperty("printing_mode", "value")) == expected[node["id"]], \
             node["name"]
+        assert same_state(io._capture(), node["snapshot"]), node["name"]  # the card shows no false move
 
     for node in (spiral, start, deeper, copies, spiral, turned, copies, start, deeper, spiral, deeper):
         check(node)
@@ -416,3 +417,5 @@ def test_switching_between_prepared_branches_restores_each_model(scene):
     assert more["parent"] == copies["id"]
     for node in (spiral, more, start, copies, deeper, more, turned):
         check(node)
+    service.before_work()
+    assert service.after_work(lambda rows: "Ничего") is None  # work without changes after a switch: no node

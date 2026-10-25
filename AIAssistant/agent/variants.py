@@ -86,18 +86,26 @@ class MaterialComparison:
         ru = r.language() == "ru"
         labels = [self._label(v, i == 0, ru) for i, v in enumerate(variants)]
         if len(variants) == 1:
-            choice, answer = 0, labels[0]
+            # The answer is the consent to apply it: one material is asked about too.
+            text = ("Подходит только один материал; время и расход — оценка до нарезки. Применить его?" if ru else
+                    "Only one material fits; time and use are estimates before slicing. Apply it?")
+            options = labels + ["Не применять" if ru else "Do not apply"]
         else:
             text = ("Какой материал печатаем? Подготовил %d варианта, у каждого свой пресет; время и расход — "
                     "оценка до нарезки." if ru else
                     "Which material do we print? %d variants are prepared, each with its preset; time and use are "
                     "estimates before slicing.") % len(variants)
-            try:
-                answers, _seq = r.questions.ask([{"text": text, "options": labels, "allow_custom": True}],
-                                                (ctx or {}).get("cancelled"))
-            except Exception:
-                raise ToolError("The user cancelled the choice")
-            choice, answer = answers[0].get("choice"), answers[0].get("text")
+            options = labels
+        try:
+            answers, _seq = r.questions.ask([{"text": text, "options": options, "allow_custom": True}],
+                                            (ctx or {}).get("cancelled"))
+        except Exception:
+            raise ToolError("The user cancelled the choice")
+        choice, answer = answers[0].get("choice"), answers[0].get("text")
+        if len(variants) == 1 and choice == 1:
+            return {"status": "declined", "variants": variants, "skipped": skipped,
+                    "next_step": "The user chose not to apply the only feasible material. Nothing was applied; stay "
+                                 "in planning and do not apply, slice or save in this turn."}
         if choice is None or not 0 <= choice < len(variants):
             return {"status": "user_answer", "answer": answer, "variants": variants, "skipped": skipped,
                     "next_step": "The user typed an own answer instead of a variant: follow it (e.g. plan_print with "

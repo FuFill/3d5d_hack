@@ -466,6 +466,14 @@ def call(name, arguments="{}", call_id="c1"):
     return {"id": call_id, "type": "function", "function": {"name": name, "arguments": arguments}}
 
 
+def test_a_step_caption_in_another_script_is_not_shown(monkeypatch):
+    agent, bus, client = run_agent(monkeypatch, [
+        {"stream": ["Планирую最强的取向"], "calls": [call("find_settings", '{"queries": ["wall"]}')]},
+        {"stream": ["Готово."]}])
+    texts = [e["text"] for e in bus.snapshot()[0] if e["type"] == "message"]
+    assert not [t for t in texts if "最" in t] and "Готово." in texts
+
+
 def test_turn_starts_by_reading_the_project_and_short_text_becomes_the_caption(monkeypatch):
     agent, bus, client = run_agent(monkeypatch, [
         {"stream": ["Ищу настройки ", "прочности"], "calls": [call("find_settings", '{"queries": ["wall"]}')]},

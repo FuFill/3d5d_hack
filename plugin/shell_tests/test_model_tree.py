@@ -183,6 +183,7 @@ def test_overlapping_selections_cannot_reorder_scene_and_selected_node():
         return original(snapshot)
 
     s.state_io.restore = restore
+    s.state_io.state = state(preset="Fine")  # the slicer differs from the selected node, so it is restored
     assert s.select_node(node["id"])["node"] == node["id"]
     assert nested == [None] and s.tree.selected == node["id"]
     s.state_io.restore = original
@@ -390,3 +391,26 @@ def test_side_plans_leave_the_current_plan_valid():
         bridge._generation += 1
         bridge._plans = {"p2": {"generation": 2, "decision": {}, "request": {}}}
     assert bridge.decision_record("p1") == {"decision": {}, "request": {}}
+
+
+def test_the_selected_model_is_restored_again_after_a_stopped_turn():
+    s = service()
+    fast = work(s, "Быстрая печать", preset="Fast")
+    restored = len(s.state_io.restored)
+    assert s.select_node(fast["id"])["node"] == fast["id"]
+    assert len(s.state_io.restored) == restored             # already on it: no extra Undo step
+    s.state_io.state = state(preset="Fine", infill=90)       # a turn applied a plan and was stopped: no node
+    assert s.select_node(fast["id"])["node"] == fast["id"]
+    assert s.state_io.restored[-1] == "Fast" and s.state_io.state["preset"] == "Fast"
+
+
+def test_a_branch_from_the_start_still_offers_the_files_of_the_chat():
+    s = service()
+    s.uploads["m1"] = {"id": "m1", "kind": "model", "name": "gear.stl", "path": "/m/gear.stl"}
+    s._turn_started()
+    s.bus.emit("user", text="Подготовь шестерню", attachments=[{"id": "m1", "name": "gear.stl"}])
+    work(s, "Быстрая", preset="Fast")
+    s._turn_finished()
+    s.select_node(s.tree.nodes[0]["id"])                  # the feed goes back to before the first message
+    assert not [e for e in s.bus.snapshot()[0] if e.get("type") == "user"]
+    assert [i["id"] for i in s.model_uploads()] == ["m1"]

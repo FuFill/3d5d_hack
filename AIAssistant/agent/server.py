@@ -33,6 +33,10 @@ SPEC_EXT = (".docx", ".txt", ".md")
 MAX_UPLOAD = 300 * 1024 * 1024
 
 
+class UnknownNode(ValueError):
+    pass
+
+
 class ChatServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
     allow_reuse_address = True
@@ -279,7 +283,10 @@ class ChatService:
             return None
         node = self.tree.node(node_id)
         if node is None:
-            raise ValueError("node")
+            raise UnknownNode(node_id)
+        if node_id == self.tree.selected and self.state_io is not None and \
+                same_state(self.state_io.capture(), node["snapshot"]):
+            return {"node": node_id, "missing_objects": 0}  # already on it: no extra Undo step
         result = self.state_io.restore(node["snapshot"], self.tree.object_ids()) if self.state_io is not None else {}
         self.tree.selected = node_id
         if "turn" in node:  # the chat goes back to the branch of this model (models of old chats keep it)
@@ -344,9 +351,11 @@ class ChatService:
         return "http://127.0.0.1:%d/mcp" % self.port
 
     def _chat_uploads(self, kinds, events=None):
-        """Uploads sent in the current chat: files of other chats are not offered to the model."""
+        """Uploads sent in the current chat: files of other chats are not offered to the model.
+
+        Every branch counts: a branch from an earlier model still works with the files of the chat."""
         if events is None:
-            events = self.bus.snapshot()[0]
+            events = self._all_events()
         ids = set(a.get("id") for e in events if e.get("type") == "user" for a in e.get("attachments") or [])
         with self._lock:
             return [dict(item) for key, item in self.uploads.items() if key in ids and item["kind"] in kinds]
@@ -554,7 +563,7 @@ class Handler(BaseHTTPRequestHandler):
             if url.path == "/api/tree/select":
                 try:
                     result = service.select_node(str(data.get("id") or ""))
-                except ValueError:
+                except UnknownNode:
                     return self._send(404, {"error": "node"})
                 except Exception as e:
                     return self._send(422, {"error": str(e)})
