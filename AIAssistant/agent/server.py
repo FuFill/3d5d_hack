@@ -221,7 +221,7 @@ class ChatService:
         if node is None or self.state_io is None:
             return None
         try:
-            result = self.state_io.restore(node["snapshot"])
+            result = self.state_io.restore(node["snapshot"], self.tree.object_ids())
         except Exception as e:
             return {"error": str(e)}
         return dict(result, node=node["id"])
@@ -280,7 +280,7 @@ class ChatService:
         node = self.tree.node(node_id)
         if node is None:
             raise ValueError("node")
-        result = self.state_io.restore(node["snapshot"]) if self.state_io is not None else {}
+        result = self.state_io.restore(node["snapshot"], self.tree.object_ids()) if self.state_io is not None else {}
         self.tree.selected = node_id
         if "turn" in node:  # the chat goes back to the branch of this model (models of old chats keep it)
             self._show_branch(self._branch_end(node["turn"]))

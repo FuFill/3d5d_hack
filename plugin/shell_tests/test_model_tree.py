@@ -36,7 +36,7 @@ class FakeIO:
     def capture(self):
         return copy.deepcopy(self.state)
 
-    def restore(self, snapshot):
+    def restore(self, snapshot, known=None):
         self.state = copy.deepcopy(snapshot)
         self.restored.append(snapshot["preset"])
         return {"missing_objects": 0}
@@ -178,7 +178,7 @@ def test_overlapping_selections_cannot_reorder_scene_and_selected_node():
     original = s.state_io.restore
     nested = []
 
-    def restore(snapshot):
+    def restore(snapshot, known=None):
         nested.append(s.select_node(s.tree.nodes[0]["id"]))
         return original(snapshot)
 

@@ -3,11 +3,18 @@
 
 A node ("model") is a snapshot of the print setup: the containers of every stack (quality
 changes, quality, material, variant, definition changes) with the user's values on top,
-the printing mode and the pose of every part on the plate. The tree belongs to one chat;
+the printing mode and the pose and mesh of every part on the plate. The tree belongs to one chat;
 its selected node is restored when the chat is opened again. Nodes are made only when a
 turn of the agent ends with a result, never for intermediate states.
+
+A plan applied in place may replace the mesh of a part (5D: the raw STL indexed for the
+5D backend instead of the centred one) and add parts (batch copies, modifier meshes);
+the saved matrix belongs to the mesh it was saved with. A node therefore also brings back
+the mesh of each part and the set of parts: parts this tree knows that the node has not
+are taken off the plate (kept for the nodes that have them), parts it has come back.
 """
 
+from collections import OrderedDict
 import re
 import time
 import uuid
@@ -27,6 +34,7 @@ IMPORTANT = ("layer_height", "infill_sparse_density", "wall_line_count", "speed_
              "material_flow", "magic_spiralize")
 EFFECTIVE_KEYS = IMPORTANT[:15]  # read even by snapshots of older versions
 MAX_CHANGES = 10
+MESH_CACHE = 32  # meshes of saved nodes kept in this session; older ones are matched by their bounding box
 VALUE_CHARS = 40
 NAMES = {"printing_mode": ("Режим печати", "Printing mode"), "preset": ("Пресет", "Preset"),
          "material": ("Материал", "Material"), "nozzle": ("Сопло", "Nozzle"),
@@ -183,6 +191,11 @@ class ModelTree:
     def node(self, node_id):
         return next((n for n in self.nodes if n["id"] == node_id), None)
 
+    def object_ids(self):
+        """IDs of the parts of every model: a part outside them was added by the user later and stays."""
+        snapshots = [n.get("snapshot") or {} for n in self.nodes] + [(self.start or {}).get("snapshot") or {}]
+        return set(o["id"] for x in snapshots for o in x.get("objects") or [] if o.get("id"))
+
     def current(self):
         return self.node(self.selected)
 
@@ -255,12 +268,16 @@ class StateIO:
     def __init__(self, app, registry):
         self._app = app
         self._registry = registry
+        self._meshes = OrderedDict()  # mesh id -> MeshData of a saved node
+        self._boxes = {}              # mesh id -> local bounding box [min, max]
+        self._detached = {}           # part id -> part taken off the plate by a node without it
 
     def capture(self):
         return run_on_main(self._app, self._capture)
 
-    def restore(self, snapshot):
-        return run_on_main(self._app, lambda: self._restore(snapshot))
+    def restore(self, snapshot, known=None):
+        """known: part IDs of the whole tree (ModelTree.object_ids)."""
+        return run_on_main(self._app, lambda: self._restore(snapshot, known))
 
     def _sliceable(self):
         return bool(run_on_main(self._app, self._registry._scene_nodes))
@@ -313,6 +330,47 @@ class StateIO:
             node._ai_assistant_tree_id = uuid.uuid4().hex
         return node._ai_assistant_tree_id
 
+    def _mesh(self, mesh):
+        """(id, local bounding box) of a mesh; the mesh is kept to restore it."""
+        token = getattr(mesh, "_ai_assistant_tree_mesh", None)
+        if token is None:
+            token = uuid.uuid4().hex
+            try:
+                mesh._ai_assistant_tree_mesh = token
+            except AttributeError:
+                return None, None
+        self._meshes[token] = mesh
+        self._meshes.move_to_end(token)
+        while len(self._meshes) > MESH_CACHE:
+            self._boxes.pop(self._meshes.popitem(last=False)[0], None)
+        if token not in self._boxes:
+            import numpy
+            vertices = mesh.getVertices()
+            vertices = numpy.asarray(vertices, dtype=float) if vertices is not None else numpy.zeros((0, 3))
+            self._boxes[token] = [vertices.min(axis=0).tolist(), vertices.max(axis=0).tolist()] \
+                if vertices.size else None
+        return token, self._boxes[token]
+
+    def _saved_mesh(self, node, item):
+        """(mesh to set or None, local shift or None) so the part takes the pose saved with its mesh.
+
+        Only a mesh of the same size counts as the same part (the centred and the raw STL);
+        a part reloaded with other geometry keeps it. The saved mesh comes back while this
+        session keeps it; otherwise the matrix is shifted by the offset of the two meshes."""
+        import numpy
+        saved, current = item.get("mesh"), node.getMeshData()
+        if not saved or current is None or getattr(current, "_ai_assistant_tree_mesh", None) == saved:
+            return None, None
+        box, now = item.get("mesh_box"), self._mesh(current)[1]
+        if not box or not now:
+            return None, None
+        (lo, hi), (lo_now, hi_now) = numpy.asarray(box, dtype=float), numpy.asarray(now, dtype=float)
+        if not numpy.allclose(hi - lo, hi_now - lo_now, atol=1e-3 * max(1.0, float((hi - lo).max()))):
+            return None, None
+        if saved in self._meshes:
+            return self._meshes[saved], None
+        return None, (lo + hi) / 2.0 - (lo_now + hi_now) / 2.0
+
     @staticmethod
     def _z_offset(node):
         return node.callDecoration("getZOffset")
@@ -355,11 +413,14 @@ class StateIO:
         objects = []
         for node in registry._scene_nodes():
             source = registry._node_source(node)
-            objects.append({"id": self._object_id(node), "name": node.getName(),
-                            "source": source.get("source_path"),
-                            "matrix": node.getLocalTransformation().getData().tolist(),
-                            "world_matrix": node.getWorldTransformation().getData().tolist(),
-                            "z_offset": self._z_offset(node)})
+            item = {"id": self._object_id(node), "name": node.getName(), "source": source.get("source_path"),
+                    "parent": getattr(node.getParent(), "_ai_assistant_tree_id", None),
+                    "matrix": node.getLocalTransformation().getData().tolist(),
+                    "world_matrix": node.getWorldTransformation().getData().tolist(),
+                    "z_offset": self._z_offset(node)}
+            if node.getMeshData() is not None:
+                item["mesh"], item["mesh_box"] = self._mesh(node.getMeshData())
+            objects.append(item)
         mode = stack.getProperty("printing_mode", "value")
         physics = self._physics_preferences()
         if mode in ("cylindrical", "cylindrical_full"):
@@ -372,22 +433,32 @@ class StateIO:
                 "nozzles": dict((s.getMetaDataEntry("position"), s.variant.getName()) for s in stacks[1:]),
                 "effective": effective, "objects": objects, "physics": physics}
 
-    def _restore(self, snapshot):
-        """Containers, values and poses of a node as one Undo step; returns how many parts were not found."""
+    def _restore(self, snapshot, known=None):
+        """Containers, values, parts, meshes and poses of a node as one Undo step.
+
+        Returns how many saved parts were not found and how many were moved, brought back
+        and taken off the plate."""
         app, registry = self._app, self._registry
         stack, stacks = self._stacks()
         if snapshot.get("machine") and snapshot["machine"] != stack.getId():
             raise ToolError("This model was made for another printer; select that printer in STE first")
         from UM.Math.Matrix import Matrix
+        from UM.Math.Vector import Vector
         from UM.Operations.Operation import Operation
         from UM.Settings.InstanceContainer import InstanceContainer
 
         containers = app.getContainerRegistry()
+        root = app.getController().getScene().getRoot()
         free = list(registry._scene_nodes())
-        moves, missing = [], 0
+        matched, missing = [], 0  # (item, node, None or the parent it is brought back to)
+        placed = {}  # saved part id -> its node
         for item in snapshot.get("objects") or []:
             node = next((n for n in free if item.get("id") and
                          getattr(n, "_ai_assistant_tree_id", None) == item["id"]), None)
+            if node is None and item.get("id") in self._detached:
+                node = self._detached[item["id"]]  # taken off by another node of the tree
+                if node.getParent() is not None or node in placed.values():
+                    node = None
             if node is None:
                 # Old snapshots/reopened scenes have no live IDs. Never guess between copies.
                 candidates = [n for n in free if n.getName() == item.get("name") and
@@ -398,13 +469,53 @@ class StateIO:
             if node is None:
                 missing += 1
                 continue
-            free.remove(node)
-            before = (node.getLocalTransformation(), self._z_offset(node))
-            after = Matrix(item.get("world_matrix", item["matrix"]))
-            if "world_matrix" in item and node.getParent() is not None:
-                after = node.getParent().getWorldTransformation().getInverse().multiply(after, copy=True)
+            back = None
+            if node in free:
+                free.remove(node)
+                if item.get("id") and not getattr(node, "_ai_assistant_tree_id", None):
+                    node._ai_assistant_tree_id = item["id"]  # found by name after a restart: the tree knows it again
+            else:
+                back = placed.get(item.get("parent")) or root
+            if item.get("id"):
+                placed[item["id"]] = node
+            matched.append((item, node, back))
+        if all(back is not None for _item, _node, back in matched):
+            # Nothing of the node is on the plate (a new project): no copies come back without their part.
+            missing += len(matched)
+            matched = []
+
+        def ancestors(node):
+            parent = node.getParent()
+            while parent is not None:
+                yield parent
+                parent = parent.getParent()
+
+        # Parts of this tree the node has not (batch copies, modifiers of a later plan) leave the plate;
+        # a modifier goes with its part. Parts added by the user after the last model stay.
+        known = set(known or ())
+        leaving = [n for n in free if getattr(n, "_ai_assistant_tree_id", None) in known]
+        leaving = [(n, n.getParent()) for n in leaving if not any(p in leaving for p in ancestors(n))]
+        moves, comings, shifts = [], [], {}
+        for item, node, back in matched:
+            parent = back or node.getParent()
+            if "world_matrix" not in item or parent in placed.values():
+                after = Matrix(item["matrix"])  # its parent takes its saved pose too
+                if parent in shifts:  # the parent keeps another mesh: its frame moved by the offset
+                    after = shifts[parent].getInverse().multiply(after, copy=True)
+            else:
+                after = Matrix(item["world_matrix"])
+                if parent is not None:
+                    after = parent.getWorldTransformation().getInverse().multiply(after, copy=True)
+            mesh, shift = self._saved_mesh(node, item)
+            if shift is not None:
+                shifts[node] = Matrix()
+                shifts[node].setByTranslation(Vector(*shift.tolist()))
+                after = after.multiply(shifts[node], copy=True)
             # Legacy snapshots did not store ZOffset. Clear any offset from a different node.
-            moves.append((node, before, (after, item.get("z_offset"))))
+            moves.append((node, (node.getLocalTransformation(), self._z_offset(node), node.getMeshData()),
+                          (after, item.get("z_offset"), mesh)))
+            if back is not None:
+                comings.append((node, back))
 
         before_physics = self._physics_preferences()
         after_physics = dict(before_physics, **(snapshot.get("physics") or {}))
@@ -462,8 +573,11 @@ class StateIO:
                         handler("printing_mode", "value")
                     for key, value in (before_physics, after_physics)[index].items():
                         app.getPreferences().setValue("physics/" + key, value)
+                    state_io._move_parts(leaving, comings, index)
                     for node, before, after in moves:
-                        matrix, z_offset = (before, after)[index]
+                        matrix, z_offset, mesh = (before, after)[index]
+                        if mesh is not None and mesh is not node.getMeshData():
+                            node.setMeshData(mesh)
                         state_io._set_z_offset(node, z_offset)
                         node.setTransformation(matrix)
                     scene = app.getController().getScene()
@@ -492,4 +606,23 @@ class StateIO:
         operation = RestoreModel()
         operation.redo()  # Failed restoration must not enter the undo stack.
         app.getOperationStack().push(operation)
-        return {"missing_objects": missing, "moved": len(moves)}
+        # Reverting a plan now would undo it over another model's setup; the tree is the way back.
+        applied = getattr(getattr(registry, "_in_place", None), "_applied", None)
+        if isinstance(applied, dict):
+            applied.clear()
+        return {"missing_objects": missing, "moved": len(moves), "returned": len(comings), "removed": len(leaving)}
+
+    def _move_parts(self, leaving, comings, index):
+        """index 1: parts leave and come back for the node; 0: undone."""
+        try:
+            from UM.Scene.Selection import Selection
+        except ImportError:
+            Selection = None
+        for node, parent in (leaving if index else comings):
+            if Selection is not None and Selection.isSelected(node):
+                Selection.remove(node)
+            node.setParent(None)
+            if getattr(node, "_ai_assistant_tree_id", None):
+                self._detached[node._ai_assistant_tree_id] = node
+        for node, parent in (comings if index else leaving):
+            node.setParent(parent)

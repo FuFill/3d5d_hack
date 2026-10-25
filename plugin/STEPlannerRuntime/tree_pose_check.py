@@ -202,4 +202,35 @@ class TreePoseCheck:
         assert abs(self.node.getBoundingBox().bottom) < 1e-4
         assert self.app.getGlobalContainerStack().getProperty("printing_mode", "value") == "classic"
         results.append("legacy_snapshot_clears_stale_offset_and_restores_explicit_mode")
+
+        # An in-place 5D plan swaps the centred mesh for the raw STL and adds batch copies.
+        from UM.Mesh.MeshData import MeshData
+        def world(node):
+            matrix = node.getWorldTransformation().getData()
+            return node.getMeshData().getVertices().dot(matrix[:3, :3].T) + matrix[:3, 3]
+        root = self.app.getController().getScene().getRoot()
+        start = self.state_io._capture()
+        start_world = world(self.node)
+        centred = self.node.getMeshData()
+        self.node.setMeshData(MeshData(vertices=centred.getVertices() + np.float32([7, -3, 11]),
+                                       file_name=centred.getFileName()))
+        self.node.setPosition(Vector(-50, 0, 20))
+        batch = SteSlicerSceneNode()
+        batch.setName(self.node.getName() + " #2")
+        batch.setMeshData(self.node.getMeshData())
+        batch.addDecorator(SliceableObjectDecorator())
+        batch.addDecorator(BuildPlateDecorator(0))
+        batch.setParent(root)
+        batch.setPosition(Vector(50, 0, 20))
+        planned = self.state_io._capture()
+        planned_world = world(self.node)
+        known = set(o["id"] for x in (start, planned) for o in x["objects"])
+        self.state_io._restore(start, known)
+        assert np.allclose(world(self.node), start_world, atol=1e-4) and batch.getParent() is None
+        self.state_io._restore(planned, known)
+        assert np.allclose(world(self.node), planned_world, atol=1e-4) and batch.getParent() is root
+        self.state_io._meshes.clear()  # another session: the saved mesh is gone, its size still matches
+        self.state_io._restore(start, known)
+        assert np.allclose(world(self.node), start_world, atol=1e-4) and batch.getParent() is None
+        results.append("planned_mesh_and_batch_copies_follow_the_node")
         return results
